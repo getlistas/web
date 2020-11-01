@@ -1,0 +1,36 @@
+{
+  "name": "purescript-halogen-realworld",
+  "description": "An exemplary real-world application demonstrating PureScript and the Halogen framework",
+  "author": "Thomas Honeyman",
+  "license": "MIT",
+  "scripts": {
+    "css:lock": "npm run bundle && npm run css-purge && cat dist/tailwind.css | ./css/css2purs.py > src/Tailwind.purs",
+    "css:gen": "tailwindcss build css/tailwind_inputs.css -o dev/tailwind.css && cat dev/tailwind.css | ./css/css2purs.py > src/Tailwind.purs",
+    "postinstall": "spago install",
+    "clean": "rm -rf node_modules output dce-output .spago dist/* *.lock .cache",
+    "build": "spago build",
+    "watch": "spago build --watch",
+    "serve": "http-server dist",
+    "prep-prod": "rm -rf dist",
+    "serve-dev": "parcel dev/index.html --open",
+    "test": "spago test",
+    "build:prod": "npm run prep-prod && npm run bundle && npm run css-purge && parcel build dist/index.html",
+    "bundle:build": "spago build --purs-args '--codegen corefn'",
+    "bundle:dce": "zephyr -f Main.main",
+    "bundle:parcel": "parcel build prod/index.html --public-url '.' --no-source-maps",
+    "bundle": "npm run bundle:build && npm run bundle:dce && npm run bundle:parcel"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thomashoneyman/purescript-halogen-realworld.git"
+  },
+  "devDependencies": {
+    "http-server": "^0.12.3",
+    "parcel": "^2.0.0-beta.1"
+  },
+  "dependencies": {
+    "decimal.js": "^10.2.0",
+    "marked": "^1.1.1",
+    "tailwindcss": "^1.9.6"
+  }
+}
