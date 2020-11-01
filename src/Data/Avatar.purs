@@ -6,7 +6,7 @@
 -- |
 -- | For more information on this pattern, please see:
 -- | https://thomashoneyman.com/guides/real-world-halogen/design-data-pure-functions/#restricting-the-domain-using-smart-constructors
-module Conduit.Data.Avatar
+module Doneq.Data.Avatar
   ( Avatar -- constructor not exported
   , parse
   , toString

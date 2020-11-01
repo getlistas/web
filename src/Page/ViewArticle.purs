@@ -1,29 +1,29 @@
 -- | Articles are stored as markdown strings, which is then rendered as HTMl. They also include
 -- | comments so users can read an article and then share what they thought about it. This component
--- | supports viewing and interacting with articles in Conduit.
-module Conduit.Page.ViewArticle where
+-- | supports viewing and interacting with articles in Doneq.
+module Doneq.Page.ViewArticle where
 
 import Prelude
 
-import Conduit.Capability.Navigate (class Navigate, navigate)
-import Conduit.Capability.Resource.Article (class ManageArticle, deleteArticle, getArticle)
-import Conduit.Capability.Resource.Comment (class ManageComment, createComment, deleteComment, getComments)
-import Conduit.Capability.Resource.User (class ManageUser)
-import Conduit.Component.HTML.Footer (footer)
-import Conduit.Component.HTML.Header (header)
-import Conduit.Component.HTML.Utils (css, maybeElem, safeHref, whenElem)
-import Conduit.Component.Part.FavoriteButton (ButtonSize(..), favorite, favoriteButton, unfavorite)
-import Conduit.Component.Part.FollowButton (follow, followButton, unfollow)
-import Conduit.Component.RawHTML as RawHTML
-import Conduit.Component.Utils (OpaqueSlot)
-import Conduit.Data.Article (ArticleWithMetadata)
-import Conduit.Data.Avatar as Avatar
-import Conduit.Data.Comment (Comment, CommentId)
-import Conduit.Data.PreciseDateTime as PDT
-import Conduit.Data.Profile (Profile, Relation(..), Author)
-import Conduit.Data.Route (Route(..))
-import Conduit.Data.Username as Username
-import Conduit.Env (UserEnv)
+import Doneq.Capability.Navigate (class Navigate, navigate)
+import Doneq.Capability.Resource.Article (class ManageArticle, deleteArticle, getArticle)
+import Doneq.Capability.Resource.Comment (class ManageComment, createComment, deleteComment, getComments)
+import Doneq.Capability.Resource.User (class ManageUser)
+import Doneq.Component.HTML.Footer (footer)
+import Doneq.Component.HTML.Header (header)
+import Doneq.Component.HTML.Utils (css, maybeElem, safeHref, whenElem)
+import Doneq.Component.Part.FavoriteButton (ButtonSize(..), favorite, favoriteButton, unfavorite)
+import Doneq.Component.Part.FollowButton (follow, followButton, unfollow)
+import Doneq.Component.RawHTML as RawHTML
+import Doneq.Component.Utils (OpaqueSlot)
+import Doneq.Data.Article (ArticleWithMetadata)
+import Doneq.Data.Avatar as Avatar
+import Doneq.Data.Comment (Comment, CommentId)
+import Doneq.Data.PreciseDateTime as PDT
+import Doneq.Data.Profile (Profile, Relation(..), Author)
+import Doneq.Data.Route (Route(..))
+import Doneq.Data.Username as Username
+import Doneq.Env (UserEnv)
 import Control.Monad.Reader (class MonadAsk, asks)
 import Control.Parallel (parTraverse_)
 import Data.Foldable (for_)

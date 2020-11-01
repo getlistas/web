@@ -3,9 +3,9 @@
 -- | includes managing auth tokens, designing types to represent possible requests, and more.
 -- |
 -- | While interesting, this module is largely mechanical. It helps provide most of the low-level
--- | functions that our production monad will leverage in `Conduit.AppM` to implement our various
+-- | functions that our production monad will leverage in `Doneq.AppM` to implement our various
 -- | app capabilities.
-module Conduit.Api.Request
+module Doneq.Api.Request
   ( Token -- constructor and decoders not exported
   , BaseURL(..)
   , RequestMethod(..)
@@ -26,13 +26,13 @@ import Affjax (Request, printError, request)
 import Affjax.RequestBody as RB
 import Affjax.RequestHeader (RequestHeader(..))
 import Affjax.ResponseFormat as RF
-import Conduit.Api.Endpoint (Endpoint(..), endpointCodec)
-import Conduit.Data.Email (Email)
-import Conduit.Data.Email as Email
-import Conduit.Data.Profile (Profile)
-import Conduit.Data.Profile as Profile
-import Conduit.Data.Username (Username)
-import Conduit.Data.Username as Username
+import Doneq.Api.Endpoint (Endpoint(..), endpointCodec)
+import Doneq.Data.Email (Email)
+import Doneq.Data.Email as Email
+import Doneq.Data.Profile (Profile)
+import Doneq.Data.Profile as Profile
+import Doneq.Data.Username (Username)
+import Doneq.Data.Username as Username
 import Data.Argonaut.Core (Json)
 import Data.Bifunctor (lmap)
 import Data.Codec as Codec
@@ -52,7 +52,7 @@ import Web.Storage.Storage (getItem, removeItem, setItem)
 
 -- | As usual, we'll start with types we'll use throughout this module.
 
--- | Conduit uses a REST API and secures certain endpoints using a JSON Web Token (JWT). That means
+-- | Doneq uses a REST API and secures certain endpoints using a JSON Web Token (JWT). That means
 -- | most requests will use the token to attach an "Authorization" header. It's critical that this
 -- | token is not inadvertently exposed and that we attach a correct token to requests. We can
 -- | prevent the token from being changed and restrict the ways it can be created using the smart
@@ -106,7 +106,7 @@ data RequestMethod
 -- | caring about the implementation (REST, RPC, local files, mocks, etc.). This type will be
 -- | used to write a REST implementation for our resource management capabilities.
 -- |
--- | Check out the `Conduit.Capability.Resource.*` modules for examples of the high-level functions
+-- | Check out the `Doneq.Capability.Resource.*` modules for examples of the high-level functions
 -- | we'll use in our business logic.
 type RequestOptions =
   { endpoint :: Endpoint
@@ -116,7 +116,7 @@ type RequestOptions =
 -- | Let's bring these `BaseURL`, `Token`, and `RequestOptions` types together to create a data
 -- | structure that the `Affjax` library understands and can use to make asynchronous requests.
 -- | We won't use this function too often directly; it's instead used as a helper in all the
--- | request functions defined below and in the `Conduit.Api.Utils` modules.
+-- | request functions defined below and in the `Doneq.Api.Utils` modules.
 defaultRequest :: BaseURL -> Maybe Token -> RequestOptions -> Request Json
 defaultRequest (BaseURL baseUrl) auth { endpoint, method } =
   { method: Left method
@@ -204,7 +204,7 @@ decodeAuthProfile { user } = do
     CA.prismaticCodec (Just <<< Token) (\(Token t) -> t) CA.string
 
 -- | The following functions deal with writing, reading, and deleting tokens in local storage at a
--- | particular key. They'll be used as part of our production monad, `Conduit.AppM`.
+-- | particular key. They'll be used as part of our production monad, `Doneq.AppM`.
 
 tokenKey = "token" :: String
 

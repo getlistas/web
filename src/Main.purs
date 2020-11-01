@@ -3,13 +3,13 @@ module Main where
 import Prelude
 
 import Affjax (request, printError)
-import Conduit.Api.Endpoint (Endpoint(..))
-import Conduit.Api.Request (BaseURL(..), RequestMethod(..), defaultRequest, readToken)
-import Conduit.AppM (runAppM)
-import Conduit.Component.Router as Router
-import Conduit.Data.Profile as Profile
-import Conduit.Data.Route (Route, routeCodec)
-import Conduit.Env (Env, LogLevel(..))
+import Doneq.Api.Endpoint (Endpoint(..))
+import Doneq.Api.Request (BaseURL(..), RequestMethod(..), defaultRequest, readToken)
+import Doneq.AppM (runAppM)
+import Doneq.Component.Router as Router
+import Doneq.Data.Profile as Profile
+import Doneq.Data.Route (Route, routeCodec)
+import Doneq.Env (Env, LogLevel(..))
 import Data.Bifunctor (lmap)
 import Data.Codec as Codec
 import Data.Codec.Argonaut (printJsonDecodeError)

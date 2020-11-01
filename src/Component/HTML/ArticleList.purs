@@ -1,17 +1,17 @@
 -- | This module exports a pure HTML function to render lists of articles in various formats,
 -- | included paginated lists.
-module Conduit.Component.HTML.ArticleList where
+module Doneq.Component.HTML.ArticleList where
 
 import Prelude
 
-import Conduit.Component.HTML.Utils (css, safeHref, whenElem)
-import Conduit.Component.Part.FavoriteButton (favoriteButton, ButtonSize(..))
-import Conduit.Data.Article (ArticleWithMetadata)
-import Conduit.Data.Avatar as Avatar
-import Conduit.Data.PaginatedArray (PaginatedArray)
-import Conduit.Data.PreciseDateTime as PDT
-import Conduit.Data.Route (Route(..))
-import Conduit.Data.Username as Username
+import Doneq.Component.HTML.Utils (css, safeHref, whenElem)
+import Doneq.Component.Part.FavoriteButton (favoriteButton, ButtonSize(..))
+import Doneq.Data.Article (ArticleWithMetadata)
+import Doneq.Data.Avatar as Avatar
+import Doneq.Data.PaginatedArray (PaginatedArray)
+import Doneq.Data.PreciseDateTime as PDT
+import Doneq.Data.Route (Route(..))
+import Doneq.Data.Username as Username
 import Data.Array (mapWithIndex)
 import Data.Enum (enumFromTo)
 import Data.Foldable (length)

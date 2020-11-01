@@ -1,6 +1,6 @@
 // This module demonstrates how to leverage untyped JavaScript code in PureScript. This should be
 // done sparingly. For a longer description of why we're using the FFI at all, see the
-// `Conduit.Foreign.Marked` module in this directory.
+// `Doneq.Foreign.Marked` module in this directory.
 //
 // Before we even begin, note that we have created a JavaScript file (`Marked.js`) in the same folder
 // as a PureScript file of the same name (`Marked.purs`). This convention ensures the compiler knows

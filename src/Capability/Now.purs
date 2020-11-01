@@ -3,7 +3,7 @@
 -- |
 -- | To learn more about why we use capabilities and this architecture, please see the guide:
 -- | https://thomashoneyman.com/guides/real-world-halogen/push-effects-to-the-edges/
-module Conduit.Capability.Now where
+module Doneq.Capability.Now where
 
 import Prelude
 

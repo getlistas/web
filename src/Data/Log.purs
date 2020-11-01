@@ -12,10 +12,10 @@
 -- | to care about how to format or gather metadata or the mechanics of sending the error to a
 -- | particular reporting service.
 -- |
--- | The `Conduit.Capability.LogMessages` module describes the higher-level interface to log an
+-- | The `Doneq.Capability.LogMessages` module describes the higher-level interface to log an
 -- | error or message that is used throughout the rest of the application. I'd recommend reading
 -- | through that module as well.
-module Conduit.Data.Log
+module Doneq.Data.Log
   ( LogReason(..)
   , message
   , reason
@@ -25,7 +25,7 @@ module Conduit.Data.Log
 
 import Prelude
 
-import Conduit.Capability.Now (class Now, nowDateTime)
+import Doneq.Capability.Now (class Now, nowDateTime)
 import Data.DateTime (DateTime)
 import Data.Either (either)
 import Data.Foldable (fold)

@@ -1,14 +1,14 @@
 -- | Comments are only used when viewing an article. Still, they're an example of an *entity* with
 -- | a persistent identity. They're a resource users can manage directly: users can create, delete,
 -- | and perhaps eventually modify them.
-module Conduit.Data.Comment where
+module Doneq.Data.Comment where
 
 import Prelude
 
-import Conduit.Data.PreciseDateTime as PDT
-import Conduit.Data.Profile (Author)
-import Conduit.Data.Profile as Profile
-import Conduit.Data.Username (Username)
+import Doneq.Data.PreciseDateTime as PDT
+import Doneq.Data.Profile (Author)
+import Doneq.Data.Profile as Profile
+import Doneq.Data.Username (Username)
 import Data.Codec.Argonaut (JsonCodec)
 import Data.Codec.Argonaut as CA
 import Data.Codec.Argonaut.Record as CAR

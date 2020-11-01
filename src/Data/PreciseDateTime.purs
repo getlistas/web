@@ -1,11 +1,11 @@
--- | We use datetimes all over the place in Conduit to describe when a resource like a comment
+-- | We use datetimes all over the place in Doneq to describe when a resource like a comment
 -- | or an article was originally created. The `PreciseDateTime` type already exists as part of
 -- | a useful library from Awake Security and has utility functions that help translate it to
 -- | and from an RFC3339 string, which our API uses to represent datetimes.
 -- |
 -- | This module demonstrates how to write a codec for a type which doesn't have a basic JSON
 -- | representation.
-module Conduit.Data.PreciseDateTime where
+module Doneq.Data.PreciseDateTime where
 
 import Prelude
 
@@ -27,7 +27,7 @@ codec = CA.prismaticCodec from to CA.string
   from = PDT.fromRFC3339String <<< RFC3339String
   to = unwrap <<< PDT.toRFC3339String
 
--- | Display a human-readable version of the precise datetime, as described in the Conduit spec
+-- | Display a human-readable version of the precise datetime, as described in the Doneq spec
 -- |
 -- | Example: "Wed Nov 5, 1999"
 toDisplayWeekName :: PreciseDateTime -> String

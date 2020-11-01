@@ -1,11 +1,11 @@
--- | Conduit has little functionality to warrant encapsulated state, but the tag input is one.
+-- | Doneq has little functionality to warrant encapsulated state, but the tag input is one.
 -- | This component manages a text input that supports key events to manage a list of tags on
 -- | an article.
-module Conduit.Component.TagInput where
+module Doneq.Component.TagInput where
 
 import Prelude
 
-import Conduit.Component.HTML.Utils (css)
+import Doneq.Component.HTML.Utils (css)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype, unwrap)
 import Data.Set (Set)

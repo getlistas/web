@@ -6,15 +6,15 @@
 -- |
 -- | For more details on how to write validators in Formless, see the official guide:
 -- | https://github.com/thomashoneyman/purescript-halogen-formless/blob/v0.5.2/readme.md
-module Conduit.Form.Validation where
+module Doneq.Form.Validation where
 
 import Prelude
 
-import Conduit.Data.Avatar (Avatar)
-import Conduit.Data.Avatar as Avatar
-import Conduit.Data.Email (Email(..))
-import Conduit.Data.Username (Username)
-import Conduit.Data.Username as Username
+import Doneq.Data.Avatar (Avatar)
+import Doneq.Data.Avatar as Avatar
+import Doneq.Data.Email (Email(..))
+import Doneq.Data.Username (Username)
+import Doneq.Data.Username as Username
 import Data.Either (Either(..), note)
 import Data.Maybe (Maybe(..))
 import Data.String as String
@@ -63,7 +63,7 @@ errorToString = case _ of
 -- | `m`, which represents which monad the Formless is being run in. This lets you perform effectful
 -- |   computations like asynchronously runnning some server-side validation. Once again, unless you
 -- |   need a specific monadic ability, this is usually left open.
--- | `e`, which represents the possible error type which can result from the validator. For Conduit
+-- | `e`, which represents the possible error type which can result from the validator. For Doneq
 -- |   we'll always fill this in with our custom `FormError` type.
 -- | `i`, which represents the input type being validated. For a validator that operates on strings,
 -- |   this would be `String`, for a validator that operates on numbers, this would be `Number`, and
@@ -105,9 +105,9 @@ maxLength n = F.hoistFnE_ $ cond (\str -> String.length str <= n) TooLong
 emailFormat :: ∀ form m. Monad m => F.Validation form m FormError String Email
 emailFormat = F.hoistFnE_ $ map Email <<< cond (String.contains (String.Pattern "@")) InvalidEmail
 
--- | This validator ensures that an input string is a valid username. Usernames in Conduit use the
+-- | This validator ensures that an input string is a valid username. Usernames in Doneq use the
 -- | smart constructor pattern, so we can't construct a username directly -- we'll need to defer
--- | to the `parse` helper function exported by `Conduit.Data.Username`. Since that function returns
+-- | to the `parse` helper function exported by `Doneq.Data.Username`. Since that function returns
 -- | a `Maybe` value, we'll use the `note` helper from `Data.Either` to turn the `Nothing` case into
 -- | an error.
 usernameFormat :: ∀ form m. Monad m => F.Validation form m FormError String Username

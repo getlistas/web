@@ -1,13 +1,13 @@
 -- | This module exports a pure HTML function to render a consistent header throughout the app.
-module Conduit.Component.HTML.Header where
+module Doneq.Component.HTML.Header where
 
 import Prelude
 
-import Conduit.Component.HTML.Utils (css, maybeElem, safeHref, whenElem)
-import Conduit.Data.Avatar as Avatar
-import Conduit.Data.Profile (ProfileRep)
-import Conduit.Data.Route (Route(..))
-import Conduit.Data.Username as Username
+import Doneq.Component.HTML.Utils (css, maybeElem, safeHref, whenElem)
+import Doneq.Data.Avatar as Avatar
+import Doneq.Data.Profile (ProfileRep)
+import Doneq.Data.Route (Route(..))
+import Doneq.Data.Username as Username
 import Data.Maybe (Maybe, isNothing, isJust)
 import Data.Monoid (guard)
 import Halogen.HTML as HH

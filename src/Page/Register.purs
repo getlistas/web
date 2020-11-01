@@ -1,19 +1,19 @@
--- | The registration form allows new users to sign up to the Conduit service and authenticate
+-- | The registration form allows new users to sign up to the Doneq service and authenticate
 -- | their session.
-module Conduit.Page.Register where
+module Doneq.Page.Register where
 
 import Prelude
 
-import Conduit.Api.Request (RegisterFields)
-import Conduit.Capability.Navigate (class Navigate, navigate)
-import Conduit.Capability.Resource.User (class ManageUser, registerUser)
-import Conduit.Component.HTML.Header (header)
-import Conduit.Component.HTML.Utils (css, safeHref)
-import Conduit.Data.Email (Email)
-import Conduit.Data.Route (Route(..))
-import Conduit.Data.Username (Username)
-import Conduit.Form.Field as Field
-import Conduit.Form.Validation as V
+import Doneq.Api.Request (RegisterFields)
+import Doneq.Capability.Navigate (class Navigate, navigate)
+import Doneq.Capability.Resource.User (class ManageUser, registerUser)
+import Doneq.Component.HTML.Header (header)
+import Doneq.Component.HTML.Utils (css, safeHref)
+import Doneq.Data.Email (Email)
+import Doneq.Data.Route (Route(..))
+import Doneq.Data.Username (Username)
+import Doneq.Form.Field as Field
+import Doneq.Form.Validation as V
 import Data.Foldable (traverse_)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)

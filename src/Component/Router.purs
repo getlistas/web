@@ -3,31 +3,31 @@
 -- | given a particular `Route` and to manage the user's location in the application.
 -- |
 -- | See `Main` to understand how this component is used as the root of the application.
-module Conduit.Component.Router where
+module Doneq.Component.Router where
 
 import Prelude
 
 import Component.HOC.Connect (WithCurrentUser)
 import Component.HOC.Connect as Connect
-import Conduit.Capability.LogMessages (class LogMessages)
-import Conduit.Capability.Navigate (class Navigate, navigate, locationState)
-import Conduit.Capability.Now (class Now)
-import Conduit.Capability.Resource.Article (class ManageArticle)
-import Conduit.Capability.Resource.Comment (class ManageComment)
-import Conduit.Capability.Resource.Tag (class ManageTag)
-import Conduit.Capability.Resource.User (class ManageUser)
-import Conduit.Component.Utils (OpaqueSlot)
-import Conduit.Data.Profile (Profile)
-import Conduit.Data.Route (Route(..), routeCodec)
-import Conduit.Env (UserEnv)
-import Conduit.Page.Editor as Editor
-import Conduit.Page.Home as Home
-import Conduit.Page.Login as Login
-import Conduit.Page.Profile (Tab(..))
-import Conduit.Page.Profile as Profile
-import Conduit.Page.Register as Register
-import Conduit.Page.Settings as Settings
-import Conduit.Page.ViewArticle as ViewArticle
+import Doneq.Capability.LogMessages (class LogMessages)
+import Doneq.Capability.Navigate (class Navigate, navigate, locationState)
+import Doneq.Capability.Now (class Now)
+import Doneq.Capability.Resource.Article (class ManageArticle)
+import Doneq.Capability.Resource.Comment (class ManageComment)
+import Doneq.Capability.Resource.Tag (class ManageTag)
+import Doneq.Capability.Resource.User (class ManageUser)
+import Doneq.Component.Utils (OpaqueSlot)
+import Doneq.Data.Profile (Profile)
+import Doneq.Data.Route (Route(..), routeCodec)
+import Doneq.Env (UserEnv)
+import Doneq.Page.Editor as Editor
+import Doneq.Page.Home as Home
+import Doneq.Page.Login as Login
+import Doneq.Page.Profile (Tab(..))
+import Doneq.Page.Profile as Profile
+import Doneq.Page.Register as Register
+import Doneq.Page.Settings as Settings
+import Doneq.Page.ViewArticle as ViewArticle
 import Control.Monad.Reader (class MonadAsk)
 import Data.Either (hush)
 import Data.Foldable (elem)

@@ -1,5 +1,5 @@
 -- | Articles are an example of an entity (a persistent data type with a unique identity). They're
--- | a critical, widely-used type in Conduit.
+-- | a critical, widely-used type in Doneq.
 -- |
 -- | We have two versions of the `Article` type: one with just some base fields and another with
 -- | the same fields, but also a bunch of metadata that is only sometimes included in the data
@@ -7,17 +7,17 @@
 -- |
 -- | It's tedious and error-prone to define multiple variations of a type which can have fields
 -- | that are only sometimes present. To avoid this, we'll use PureScript's lovely extensible
--- | rows & records. I've given a *much* fuller treatment of the topic in the `Conduit.Api.Request`
+-- | rows & records. I've given a *much* fuller treatment of the topic in the `Doneq.Api.Request`
 -- | module. If you stil feel unfamiliar with this pattern, I recommend giving that module a read
 -- | before coming back to this one.
-module Conduit.Data.Article where
+module Doneq.Data.Article where
 
 
-import Conduit.Data.PaginatedArray (PaginatedArray)
-import Conduit.Data.PreciseDateTime as PDT
-import Conduit.Data.Profile (Author)
-import Conduit.Data.Profile as Profile
-import Conduit.Data.Username (Username)
+import Doneq.Data.PaginatedArray (PaginatedArray)
+import Doneq.Data.PreciseDateTime as PDT
+import Doneq.Data.Profile (Author)
+import Doneq.Data.Profile as Profile
+import Doneq.Data.Username (Username)
 import Data.Codec ((>~>))
 import Data.Codec.Argonaut (JsonCodec)
 import Data.Codec.Argonaut as CA
@@ -44,7 +44,7 @@ type ArticleRep row =
 -- | with an article. These types are not generally editable by users and have crisper types. For
 -- | example, we expect a well-formed slug (not any string will do!), a precise datetime value,
 -- | and a custom `Profile` type. The `Profile` type is interesting because it disallows some tricky
--- | invalid states in the type system. It's defined in `Conduit.Data.Profile`.
+-- | invalid states in the type system. It's defined in `Doneq.Data.Profile`.
 type ArticleMetadataRep row =
   ( slug :: Slug
   , createdAt :: PreciseDateTime

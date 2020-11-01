@@ -1,11 +1,11 @@
--- | The favorite buttons in Conduit don't have enough encapsulated state or behaviors to be a full
+-- | The favorite buttons in Doneq don't have enough encapsulated state or behaviors to be a full
 -- | component, but do need to trigger certain actions in a parent component. To avoid writing the
 -- | same query handler over and over again, we'll export both the pure HTML function and a default
 -- | handle from this module.
 -- |
--- | For a more in-depth example of this pattern, see the `Conduit.Component.Part.FollowButton`
+-- | For a more in-depth example of this pattern, see the `Doneq.Component.Part.FollowButton`
 -- | module.
-module Conduit.Component.Part.FavoriteButton
+module Doneq.Component.Part.FavoriteButton
   ( ButtonSize(..)
   , favoriteButton
   , favorite
@@ -14,9 +14,9 @@ module Conduit.Component.Part.FavoriteButton
 
 import Prelude
 
-import Conduit.Capability.Resource.Article (class ManageArticle, favoriteArticle, unfavoriteArticle)
-import Conduit.Component.HTML.Utils (css)
-import Conduit.Data.Article (ArticleWithMetadata)
+import Doneq.Capability.Resource.Article (class ManageArticle, favoriteArticle, unfavoriteArticle)
+import Doneq.Component.HTML.Utils (css)
+import Doneq.Data.Article (ArticleWithMetadata)
 import Data.Foldable (for_)
 import Data.Lens (Traversal', preview, set)
 import Data.Maybe (Maybe(..))

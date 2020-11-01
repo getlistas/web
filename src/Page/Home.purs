@@ -1,22 +1,22 @@
-module Conduit.Page.Home where
+module Doneq.Page.Home where
 
 import Prelude
 
 import Component.HOC.Connect as Connect
-import Conduit.Api.Endpoint (ArticleParams, Pagination, noArticleParams)
-import Conduit.Capability.Navigate (class Navigate)
-import Conduit.Capability.Resource.Article (class ManageArticle, getArticles, getCurrentUserFeed)
-import Conduit.Capability.Resource.Tag (class ManageTag, getAllTags)
-import Conduit.Component.HTML.ArticleList (articleList, renderPagination)
-import Conduit.Component.HTML.Footer (footer)
-import Conduit.Component.HTML.Header (header)
-import Conduit.Component.HTML.Utils (css, maybeElem, whenElem)
-import Conduit.Component.Part.FavoriteButton (favorite, unfavorite)
-import Conduit.Data.Article (ArticleWithMetadata)
-import Conduit.Data.PaginatedArray (PaginatedArray)
-import Conduit.Data.Profile (Profile)
-import Conduit.Data.Route (Route(..))
-import Conduit.Env (UserEnv)
+import Doneq.Api.Endpoint (ArticleParams, Pagination, noArticleParams)
+import Doneq.Capability.Navigate (class Navigate)
+import Doneq.Capability.Resource.Article (class ManageArticle, getArticles, getCurrentUserFeed)
+import Doneq.Capability.Resource.Tag (class ManageTag, getAllTags)
+import Doneq.Component.HTML.ArticleList (articleList, renderPagination)
+import Doneq.Component.HTML.Footer (footer)
+import Doneq.Component.HTML.Header (header)
+import Doneq.Component.HTML.Utils (css, maybeElem, whenElem)
+import Doneq.Component.Part.FavoriteButton (favorite, unfavorite)
+import Doneq.Data.Article (ArticleWithMetadata)
+import Doneq.Data.PaginatedArray (PaginatedArray)
+import Doneq.Data.Profile (Profile)
+import Doneq.Data.Route (Route(..))
+import Doneq.Env (UserEnv)
 import Control.Monad.Reader (class MonadAsk)
 import Data.Lens (Traversal')
 import Data.Lens.Index (ix)

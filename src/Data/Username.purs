@@ -1,4 +1,4 @@
--- | Usernames are the unique identifier for users in Conduit. You should give meaningful types
+-- | Usernames are the unique identifier for users in Doneq. You should give meaningful types
 -- | to identifiers like usernames so they are not easily mistaken for a usual `String` type and
 -- | to prevent inadvertently modifying their contents.
 -- |
@@ -6,7 +6,7 @@
 -- | become a `Username`. For now, that validation is simply that the value is non-empty, but we
 -- | may impose further rules in the future. This helps us be confident that when we're working
 -- | with a `Username` in our code it's actually a valid username, not an arbitrary string.
-module Conduit.Data.Username
+module Doneq.Data.Username
   ( Username -- constructor not exported
   , parse
   , toString

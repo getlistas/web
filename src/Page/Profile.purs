@@ -1,27 +1,27 @@
 -- | User profiles display the articles they have written as well as the articles they have
 -- | favorited. It's also the main way users choose to follow one another. Users can view their
 -- | own profile.
-module Conduit.Page.Profile where
+module Doneq.Page.Profile where
 
 import Prelude
 
-import Conduit.Api.Endpoint (noArticleParams)
-import Conduit.Capability.Resource.Article (class ManageArticle, getArticles)
-import Conduit.Capability.Resource.User (class ManageUser, getAuthor)
-import Conduit.Component.HTML.ArticleList (articleList, renderPagination)
-import Conduit.Component.HTML.Footer (footer)
-import Conduit.Component.HTML.Header (header)
-import Conduit.Component.HTML.Utils (css, maybeElem, safeHref, whenElem)
-import Conduit.Component.Part.FavoriteButton (favorite, unfavorite)
-import Conduit.Component.Part.FollowButton (follow, followButton, unfollow)
-import Conduit.Data.Article (ArticleWithMetadata)
-import Conduit.Data.Avatar as Avatar
-import Conduit.Data.PaginatedArray (PaginatedArray)
-import Conduit.Data.Profile (Profile, Author)
-import Conduit.Data.Route (Route(..))
-import Conduit.Data.Username (Username)
-import Conduit.Data.Username as Username
-import Conduit.Env (UserEnv)
+import Doneq.Api.Endpoint (noArticleParams)
+import Doneq.Capability.Resource.Article (class ManageArticle, getArticles)
+import Doneq.Capability.Resource.User (class ManageUser, getAuthor)
+import Doneq.Component.HTML.ArticleList (articleList, renderPagination)
+import Doneq.Component.HTML.Footer (footer)
+import Doneq.Component.HTML.Header (header)
+import Doneq.Component.HTML.Utils (css, maybeElem, safeHref, whenElem)
+import Doneq.Component.Part.FavoriteButton (favorite, unfavorite)
+import Doneq.Component.Part.FollowButton (follow, followButton, unfollow)
+import Doneq.Data.Article (ArticleWithMetadata)
+import Doneq.Data.Avatar as Avatar
+import Doneq.Data.PaginatedArray (PaginatedArray)
+import Doneq.Data.Profile (Profile, Author)
+import Doneq.Data.Route (Route(..))
+import Doneq.Data.Username (Username)
+import Doneq.Data.Username as Username
+import Doneq.Env (UserEnv)
 import Control.Monad.Reader (class MonadAsk, asks)
 import Data.Lens (Traversal')
 import Data.Lens.Index (ix)

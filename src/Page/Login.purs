@@ -1,19 +1,19 @@
 -- | The login page supports a form users can submit to authenticate their session and gain access
 -- | to the application.
-module Conduit.Page.Login where
+module Doneq.Page.Login where
 
 import Prelude
 
-import Conduit.Api.Request (LoginFields)
-import Conduit.Capability.Navigate (class Navigate, navigate)
-import Conduit.Capability.Resource.User (class ManageUser, loginUser)
-import Conduit.Component.HTML.Header (header)
-import Conduit.Component.HTML.Utils (css, safeHref, whenElem)
-import Conduit.Data.Email (Email)
-import Conduit.Data.Route (Route(..))
-import Conduit.Form.Field (submit)
-import Conduit.Form.Field as Field
-import Conduit.Form.Validation as V
+import Doneq.Api.Request (LoginFields)
+import Doneq.Capability.Navigate (class Navigate, navigate)
+import Doneq.Capability.Resource.User (class ManageUser, loginUser)
+import Doneq.Component.HTML.Header (header)
+import Doneq.Component.HTML.Utils (css, safeHref, whenElem)
+import Doneq.Data.Email (Email)
+import Doneq.Data.Route (Route(..))
+import Doneq.Form.Field (submit)
+import Doneq.Form.Field as Field
+import Doneq.Form.Validation as V
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
 import Effect.Aff.Class (class MonadAff)

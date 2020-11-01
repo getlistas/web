@@ -5,9 +5,9 @@ module Component.HOC.Connect where
 
 import Prelude
 
-import Conduit.Component.Utils (busEventSource)
-import Conduit.Data.Profile (Profile)
-import Conduit.Env (UserEnv)
+import Doneq.Component.Utils (busEventSource)
+import Doneq.Data.Profile (Profile)
+import Doneq.Env (UserEnv)
 import Control.Monad.Reader (class MonadAsk, asks)
 import Data.Maybe (Maybe(..))
 import Data.Symbol (SProxy(..))

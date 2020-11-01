@@ -4,25 +4,25 @@
 -- | This capability lets us ignore the mechanics of managing a resource and focus on our
 -- | business logic. For now our app implements this capability with a REST API, but we could
 -- | easily swap in a database, RPC, local filesystem, or something else without having to touch
--- | any application code besides the application monad, `Conduit.AppM`. In addition, we can test
+-- | any application code besides the application monad, `Doneq.AppM`. In addition, we can test
 -- | our business logic by mocking responses in our test monad instead of hitting the server.
 -- |
 -- | To learn more about why we use capabilities and this architecture, please see the guide:
 -- | https://thomashoneyman.com/guides/real-world-halogen/push-effects-to-the-edges/
-module Conduit.Capability.Resource.User where
+module Doneq.Capability.Resource.User where
 
 import Prelude
 
-import Conduit.Api.Request (LoginFields, RegisterFields)
-import Conduit.Data.Email (Email)
-import Conduit.Data.Profile (Profile, ProfileRep, ProfileWithEmail, Author)
-import Conduit.Data.Username (Username)
+import Doneq.Api.Request (LoginFields, RegisterFields)
+import Doneq.Data.Email (Email)
+import Doneq.Data.Profile (Profile, ProfileRep, ProfileWithEmail, Author)
+import Doneq.Data.Username (Username)
 import Data.Maybe (Maybe)
 import Halogen (HalogenM, lift)
 
 -- | This type is a record made up of two row types: the fields that make up a profile, plus the
 -- | fields used for authentication, like their email address and password. See the
--- | `Conduit.Data.Profile` module for more details.
+-- | `Doneq.Data.Profile` module for more details.
 type UpdateProfileFields =
   { email :: Email
   , password :: Maybe String

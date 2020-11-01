@@ -1,24 +1,24 @@
-module Conduit.AppM where
+module Doneq.AppM where
 
 import Prelude
 
-import Conduit.Api.Endpoint (Endpoint(..), noArticleParams)
-import Conduit.Api.Request (RequestMethod(..))
-import Conduit.Api.Request as Request
-import Conduit.Api.Utils (authenticate, decode, decodeWithUser, mkAuthRequest, mkRequest)
-import Conduit.Capability.LogMessages (class LogMessages)
-import Conduit.Capability.Navigate (class Navigate, locationState, navigate)
-import Conduit.Capability.Now (class Now)
-import Conduit.Capability.Resource.Article (class ManageArticle)
-import Conduit.Capability.Resource.Comment (class ManageComment)
-import Conduit.Capability.Resource.Tag (class ManageTag)
-import Conduit.Capability.Resource.User (class ManageUser)
-import Conduit.Data.Article as Article
-import Conduit.Data.Comment as Comment
-import Conduit.Data.Log as Log
-import Conduit.Data.Profile as Profile
-import Conduit.Data.Route as Route
-import Conduit.Env (Env, LogLevel(..))
+import Doneq.Api.Endpoint (Endpoint(..), noArticleParams)
+import Doneq.Api.Request (RequestMethod(..))
+import Doneq.Api.Request as Request
+import Doneq.Api.Utils (authenticate, decode, decodeWithUser, mkAuthRequest, mkRequest)
+import Doneq.Capability.LogMessages (class LogMessages)
+import Doneq.Capability.Navigate (class Navigate, locationState, navigate)
+import Doneq.Capability.Now (class Now)
+import Doneq.Capability.Resource.Article (class ManageArticle)
+import Doneq.Capability.Resource.Comment (class ManageComment)
+import Doneq.Capability.Resource.Tag (class ManageTag)
+import Doneq.Capability.Resource.User (class ManageUser)
+import Doneq.Data.Article as Article
+import Doneq.Data.Comment as Comment
+import Doneq.Data.Log as Log
+import Doneq.Data.Profile as Profile
+import Doneq.Data.Route as Route
+import Doneq.Env (Env, LogLevel(..))
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, ask, asks, runReaderT)
 import Data.Codec.Argonaut as CA
 import Data.Codec.Argonaut as Codec

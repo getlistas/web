@@ -1,6 +1,6 @@
 -- | We only receive a portion of large resources like "all articles" for performance reasons. This
 -- | module exports a type to represent partial data in an array format.
-module Conduit.Data.PaginatedArray where
+module Doneq.Data.PaginatedArray where
 
 -- | This type is a simple model of paginated data. We don't receive an entire payload at once, so
 -- | it's unnecessary to track anything beyond our current window of data. We'll hold on to the

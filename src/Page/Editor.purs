@@ -1,24 +1,24 @@
 -- | The editor allows users to write new articles or edit existing ones. Users write markdown and
 -- | can include tags for their articles; when articles are displayed, the markdown is rendered as
 -- | HTML content.
-module Conduit.Page.Editor where
+module Doneq.Page.Editor where
 
 import Prelude
 
 import Component.HOC.Connect as Connect
-import Conduit.Capability.Navigate (class Navigate, navigate)
-import Conduit.Capability.Resource.Article (class ManageArticle, createArticle, getArticle, updateArticle)
-import Conduit.Component.HTML.Header (header)
-import Conduit.Component.HTML.Utils (css, maybeElem)
-import Conduit.Component.TagInput (Tag(..))
-import Conduit.Component.TagInput as TagInput
-import Conduit.Data.Article (ArticleWithMetadata, Article)
-import Conduit.Data.Profile (Profile)
-import Conduit.Data.Route (Route(..))
-import Conduit.Env (UserEnv)
-import Conduit.Form.Field as Field
-import Conduit.Form.Validation (errorToString)
-import Conduit.Form.Validation as V
+import Doneq.Capability.Navigate (class Navigate, navigate)
+import Doneq.Capability.Resource.Article (class ManageArticle, createArticle, getArticle, updateArticle)
+import Doneq.Component.HTML.Header (header)
+import Doneq.Component.HTML.Utils (css, maybeElem)
+import Doneq.Component.TagInput (Tag(..))
+import Doneq.Component.TagInput as TagInput
+import Doneq.Data.Article (ArticleWithMetadata, Article)
+import Doneq.Data.Profile (Profile)
+import Doneq.Data.Route (Route(..))
+import Doneq.Env (UserEnv)
+import Doneq.Form.Field as Field
+import Doneq.Form.Validation (errorToString)
+import Doneq.Form.Validation as V
 import Control.Monad.Reader (class MonadAsk)
 import Data.Const (Const)
 import Data.Foldable (for_)

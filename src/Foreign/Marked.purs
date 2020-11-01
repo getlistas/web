@@ -14,7 +14,7 @@
 -- |
 -- | You can learn more about the PureScript foreign function interface (FFI) in PureScript by Example:
 -- | https://leanpub.com/purescript/read#leanpub-auto-the-foreign-function-interface
-module Conduit.Foreign.Marked
+module Doneq.Foreign.Marked
   ( RawHTML
   , marked
   ) where

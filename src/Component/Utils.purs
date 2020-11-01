@@ -1,5 +1,5 @@
 -- | Some utilities are useful across any component. We'll maintain them in this catch-all module.
-module Conduit.Component.Utils where
+module Doneq.Component.Utils where
 
 import Prelude
 
