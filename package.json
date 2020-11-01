@@ -5,6 +5,7 @@
   "scripts": {
     "css:lock": "npm run bundle && npm run css-purge && cat dist/tailwind.css | ./css/css2purs.py > src/Tailwind.purs",
     "css:gen": "tailwindcss build css/tailwind_inputs.css -o dev/tailwind.css && cat dev/tailwind.css | ./css/css2purs.py > src/Tailwind.purs",
+    "css:purge": "NODE_ENV=production tailwindcss build css/tailwind_inputs.css -o assets/tailwind.css",
     "postinstall": "spago install",
     "clean": "rm -rf node_modules output dce-output .spago dist/* *.lock .cache",
     "build": "spago build",
