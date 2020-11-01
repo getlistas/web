@@ -1,8 +1,7 @@
 {
-  "name": "purescript-halogen-realworld",
-  "description": "An exemplary real-world application demonstrating PureScript and the Halogen framework",
-  "author": "Thomas Honeyman",
-  "license": "MIT",
+  "name": "doneq",
+  "private": true,
+  "author": "Christain Gill",
   "scripts": {
     "css:lock": "npm run bundle && npm run css-purge && cat dist/tailwind.css | ./css/css2purs.py > src/Tailwind.purs",
     "css:gen": "tailwindcss build css/tailwind_inputs.css -o dev/tailwind.css && cat dev/tailwind.css | ./css/css2purs.py > src/Tailwind.purs",
@@ -22,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thomashoneyman/purescript-halogen-realworld.git"
+    "url": "git+https://github.com/gillchristian/doneq.git"
   },
   "devDependencies": {
     "http-server": "^0.12.3",

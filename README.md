@@ -16,14 +16,14 @@ nix-shell
 ```
 
 > Alternately, you can install PureScript, Spago, and Zephyr manually. You can
-> use Yarn to install PureScript and Spago, and you can install the Zephyr
+> use NPM to install PureScript and Spago, and you can install the Zephyr
 > binary [from its releases page](https://github.com/coot/zephyr/releases) --
 > ensure it exists in your PATH by moving it to `usr/bin/local`.
 
 Next, install JavaScript dependencies:
 
 ```sh
-yarn
+npm install
 ```
 
 ## Building and running
@@ -32,13 +32,13 @@ Next, build the project (this command will run `spago build`; see the
 [`package.json`](package.json) file to see all helper scripts for the project):
 
 ```sh
-yarn build
+npm run build
 ```
 
 You can bundle the JS for production:
 
 ```sh
-yarn bundle
+npm run bundle
 ```
 
 And, once bundled, you can run a local server to use Doneq (defaults to
@@ -46,7 +46,7 @@ And, once bundled, you can run a local server to use Doneq (defaults to
 increment to 8081, etc.):
 
 ```sh
-yarn serve
+npm run serve
 ```
 
 ## Dev mode
@@ -55,12 +55,12 @@ To run it in dev mode where saving your changes rebuilds and reloads the app,
 you can run the command below (which calls `spago build --watch`) 
 
 ```sh
-yarn watch
+npm run watch
 ```
 
 And run the application with
 
 ```sh
-yarn serve-dev
+npm run serve-dev
 ```
 This will open your default browser at [port 1234](http://localhost:1234)
