@@ -16,7 +16,7 @@
     "css:gen:all": "twpurs gen-purs --classes css/tailwind-classes.txt --all",
     "css:gen:available": "twpurs gen-available-classes --css dev/tailwind.css --out css/tailwind-classes.txt",
     "css:lock": "twpurs gen-purs --classes css/tailwind-classes.txt",
-    "css:purge": "twpurs gen-css --classes css/tailwind-classes.txt -o prod/tailwind.css",
+    "css:purge": "twpurs gen-css --classes css/tailwind-classes.txt --css dev/tailwind.css -o prod/tailwind.css",
     "prep-prod": "rm -rf dist",
     "serve-dev": "parcel dev/index.html --open",
     "test": "spago test",
