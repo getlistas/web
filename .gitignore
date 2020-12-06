@@ -21,3 +21,6 @@ dce-output
 dist
 *.lock
 *.map
+
+# Build
+!dist
