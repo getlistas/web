@@ -32,6 +32,7 @@ import Halogen.HTML.Properties as HP
 import Network.RemoteData (RemoteData(..), _Success, fromMaybe, toMaybe)
 import Web.Event.Event (preventDefault)
 import Web.UIEvent.MouseEvent (MouseEvent, toEvent)
+import Tailwind as T
 
 data Action
   = Initialize
@@ -151,7 +152,8 @@ component = Connect.component $ H.mkComponent
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render state@{ tags, articles, currentUser } =
-    HH.div_
+    HH.div
+      [ HP.classes [ T.container ] ]
       [ header currentUser Home
       , HH.div
           [ css "home-page" ]
