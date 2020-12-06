@@ -7,20 +7,29 @@ let
   # nix-prefetch-git https://github.com/justinwoo/easy-purescript-nix
   #
   # Then, copy the resulting rev and sha256 here.
-  # Last update: 2020-08-01
+  # Last update: 2020-12-03
   pursPkgs = import (pkgs.fetchFromGitHub {
     owner = "justinwoo";
     repo = "easy-purescript-nix";
-    rev = "7ff5a12af5750f94d0480059dba0ba6b82c6c452";
-    sha256 = "0af25dqhs13ii4mx9jjkx2pww4ddbs741vb5gfc5ckxb084d69fq";
+    rev = "860a95cb9e1ebdf574cede2b4fcb0f66eac77242";
+    sha256 = "1ly3bm6i1viw6d64gi1zfiwdvjncm3963rj59320cr15na5bzjri";
   }) { inherit pkgs; };
 
+  twpurs = import (builtins.fetchGit {
+    name = "twpurs";
+    url = "https://github.com/gillchristian/tailwind-purs";
+    rev = "4841f9164a467b780880709cec440ddad8245bdd";
+  });
+
 in pkgs.stdenv.mkDerivation {
-  name = "halogen-realworld";
-  buildInputs = with pursPkgs; [
+  name = "doneq";
+  LOCALE_ARCHIVE="${pkgs.glibcLocales}/lib/locale/locale-archive";
+  # TODO add npm & yarn
+  buildInputs = with pursPkgs; with twpurs; [
     pursPkgs.purs
     pursPkgs.spago
     pursPkgs.zephyr
     pkgs.nodejs-12_x
+    twpurs
   ];
 }
