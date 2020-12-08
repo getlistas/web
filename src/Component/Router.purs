@@ -9,6 +9,11 @@ import Prelude
 
 import Component.HOC.Connect (WithCurrentUser)
 import Component.HOC.Connect as Connect
+import Control.Monad.Reader (class MonadAsk)
+import Data.Either (hush)
+import Data.Foldable (elem)
+import Data.Maybe (Maybe(..), fromMaybe, isJust)
+import Data.Symbol (SProxy(..))
 import Doneq.Capability.LogMessages (class LogMessages)
 import Doneq.Capability.Navigate (class Navigate, navigate, locationState)
 import Doneq.Capability.Now (class Now)
@@ -20,19 +25,17 @@ import Doneq.Component.Utils (OpaqueSlot)
 import Doneq.Data.Profile (Profile)
 import Doneq.Data.Route (Route(..), routeCodec)
 import Doneq.Env (UserEnv)
-import Doneq.Page.Editor as Editor
+import Doneq.Page.About as About
+import Doneq.Page.Dashboard as Dashboard
+import Doneq.Page.Discover as Discover
+import Doneq.Page.Done as Done
+import Doneq.Page.EditList as EditList
 import Doneq.Page.Home as Home
 import Doneq.Page.Login as Login
-import Doneq.Page.Profile (Tab(..))
 import Doneq.Page.Profile as Profile
 import Doneq.Page.Register as Register
 import Doneq.Page.Settings as Settings
-import Doneq.Page.ViewArticle as ViewArticle
-import Control.Monad.Reader (class MonadAsk)
-import Data.Either (hush)
-import Data.Foldable (elem)
-import Data.Maybe (Maybe(..), fromMaybe, isJust)
-import Data.Symbol (SProxy(..))
+import Doneq.Page.ViewList as ViewList
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -52,12 +55,16 @@ data Action
 
 type ChildSlots =
   ( home :: OpaqueSlot Unit
+  , about :: OpaqueSlot Unit
   , login :: OpaqueSlot Unit
   , register :: OpaqueSlot Unit
   , settings :: OpaqueSlot Unit
-  , editor :: OpaqueSlot Unit
-  , viewArticle :: OpaqueSlot Unit
   , profile :: OpaqueSlot Unit
+  , viewList :: OpaqueSlot Unit
+  , editList :: OpaqueSlot Unit
+  , dashboard :: OpaqueSlot Unit
+  , done :: OpaqueSlot Unit
+  , discover :: OpaqueSlot Unit
   )
 
 component
@@ -121,6 +128,8 @@ component = Connect.component $ H.mkComponent
     Just r -> case r of
       Home ->
         HH.slot (SProxy :: _ "home") unit Home.component {} absurd
+      About ->
+        HH.slot (SProxy :: _ "about") unit About.component {} absurd
       Login ->
         HH.slot (SProxy :: _ "login") unit Login.component { redirect: true } absurd
       Register ->
@@ -128,17 +137,20 @@ component = Connect.component $ H.mkComponent
       Settings ->
         HH.slot (SProxy :: _ "settings") unit Settings.component unit absurd
           # authorize currentUser
-      Editor ->
-        HH.slot (SProxy :: _ "editor") unit Editor.component { slug: Nothing } absurd
+      Profile _ ->
+        HH.slot (SProxy :: _ "profile") unit Profile.component {} absurd
+      ViewList _ ->
+        HH.slot (SProxy :: _ "viewList") unit ViewList.component {} absurd
+      EditList _ ->
+        HH.slot (SProxy :: _ "editList") unit EditList.component {} absurd
           # authorize currentUser
-      EditArticle slug ->
-        HH.slot (SProxy :: _ "editor") unit Editor.component { slug: Just slug } absurd
+      Dashboard ->
+        HH.slot (SProxy :: _ "dashboard") unit Dashboard.component {} absurd
           # authorize currentUser
-      ViewArticle slug ->
-        HH.slot (SProxy :: _ "viewArticle") unit ViewArticle.component { slug } absurd
-      Profile username ->
-        HH.slot (SProxy :: _ "profile") unit Profile.component { username, tab: ArticlesTab } absurd
-      Favorites username ->
-        HH.slot (SProxy :: _ "profile") unit Profile.component { username, tab: FavoritesTab } absurd
+      Done ->
+        HH.slot (SProxy :: _ "done") unit Done.component {} absurd
+          # authorize currentUser
+      Discover ->
+        HH.slot (SProxy :: _ "discover") unit Discover.component {} absurd
     Nothing ->
       HH.div_ [ HH.text "Oh no! That page wasn't found." ]

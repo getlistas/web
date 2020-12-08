@@ -1,4 +1,4 @@
-module Doneq.Page.Home where
+module Doneq.Page.About where
 
 import Prelude
 
@@ -51,8 +51,9 @@ component = Connect.component $ H.mkComponent
   render { currentUser } =
     HH.div
       [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-      [ header currentUser Home
+      [ header currentUser About
       , HH.div
           [ HP.classes [ T.container, T.textCenter, T.mt10 ] ]
-          [ HH.text "home" ]
+          [ HH.text "about" ]
       ]
+
