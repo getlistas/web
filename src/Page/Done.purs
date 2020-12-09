@@ -5,7 +5,7 @@ import Prelude
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Maybe (Maybe(..))
-import Doneq.Capability.Navigate (class Navigate)
+import Doneq.Capability.Navigate (class Navigate, navigate_)
 import Doneq.Component.HTML.Header (header)
 import Doneq.Data.Profile (Profile)
 import Doneq.Data.Route (Route(..))
@@ -15,10 +15,12 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Tailwind as T
+import Web.Event.Event (Event)
 
 data Action
   = Initialize
   | Receive { currentUser :: Maybe Profile }
+  | Navigate Route Event
 
 type State = {currentUser :: Maybe Profile}
 
@@ -47,11 +49,13 @@ component = Connect.component $ H.mkComponent
     Receive { currentUser } ->
       H.modify_ _ { currentUser = currentUser }
 
+    Navigate route e -> navigate_ e route
+
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render { currentUser } =
     HH.div
       [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-      [ header currentUser Done
+      [ header currentUser Navigate Done
       , HH.div
           [ HP.classes [ T.container, T.textCenter, T.mt10 ] ]
           [ HH.text "done" ]

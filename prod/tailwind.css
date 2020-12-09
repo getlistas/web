@@ -367,12 +367,20 @@ video {
   justify-content: center;
 }
 
+.justify-around {
+  justify-content: space-around;
+}
+
 .text-4xl {
   font-size: 2.25rem;
 }
 
 .leading-none {
   line-height: 1;
+}
+
+.mt-8 {
+  margin-top: 2rem;
 }
 
 .mt-10 {
@@ -396,6 +404,10 @@ video {
   --text-opacity: 1;
   color: #2d3748;
   color: rgba(45, 55, 72, var(--text-opacity));
+}
+
+.w-6\/12 {
+  width: 50%;
 }
 
 .w-screen {

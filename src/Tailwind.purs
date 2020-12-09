@@ -23,6 +23,10 @@ flexCol = ClassName "flex-col"
 itemsCenter :: ClassName
 itemsCenter = ClassName "items-center"
 
+-- | justifyAround
+justifyAround :: ClassName
+justifyAround = ClassName "justify-around"
+
 -- | justifyCenter
 justifyCenter :: ClassName
 justifyCenter = ClassName "justify-center"
@@ -39,6 +43,10 @@ minHScreen = ClassName "min-h-screen"
 mt10 :: ClassName
 mt10 = ClassName "mt-10"
 
+-- | mt8
+mt8 :: ClassName
+mt8 = ClassName "mt-8"
+
 -- | py2
 py2 :: ClassName
 py2 = ClassName "py-2"
@@ -54,6 +62,10 @@ textCenter = ClassName "text-center"
 -- | textGray800
 textGray800 :: ClassName
 textGray800 = ClassName "text-gray-800"
+
+-- | w6d12
+w6d12 :: ClassName
+w6d12 = ClassName "w-6/12"
 
 -- | wScreen
 wScreen :: ClassName

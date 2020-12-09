@@ -4,7 +4,7 @@ module Doneq.Page.Settings where
 
 import Prelude
 
-import Doneq.Capability.Navigate (class Navigate, logout)
+import Doneq.Capability.Navigate (class Navigate, logout, navigate_)
 import Doneq.Capability.Resource.User (class ManageUser, UpdateProfileFields, getCurrentUser, updateUser)
 import Doneq.Component.HTML.Header (header)
 import Doneq.Component.HTML.Utils (css)
@@ -28,6 +28,7 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Network.RemoteData (RemoteData(..), _Success, fromMaybe)
+import Web.Event.Event (Event)
 
 -- | See the Formless tutorial to learn how to build your own forms:
 -- | https://github.com/thomashoneyman/purescript-halogen-formless
@@ -46,6 +47,7 @@ data Action
   = Initialize
   | HandleForm UpdateProfileFields
   | LogUserOut
+  | Navigate Route Event
 
 type State =
   { profile :: RemoteData String ProfileWithEmail }
@@ -93,6 +95,8 @@ component = H.mkComponent
 
     LogUserOut -> logout
 
+    Navigate route e -> navigate_ e route
+
   render { profile } =
     container
       [ HH.h1
@@ -109,7 +113,7 @@ component = H.mkComponent
     where
     container html =
       HH.div_
-        [ header (preview _Success profile) Settings
+        [ header (preview _Success profile) Navigate Settings
         , HH.div
             [ css "settings-page" ]
             [ HH.div

@@ -12,6 +12,7 @@ import Control.Monad.Trans.Class (lift)
 import Doneq.Data.Route (Route)
 import Halogen (HalogenM)
 import Routing.PushState (LocationState)
+import Web.Event.Event (Event)
 
 -- | This capability represents the ability to move around the application. The `navigate` function
 -- | should change the browser location, which will then notify our routing component. The `logout`
@@ -19,11 +20,13 @@ import Routing.PushState (LocationState)
 -- | redirecting them to the homepage.
 class Monad m <= Navigate m where
   navigate :: Route -> m Unit
+  navigate_ :: Event -> Route -> m Unit -- TODO better name !!!
   logout :: m Unit
   locationState :: m LocationState
 
 -- | This instance lets us avoid having to use `lift` when we use these functions in a component.
 instance navigateHalogenM :: Navigate m => Navigate (HalogenM st act slots msg m) where
   navigate = lift <<< navigate
+  navigate_ e r = lift $ navigate_ e r
   logout = lift logout
   locationState = lift locationState

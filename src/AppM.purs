@@ -2,6 +2,11 @@ module Doneq.AppM where
 
 import Prelude
 
+import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, ask, asks, runReaderT)
+import Data.Codec.Argonaut as CA
+import Data.Codec.Argonaut as Codec
+import Data.Codec.Argonaut.Record as CAR
+import Data.Maybe (Maybe(..))
 import Doneq.Api.Endpoint (Endpoint(..), noArticleParams)
 import Doneq.Api.Request (RequestMethod(..))
 import Doneq.Api.Request as Request
@@ -19,11 +24,6 @@ import Doneq.Data.Log as Log
 import Doneq.Data.Profile as Profile
 import Doneq.Data.Route as Route
 import Doneq.Env (Env, LogLevel(..))
-import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, ask, asks, runReaderT)
-import Data.Codec.Argonaut as CA
-import Data.Codec.Argonaut as Codec
-import Data.Codec.Argonaut.Record as CAR
-import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
 import Effect.Aff.Bus as Bus
 import Effect.Aff.Class (class MonadAff, liftAff)
@@ -33,6 +33,7 @@ import Effect.Now as Now
 import Effect.Ref as Ref
 import Routing.Duplex (print)
 import Type.Equality (class TypeEquals, from)
+import Web.Event.Event (preventDefault)
 
 newtype AppM a = AppM (ReaderT Env Aff a)
 
@@ -71,6 +72,10 @@ instance navigateAppM :: Navigate AppM where
     { pushState } <- asks _.nav
     { state } <- locationState
     liftEffect $ pushState state $ print Route.routeCodec $ route
+
+  navigate_ event route = do
+    liftEffect $ preventDefault event
+    navigate route
 
   logout = do
     { currentUser, userBus } <- asks _.userEnv
