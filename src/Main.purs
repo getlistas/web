@@ -39,7 +39,7 @@ main = HA.runHalogenAff do
   _ <- HA.awaitBody
 
   let
-    baseUrl = BaseURL "https://conduit.productionready.io"
+    baseUrl = BaseURL "http://localhost:8080"
     logLevel = Dev
 
   userEnv <- liftEffect do

@@ -1,8 +1,6 @@
 -- | The `Router` component is the root of our Halogen application. Every other component is a
 -- | direct descendent of this component. We'll use the router to choose which component to render
 -- | given a particular `Route` and to manage the user's location in the application.
--- |
--- | See `Main` to understand how this component is used as the root of the application.
 module Doneq.Component.Router where
 
 import Prelude
@@ -17,9 +15,6 @@ import Data.Symbol (SProxy(..))
 import Doneq.Capability.LogMessages (class LogMessages)
 import Doneq.Capability.Navigate (class Navigate, navigate, locationState)
 import Doneq.Capability.Now (class Now)
-import Doneq.Capability.Resource.Article (class ManageArticle)
-import Doneq.Capability.Resource.Comment (class ManageComment)
-import Doneq.Capability.Resource.Tag (class ManageTag)
 import Doneq.Capability.Resource.User (class ManageUser)
 import Doneq.Component.Utils (OpaqueSlot)
 import Doneq.Data.Profile (Profile)
@@ -75,9 +70,6 @@ component
   => LogMessages m
   => Navigate m
   => ManageUser m
-  => ManageArticle m
-  => ManageComment m
-  => ManageTag m
   => H.Component HH.HTML Query {} Void m
 component = Connect.component $ H.mkComponent
   { initialState: \{ currentUser } -> { route: Nothing, currentUser }

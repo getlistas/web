@@ -1,4 +1,3 @@
--- | This module exports a pure HTML function to render a consistent header throughout the app.
 module Doneq.Component.HTML.Header where
 
 import Prelude
@@ -14,10 +13,6 @@ import Tailwind as T
 import Web.Event.Event (Event)
 import Web.UIEvent.MouseEvent (toEvent)
 
--- | Our header will be a pure render function, but we'll require a route as an argument so we can
--- | judge whether a link should display active or not. We'll allow for any profile record type so
--- | long as it has our core fields -- this makes the header reusable across pages despite which
--- | variation on `Profile` they use.
 header :: forall i p r. Maybe { | ProfileRep r } -> (Route -> Event -> p) -> Route -> HH.HTML i p
 header currentUser navigate route =
   HH.nav

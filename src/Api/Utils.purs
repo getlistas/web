@@ -105,4 +105,4 @@ decodeWithUser
   -> m (Maybe a)
 decodeWithUser codec json = do
   maybeProfile <- (liftEffect <<< Ref.read) =<< asks _.userEnv.currentUser
-  decode (codec (_.username <$> maybeProfile)) json
+  decode (codec (_.name <$> maybeProfile)) json

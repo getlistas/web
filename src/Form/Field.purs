@@ -1,39 +1,27 @@
--- | This module provides small utilities for building form fields with Formless. They're not
--- | necessary to use the library, but help alleviate a little boilerplate around handling
--- | inputs. To read more about how to use the Formless library, see:
--- | https://github.com/thomashoneyman/purescript-halogen-formless
--- |
--- | In a framework like React, little bundles of functionality like this might be individual
--- | components. In Halogen, they're simple pure functions which produce HTML.
 module Doneq.Form.Field where
 
 import Prelude
-
-import Doneq.Component.HTML.Utils (css, maybeElem)
-import Doneq.Form.Validation (errorToString)
-import Doneq.Form.Validation as V
 import DOM.HTML.Indexed (HTMLinput)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
 import Data.Symbol (class IsSymbol, SProxy)
 import Data.Variant (Variant)
+import Doneq.Component.HTML.Utils (maybeElem)
+import Doneq.Form.Validation (errorToString)
+import Doneq.Form.Validation as V
 import Formless as F
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Type.Row as Row
 
--- | Formless (the form library for Halogen) supports a submit event which will attempt to validate
--- | and return the successfully-parsed fields. We can create a small helper function that creates
--- | a submit button with customizable text and the submit event triggered by a click. Since all
--- | submit buttons in the Doneq application look the same, we can jus use this throughout the app.
-submit :: forall form act slots m. String -> F.ComponentHTML form act slots m
+submit :: forall i p. String -> HH.HTML i p
 submit buttonText =
-  HH.button
-    [ css "btn btn-lg btn-primary pull-xs-right"
-    , HE.onClick \_ -> Just F.submit
+  HH.input
+    -- TODO: styles
+    [ HP.type_ HP.InputSubmit
+    , HP.value buttonText
     ]
-    [ HH.text buttonText ]
 
 -- | This helper function creates an input field hooked up with Formless, including styles,
 -- | events, error handling, and more. The function ensures at compile-time that the field we
@@ -59,30 +47,32 @@ submit buttonText =
 -- | type `String` at the label `sym` in the row `fields`. In short, we require at compile-time
 -- | that an input field of the correct type exists in our form state at the key we provided as
 -- | the function's first argument.
-input
-  :: forall form act slots m sym fields inputs out t0 t1
-   . IsSymbol sym
-  => Newtype (form Record F.FormField) { | fields }
-  => Newtype (form Variant F.InputFunction) (Variant inputs)
-  => Row.Cons sym (F.FormField V.FormError String out) t0 fields
-  => Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs
-  => SProxy sym
-  -> form Record F.FormField
-  -> Array (HH.IProp HTMLinput (F.Action form act))
-  -> F.ComponentHTML form act slots m
+-- |
+-- | TODO: remove this once I understand it :)
+input ::
+  forall form act slots m sym fields inputs out t0 t1.
+  IsSymbol sym =>
+  Newtype (form Record F.FormField) { | fields } =>
+  Newtype (form Variant F.InputFunction) (Variant inputs) =>
+  Row.Cons sym (F.FormField V.FormError String out) t0 fields =>
+  Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs =>
+  SProxy sym ->
+  form Record F.FormField ->
+  Array (HH.IProp HTMLinput (F.Action form act)) ->
+  F.ComponentHTML form act slots m
 input sym form props =
   HH.fieldset
-    [ css "form-group" ]
+    [] -- TODO: styles
     [ HH.input
-      ( append
-          [ css "form-control form-control-lg"
-          , HP.value $ F.getInput sym form
-          , HE.onValueInput $ Just <<< F.setValidate sym
-          ]
-          props
-      )
+        ( append
+            -- TODO: styles
+            [ HP.value $ F.getInput sym form
+            , HE.onValueInput $ Just <<< F.setValidate sym
+            ]
+            props
+        )
     , maybeElem (F.getError sym form) \err ->
         HH.div
-          [ css "error-messages" ]
+          [] -- TODO: styles
           [ HH.text $ errorToString err ]
     ]
