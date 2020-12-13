@@ -5,12 +5,13 @@ import Prelude
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, ask, asks, runReaderT)
 import Data.Codec.Argonaut as Codec
 import Data.Codec.Argonaut.Record as CAR
+import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Doneq.Api.Endpoint (Endpoint(..))
 import Doneq.Api.Request (RequestMethod(..))
 import Doneq.Api.Request as Request
 import Doneq.Api.Utils (authenticate, decode, mkAuthRequest)
-import Doneq.Capability.LogMessages (class LogMessages)
+import Doneq.Capability.LogMessages (class LogMessages, logError)
 import Doneq.Capability.Navigate (class Navigate, locationState, navigate)
 import Doneq.Capability.Now (class Now)
 import Doneq.Capability.Resource.User (class ManageUser)
@@ -84,8 +85,12 @@ instance manageUserAppM :: ManageUser AppM where
   loginUser =
     authenticate Request.login
 
-  registerUser =
-    authenticate Request.register
+  registerUser fields = do
+    { baseUrl } <- ask
+    res <- Request.register baseUrl fields
+    case res of
+      Left err -> logError err *> pure Nothing
+      Right profile -> pure $ Just profile
 
   getCurrentUser = do
     mbJson <- mkAuthRequest { endpoint: User, method: Get }

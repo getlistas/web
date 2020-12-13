@@ -54,6 +54,7 @@ component =
     }
   where
   handleAction = case _ of
+    -- TODO
     HandleRegisterForm fields -> registerUser fields >>= traverse_ (\_ -> navigate Home)
     Navigate route e -> navigate_ e route
 

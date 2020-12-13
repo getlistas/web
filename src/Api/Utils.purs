@@ -54,10 +54,10 @@ mkAuthRequest opts = do
   response <- liftAff $ request $ defaultRequest baseUrl token opts
   pure $ hush $ rmap _.body response
 
--- | Logging in and registering share a lot of behavior, namely updating the application environment
--- | and writing the auth token to local storage. This helper function makes it easy to layer those
--- | behaviors on top of the request. This also performs the work of broadcasting changes in the
--- | current user to all subscribed components.
+-- | Logging requires uptading the application environment and writing the auth
+-- | token to local storage. This helper function makes it easy to layer those
+-- | behaviors on top of the request. This also performs the work of broadcasting
+-- | changes in the current user to all subscribed components.
 authenticate
   :: forall m a r
    . MonadAff m

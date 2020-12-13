@@ -2,20 +2,12 @@ module Main where
 
 import Prelude
 
-import Affjax (request, printError)
-import Doneq.Api.Endpoint (Endpoint(..))
-import Doneq.Api.Request (BaseURL(..), RequestMethod(..), defaultRequest, readToken)
+import Doneq.Api.Request (BaseURL(..), decodeToken, readToken)
 import Doneq.AppM (runAppM)
 import Doneq.Component.Router as Router
-import Doneq.Data.Profile as Profile
 import Doneq.Data.Route (Route, routeCodec)
 import Doneq.Env (Env, LogLevel(..))
-import Data.Bifunctor (lmap)
-import Data.Codec as Codec
-import Data.Codec.Argonaut (printJsonDecodeError)
-import Data.Codec.Argonaut as CA
-import Data.Codec.Argonaut.Record as CAR
-import Data.Either (Either(..), hush)
+import Data.Either (hush)
 import Data.Maybe (Maybe(..))
 import Data.Traversable (traverse_)
 import Effect (Effect)
@@ -48,20 +40,8 @@ main = HA.runHalogenAff do
     userBus <- Bus.make
 
     readToken >>= traverse_ \token -> do
-      let requestOptions = { endpoint: User, method: Get }
-      launchAff_ do
-        res <- request $ defaultRequest baseUrl (Just token) requestOptions
-
-        let
-          user :: Either String _
-          user = case res of
-            Left e ->
-              Left (printError e)
-            Right v -> lmap printJsonDecodeError do
-              u <- Codec.decode (CAR.object "User" { user: CA.json }) v.body
-              CA.decode Profile.profileCodec u.user
-
-        liftEffect (Ref.write (hush user) currentUser)
+      -- TODO: log the decoding error ?
+      liftEffect (Ref.write (hush $ decodeToken token) currentUser)
 
     pure { currentUser, userBus }
 

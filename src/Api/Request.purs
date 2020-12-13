@@ -8,6 +8,7 @@ module Doneq.Api.Request
   , LoginFields(..)
   , login
   , register
+  , decodeToken
   , readToken
   , writeToken
   , removeToken
@@ -24,7 +25,7 @@ import Data.Codec as Codec
 import Data.Codec.Argonaut (JsonCodec, JsonDecodeError, printJsonDecodeError)
 import Data.Codec.Argonaut as CA
 import Data.Codec.Argonaut.Record as CAR
-import Data.Either (Either(..), note)
+import Data.Either (Either(..))
 import Data.HTTP.Method (Method(..))
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
@@ -37,6 +38,7 @@ import Doneq.Data.Username (Username)
 import Doneq.Data.Username as Username
 import Effect (Effect)
 import Effect.Aff.Class (class MonadAff, liftAff)
+import Jwt as Jwt
 import Routing.Duplex (print)
 import Web.HTML (window)
 import Web.HTML.Window (localStorage)
@@ -122,48 +124,49 @@ loginCodec =
     , password: CA.string
     }
 
--- {"access_token":"<asdf>.<asdf>.<asdf>"}
+type User = { user :: Profile }
+
+userCodec ::  JsonCodec User
+userCodec = CAR.object "user" { user: Profile.profileCodec }
+
 login :: forall m. MonadAff m => BaseURL -> LoginFields -> m (Either String (Tuple Token Profile))
-login baseUrl fields =
-  let
-    method = Post $ Just $ Codec.encode loginCodec fields
-  in
-    requestUser baseUrl { endpoint: Login, method }
-
--- {"id":"<asdf>","email":"<asdf>@<asdf>.<asdf>","name":"<asdf>","slug":"<asdf>"}
-register :: forall m. MonadAff m => BaseURL -> RegisterFields -> m (Either String (Tuple Token Profile))
-register baseUrl fields =
-  let
-    method = Post $ Just $ Codec.encode registerCodec fields
-  in
-    requestUser baseUrl { endpoint: Users, method }
-
--- | The login and registration requests share the same underlying implementation, just a different
--- | endpoint. This function can be re-used by both requests.
-requestUser :: forall m. MonadAff m => BaseURL -> RequestOptions -> m (Either String (Tuple Token Profile))
-requestUser baseUrl opts = do
-  res <- liftAff $ request $ defaultRequest baseUrl Nothing opts
+login baseUrl fields = do
+  res <- liftAff $ request $ defaultRequest baseUrl Nothing { endpoint: Login, method: Post $ Just $ Codec.encode loginCodec fields }
   case res of
     Left e -> pure $ Left $ printError e
-    Right v -> pure $ lmap printJsonDecodeError $ decodeAuthProfile =<< Codec.decode CA.json v.body
+    Right v -> pure $ lmap printJwtError $ decodeAuthProfileFromToken =<< (lmap Jwt.JsonDecodeError $ Codec.decode CA.json v.body)
 
--- | This JSON decoder is defined in this module because it manipulates a token. First, we'll decode
--- | only the token field from the payload, and then we'll decode everything else separately into
--- | the user's profile.
-decodeAuthProfile :: Json -> Either JsonDecodeError (Tuple Token Profile)
-decodeAuthProfile user = do
-  -- TODO HERE
-  { access_token } <- Codec.decode (CAR.object "access_token" { access_token: tokenCodec }) user
-  profile <- case Codec.decode Profile.profileCodec user of
-    Right p -> Right p
-    Left e -> case Username.parse "test1" of
-      Just name -> note e $ { name, slug: _ } <$> Username.parse "test1"
-      Nothing -> Left e
-  pure (Tuple access_token profile)
+printJwtError :: Jwt.JwtError JsonDecodeError -> String
+printJwtError = case _ of
+  Jwt.MalformedToken -> "Malformed token"
+  Jwt.Base64DecodeError _ -> "Token base64 decode failed"
+  Jwt.JsonDecodeError err -> "Token Json decode error: " <> printJsonDecodeError err
+  Jwt.JsonParseError s -> "Token Json parse error: " <> s
+
+-- | This JSON decoder is defined in this module because it manipulates a token.
+-- | First, we'll decode the token field from the payload, and then we'll decode
+-- | the user's profile from the token itself.
+decodeAuthProfileFromToken :: Json -> Either (Jwt.JwtError JsonDecodeError) (Tuple Token Profile)
+decodeAuthProfileFromToken tokenPayload = do
+  { access_token } <- lmap Jwt.JsonDecodeError $ Codec.decode tokenResponseCodec tokenPayload
+  { user } <- Jwt.decodeWith (Codec.decode userCodec) access_token
+  pure (Tuple (Token access_token) user)
   where
-  tokenCodec = CA.prismaticCodec (Just <<< Token) (\(Token t) -> t) CA.string
+  tokenResponseCodec = CAR.object "access_token" { access_token: CA.string }
+
+-- TODO: move to AppM (since it doesn't use token)
+register :: forall m. MonadAff m => BaseURL -> RegisterFields -> m (Either String Profile)
+register baseUrl fields = do
+  res <- liftAff $ request $ defaultRequest baseUrl Nothing { endpoint: Users, method: Post $ Just $ Codec.encode registerCodec fields }
+  case res of
+    Left e -> pure $ Left $ printError e
+    Right v -> pure $ lmap printJsonDecodeError $ Codec.decode Profile.profileCodec v.body
 
 tokenKey = "token" :: String
+
+decodeToken :: Token -> Either String Profile
+decodeToken (Token token) =
+   lmap printJwtError $ _.user <$> Jwt.decodeWith (Codec.decode userCodec) token
 
 readToken :: Effect (Maybe Token)
 readToken = do

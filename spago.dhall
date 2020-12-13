@@ -12,6 +12,7 @@
   , "formatters"
   , "halogen"
   , "halogen-formless"
+  , "jwt"
   , "nonempty"
   , "now"
   , "precise-datetime"
