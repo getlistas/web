@@ -19,6 +19,14 @@ flex = ClassName "flex"
 flexCol :: ClassName
 flexCol = ClassName "flex-col"
 
+-- | fontBold
+fontBold :: ClassName
+fontBold = ClassName "font-bold"
+
+-- | h6
+h6 :: ClassName
+h6 = ClassName "h-6"
+
 -- | itemsCenter
 itemsCenter :: ClassName
 itemsCenter = ClassName "items-center"
@@ -39,6 +47,14 @@ leadingNone = ClassName "leading-none"
 minHScreen :: ClassName
 minHScreen = ClassName "min-h-screen"
 
+-- | ml2
+ml2 :: ClassName
+ml2 = ClassName "ml-2"
+
+-- | mr1
+mr1 :: ClassName
+mr1 = ClassName "mr-1"
+
 -- | mt10
 mt10 :: ClassName
 mt10 = ClassName "mt-10"
@@ -51,6 +67,10 @@ mt8 = ClassName "mt-8"
 py2 :: ClassName
 py2 = ClassName "py-2"
 
+-- | roundedFull
+roundedFull :: ClassName
+roundedFull = ClassName "rounded-full"
+
 -- | text4xl
 text4xl :: ClassName
 text4xl = ClassName "text-4xl"
@@ -62,6 +82,14 @@ textCenter = ClassName "text-center"
 -- | textGray800
 textGray800 :: ClassName
 textGray800 = ClassName "text-gray-800"
+
+-- | underline
+underline :: ClassName
+underline = ClassName "underline"
+
+-- | w6
+w6 :: ClassName
+w6 = ClassName "w-6"
 
 -- | w6d12
 w6d12 :: ClassName

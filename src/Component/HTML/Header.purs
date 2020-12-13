@@ -1,11 +1,11 @@
 module Doneq.Component.HTML.Header where
 
 import Prelude
-
-import Data.Maybe (Maybe(..))
-import Doneq.Component.HTML.Utils (safeHref)
+import Data.Maybe (Maybe(..), isJust, isNothing)
+import Doneq.Component.HTML.Utils (maybeElem, safeHref, whenElem, cx)
 import Doneq.Data.Profile (ProfileRep)
 import Doneq.Data.Route (Route(..))
+import Doneq.Data.Username as Username
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
@@ -32,19 +32,57 @@ header currentUser navigate route =
         [ HH.a [ safeHref Home, HE.onClick (onNavigate Home) ] [ HH.text "doneq" ] ]
     , HH.div
         [ HP.classes [ T.flex, T.justifyAround, T.mt8, T.w6d12 ] ]
-        [ HH.a
-            [ safeHref About, HE.onClick (onNavigate About) ]
+        [ whenElem (isJust currentUser) \_ ->
+            HH.a
+              [ safeHref Dashboard
+              , HE.onClick (onNavigate Dashboard)
+              , HP.classes [ cx T.fontBold $ route == Dashboard, cx T.underline $ route == Dashboard ]
+              ]
+              [ HH.text "Dashboard" ]
+        , whenElem (isJust currentUser) \_ ->
+            HH.a
+              [ safeHref Done
+              , HE.onClick (onNavigate Done)
+              , HP.classes [ cx T.fontBold $ route == Done, cx T.underline $ route == Done ]
+              ]
+              [ HH.text "Done" ]
+        , HH.a
+            [ safeHref About
+            , HE.onClick (onNavigate About)
+            , HP.classes [ cx T.fontBold $ route == About, cx T.underline $ route == About ]
+            ]
             [ HH.text "About" ]
         , HH.a
-            [ safeHref Discover, HE.onClick (onNavigate Discover) ]
+            [ safeHref Discover
+            , HE.onClick (onNavigate Discover)
+            , HP.classes [ cx T.fontBold $ route == Discover, cx T.underline $ route == Discover ]
+            ]
             [ HH.text "Discover" ]
-        , HH.a
-            [ safeHref Login, HE.onClick (onNavigate Login) ]
-            [ HH.text "Login" ]
-        , HH.a
-            [ safeHref Register, HE.onClick (onNavigate Register) ]
-            [ HH.text "Register" ]
+        , whenElem (isNothing currentUser) \_ ->
+            HH.a
+              [ safeHref Login
+              , HE.onClick (onNavigate Login)
+              , HP.classes [ cx T.fontBold $ route == Login, cx T.underline $ route == Login ]
+              ]
+              [ HH.text "Login" ]
+        , whenElem (isNothing currentUser) \_ ->
+            HH.a
+              [ safeHref Register
+              , HE.onClick (onNavigate Register)
+              , HP.classes [ cx T.fontBold $ route == Register, cx T.underline $ route == Register ]
+              ]
+              [ HH.text "Register" ]
+        , maybeElem currentUser (user <<< Username.toString <<< _.slug)
         ]
     ]
   where
   onNavigate r = Just <<< navigate r <<< toEvent
+
+  user username =
+    HH.div [ HP.classes [ T.flex ] ]
+      [ HH.img
+          [ HP.classes [ T.roundedFull, T.h6, T.w6, T.mr1, T.ml2 ]
+          , HP.src "https://static.productionready.io/images/smiley-cyrus.jpg"
+          ]
+      , HH.text username
+      ]

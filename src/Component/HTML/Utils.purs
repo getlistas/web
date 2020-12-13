@@ -6,6 +6,7 @@ import Doneq.Data.Route (Route, routeCodec)
 import Data.Maybe (Maybe(..))
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
+import Halogen.HTML.Core as HC
 import Routing.Duplex (print)
 
 -- | We must provide a `String` to the "href" attribute, but we represent routes with the much
@@ -24,3 +25,6 @@ maybeElem _ _ = HH.text ""
 -- | to minimize the work performed each render.
 whenElem :: forall p i. Boolean -> (Unit -> HH.HTML p i) -> HH.HTML p i
 whenElem cond f = if cond then f unit else HH.text ""
+
+cx :: HC.ClassName -> Boolean -> HC.ClassName
+cx c cond = if cond then c else HC.ClassName ""
