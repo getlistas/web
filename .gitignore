@@ -20,6 +20,3 @@ output
 dce-output
 *.lock
 *.map
-
-# Build
-!dist
