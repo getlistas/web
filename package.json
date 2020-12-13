@@ -8,7 +8,7 @@
     "build": "npm run prep-prod && npm run bundle && npm run assets:prod",
     "build:dev": "spago build",
     "bundle": "npm run bundle:build && npm run bundle:dce && npm run css:purge && npm run bundle:parcel",
-    "bundle:build": "spago build --purs-args '--codegen corefn'",
+    "bundle:build": "PRODUCTION=True spago build --purs-args '--codegen corefn'",
     "bundle:dce": "zephyr -f Main.main",
     "bundle:parcel": "parcel build prod/index.html --public-url '.' --no-source-maps",
     "clean": "rm -rf node_modules output dce-output .spago dist/* *.lock .cache",

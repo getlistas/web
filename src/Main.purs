@@ -2,7 +2,7 @@ module Main where
 
 import Prelude
 
-import Doneq.Api.Request (BaseURL(..), decodeToken, readToken)
+import Doneq.Api.Request (decodeToken, readToken)
 import Doneq.AppM (runAppM)
 import Doneq.Component.Router as Router
 import Doneq.Data.Route (Route, routeCodec)
@@ -24,6 +24,7 @@ import Halogen.VDom.Driver (runUI)
 import Routing.Duplex (parse)
 import Routing.PushState (makeInterface, matchesWith)
 import Web.DOM.ParentNode (QuerySelector(..))
+import ConfigProvider as ConfigProvider
 
 main :: Effect Unit
 main = HA.runHalogenAff do
@@ -31,7 +32,7 @@ main = HA.runHalogenAff do
   _ <- HA.awaitBody
 
   let
-    baseUrl = BaseURL "http://localhost:8080"
+    baseUrl = ConfigProvider.provide
     logLevel = Dev
 
   userEnv <- liftEffect do
