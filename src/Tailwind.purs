@@ -3,13 +3,53 @@ module Tailwind where
 
 import Halogen.HTML.Core (ClassName(..))
 
+-- | appearanceNone
+appearanceNone :: ClassName
+appearanceNone = ClassName "appearance-none"
+
+-- | bgGreen100
+bgGreen100 :: ClassName
+bgGreen100 = ClassName "bg-green-100"
+
 -- | bgRed100
 bgRed100 :: ClassName
 bgRed100 = ClassName "bg-red-100"
 
+-- | bgTeal500
+bgTeal500 :: ClassName
+bgTeal500 = ClassName "bg-teal-500"
+
+-- | bgWhite
+bgWhite :: ClassName
+bgWhite = ClassName "bg-white"
+
+-- | border
+border :: ClassName
+border = ClassName "border"
+
+-- | borderGreen300
+borderGreen300 :: ClassName
+borderGreen300 = ClassName "border-green-300"
+
+-- | borderTransparent
+borderTransparent :: ClassName
+borderTransparent = ClassName "border-transparent"
+
 -- | container
 container :: ClassName
 container = ClassName "container"
+
+-- | cursorNotAllowed
+cursorNotAllowed :: ClassName
+cursorNotAllowed = ClassName "cursor-not-allowed"
+
+-- | cursorPointer
+cursorPointer :: ClassName
+cursorPointer = ClassName "cursor-pointer"
+
+-- | flex1
+flex1 :: ClassName
+flex1 = ClassName "flex-1"
 
 -- | flex
 flex :: ClassName
@@ -19,13 +59,41 @@ flex = ClassName "flex"
 flexCol :: ClassName
 flexCol = ClassName "flex-col"
 
+-- | flexInitial
+flexInitial :: ClassName
+flexInitial = ClassName "flex-initial"
+
+-- | focusBorderTransparent
+focusBorderTransparent :: ClassName
+focusBorderTransparent = ClassName "focus:border-transparent"
+
+-- | focusOutlineNone
+focusOutlineNone :: ClassName
+focusOutlineNone = ClassName "focus:outline-none"
+
 -- | fontBold
 fontBold :: ClassName
 fontBold = ClassName "font-bold"
 
+-- | fontMedium
+fontMedium :: ClassName
+fontMedium = ClassName "font-medium"
+
+-- | fontNormal
+fontNormal :: ClassName
+fontNormal = ClassName "font-normal"
+
+-- | fontSemibold
+fontSemibold :: ClassName
+fontSemibold = ClassName "font-semibold"
+
 -- | h6
 h6 :: ClassName
 h6 = ClassName "h-6"
+
+-- | hoverBgTeal700
+hoverBgTeal700 :: ClassName
+hoverBgTeal700 = ClassName "hover:bg-teal-700"
 
 -- | itemsCenter
 itemsCenter :: ClassName
@@ -42,6 +110,14 @@ justifyCenter = ClassName "justify-center"
 -- | leadingNone
 leadingNone :: ClassName
 leadingNone = ClassName "leading-none"
+
+-- | m1
+m1 :: ClassName
+m1 = ClassName "m-1"
+
+-- | maxWFull
+maxWFull :: ClassName
+maxWFull = ClassName "max-w-full"
 
 -- | minHScreen
 minHScreen :: ClassName
@@ -63,6 +139,34 @@ mt10 = ClassName "mt-10"
 mt8 :: ClassName
 mt8 = ClassName "mt-8"
 
+-- | my2
+my2 :: ClassName
+my2 = ClassName "my-2"
+
+-- | my4
+my4 :: ClassName
+my4 = ClassName "my-4"
+
+-- | opacity50
+opacity50 :: ClassName
+opacity50 = ClassName "opacity-50"
+
+-- | placeholderGray400
+placeholderGray400 :: ClassName
+placeholderGray400 = ClassName "placeholder-gray-400"
+
+-- | px2
+px2 :: ClassName
+px2 = ClassName "px-2"
+
+-- | px4
+px4 :: ClassName
+px4 = ClassName "px-4"
+
+-- | py1
+py1 :: ClassName
+py1 = ClassName "py-1"
+
 -- | py2
 py2 :: ClassName
 py2 = ClassName "py-2"
@@ -71,17 +175,57 @@ py2 = ClassName "py-2"
 roundedFull :: ClassName
 roundedFull = ClassName "rounded-full"
 
+-- | roundedLg
+roundedLg :: ClassName
+roundedLg = ClassName "rounded-lg"
+
+-- | roundedMd
+roundedMd :: ClassName
+roundedMd = ClassName "rounded-md"
+
+-- | shadowMd
+shadowMd :: ClassName
+shadowMd = ClassName "shadow-md"
+
+-- | text2xl
+text2xl :: ClassName
+text2xl = ClassName "text-2xl"
+
 -- | text4xl
 text4xl :: ClassName
 text4xl = ClassName "text-4xl"
+
+-- | textBase
+textBase :: ClassName
+textBase = ClassName "text-base"
 
 -- | textCenter
 textCenter :: ClassName
 textCenter = ClassName "text-center"
 
+-- | textGray700
+textGray700 :: ClassName
+textGray700 = ClassName "text-gray-700"
+
 -- | textGray800
 textGray800 :: ClassName
 textGray800 = ClassName "text-gray-800"
+
+-- | textGreen700
+textGreen700 :: ClassName
+textGreen700 = ClassName "text-green-700"
+
+-- | textRed500
+textRed500 :: ClassName
+textRed500 = ClassName "text-red-500"
+
+-- | textSm
+textSm :: ClassName
+textSm = ClassName "text-sm"
+
+-- | textWhite
+textWhite :: ClassName
+textWhite = ClassName "text-white"
 
 -- | underline
 underline :: ClassName
@@ -94,6 +238,10 @@ w6 = ClassName "w-6"
 -- | w6d12
 w6d12 :: ClassName
 w6d12 = ClassName "w-6/12"
+
+-- | wFull
+wFull :: ClassName
+wFull = ClassName "w-full"
 
 -- | wScreen
 wScreen :: ClassName

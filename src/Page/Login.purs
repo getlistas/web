@@ -142,7 +142,7 @@ formComponent =
 
   proxies = F.mkSProxies (F.FormProxy :: _ LoginForm)
 
-  renderLogin { form, loginError } =
+  renderLogin { form, loginError, submitting } =
     HH.form
       [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev ]
       [ whenElem loginError \_ ->
@@ -158,6 +158,6 @@ formComponent =
               [ HP.placeholder "Password"
               , HP.type_ HP.InputPassword
               ]
-          , Field.submit "Log in"
+          , Field.submit "Log in" submitting
           ]
       ]

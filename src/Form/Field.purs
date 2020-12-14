@@ -6,21 +6,36 @@ import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
 import Data.Symbol (class IsSymbol, SProxy)
 import Data.Variant (Variant)
-import Doneq.Component.HTML.Utils (maybeElem)
+import Doneq.Component.HTML.Utils (cx, maybeElem, whenElem)
 import Doneq.Form.Validation (errorToString)
 import Doneq.Form.Validation as V
 import Formless as F
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Tailwind as T
 import Type.Row as Row
 
-submit :: forall i p. String -> HH.HTML i p
-submit buttonText =
+submit :: forall i p. String -> Boolean -> HH.HTML i p
+submit buttonText disabled =
   HH.input
-    -- TODO: styles
     [ HP.type_ HP.InputSubmit
     , HP.value buttonText
+    , HP.classes
+        [ T.cursorPointer
+        , cx T.cursorNotAllowed disabled
+        , cx T.opacity50 disabled
+        , T.py2
+        , T.px4
+        , T.bgTeal500
+        , T.textWhite
+        , T.fontSemibold
+        , T.roundedLg
+        , T.shadowMd
+        , T.hoverBgTeal700
+        , T.focusOutlineNone
+        ]
+    , HP.disabled disabled
     ]
 
 -- | This helper function creates an input field hooked up with Formless, including styles,
@@ -62,17 +77,40 @@ input ::
   F.ComponentHTML form act slots m
 input sym form props =
   HH.fieldset
-    [] -- TODO: styles
+    [ HP.classes [ T.my4 ] ]
     [ HH.input
         ( append
-            -- TODO: styles
             [ HP.value $ F.getInput sym form
             , HE.onValueInput $ Just <<< F.setValidate sym
+            , HP.classes
+                [ T.flex1
+                , T.appearanceNone
+                , T.border
+                , T.borderTransparent
+                , T.wFull
+                , T.py2
+                , T.px4
+                , T.bgWhite
+                , T.textGray700
+                , T.placeholderGray400
+                , T.shadowMd
+                , T.roundedLg
+                -- , T.textBase
+                , T.focusOutlineNone
+                -- , T.focusRing2
+                -- , T.focusRingPurple600
+                , T.focusBorderTransparent
+                ]
             ]
             props
         )
     , maybeElem (F.getError sym form) \err ->
-        HH.div
-          [] -- TODO: styles
-          [ HH.text $ errorToString err ]
+        whenElem (F.getTouched sym form) \_ ->
+          HH.div
+            [ HP.classes
+                [ T.textRed500
+                , T.my2
+                ]
+            ]
+            [ HH.text $ errorToString err ]
     ]

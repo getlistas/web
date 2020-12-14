@@ -1,11 +1,11 @@
 module Doneq.Page.Register where
 
 import Prelude
-import Data.Foldable (traverse_)
+import Control.Error.Util (note)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
 import Doneq.Api.Request (RegisterFields)
-import Doneq.Capability.Navigate (class Navigate, navigate, navigate_)
+import Doneq.Capability.Navigate (class Navigate, navigate_)
 import Doneq.Capability.Resource.User (class ManageUser, registerUser)
 import Doneq.Component.HTML.Header (header)
 import Doneq.Component.HTML.Utils (safeHref)
@@ -20,6 +20,7 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Network.RemoteData (RemoteData(..), fromEither)
 import Tailwind as T
 import Web.Event.Event as Event
 import Web.UIEvent.MouseEvent as Mouse
@@ -36,6 +37,9 @@ newtype RegisterForm r f
 
 derive instance newtypeRegisterForm :: Newtype (RegisterForm r f) _
 
+type State
+  = { registration :: RemoteData String Unit }
+
 data Action
   = HandleRegisterForm RegisterFields
   | Navigate Route Event.Event
@@ -48,17 +52,18 @@ component ::
   H.Component HH.HTML q Unit o m
 component =
   H.mkComponent
-    { initialState: const unit
+    { initialState: const { registration: NotAsked }
     , render
     , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
     }
   where
   handleAction = case _ of
-    -- TODO
-    HandleRegisterForm fields -> registerUser fields >>= traverse_ (\_ -> navigate Home)
+    HandleRegisterForm fields -> do
+      result <- fromEither <$> note "Failed to register" <$> registerUser fields
+      H.modify_ _ { registration = result }
     Navigate route e -> navigate_ e route
 
-  render _ =
+  render { registration } =
     container
       [ HH.h1
           []
@@ -69,7 +74,38 @@ component =
               [ safeHref Login, HE.onClick (Just <<< Navigate Login <<< Mouse.toEvent) ]
               [ HH.text "Already have an account?" ]
           ]
-      , HH.slot F._formless unit formComponent unit (Just <<< HandleRegisterForm)
+      , case registration of
+          NotAsked -> HH.slot F._formless unit formComponent unit (Just <<< HandleRegisterForm)
+          Loading -> HH.slot F._formless unit formComponent unit (Just <<< HandleRegisterForm) -- ???
+          Success _ ->
+            HH.div
+              [ HP.classes
+                  [ T.flex
+                  , T.justifyCenter
+                  , T.itemsCenter
+                  , T.m1
+                  , T.fontMedium
+                  , T.py1
+                  , T.px2
+                  , T.bgWhite
+                  , T.roundedMd
+                  , T.textGreen700
+                  , T.bgGreen100
+                  , T.border
+                  , T.borderGreen300
+                  ]
+              ]
+              [ HH.div
+                  [ HP.classes [ T.text2xl, T.fontNormal, T.maxWFull, T.flexInitial ] ]
+                  [ HH.text "Account created :)"
+                  , HH.div [ HP.classes [ T.textSm, T.textBase ] ] [ HH.text "Check your email" ]
+                  ]
+              ]
+          Failure _ ->
+            HH.div []
+              [ HH.text "Failed"
+              , HH.slot F._formless unit formComponent unit (Just <<< HandleRegisterForm)
+              ]
       ]
     where
     container html =
@@ -116,7 +152,7 @@ formComponent =
     where
     eval act = F.handleAction handleAction handleEvent act
 
-  renderForm { form } =
+  renderForm { form, submitting } =
     HH.form
       [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev ]
       [ HH.fieldset_
@@ -125,7 +161,7 @@ formComponent =
           , email
           , password
           ]
-      , Field.submit "Sign up"
+      , Field.submit "Sign up" submitting
       ]
     where
     proxies = F.mkSProxies (F.FormProxy :: _ RegisterForm)

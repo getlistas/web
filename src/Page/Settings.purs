@@ -131,12 +131,12 @@ component =
         , initialInputs: Nothing
         }
 
-      renderForm { form } =
+      renderForm { form, submitting } =
         HH.form_
           [ HH.fieldset_
               [ name
               , slug
-              , Field.submit "Update settings"
+              , Field.submit "Update settings" submitting
               ]
           ]
         where
