@@ -1,6 +1,9 @@
 module.exports = {
-  purge: ["./prod/index.js"],
-  theme: {},
+  purge: false,
+  darkMode: false, // or 'media' or 'class'
+  theme: {
+    extend: {},
+  },
   variants: {},
   plugins: [],
-};
+}

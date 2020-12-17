@@ -27,12 +27,12 @@ submit buttonText disabled =
         , cx T.opacity50 disabled
         , T.py2
         , T.px4
-        , T.bgTeal500
+        , T.bgPink300
         , T.textWhite
         , T.fontSemibold
         , T.roundedLg
         , T.shadowMd
-        , T.hoverBgTeal700
+        , T.hoverBgPink700
         , T.focusOutlineNone
         ]
     , HP.disabled disabled
@@ -95,10 +95,10 @@ input sym form props =
                 , T.placeholderGray400
                 , T.shadowMd
                 , T.roundedLg
-                -- , T.textBase
+                , T.textBase
                 , T.focusOutlineNone
-                -- , T.focusRing2
-                -- , T.focusRingPurple600
+                , T.focusRing2
+                , T.focusRingPurple600
                 , T.focusBorderTransparent
                 ]
             ]

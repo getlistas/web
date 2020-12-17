@@ -11,13 +11,13 @@ appearanceNone = ClassName "appearance-none"
 bgGreen100 :: ClassName
 bgGreen100 = ClassName "bg-green-100"
 
+-- | bgPink300
+bgPink300 :: ClassName
+bgPink300 = ClassName "bg-pink-300"
+
 -- | bgRed100
 bgRed100 :: ClassName
 bgRed100 = ClassName "bg-red-100"
-
--- | bgTeal500
-bgTeal500 :: ClassName
-bgTeal500 = ClassName "bg-teal-500"
 
 -- | bgWhite
 bgWhite :: ClassName
@@ -71,6 +71,14 @@ focusBorderTransparent = ClassName "focus:border-transparent"
 focusOutlineNone :: ClassName
 focusOutlineNone = ClassName "focus:outline-none"
 
+-- | focusRing2
+focusRing2 :: ClassName
+focusRing2 = ClassName "focus:ring-2"
+
+-- | focusRingPurple600
+focusRingPurple600 :: ClassName
+focusRingPurple600 = ClassName "focus:ring-purple-600"
+
 -- | fontBold
 fontBold :: ClassName
 fontBold = ClassName "font-bold"
@@ -91,9 +99,9 @@ fontSemibold = ClassName "font-semibold"
 h6 :: ClassName
 h6 = ClassName "h-6"
 
--- | hoverBgTeal700
-hoverBgTeal700 :: ClassName
-hoverBgTeal700 = ClassName "hover:bg-teal-700"
+-- | hoverBgPink700
+hoverBgPink700 :: ClassName
+hoverBgPink700 = ClassName "hover:bg-pink-700"
 
 -- | itemsCenter
 itemsCenter :: ClassName
