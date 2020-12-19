@@ -1,8 +1,8 @@
-module Doneq.Component.HTML.Utils where
+module Listasio.Component.HTML.Utils where
 
 import Prelude
 
-import Doneq.Data.Route (Route, routeCodec)
+import Listasio.Data.Route (Route, routeCodec)
 import Data.Maybe (Maybe(..))
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP

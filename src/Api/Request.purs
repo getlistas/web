@@ -1,4 +1,4 @@
-module Doneq.Api.Request
+module Listasio.Api.Request
   ( Token -- constructor and decoders not exported
   , BaseURL(..)
   , RequestMethod(..)
@@ -29,13 +29,13 @@ import Data.Either (Either(..))
 import Data.HTTP.Method (Method(..))
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
-import Doneq.Api.Endpoint (Endpoint(..), endpointCodec)
-import Doneq.Data.Email (Email)
-import Doneq.Data.Email as Email
-import Doneq.Data.Profile (Profile)
-import Doneq.Data.Profile as Profile
-import Doneq.Data.Username (Username)
-import Doneq.Data.Username as Username
+import Listasio.Api.Endpoint (Endpoint(..), endpointCodec)
+import Listasio.Data.Email (Email)
+import Listasio.Data.Email as Email
+import Listasio.Data.Profile (Profile)
+import Listasio.Data.Profile as Profile
+import Listasio.Data.Username (Username)
+import Listasio.Data.Username as Username
 import Effect (Effect)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Jwt as Jwt

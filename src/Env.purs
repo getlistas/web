@@ -1,9 +1,9 @@
-module Doneq.Env where
+module Listasio.Env where
 
 import Prelude
 
-import Doneq.Api.Request (BaseURL)
-import Doneq.Data.Profile (Profile)
+import Listasio.Api.Request (BaseURL)
+import Listasio.Data.Profile (Profile)
 import Data.Maybe (Maybe)
 import Effect.Aff.Bus (BusRW)
 import Effect.Ref (Ref)

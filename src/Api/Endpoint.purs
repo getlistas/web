@@ -1,7 +1,7 @@
--- | Doneq uses a REST API for resource management.
+-- | Listasio uses a REST API for resource management.
 -- | This module defines endpoints in a data type
 -- | which ensures invalid endpoints fail to compile.
-module Doneq.Api.Endpoint where
+module Listasio.Api.Endpoint where
 
 import Prelude hiding ((/))
 import Data.Generic.Rep (class Generic)

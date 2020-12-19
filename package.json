@@ -1,5 +1,5 @@
 {
-  "name": "doneq",
+  "name": "listas.io",
   "private": true,
   "author": "Christain Gill",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gillchristian/doneq.git"
+    "url": "git+https://github.com/gillchristian/listas.io.git"
   },
   "devDependencies": {
     "http-server": "^0.12.3",

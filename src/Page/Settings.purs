@@ -1,19 +1,19 @@
-module Doneq.Page.Settings where
+module Listasio.Page.Settings where
 
 import Prelude
 
 import Data.Lens (preview)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
-import Doneq.Capability.Navigate (class Navigate, logout, navigate_)
-import Doneq.Capability.Resource.User (class ManageUser, getCurrentUser, updateUser)
-import Doneq.Component.HTML.Header (header)
-import Doneq.Data.Profile (Profile)
-import Doneq.Data.Route (Route(..))
-import Doneq.Data.Username (Username)
-import Doneq.Data.Username as Username
-import Doneq.Form.Field as Field
-import Doneq.Form.Validation as V
+import Listasio.Capability.Navigate (class Navigate, logout, navigate_)
+import Listasio.Capability.Resource.User (class ManageUser, getCurrentUser, updateUser)
+import Listasio.Component.HTML.Header (header)
+import Listasio.Data.Profile (Profile)
+import Listasio.Data.Route (Route(..))
+import Listasio.Data.Username (Username)
+import Listasio.Data.Username as Username
+import Listasio.Form.Field as Field
+import Listasio.Form.Validation as V
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H

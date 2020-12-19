@@ -1,9 +1,9 @@
-module Doneq.Capability.Resource.User where
+module Listasio.Capability.Resource.User where
 
 import Prelude
 
-import Doneq.Api.Request (LoginFields, RegisterFields)
-import Doneq.Data.Profile (Profile)
+import Listasio.Api.Request (LoginFields, RegisterFields)
+import Listasio.Data.Profile (Profile)
 import Data.Maybe (Maybe)
 import Halogen (HalogenM, lift)
 

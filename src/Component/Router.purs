@@ -1,7 +1,7 @@
 -- | The `Router` component is the root of our Halogen application. Every other component is a
 -- | direct descendent of this component. We'll use the router to choose which component to render
 -- | given a particular `Route` and to manage the user's location in the application.
-module Doneq.Component.Router where
+module Listasio.Component.Router where
 
 import Prelude
 
@@ -12,25 +12,25 @@ import Data.Either (hush)
 import Data.Foldable (elem)
 import Data.Maybe (Maybe(..), fromMaybe, isJust)
 import Data.Symbol (SProxy(..))
-import Doneq.Capability.LogMessages (class LogMessages)
-import Doneq.Capability.Navigate (class Navigate, navigate, locationState)
-import Doneq.Capability.Now (class Now)
-import Doneq.Capability.Resource.User (class ManageUser)
-import Doneq.Component.Utils (OpaqueSlot)
-import Doneq.Data.Profile (Profile)
-import Doneq.Data.Route (Route(..), routeCodec)
-import Doneq.Env (UserEnv)
-import Doneq.Page.About as About
-import Doneq.Page.Dashboard as Dashboard
-import Doneq.Page.Discover as Discover
-import Doneq.Page.Done as Done
-import Doneq.Page.EditList as EditList
-import Doneq.Page.Home as Home
-import Doneq.Page.Login as Login
-import Doneq.Page.Profile as Profile
-import Doneq.Page.Register as Register
-import Doneq.Page.Settings as Settings
-import Doneq.Page.ViewList as ViewList
+import Listasio.Capability.LogMessages (class LogMessages)
+import Listasio.Capability.Navigate (class Navigate, navigate, locationState)
+import Listasio.Capability.Now (class Now)
+import Listasio.Capability.Resource.User (class ManageUser)
+import Listasio.Component.Utils (OpaqueSlot)
+import Listasio.Data.Profile (Profile)
+import Listasio.Data.Route (Route(..), routeCodec)
+import Listasio.Env (UserEnv)
+import Listasio.Page.About as About
+import Listasio.Page.Dashboard as Dashboard
+import Listasio.Page.Discover as Discover
+import Listasio.Page.Done as Done
+import Listasio.Page.EditList as EditList
+import Listasio.Page.Home as Home
+import Listasio.Page.Login as Login
+import Listasio.Page.Profile as Profile
+import Listasio.Page.Register as Register
+import Listasio.Page.Settings as Settings
+import Listasio.Page.ViewList as ViewList
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH

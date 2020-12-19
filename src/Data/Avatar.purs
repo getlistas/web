@@ -1,6 +1,6 @@
 -- | It's useful to be able to tell at a glance that a
 -- | value isn't just a string -- it's an avatar
-module Doneq.Data.Avatar
+module Listasio.Data.Avatar
   ( Avatar -- constructor not exported
   , parse
   , toString

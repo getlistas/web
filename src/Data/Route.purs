@@ -1,10 +1,10 @@
-module Doneq.Data.Route where
+module Listasio.Data.Route where
 
 import Prelude hiding ((/))
 import Data.Either (note)
 import Data.Generic.Rep (class Generic)
-import Doneq.Data.Username (Username)
-import Doneq.Data.Username as Username
+import Listasio.Data.Username (Username)
+import Listasio.Data.Username as Username
 import Routing.Duplex (RouteDuplex', as, root, segment)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/))

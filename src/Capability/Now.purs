@@ -1,4 +1,4 @@
-module Doneq.Capability.Now where
+module Listasio.Capability.Now where
 
 import Prelude
 

@@ -1,11 +1,11 @@
-module Doneq.Component.HTML.Header where
+module Listasio.Component.HTML.Header where
 
 import Prelude
 import Data.Maybe (Maybe(..), isJust, isNothing)
-import Doneq.Component.HTML.Utils (maybeElem, safeHref, whenElem, cx)
-import Doneq.Data.Profile (ProfileRep)
-import Doneq.Data.Route (Route(..))
-import Doneq.Data.Username as Username
+import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem, cx)
+import Listasio.Data.Profile (ProfileRep)
+import Listasio.Data.Route (Route(..))
+import Listasio.Data.Username as Username
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
@@ -29,7 +29,7 @@ header currentUser navigate route =
     ]
     [ HH.h1
         [ HP.classes [ T.text4xl, T.leadingNone ] ]
-        [ HH.a [ safeHref Home, HE.onClick (onNavigate Home) ] [ HH.text "doneq" ] ]
+        [ HH.a [ safeHref Home, HE.onClick (onNavigate Home) ] [ HH.text "listas.io" ] ]
     , HH.div
         [ HP.classes [ T.flex, T.justifyAround, T.mt8, T.w6d12 ] ]
         [ whenElem (isJust currentUser) \_ ->

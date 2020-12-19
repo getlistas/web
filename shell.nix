@@ -22,7 +22,7 @@ let
   });
 
 in pkgs.stdenv.mkDerivation {
-  name = "doneq";
+  name = "listas.io";
   LOCALE_ARCHIVE="${pkgs.glibcLocales}/lib/locale/locale-archive";
   # TODO add npm & yarn
   buildInputs = with pursPkgs; with twpurs; [

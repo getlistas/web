@@ -1,4 +1,4 @@
-module Doneq.Form.Field where
+module Listasio.Form.Field where
 
 import Prelude
 import DOM.HTML.Indexed (HTMLinput)
@@ -6,9 +6,9 @@ import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
 import Data.Symbol (class IsSymbol, SProxy)
 import Data.Variant (Variant)
-import Doneq.Component.HTML.Utils (cx, maybeElem, whenElem)
-import Doneq.Form.Validation (errorToString)
-import Doneq.Form.Validation as V
+import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
+import Listasio.Form.Validation (errorToString)
+import Listasio.Form.Validation as V
 import Formless as F
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE

@@ -1,9 +1,9 @@
-module Doneq.Capability.Navigate where
+module Listasio.Capability.Navigate where
 
 import Prelude
 
 import Control.Monad.Trans.Class (lift)
-import Doneq.Data.Route (Route)
+import Listasio.Data.Route (Route)
 import Halogen (HalogenM)
 import Routing.PushState (LocationState)
 import Web.Event.Event (Event)

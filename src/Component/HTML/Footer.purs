@@ -1,4 +1,4 @@
-module Doneq.Component.HTML.Footer where
+module Listasio.Component.HTML.Footer where
 
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP

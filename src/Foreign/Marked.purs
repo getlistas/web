@@ -1,4 +1,4 @@
-module Doneq.Foreign.Marked
+module Listasio.Foreign.Marked
   ( RawHTML
   , marked
   ) where

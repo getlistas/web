@@ -1,17 +1,17 @@
 -- | This module exports various utilities for working with a REST API and Json. It also provides
 -- | a few helpers shared among requests which I found useful when implementing the production
--- | monad, `Doneq.AppM`.
-module Doneq.Api.Utils where
+-- | monad, `Listasio.AppM`.
+module Listasio.Api.Utils where
 
 import Prelude
 
 import Affjax (request)
-import Doneq.Api.Request (BaseURL, RequestOptions, Token, defaultRequest, readToken, writeToken)
-import Doneq.Capability.LogMessages (class LogMessages, logError)
-import Doneq.Capability.Now (class Now)
-import Doneq.Data.Profile (Profile)
-import Doneq.Data.Username (Username)
-import Doneq.Env (UserEnv)
+import Listasio.Api.Request (BaseURL, RequestOptions, Token, defaultRequest, readToken, writeToken)
+import Listasio.Capability.LogMessages (class LogMessages, logError)
+import Listasio.Capability.Now (class Now)
+import Listasio.Data.Profile (Profile)
+import Listasio.Data.Username (Username)
+import Listasio.Env (UserEnv)
 import Control.Monad.Reader (class MonadAsk, ask, asks)
 import Data.Argonaut.Core (Json)
 import Data.Bifunctor (rmap)
@@ -27,7 +27,7 @@ import Effect.Ref as Ref
 
 -- | This function performs a request that does not require authentication by pulling the base URL
 -- | out of the app environment and running an asynchronous request. This function only requires the
--- | `baseUrl` field from the app environment. See `Doneq.AppM` for examples of this in action.
+-- | `baseUrl` field from the app environment. See `Listasio.AppM` for examples of this in action.
 mkRequest
   :: forall m r
    . MonadAff m
@@ -41,7 +41,7 @@ mkRequest opts = do
 
 -- | This function performs a request that requires authentication by pulling the base URL out
 -- | of the app environment, reading the auth token from local storage, and then performing
--- | the asynchronous request. See `Doneq.AppM` for examples of this in action.
+-- | the asynchronous request. See `Listasio.AppM` for examples of this in action.
 mkAuthRequest
   :: forall m r
    . MonadAff m
@@ -81,7 +81,7 @@ authenticate req fields = do
 
 -- | This small utility decodes JSON and logs any failures that occurred, returning the parsed
 -- | value only if decoding succeeded. This utility makes it easy to abstract the mechanices of
--- | dealing with malformed responses. See `Doneq.AppM` for examples of this in practice.
+-- | dealing with malformed responses. See `Listasio.AppM` for examples of this in practice.
 decode :: forall m a. LogMessages m => Now m => JsonCodec a -> Maybe Json -> m (Maybe a)
 decode _ Nothing = logError "Response malformed" *> pure Nothing
 decode codec (Just json) = case CA.decode codec json of

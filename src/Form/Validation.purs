@@ -1,13 +1,13 @@
 -- | Where there are forms, there is inevitably validation.
-module Doneq.Form.Validation where
+module Listasio.Form.Validation where
 
 import Prelude
 
-import Doneq.Data.Avatar (Avatar)
-import Doneq.Data.Avatar as Avatar
-import Doneq.Data.Email (Email(..))
-import Doneq.Data.Username (Username)
-import Doneq.Data.Username as Username
+import Listasio.Data.Avatar (Avatar)
+import Listasio.Data.Avatar as Avatar
+import Listasio.Data.Email (Email(..))
+import Listasio.Data.Username (Username)
+import Listasio.Data.Username as Username
 import Data.Either (Either(..), note)
 import Data.Maybe (Maybe(..))
 import Data.String as String

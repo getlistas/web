@@ -1,9 +1,9 @@
-module Doneq.Capability.LogMessages where
+module Listasio.Capability.LogMessages where
 
 import Prelude
 
-import Doneq.Capability.Now (class Now)
-import Doneq.Data.Log (Log, LogReason(..), mkLog)
+import Listasio.Capability.Now (class Now)
+import Listasio.Data.Log (Log, LogReason(..), mkLog)
 import Control.Monad.Trans.Class (lift)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))

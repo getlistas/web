@@ -1,4 +1,4 @@
-module Doneq.Data.Profile where
+module Listasio.Data.Profile where
 
 import Prelude
 import Data.Codec.Argonaut (JsonCodec)
@@ -6,10 +6,10 @@ import Data.Codec.Argonaut as CA
 import Data.Codec.Argonaut.Compat as CAC
 import Data.Codec.Argonaut.Record as CAR
 import Data.Maybe (Maybe)
-import Doneq.Data.Email (Email)
-import Doneq.Data.Email as Email
-import Doneq.Data.Username (Username)
-import Doneq.Data.Username as Username
+import Listasio.Data.Email (Email)
+import Listasio.Data.Email as Email
+import Listasio.Data.Username (Username)
+import Listasio.Data.Username as Username
 
 data Relation
   = Following

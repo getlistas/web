@@ -1,12 +1,12 @@
-# Doneq
+# Listasio
 
 ## Installation
 
 First, clone the repository:
 
 ```sh
-git clone git@github.com:gillchristian/doneq.git
-cd doneq
+git clone git@github.com:gillchristian/listas.io.git
+cd listas.io
 ```
 
 You can enter a development shell with all non-JavaScript dependencies via Nix:
@@ -41,7 +41,7 @@ You can bundle the JS for production:
 npm run bundle
 ```
 
-And, once bundled, you can run a local server to use Doneq (defaults to
+And, once bundled, you can run a local server to use Listasio (defaults to
 [port 8080](http://127.0.0.1:8080), but if this port is already in use it will
 increment to 8081, etc.):
 

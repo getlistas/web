@@ -2,11 +2,11 @@ module Main where
 
 import Prelude
 
-import Doneq.Api.Request (decodeToken, readToken)
-import Doneq.AppM (runAppM)
-import Doneq.Component.Router as Router
-import Doneq.Data.Route (Route, routeCodec)
-import Doneq.Env (Env, LogLevel(..))
+import Listasio.Api.Request (decodeToken, readToken)
+import Listasio.AppM (runAppM)
+import Listasio.Component.Router as Router
+import Listasio.Data.Route (Route, routeCodec)
+import Listasio.Env (Env, LogLevel(..))
 import Data.Either (hush)
 import Data.Maybe (Maybe(..))
 import Data.Traversable (traverse_)

@@ -1,5 +1,5 @@
 -- | Some utilities are useful across any component. We'll maintain them in this catch-all module.
-module Doneq.Component.Utils where
+module Listasio.Component.Utils where
 
 import Prelude
 

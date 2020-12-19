@@ -1,10 +1,10 @@
 -- | Halogen does not support writing an HTML string to the DOM. This component allows us to do this
 -- | at a particular controlled HTML node.
-module Doneq.Component.RawHTML where
+module Listasio.Component.RawHTML where
 
 import Prelude
 
-import Doneq.Foreign.Marked (RawHTML, marked)
+import Listasio.Foreign.Marked (RawHTML, marked)
 import Data.Foldable (for_)
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
@@ -15,7 +15,7 @@ import Halogen.HTML.Properties as HP
 import Web.HTML (HTMLElement)
 
 -- | For an explanation of how to properly use the PureScript FFI with JavaScript, please see the
--- | `src/Foreign/Marked.js` file and the `Doneq.Foreign.Marked` module.
+-- | `src/Foreign/Marked.js` file and the `Listasio.Foreign.Marked` module.
 foreign import unsafeSetInnerHTML :: HTMLElement -> RawHTML -> Effect Unit
 
 type State =

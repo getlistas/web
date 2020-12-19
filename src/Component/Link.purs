@@ -1,10 +1,10 @@
-module Doneq.Component.Link where
+module Listasio.Component.Link where
 
 import Prelude
 
-import Doneq.Capability.Navigate (class Navigate, navigate)
-import Doneq.Component.HTML.Utils (safeHref)
-import Doneq.Data.Route (Route)
+import Listasio.Capability.Navigate (class Navigate, navigate)
+import Listasio.Component.HTML.Utils (safeHref)
+import Listasio.Data.Route (Route)
 import Data.Maybe (Maybe(..))
 import Data.Symbol (SProxy(..))
 import Effect.Class (class MonadEffect)

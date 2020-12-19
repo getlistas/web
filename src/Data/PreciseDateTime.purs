@@ -1,7 +1,7 @@
--- | We use datetimes all over the place in Doneq. The `PreciseDateTime` type already exists as part of
+-- | We use datetimes all over the place in Listasio. The `PreciseDateTime` type already exists as part of
 -- | a useful library from Awake Security and has utility functions that help translate it to
 -- | and from an RFC3339 string, which our API uses to represent datetimes.
-module Doneq.Data.PreciseDateTime where
+module Listasio.Data.PreciseDateTime where
 
 import Prelude
 import Data.Codec.Argonaut (JsonCodec)
@@ -23,7 +23,7 @@ codec = CA.prismaticCodec from to CA.string
 
   to = unwrap <<< PDT.toRFC3339String
 
--- | Display a human-readable version of the precise datetime, as described in the Doneq spec
+-- | Display a human-readable version of the precise datetime, as described in the Listasio spec
 -- |
 -- | Example: "Wed Nov 5, 1999"
 toDisplayWeekName :: PreciseDateTime -> String

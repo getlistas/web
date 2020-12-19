@@ -1,5 +1,5 @@
--- | Usernames are the unique identifier for users in Doneq.
-module Doneq.Data.Username
+-- | Usernames are the unique identifier for users in Listasio.
+module Listasio.Data.Username
   ( Username -- constructor not exported
   , parse
   , toString

@@ -1,15 +1,15 @@
-module Doneq.Page.About where
+module Listasio.Page.About where
 
 import Prelude
 
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Maybe (Maybe(..))
-import Doneq.Capability.Navigate (class Navigate, navigate_)
-import Doneq.Component.HTML.Header (header)
-import Doneq.Data.Profile (Profile)
-import Doneq.Data.Route (Route(..))
-import Doneq.Env (UserEnv)
+import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Component.HTML.Header (header)
+import Listasio.Data.Profile (Profile)
+import Listasio.Data.Route (Route(..))
+import Listasio.Env (UserEnv)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH

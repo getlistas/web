@@ -1,19 +1,19 @@
-module Doneq.Page.Register where
+module Listasio.Page.Register where
 
 import Prelude
 import Control.Error.Util (note)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
-import Doneq.Api.Request (RegisterFields)
-import Doneq.Capability.Navigate (class Navigate, navigate_)
-import Doneq.Capability.Resource.User (class ManageUser, registerUser)
-import Doneq.Component.HTML.Header (header)
-import Doneq.Component.HTML.Utils (safeHref)
-import Doneq.Data.Email (Email)
-import Doneq.Data.Route (Route(..))
-import Doneq.Data.Username (Username)
-import Doneq.Form.Field as Field
-import Doneq.Form.Validation as V
+import Listasio.Api.Request (RegisterFields)
+import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Capability.Resource.User (class ManageUser, registerUser)
+import Listasio.Component.HTML.Header (header)
+import Listasio.Component.HTML.Utils (safeHref)
+import Listasio.Data.Email (Email)
+import Listasio.Data.Route (Route(..))
+import Listasio.Data.Username (Username)
+import Listasio.Form.Field as Field
+import Listasio.Form.Validation as V
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H

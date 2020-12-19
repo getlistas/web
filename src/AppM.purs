@@ -1,4 +1,4 @@
-module Doneq.AppM where
+module Listasio.AppM where
 
 import Prelude
 
@@ -7,18 +7,18 @@ import Data.Codec.Argonaut as Codec
 import Data.Codec.Argonaut.Record as CAR
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
-import Doneq.Api.Endpoint (Endpoint(..))
-import Doneq.Api.Request (RequestMethod(..))
-import Doneq.Api.Request as Request
-import Doneq.Api.Utils (authenticate, decode, mkAuthRequest)
-import Doneq.Capability.LogMessages (class LogMessages, logError)
-import Doneq.Capability.Navigate (class Navigate, locationState, navigate)
-import Doneq.Capability.Now (class Now)
-import Doneq.Capability.Resource.User (class ManageUser)
-import Doneq.Data.Log as Log
-import Doneq.Data.Profile as Profile
-import Doneq.Data.Route as Route
-import Doneq.Env (Env, LogLevel(..))
+import Listasio.Api.Endpoint (Endpoint(..))
+import Listasio.Api.Request (RequestMethod(..))
+import Listasio.Api.Request as Request
+import Listasio.Api.Utils (authenticate, decode, mkAuthRequest)
+import Listasio.Capability.LogMessages (class LogMessages, logError)
+import Listasio.Capability.Navigate (class Navigate, locationState, navigate)
+import Listasio.Capability.Now (class Now)
+import Listasio.Capability.Resource.User (class ManageUser)
+import Listasio.Data.Log as Log
+import Listasio.Data.Profile as Profile
+import Listasio.Data.Route as Route
+import Listasio.Env (Env, LogLevel(..))
 import Effect.Aff (Aff)
 import Effect.Aff.Bus as Bus
 import Effect.Aff.Class (class MonadAff, liftAff)

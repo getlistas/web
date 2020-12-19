@@ -5,9 +5,9 @@ module Component.HOC.Connect where
 
 import Prelude
 
-import Doneq.Component.Utils (busEventSource)
-import Doneq.Data.Profile (Profile)
-import Doneq.Env (UserEnv)
+import Listasio.Component.Utils (busEventSource)
+import Listasio.Data.Profile (Profile)
+import Listasio.Env (UserEnv)
 import Control.Monad.Reader (class MonadAsk, asks)
 import Data.Maybe (Maybe(..))
 import Data.Symbol (SProxy(..))

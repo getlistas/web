@@ -1,6 +1,6 @@
 -- | It's useful to be able to tell at a glance that a
 -- | string is not just a string -- it's an email address.
-module Doneq.Data.Email where
+module Listasio.Data.Email where
 
 import Prelude
 
