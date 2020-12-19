@@ -4,15 +4,16 @@
 module Listasio.Api.Endpoint where
 
 import Prelude hiding ((/))
+
 import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe)
-import Routing.Duplex (RouteDuplex', root)
+import Routing.Duplex (RouteDuplex', int, optional, root, segment, string)
 import Routing.Duplex.Generic (noArgs, sum)
-import Routing.Duplex.Generic.Syntax ((/))
+import Routing.Duplex.Generic.Syntax ((/), (?))
 
 type PaginationRep
   = ( limit :: Maybe Int
-    , offset :: Maybe Int
+    , skip :: Maybe Int
     )
 
 type Pagination
@@ -22,6 +23,9 @@ data Endpoint
   = Login
   | User
   | Users
+  | List String -- TODO user ID newtype
+  | Lists
+  | Discover Pagination
 
 derive instance genericEndpoint :: Generic Endpoint _
 
@@ -32,4 +36,10 @@ endpointCodec =
         { "Login": "users" / "auth" / noArgs
         , "User": "user" / noArgs -- TODO: slug ?
         , "Users": "users" / noArgs
+        , "List": "lists" / string segment
+        , "Lists": "lists" / noArgs
+        , "Discover": "lists" / "discover" ?
+            { skip: optional <<< int
+            , limit: optional <<< int
+            }
         }

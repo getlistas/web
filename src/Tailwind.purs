@@ -19,17 +19,41 @@ bgPink300 = ClassName "bg-pink-300"
 bgRed100 :: ClassName
 bgRed100 = ClassName "bg-red-100"
 
+-- | bgRed200
+bgRed200 :: ClassName
+bgRed200 = ClassName "bg-red-200"
+
 -- | bgWhite
 bgWhite :: ClassName
 bgWhite = ClassName "bg-white"
+
+-- | border4
+border4 :: ClassName
+border4 = ClassName "border-4"
 
 -- | border
 border :: ClassName
 border = ClassName "border"
 
+-- | borderB2
+borderB2 :: ClassName
+borderB2 = ClassName "border-b-2"
+
+-- | borderGray200
+borderGray200 :: ClassName
+borderGray200 = ClassName "border-gray-200"
+
 -- | borderGreen300
 borderGreen300 :: ClassName
 borderGreen300 = ClassName "border-green-300"
+
+-- | borderIndigo400
+borderIndigo400 :: ClassName
+borderIndigo400 = ClassName "border-indigo-400"
+
+-- | borderRed600
+borderRed600 :: ClassName
+borderRed600 = ClassName "border-red-600"
 
 -- | borderTransparent
 borderTransparent :: ClassName
@@ -123,9 +147,17 @@ leadingNone = ClassName "leading-none"
 m1 :: ClassName
 m1 = ClassName "m-1"
 
+-- | m4
+m4 :: ClassName
+m4 = ClassName "m-4"
+
 -- | maxWFull
 maxWFull :: ClassName
 maxWFull = ClassName "max-w-full"
+
+-- | mb4
+mb4 :: ClassName
+mb4 = ClassName "mb-4"
 
 -- | minHScreen
 minHScreen :: ClassName
@@ -138,6 +170,10 @@ ml2 = ClassName "ml-2"
 -- | mr1
 mr1 :: ClassName
 mr1 = ClassName "mr-1"
+
+-- | mr2
+mr2 :: ClassName
+mr2 = ClassName "mr-2"
 
 -- | mt10
 mt10 :: ClassName
@@ -158,6 +194,14 @@ my4 = ClassName "my-4"
 -- | opacity50
 opacity50 :: ClassName
 opacity50 = ClassName "opacity-50"
+
+-- | p2
+p2 :: ClassName
+p2 = ClassName "p-2"
+
+-- | p4
+p4 :: ClassName
+p4 = ClassName "p-4"
 
 -- | placeholderGray400
 placeholderGray400 :: ClassName
@@ -223,9 +267,17 @@ textGray800 = ClassName "text-gray-800"
 textGreen700 :: ClassName
 textGreen700 = ClassName "text-green-700"
 
+-- | textLg
+textLg :: ClassName
+textLg = ClassName "text-lg"
+
 -- | textRed500
 textRed500 :: ClassName
 textRed500 = ClassName "text-red-500"
+
+-- | textRed900
+textRed900 :: ClassName
+textRed900 = ClassName "text-red-900"
 
 -- | textSm
 textSm :: ClassName

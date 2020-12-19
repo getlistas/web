@@ -12,9 +12,13 @@ import Data.Either (hush)
 import Data.Foldable (elem)
 import Data.Maybe (Maybe(..), fromMaybe, isJust)
 import Data.Symbol (SProxy(..))
+import Effect.Aff.Class (class MonadAff)
+import Halogen as H
+import Halogen.HTML as HH
 import Listasio.Capability.LogMessages (class LogMessages)
 import Listasio.Capability.Navigate (class Navigate, navigate, locationState)
 import Listasio.Capability.Now (class Now)
+import Listasio.Capability.Resource.List (class ManageList)
 import Listasio.Capability.Resource.User (class ManageUser)
 import Listasio.Component.Utils (OpaqueSlot)
 import Listasio.Data.Profile (Profile)
@@ -31,9 +35,6 @@ import Listasio.Page.Profile as Profile
 import Listasio.Page.Register as Register
 import Listasio.Page.Settings as Settings
 import Listasio.Page.ViewList as ViewList
-import Effect.Aff.Class (class MonadAff)
-import Halogen as H
-import Halogen.HTML as HH
 import Routing.Duplex as RD
 
 type State =
@@ -70,6 +71,7 @@ component
   => LogMessages m
   => Navigate m
   => ManageUser m
+  => ManageList m
   => H.Component HH.HTML Query {} Void m
 component = Connect.component $ H.mkComponent
   { initialState: \{ currentUser } -> { route: Nothing, currentUser }

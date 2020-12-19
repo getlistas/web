@@ -1,24 +1,12 @@
 module Listasio.AppM where
 
 import Prelude
-
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, ask, asks, runReaderT)
 import Data.Codec.Argonaut as Codec
+import Data.Codec.Argonaut.Compat as CAC
 import Data.Codec.Argonaut.Record as CAR
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
-import Listasio.Api.Endpoint (Endpoint(..))
-import Listasio.Api.Request (RequestMethod(..))
-import Listasio.Api.Request as Request
-import Listasio.Api.Utils (authenticate, decode, mkAuthRequest)
-import Listasio.Capability.LogMessages (class LogMessages, logError)
-import Listasio.Capability.Navigate (class Navigate, locationState, navigate)
-import Listasio.Capability.Now (class Now)
-import Listasio.Capability.Resource.User (class ManageUser)
-import Listasio.Data.Log as Log
-import Listasio.Data.Profile as Profile
-import Listasio.Data.Route as Route
-import Listasio.Env (Env, LogLevel(..))
 import Effect.Aff (Aff)
 import Effect.Aff.Bus as Bus
 import Effect.Aff.Class (class MonadAff, liftAff)
@@ -26,11 +14,26 @@ import Effect.Class (class MonadEffect, liftEffect)
 import Effect.Console as Console
 import Effect.Now as Now
 import Effect.Ref as Ref
+import Listasio.Api.Endpoint (Endpoint(..))
+import Listasio.Api.Request (RequestMethod(..))
+import Listasio.Api.Request as Request
+import Listasio.Api.Utils (authenticate, decode, mkAuthRequest)
+import Listasio.Capability.LogMessages (class LogMessages, logError)
+import Listasio.Capability.Navigate (class Navigate, locationState, navigate)
+import Listasio.Capability.Now (class Now)
+import Listasio.Capability.Resource.List (class ManageList)
+import Listasio.Capability.Resource.User (class ManageUser)
+import Listasio.Data.List as List
+import Listasio.Data.Log as Log
+import Listasio.Data.Profile as Profile
+import Listasio.Data.Route as Route
+import Listasio.Env (Env, LogLevel(..))
 import Routing.Duplex (print)
 import Type.Equality (class TypeEquals, from)
 import Web.Event.Event (preventDefault)
 
-newtype AppM a = AppM (ReaderT Env Aff a)
+newtype AppM a
+  = AppM (ReaderT Env Aff a)
 
 runAppM :: Env -> AppM ~> Aff
 runAppM env (AppM m) = runReaderT m env
@@ -82,8 +85,7 @@ instance navigateAppM :: Navigate AppM where
     navigate Route.Home
 
 instance manageUserAppM :: ManageUser AppM where
-  loginUser =
-    authenticate Request.login
+  loginUser = authenticate Request.login
 
   registerUser fields = do
     { baseUrl } <- ask
@@ -98,7 +100,29 @@ instance manageUserAppM :: ManageUser AppM where
       $ decode (CAR.object "User" { user: Profile.profileCodec }) mbJson
 
   updateUser fields =
-    void $ mkAuthRequest
-      { endpoint: User
-      , method: Put (Just (Codec.encode Profile.profileCodec fields))
-      }
+    void
+      $ mkAuthRequest
+          { endpoint: User
+          , method: Put $ Just $ Codec.encode Profile.profileCodec fields
+          }
+
+instance manageListAppM :: ManageList AppM where
+  createList list = do
+    let
+      method = Post $ Just $ Codec.encode List.listCodec list
+    mbJson <- mkAuthRequest { endpoint: Lists, method }
+    decode List.listWitIdAndUserCodec mbJson
+
+  getList id = do
+    mbJson <- mkAuthRequest { endpoint: List id, method: Get }
+    decode List.listWitIdAndUserCodec mbJson
+
+  getLists = do
+    mbJson <- mkAuthRequest { endpoint: Lists, method: Get }
+    decode (CAC.array List.listWitIdAndUserCodec) mbJson
+
+  deleteList id = void $ mkAuthRequest { endpoint: List id, method: Delete }
+
+  discoverLists pagination = do
+    mbJson <- mkAuthRequest { endpoint: Discover pagination, method: Get }
+    decode (CAC.array List.listWitIdAndUserCodec) mbJson
