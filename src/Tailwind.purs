@@ -87,6 +87,10 @@ flexCol = ClassName "flex-col"
 flexInitial :: ClassName
 flexInitial = ClassName "flex-initial"
 
+-- | flexWrap
+flexWrap :: ClassName
+flexWrap = ClassName "flex-wrap"
+
 -- | focusBorderTransparent
 focusBorderTransparent :: ClassName
 focusBorderTransparent = ClassName "focus:border-transparent"
@@ -178,6 +182,10 @@ mr2 = ClassName "mr-2"
 -- | mt10
 mt10 :: ClassName
 mt10 = ClassName "mt-10"
+
+-- | mt4
+mt4 :: ClassName
+mt4 = ClassName "mt-4"
 
 -- | mt8
 mt8 :: ClassName

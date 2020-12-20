@@ -1,6 +1,7 @@
 module Listasio.AppM where
 
 import Prelude
+
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, ask, asks, runReaderT)
 import Data.Codec.Argonaut as Codec
 import Data.Codec.Argonaut.Compat as CAC
@@ -22,10 +23,12 @@ import Listasio.Capability.LogMessages (class LogMessages, logError)
 import Listasio.Capability.Navigate (class Navigate, locationState, navigate)
 import Listasio.Capability.Now (class Now)
 import Listasio.Capability.Resource.List (class ManageList)
+import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Capability.Resource.User (class ManageUser)
 import Listasio.Data.List as List
 import Listasio.Data.Log as Log
 import Listasio.Data.Profile as Profile
+import Listasio.Data.Resource as Resource
 import Listasio.Data.Route as Route
 import Listasio.Env (Env, LogLevel(..))
 import Routing.Duplex (print)
@@ -126,3 +129,8 @@ instance manageListAppM :: ManageList AppM where
   discoverLists pagination = do
     mbJson <- mkAuthRequest { endpoint: Discover pagination, method: Get }
     decode (CAC.array List.listWitIdAndUserCodec) mbJson
+
+instance manageResourceAppM :: ManageResource AppM where
+  getListResources listId = do
+     mbJson <- mkAuthRequest { endpoint: ListResources listId, method: Get }
+     decode (CAC.array Resource.listResourceCodec) mbJson

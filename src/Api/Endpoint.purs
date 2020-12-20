@@ -26,6 +26,7 @@ data Endpoint
   | List String -- TODO user ID newtype
   | Lists
   | Discover Pagination
+  | ListResources String
 
 derive instance genericEndpoint :: Generic Endpoint _
 
@@ -42,4 +43,5 @@ endpointCodec =
             { skip: optional <<< int
             , limit: optional <<< int
             }
+        , "ListResources": "lists" / string segment / "resources"
         }

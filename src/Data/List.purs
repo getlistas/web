@@ -26,7 +26,7 @@ type ID
 type ListWithIdAndUser
   = {
     | ListRep
-      ( _id :: ID -- TODO should be NonEmptyString ?
+      ( _id :: ID -- TODO should be NonEmptyString or newtype?
       , user :: ID -- TODO should be some newtype ID ?
       )
     }

@@ -19,6 +19,7 @@ import Listasio.Capability.LogMessages (class LogMessages)
 import Listasio.Capability.Navigate (class Navigate, navigate, locationState)
 import Listasio.Capability.Now (class Now)
 import Listasio.Capability.Resource.List (class ManageList)
+import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Capability.Resource.User (class ManageUser)
 import Listasio.Component.Utils (OpaqueSlot)
 import Listasio.Data.Profile (Profile)
@@ -71,6 +72,7 @@ component
   => LogMessages m
   => Navigate m
   => ManageUser m
+  => ManageResource m
   => ManageList m
   => H.Component HH.HTML Query {} Void m
 component = Connect.component $ H.mkComponent

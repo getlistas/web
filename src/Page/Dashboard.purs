@@ -4,19 +4,22 @@ import Prelude
 
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
-import Data.Array (null)
+import Data.Array (null, zipWith)
 import Data.Either (Either, note)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Traversable (traverse)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
+import Listasio.Capability.Resource.Resource (class ManageResource, getListResources)
 import Listasio.Component.HTML.Header (header)
 import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Profile (Profile)
+import Listasio.Data.Resource (ListResource)
 import Listasio.Data.Route (Route(..))
 import Listasio.Env (UserEnv)
 import Network.RemoteData (RemoteData(..))
@@ -30,9 +33,14 @@ data Action
   | Navigate Route Event
   | LoadLists
 
+type Item
+  = { list :: ListWithIdAndUser
+    , resources :: Array ListResource
+    }
+
 type State
   = { currentUser :: Maybe Profile
-    , lists :: RemoteData String (Array ListWithIdAndUser)
+    , lists :: RemoteData String (Array Item)
     }
 
 noteError :: forall a. Maybe a -> Either String a
@@ -43,6 +51,7 @@ component
    . MonadAff m
   => MonadAsk { userEnv :: UserEnv | r } m
   => ManageList m
+  => ManageResource m
   => Navigate m
   => H.Component HH.HTML q {} o m
 component = Connect.component $ H.mkComponent
@@ -68,7 +77,10 @@ component = Connect.component $ H.mkComponent
     LoadLists -> do
       H.modify_ _ { lists = Loading }
       lists <- RemoteData.fromEither <$> noteError <$> getLists
-      H.modify_ _ { lists = lists }
+      H.modify_ _ { lists = map { list: _, resources: mempty } <$> lists }
+      resourcesByList <- traverse (getListResources <<< _._id."$oid") $ fromMaybe mempty $ RemoteData.toMaybe lists
+      let resources = map (fromMaybe mempty) resourcesByList
+      H.modify_ _ { lists = (\ls -> zipWith { list: _, resources: _} ls resources) <$> lists }
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render { currentUser, lists } =
@@ -81,7 +93,7 @@ component = Connect.component $ H.mkComponent
     feed = case lists of
       Success items ->
         HH.div
-          [ HP.classes [ T.flex ] ]
+          [ HP.classes [ T.flex, T.flexWrap ] ]
           $ map listInfo items
       Failure msg ->
         HH.div
@@ -91,8 +103,8 @@ component = Connect.component $ H.mkComponent
           ]
       _ -> HH.div [ HP.classes [ T.textCenter ] ] [ HH.text "Loading ..." ]
 
-    listInfo :: ListWithIdAndUser -> H.ComponentHTML Action slots m
-    listInfo { title, description, tags } =
+    listInfo :: Item -> H.ComponentHTML Action slots m
+    listInfo { list: { title, description, tags }, resources } =
       HH.div
         [ HP.classes [ T.m4, T.p2, T.border4, T.borderIndigo400 ] ]
         [ HH.div [ HP.classes [ T.textLg, T.borderB2, T.borderGray200, T.mb4 ] ] [ HH.text title ]
@@ -101,4 +113,9 @@ component = Connect.component $ H.mkComponent
             HH.div
               [ HP.classes [ T.flex, T.textSm ] ]
               $ map ((\t -> HH.div [ HP.classes [ T.mr2 ] ] [ HH.text t ]) <<< ("#" <> _)) tags
+        , whenElem (not $ null resources) \_ ->
+            HH.div
+              [ HP.classes [ T.mt4, T.flex, T.flexCol ] ]
+              $ map (\i -> HH.a [ HP.href i.url ] [ HH.text i.title ]) resources
+
         ]
