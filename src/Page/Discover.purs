@@ -102,7 +102,7 @@ component = Connect.component $ H.mkComponent
       mbLists <- discoverLists pagination
 
       let
-        lists = noteError $ { refreshing: false, items: _ } <$> (_ <> prev) <$> mbLists
+        lists = noteError $ { refreshing: false, items: _ } <$> (prev <> _) <$> mbLists
         isLast = maybe false ((perPage > _) <<< length) mbLists
         newPage = maybe state.page (const (state.page + 1)) mbLists
 
