@@ -1,18 +1,19 @@
 module Listasio.Form.Field where
 
 import Prelude
+
 import DOM.HTML.Indexed (HTMLinput)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
 import Data.Symbol (class IsSymbol, SProxy)
 import Data.Variant (Variant)
-import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
-import Listasio.Form.Validation (errorToString)
-import Listasio.Form.Validation as V
 import Formless as F
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
+import Listasio.Form.Validation (errorToString)
+import Listasio.Form.Validation as V
 import Tailwind as T
 import Type.Row as Row
 

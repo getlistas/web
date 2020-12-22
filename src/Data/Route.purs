@@ -1,6 +1,7 @@
 module Listasio.Data.Route where
 
 import Prelude hiding ((/))
+
 import Data.Either (note)
 import Data.Generic.Rep (class Generic)
 import Listasio.Data.Username (Username)
@@ -18,6 +19,7 @@ data Route
   | Register
   | Settings
   | Profile Username
+  | CreateList
   | ViewList Slug
   | EditList Slug
   | Dashboard
@@ -42,6 +44,7 @@ routeCodec =
         , "Register": "register" / noArgs
         , "Settings": "settings" / noArgs
         , "Profile": "profile" / uname segment
+        , "CreateList": "list" / "create" / noArgs
         , "ViewList": "list" / slug segment
         , "EditList": "list" / slug segment / "edit"
         , "Dashboard": "dashboard" / noArgs

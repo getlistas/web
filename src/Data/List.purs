@@ -9,10 +9,7 @@ import Data.Maybe (Maybe)
 type ListRep row
   = ( title :: String -- TODO should be NonEmptyString ?
     , description :: Maybe String
-    , tags :: (Array String)
-    -- TODO
-    -- created_at  :: DateTime<Utc>
-    -- updated_at  :: DateTime<Utc>
+    , tags :: Array String
     | row
     )
 
@@ -26,8 +23,11 @@ type ID
 type ListWithIdAndUser
   = {
     | ListRep
-      ( _id :: ID -- TODO should be NonEmptyString or newtype?
-      , user :: ID -- TODO should be some newtype ID ?
+      ( _id :: ID -- TODO should be NonEmptyString or newtype ID ?
+      , user :: ID
+    -- TODO
+    -- created_at  :: DateTime<Utc>
+    -- updated_at  :: DateTime<Utc>
       )
     }
 

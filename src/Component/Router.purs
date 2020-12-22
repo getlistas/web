@@ -26,6 +26,7 @@ import Listasio.Data.Profile (Profile)
 import Listasio.Data.Route (Route(..), routeCodec)
 import Listasio.Env (UserEnv)
 import Listasio.Page.About as About
+import Listasio.Page.CreateList as CreateList
 import Listasio.Page.Dashboard as Dashboard
 import Listasio.Page.Discover as Discover
 import Listasio.Page.Done as Done
@@ -57,6 +58,7 @@ type ChildSlots =
   , register :: OpaqueSlot Unit
   , settings :: OpaqueSlot Unit
   , profile :: OpaqueSlot Unit
+  , createList :: OpaqueSlot Unit
   , viewList :: OpaqueSlot Unit
   , editList :: OpaqueSlot Unit
   , dashboard :: OpaqueSlot Unit
@@ -144,6 +146,9 @@ component = Connect.component $ H.mkComponent
 
       ViewList _ ->
         HH.slot (SProxy :: _ "viewList") unit ViewList.component {} absurd
+
+      CreateList ->
+        HH.slot (SProxy :: _ "createList") unit CreateList.component {} absurd
 
       EditList _ ->
         HH.slot (SProxy :: _ "editList") unit EditList.component {} absurd
