@@ -39,7 +39,7 @@ endpointCodec =
         , "Users": "users" / noArgs
         , "List": "lists" / string segment
         , "Lists": "lists" / noArgs
-        , "Discover": "lists" / "discover" ?
+        , "Discover": "discover" ?
             { skip: optional <<< int
             , limit: optional <<< int
             }
