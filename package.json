@@ -5,6 +5,7 @@
   "scripts": {
     "assets:dev": "cp -R dev/assets public/",
     "assets:prod": "cp -R prod/assets dist/",
+    "pscid:build": "spago build",
     "build": "npm run prep-prod && npm run bundle && npm run assets:prod",
     "build:dev": "spago build",
     "bundle": "npm run bundle:build && npm run bundle:dce && npm run css:purge && npm run bundle:parcel",
