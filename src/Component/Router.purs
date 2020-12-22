@@ -62,6 +62,7 @@ type ChildSlots =
   , dashboard :: OpaqueSlot Unit
   , done :: OpaqueSlot Unit
   , discover :: OpaqueSlot Unit
+  , verifySuccess :: OpaqueSlot Unit
   )
 
 component
@@ -115,7 +116,7 @@ component = Connect.component $ H.mkComponent
   authorize :: Maybe Profile -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
   authorize mbProfile html = case mbProfile of
     Nothing ->
-      HH.slot (SProxy :: _ "login") unit Login.component { redirect: false } absurd
+      HH.slot (SProxy :: _ "login") unit Login.component { redirect: false, success: false } absurd
     Just _ ->
       html
 
@@ -124,29 +125,44 @@ component = Connect.component $ H.mkComponent
     Just r -> case r of
       Home ->
         HH.slot (SProxy :: _ "home") unit Home.component {} absurd
+
       About ->
         HH.slot (SProxy :: _ "about") unit About.component {} absurd
+
       Login ->
-        HH.slot (SProxy :: _ "login") unit Login.component { redirect: true } absurd
+        HH.slot (SProxy :: _ "login") unit Login.component { redirect: true, success: false } absurd
+
       Register ->
         HH.slot (SProxy :: _ "register") unit Register.component unit absurd
+
       Settings ->
         HH.slot (SProxy :: _ "settings") unit Settings.component unit absurd
           # authorize currentUser
+
       Profile _ ->
         HH.slot (SProxy :: _ "profile") unit Profile.component {} absurd
+
       ViewList _ ->
         HH.slot (SProxy :: _ "viewList") unit ViewList.component {} absurd
+
       EditList _ ->
         HH.slot (SProxy :: _ "editList") unit EditList.component {} absurd
           # authorize currentUser
+
       Dashboard ->
         HH.slot (SProxy :: _ "dashboard") unit Dashboard.component {} absurd
           # authorize currentUser
+
       Done ->
         HH.slot (SProxy :: _ "done") unit Done.component {} absurd
           # authorize currentUser
+
       Discover ->
         HH.slot (SProxy :: _ "discover") unit Discover.component {} absurd
+
+      VerifyEmailSuccess ->
+        -- TODO do not show it if logged in
+        HH.slot (SProxy :: _ "verifySuccess") unit Login.component { redirect: true, success: true } absurd
+
     Nothing ->
       HH.div_ [ HH.text "Oh no! That page wasn't found." ]
