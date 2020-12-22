@@ -1,8 +1,15 @@
 module Listasio.Page.Login where
 
 import Prelude
+
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
+import Effect.Aff.Class (class MonadAff)
+import Formless as F
+import Halogen as H
+import Halogen.HTML as HH
+import Halogen.HTML.Events as HE
+import Halogen.HTML.Properties as HP
 import Listasio.Api.Request (LoginFields)
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, loginUser)
@@ -12,12 +19,6 @@ import Listasio.Data.Email (Email)
 import Listasio.Data.Route (Route(..))
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation as V
-import Effect.Aff.Class (class MonadAff)
-import Formless as F
-import Halogen as H
-import Halogen.HTML as HH
-import Halogen.HTML.Events as HE
-import Halogen.HTML.Properties as HP
 import Tailwind as T
 import Web.Event.Event as Event
 import Web.UIEvent.MouseEvent as Mouse
@@ -27,10 +28,14 @@ data Action
   | Navigate Route Event.Event
 
 type State
-  = { redirect :: Boolean } -- TODO: Maybe Route instead
+  = { redirect :: Boolean -- TODO: Maybe Route instead
+    , success :: Boolean
+    }
 
 type Input
-  = { redirect :: Boolean }
+  = { redirect :: Boolean
+    , success :: Boolean
+    }
 
 type ChildSlots
   = ( formless :: F.Slot LoginForm FormQuery () LoginFields Unit )
@@ -58,11 +63,11 @@ component =
             Just profile -> do
               void $ H.query F._formless unit $ F.injQuery $ SetLoginError false unit
               st <- H.get
-              when st.redirect (navigate Home)
+              when st.redirect (navigate Dashboard)
     Navigate route e -> navigate_ e route
 
   render :: State -> H.ComponentHTML Action ChildSlots m
-  render _ =
+  render { success } =
     container
       [ HH.h1
           []
@@ -73,6 +78,30 @@ component =
               [ safeHref Register, HE.onClick (Just <<< Navigate Register <<< Mouse.toEvent) ]
               [ HH.text "Need an account?" ]
           ]
+      , whenElem success \_ ->
+          HH.div
+            [ HP.classes
+                [ T.flex
+                , T.justifyCenter
+                , T.itemsCenter
+                , T.m1
+                , T.fontMedium
+                , T.py1
+                , T.px2
+                , T.bgWhite
+                , T.roundedMd
+                , T.textGreen700
+                , T.bgGreen100
+                , T.border
+                , T.borderGreen300
+                ]
+            ]
+            [ HH.div
+                [ HP.classes [ T.text2xl, T.fontNormal, T.maxWFull, T.flexInitial ] ]
+                [ HH.text "Registration succesful :)"
+                , HH.div [ HP.classes [ T.textSm, T.textBase ] ] [ HH.text "Login to start using the app" ]
+                ]
+            ]
       , HH.slot F._formless unit formComponent unit (Just <<< HandleLoginForm)
       ]
     where
