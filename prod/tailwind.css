@@ -361,6 +361,11 @@ video {
   background-color: rgba(249, 168, 212, var(--tw-bg-opacity));
 }
 
+.bg-pink-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(190, 24, 93, var(--tw-bg-opacity));
+}
+
 .hover\:bg-pink-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgba(190, 24, 93, var(--tw-bg-opacity));
@@ -432,6 +437,10 @@ video {
 
 .flex-col {
   flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
 }
 
 .items-center {
@@ -531,6 +540,10 @@ video {
 
 .ml-2 {
   margin-left: 0.5rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
 }
 
 .mb-4 {
