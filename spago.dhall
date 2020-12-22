@@ -21,12 +21,16 @@
   , "routing"
   , "routing-duplex"
   , "slug"
+  , "strings"
   , "variant"
   ]
 , sources =
   [ "src/**/*.purs"
-  -- https://discourse.purescript.org/t/how-do-you-read-node-env-while-bundling/1743/3
-  , "${if (((env:PRODUCTION : Bool) ? False )) then "env/prod/*.purs" else "env/dev/*.purs"}"
+  , "${      if (env:PRODUCTION : Bool) ? False
+
+       then  "env/prod/*.purs"
+
+       else  "env/dev/*.purs"}"
   , "test/**/*.purs"
   ]
 }
