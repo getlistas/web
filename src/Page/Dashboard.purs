@@ -11,12 +11,13 @@ import Data.Traversable (traverse)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource, getListResources)
 import Listasio.Component.HTML.Header (header)
-import Listasio.Component.HTML.Utils (maybeElem, whenElem)
+import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Resource (ListResource)
@@ -26,6 +27,7 @@ import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
 import Tailwind as T
 import Web.Event.Event (Event)
+import Web.UIEvent.MouseEvent as Mouse
 
 data Action
   = Initialize
@@ -87,7 +89,26 @@ component = Connect.component $ H.mkComponent
     HH.div
       [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
       [ header currentUser Navigate Dashboard
-      , HH.div [ HP.classes [ T.mt10 ] ] [ feed ]
+      , HH.div
+          [ HP.classes [ T.mt10 ] ]
+          [ HH.a
+              [ safeHref CreateList
+              , HE.onClick (Just <<< Navigate CreateList <<< Mouse.toEvent)
+              , HP.classes
+                  [ T.cursorPointer
+                  , T.py2
+                  , T.px4
+                  , T.bgPink700
+                  , T.textWhite
+                  , T.fontSemibold
+                  , T.roundedLg
+                  , T.shadowMd
+                  , T.focusOutlineNone
+                  ]
+              ]
+            [ HH.text "Create new list" ]
+          ]
+      , HH.div [ HP.classes [ T.mt4 ] ] [ feed ]
       ]
     where
     feed = case lists of

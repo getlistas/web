@@ -15,6 +15,10 @@ bgGreen100 = ClassName "bg-green-100"
 bgPink300 :: ClassName
 bgPink300 = ClassName "bg-pink-300"
 
+-- | bgPink700
+bgPink700 :: ClassName
+bgPink700 = ClassName "bg-pink-700"
+
 -- | bgRed100
 bgRed100 :: ClassName
 bgRed100 = ClassName "bg-red-100"
