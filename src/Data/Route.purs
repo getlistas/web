@@ -26,6 +26,7 @@ data Route
   | Done
   | Discover
   | VerifyEmailSuccess
+  | VerifyEmailFailure
 
 derive instance genericRoute :: Generic Route _
 
@@ -51,6 +52,7 @@ routeCodec =
         , "Done": "dashboard" / "done" / noArgs
         , "Discover": "discover" / noArgs
         , "VerifyEmailSuccess": "verify-email" / "success" / noArgs
+        , "VerifyEmailFailure": "verify-email" / "failure" / noArgs
         }
 
 -- | This combinator transforms a codec over `String` into one that operates on the `Slug` type.

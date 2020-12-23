@@ -36,6 +36,7 @@ import Listasio.Page.Login as Login
 import Listasio.Page.Profile as Profile
 import Listasio.Page.Register as Register
 import Listasio.Page.Settings as Settings
+import Listasio.Page.VerifyFailure as VerifyFailure
 import Listasio.Page.ViewList as ViewList
 import Routing.Duplex as RD
 
@@ -65,6 +66,7 @@ type ChildSlots =
   , done :: OpaqueSlot Unit
   , discover :: OpaqueSlot Unit
   , verifySuccess :: OpaqueSlot Unit
+  , verifyFailure :: OpaqueSlot Unit
   )
 
 component
@@ -166,8 +168,11 @@ component = Connect.component $ H.mkComponent
         HH.slot (SProxy :: _ "discover") unit Discover.component {} absurd
 
       VerifyEmailSuccess ->
-        -- TODO do not show it if logged in
+        -- TODO: if the user is logged in navigate to the Dashboard instead
         HH.slot (SProxy :: _ "verifySuccess") unit Login.component { redirect: true, success: true } absurd
+
+      VerifyEmailFailure ->
+        HH.slot (SProxy :: _ "verifyFailure") unit VerifyFailure.component {} absurd
 
     Nothing ->
       HH.div_ [ HH.text "Oh no! That page wasn't found." ]
