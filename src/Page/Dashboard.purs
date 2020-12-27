@@ -4,10 +4,9 @@ import Prelude
 
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
-import Data.Array (head, null, snoc, zipWith)
+import Data.Array (null)
 import Data.Either (Either, note)
-import Data.Maybe (Maybe(..), fromMaybe)
-import Data.Traversable (traverse)
+import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -15,13 +14,13 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
-import Listasio.Capability.Resource.Resource (class ManageResource, getListResources)
+import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Component.HTML.CreateResource as CreateResource
 import Listasio.Component.HTML.Header (header)
-import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
+import Listasio.Component.HTML.List as List
+import Listasio.Component.HTML.Utils (safeHref)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Profile (Profile)
-import Listasio.Data.Resource (ListResource)
 import Listasio.Data.Route (Route(..))
 import Listasio.Env (UserEnv)
 import Network.RemoteData (RemoteData(..))
@@ -37,18 +36,15 @@ data Action
   | LoadLists
   | HandleCreateResource CreateResource.Output
 
-type Item
-  = { list :: ListWithIdAndUser
-    , resources :: Array ListResource
-    }
-
 type State
   = { currentUser :: Maybe Profile
-    , lists :: RemoteData String (Array Item)
+    , lists :: RemoteData String (Array ListWithIdAndUser)
     }
 
 type ChildSlots
-  = ( createResource :: CreateResource.Slot )
+  = ( createResource :: CreateResource.Slot
+    , list :: List.Slot
+    )
 
 noteError :: forall a. Maybe a -> Either String a
 noteError = note "Could not fetch your lists"
@@ -84,20 +80,16 @@ component = Connect.component $ H.mkComponent
     LoadLists -> do
       H.modify_ _ { lists = Loading }
       lists <- RemoteData.fromEither <$> noteError <$> getLists
-      H.modify_ _ { lists = map { list: _, resources: mempty } <$> lists }
-      resourcesByList <- traverse (getListResources <<< _._id."$oid") $ fromMaybe mempty $ RemoteData.toMaybe lists
-      let resources = map (fromMaybe mempty) resourcesByList
-      H.modify_ _ { lists = (\ls -> zipWith { list: _, resources: _} ls resources) <$> lists }
+      H.modify_ _ { lists = lists }
 
-    HandleCreateResource (CreateResource.Created resource) -> do
-      -- TODO !!!
-      H.modify_ \s -> s { lists = map (\i -> if i.list._id."$oid" == resource.list."$oid" then i { resources = snoc i.resources resource } else i) <$> s.lists }
+    HandleCreateResource (CreateResource.Created resource) ->
+      void $ H.query List._list resource.list."$oid" $ H.tell $ List.ResourceAdded resource
 
   render :: State -> H.ComponentHTML Action ChildSlots m
-  render { currentUser, lists } =
+  render st =
     HH.div
       [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-      [ header currentUser Navigate $ Just Dashboard
+      [ header st.currentUser Navigate $ Just Dashboard
       , HH.div
           [ HP.classes [ T.mt10 ] ]
           [ HH.a
@@ -120,20 +112,17 @@ component = Connect.component $ H.mkComponent
       , HH.div [ HP.classes [ T.mt4 ] ] [ feed ]
       ]
     where
-    mkOutput = Just <<< HandleCreateResource
-    mkInput items = { lists: _ } $ map _.list $ items
-
-    feed = case lists of
-      Success items | null items -> HH.text "Create a list :)"
-      Success items ->
+    feed = case st.lists of
+      Success lists | null lists -> HH.text "Create a list :)"
+      Success lists ->
         HH.div
           []
           [ HH.div
               [ HP.classes [ T.flex, T.flexWrap ] ]
-              $ map listInfo items
+              $ map (\list -> HH.slot List._list list._id."$oid" List.component { list } absurd) lists
           , HH.div
               [ HP.classes [ T.w1d2 ] ]
-              [ HH.slot CreateResource._createResource unit CreateResource.component (mkInput items) mkOutput ]
+              [ HH.slot CreateResource._createResource unit CreateResource.component { lists } (Just <<< HandleCreateResource) ]
           ]
 
       Failure msg ->
@@ -144,22 +133,3 @@ component = Connect.component $ H.mkComponent
           ]
 
       _ -> HH.div [ HP.classes [ T.textCenter ] ] [ HH.text "Loading ..." ]
-
-    listInfo :: forall slots. Item -> H.ComponentHTML Action slots m
-    listInfo { list: { title, description, tags }, resources } =
-      HH.div
-        [ HP.classes [ T.m4, T.p2, T.border4, T.borderIndigo400 ] ]
-        [ HH.div [ HP.classes [ T.textLg, T.borderB2, T.borderGray200, T.mb4 ] ] [ HH.text title ]
-        , maybeElem description \des -> HH.div [ HP.classes [ T.textSm, T.mb4 ] ] [ HH.text des ]
-        , whenElem (not $ null tags) \_ ->
-            HH.div
-              [ HP.classes [ T.flex, T.textSm ] ]
-              $ map ((\t -> HH.div [ HP.classes [ T.mr2 ] ] [ HH.text t ]) <<< ("#" <> _)) tags
-        , maybeElem (head resources) \next ->
-            HH.div
-              [ HP.classes [ T.mt4 ] ]
-              [ HH.text "Next item: "
-              , HH.a [ HP.classes [ T.underline ], HP.href next.url ] [ HH.text next.title ]
-              ]
-
-        ]

@@ -110,7 +110,7 @@ component = Connect.component $ H.mkComponent
         case isJust currentUser && dest `elem` [ Login, Register ] of
           false -> H.modify_ _ { route = Just dest }
           _ -> pure unit
-      pure (Just a)
+      pure $ Just a
 
   -- Display the login page instead of the expected page if there is no current user
   authorize :: Maybe Profile -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
