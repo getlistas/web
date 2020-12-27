@@ -9,14 +9,13 @@ import Data.Either (Either, note)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Traversable (traverse)
 import Effect.Aff.Class (class MonadAff)
-import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
-import Listasio.Capability.Resource.Resource (class ManageResource, createResource, getListResources)
+import Listasio.Capability.Resource.Resource (class ManageResource, getListResources)
 import Listasio.Component.HTML.CreateResource as CreateResource
 import Listasio.Component.HTML.Header (header)
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
@@ -36,7 +35,7 @@ data Action
   | Receive { currentUser :: Maybe Profile }
   | Navigate Route Event
   | LoadLists
-  | HandleCreateForm CreateResource.ResourceWithList
+  | HandleCreateResource CreateResource.Output
 
 type Item
   = { list :: ListWithIdAndUser
@@ -49,7 +48,7 @@ type State
     }
 
 type ChildSlots
-  = ( formless :: CreateResource.Slot )
+  = ( createResource :: CreateResource.Slot )
 
 noteError :: forall a. Maybe a -> Either String a
 noteError = note "Could not fetch your lists"
@@ -90,15 +89,9 @@ component = Connect.component $ H.mkComponent
       let resources = map (fromMaybe mempty) resourcesByList
       H.modify_ _ { lists = (\ls -> zipWith { list: _, resources: _} ls resources) <$> lists }
 
-    HandleCreateForm { description, title, url, list: listId } -> do
-      { lists } <- H.get
-      mbNewResource <- createResource { description, title, url } listId
-      case mbNewResource of
-        Just resource -> do
-          H.modify_ \s -> s { lists = map (\i -> if i.list._id."$oid" == listId then i { resources = snoc i.resources resource  } else i) <$> s.lists }
-          void $ H.query F._formless unit $ F.injQuery $ CreateResource.SetCreateError false unit
-
-        Nothing -> void $ H.query F._formless unit $ F.injQuery $ CreateResource.SetCreateError true unit
+    HandleCreateResource (CreateResource.Created resource) -> do
+      -- TODO !!!
+      H.modify_ \s -> s { lists = map (\i -> if i.list._id."$oid" == resource.list."$oid" then i { resources = snoc i.resources resource } else i) <$> s.lists }
 
   render :: State -> H.ComponentHTML Action ChildSlots m
   render { currentUser, lists } =
@@ -127,6 +120,9 @@ component = Connect.component $ H.mkComponent
       , HH.div [ HP.classes [ T.mt4 ] ] [ feed ]
       ]
     where
+    mkOutput = Just <<< HandleCreateResource
+    mkInput items = { lists: _ } $ map _.list $ items
+
     feed = case lists of
       Success items | null items -> HH.text "Create a list :)"
       Success items ->
@@ -137,7 +133,7 @@ component = Connect.component $ H.mkComponent
               $ map listInfo items
           , HH.div
               [ HP.classes [ T.w1d2 ] ]
-              [ HH.slot F._formless unit CreateResource.formComponent ({ lists: _ } $ map _.list $ items) (Just <<< HandleCreateForm) ]
+              [ HH.slot CreateResource._createResource unit CreateResource.component (mkInput items) mkOutput ]
           ]
 
       Failure msg ->
