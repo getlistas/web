@@ -4,6 +4,14 @@ module.exports = {
   theme: {
     extend: {},
   },
-  variants: {},
-  plugins: [],
+  variants: {
+    extend: {
+      backgroundColor: ['checked'],
+      borderColor: ['checked'],
+      borderWidth: ['hover'],
+    }
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
 }
