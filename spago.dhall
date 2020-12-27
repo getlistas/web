@@ -12,6 +12,7 @@
   , "formatters"
   , "halogen"
   , "halogen-formless"
+  , "halogen-select"
   , "jwt"
   , "nonempty"
   , "now"
