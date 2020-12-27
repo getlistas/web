@@ -35,6 +35,8 @@ submit buttonText disabled =
         , T.shadowMd
         , T.hoverBgPink700
         , T.focusOutlineNone
+        , T.focusRing2
+        , T.focusRingPurple600
         ]
     , HP.disabled disabled
     ]
@@ -58,6 +60,8 @@ cancel buttonText disabled action =
         , T.shadowMd
         , T.hoverBgPink700
         , T.focusOutlineNone
+        , T.focusRing2
+        , T.focusRingPurple600
         ]
     , HP.disabled disabled
     ]
@@ -123,7 +127,6 @@ input sym form props =
                 , T.focusOutlineNone
                 , T.focusRing2
                 , T.focusRingPurple600
-                , T.focusBorderTransparent
                 ]
             ]
             props
