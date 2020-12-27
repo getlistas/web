@@ -4,7 +4,7 @@ import Prelude
 
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
-import Data.Array (null, snoc, zipWith)
+import Data.Array (head, null, snoc, zipWith)
 import Data.Either (Either, note)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Traversable (traverse)
@@ -159,9 +159,11 @@ component = Connect.component $ H.mkComponent
             HH.div
               [ HP.classes [ T.flex, T.textSm ] ]
               $ map ((\t -> HH.div [ HP.classes [ T.mr2 ] ] [ HH.text t ]) <<< ("#" <> _)) tags
-        , whenElem (not $ null resources) \_ ->
+        , maybeElem (head resources) \next ->
             HH.div
-              [ HP.classes [ T.mt4, T.flex, T.flexCol ] ]
-              $ map (\i -> HH.a [ HP.href i.url ] [ HH.text i.title ]) resources
+              [ HP.classes [ T.mt4 ] ]
+              [ HH.text "Next item: "
+              , HH.a [ HP.classes [ T.underline ], HP.href next.url ] [ HH.text next.title ]
+              ]
 
         ]
