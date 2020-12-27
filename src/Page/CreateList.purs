@@ -69,8 +69,8 @@ component = Connect.component $ H.mkComponent
     HandleCreateForm newList -> do
        mbCreatedList <- createList newList
        case mbCreatedList of
-            Just _ -> navigate Dashboard
-            Nothing -> void $ H.query F._formless unit $ F.injQuery $ SetCreateError true unit
+         Just _ -> navigate Dashboard
+         Nothing -> void $ H.query F._formless unit $ F.injQuery $ SetCreateError true unit
 
   render :: State -> H.ComponentHTML Action ChildSlots m
   render { currentUser } =
@@ -89,6 +89,7 @@ newtype CreateListForm r f
       ( title :: f V.FormError String String
       , description :: f V.FormError String (Maybe String)
       , tags :: f V.FormError String (Array String)
+      , is_public :: f V.FormError Boolean Boolean
       )
   )
 
@@ -122,6 +123,7 @@ formComponent =
           { title: V.required >>> V.minLength 3 >>> V.maxLength 50
           , description: V.toOptional $ V.minLength 5 >>> V.maxLength 500
           , tags: F.hoistFn_ (map trim <<< split (Pattern ","))
+          , is_public: F.noValidation
           }
     , initialInputs: Nothing
     , createError: false
@@ -164,6 +166,28 @@ formComponent =
           , Field.input proxies.tags form
               [ HP.placeholder "Tags (comman separated)"
               , HP.type_ HP.InputText
+              ]
+          , HH.label
+              [ HP.classes [ T.flex, T.itemsCenter, T.my4 ] ]
+              [ HH.input
+                  [ HP.type_ HP.InputCheckbox
+                  , HP.checked $ F.getInput proxies.is_public form
+                  , HE.onChange $ \_ -> Just $ F.modify proxies.is_public not
+                  , HP.classes
+                      [ T.appearanceNone
+                      , T.h6
+                      , T.w6
+                      , T.border
+                      , T.borderGray300
+                      , T.roundedMd
+                      , T.checkedBgBlue600
+                      , T.checkedBorderTransparent
+                      , T.focusOutlineNone
+                      ]
+                  ]
+              , HH.span
+                  [ HP.classes [ T.fontMedium, T.ml2 ] ]
+                  [ HH.text "This is a public list" ]
               ]
           , Field.submit "Create list" submitting
           ]

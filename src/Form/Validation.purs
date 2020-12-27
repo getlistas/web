@@ -30,6 +30,12 @@ errorToString = case _ of
   InvalidUsername -> "Invalid username"
   InvalidAvatar -> "Invalid image URL"
 
+class ToText item where
+  toText :: item -> String
+
+instance toTextString :: ToText String where
+  toText = identity
+
 -- | In order to validate a particular field, we need to give Formless a value of type `Validation`,
 -- | which takes several type parameters:
 -- |
@@ -101,3 +107,15 @@ toOptional v = F.Validation \form val ->
   case val == mempty of
     true -> pure (pure Nothing)
     _ -> (map <<< map) Just (F.runValidation v form val)
+
+-- | Validate an input only if it isn't empty.
+requiredFromOptional :: forall form m a b
+   . Monoid a
+  => Eq a
+  => Monad m
+  => F.Validation form m FormError a b
+  -> F.Validation form m FormError (Maybe a) b
+requiredFromOptional v = F.Validation \form val ->
+  case val of
+    Just val_ -> (map <<< map) identity (F.runValidation v form val_)
+    Nothing -> pure (Left Required)
