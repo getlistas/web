@@ -11,7 +11,6 @@ class Monad m <= ManageList m where
   createList :: List -> m (Maybe ListWithIdAndUser)
   getList :: String -> m (Maybe ListWithIdAndUser)
   getLists :: m (Maybe (Array ListWithIdAndUser))
-  -- updateList :: _ -> m (Maybe List)
   deleteList :: String -> m Unit
   discoverLists :: Pagination -> m (Maybe (Array ListWithIdAndUser))
 
@@ -19,6 +18,5 @@ instance manageListHalogenM :: ManageList m => ManageList (HalogenM st act slots
   createList = lift <<< createList
   getList = lift <<< getList
   getLists = lift getLists
-  -- updateList = lift <<< updateList
   deleteList = lift <<< deleteList
   discoverLists = lift <<< discoverLists

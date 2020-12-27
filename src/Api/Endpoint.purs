@@ -35,9 +35,9 @@ endpointCodec =
   root
     $ sum
         { "Login": "users" / "auth" / noArgs
-        , "User": "user" / noArgs -- TODO: slug ?
+        , "User": "user" / noArgs -- TODO: Slug
         , "Users": "users" / noArgs
-        , "List": "lists" / string segment
+        , "List": "lists" / string segment -- TODO: Slug
         , "Lists": "lists" / noArgs
         , "Discover": "discover" ?
             { skip: optional <<< int

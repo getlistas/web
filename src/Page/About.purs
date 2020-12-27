@@ -55,9 +55,11 @@ component = Connect.component $ H.mkComponent
   render { currentUser } =
     HH.div
       [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-      [ header currentUser Navigate About
+      [ header currentUser Navigate $ Just About
       , HH.div
           [ HP.classes [ T.container, T.textCenter, T.mt10 ] ]
-          [ HH.text "about" ]
+          [ HH.div [] [ HH.text "listas.io your favorite digital consumption manager" ]
+          , HH.div [ HP.classes [ T.mt10 ] ] [ HH.text "@ndelvalle <> @DvNahuel <> @gillchristian" ]
+          ]
       ]
 

@@ -10,7 +10,7 @@ footer =
     [ HH.div
         [ HP.classes [ T.container ] ]
         [ HH.a
-            [ HP.href "/" ] -- TODO: safeHref
+            [ HP.href "/" ]
             [ HH.text "conduit" ]
         , HH.span
             []

@@ -19,7 +19,7 @@ data Relation
 derive instance eqRelation :: Eq Relation
 
 type ProfileRep row
-  = ( name :: Username -- TODO: use NonEmptyString
+  = ( name :: Username
     , slug :: Username
     | row
     )

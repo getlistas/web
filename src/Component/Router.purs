@@ -106,17 +106,15 @@ component = Connect.component $ H.mkComponent
   handleQuery = case _ of
     Navigate dest a -> do
       { route, currentUser } <- H.get
-      -- don't re-render unnecessarily if the route is unchanged
       when (route /= Just dest) do
-        -- don't change routes if there is a logged-in user trying to access
-        -- a route only meant to be accessible to a not-logged-in session
-        case (isJust currentUser && dest `elem` [ Login, Register ]) of
+        case isJust currentUser && dest `elem` [ Login, Register ] of
           false -> H.modify_ _ { route = Just dest }
           _ -> pure unit
       pure (Just a)
 
-  -- Display the login page instead of the expected page if there is no current user; a simple
-  -- way to restrict access.
+  -- Display the login page instead of the expected page if there is no current user;
+  -- a simple way to restrict access.
+  -- TODO: navigate instead ?
   authorize :: Maybe Profile -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
   authorize mbProfile html = case mbProfile of
     Nothing ->
@@ -127,6 +125,7 @@ component = Connect.component $ H.mkComponent
   render :: State -> H.ComponentHTML Action ChildSlots m
   render { route, currentUser } = case route of
     Just r -> case r of
+      -- PUBLIC ----------------------------------------------------------------
       Home ->
         HH.slot (SProxy :: _ "home") unit Home.component {} absurd
 
@@ -139,18 +138,31 @@ component = Connect.component $ H.mkComponent
       Register ->
         HH.slot (SProxy :: _ "register") unit Register.component unit absurd
 
-      Settings ->
-        HH.slot (SProxy :: _ "settings") unit Settings.component unit absurd
-          # authorize currentUser
-
       Profile _ ->
         HH.slot (SProxy :: _ "profile") unit Profile.component {} absurd
 
       ViewList _ ->
         HH.slot (SProxy :: _ "viewList") unit ViewList.component {} absurd
 
+      Discover ->
+        HH.slot (SProxy :: _ "discover") unit Discover.component {} absurd
+
+      VerifyEmailSuccess ->
+        -- TODO: if the user is logged in navigate to the Dashboard instead
+        HH.slot (SProxy :: _ "verifySuccess") unit Login.component { redirect: true, success: true } absurd
+
+      VerifyEmailFailure ->
+        -- TODO: if the user is logged in navigate to the Dashboard instead
+        HH.slot (SProxy :: _ "verifyFailure") unit VerifyFailure.component {} absurd
+
+      -- PRIVATE ---------------------------------------------------------------
+      Settings ->
+        HH.slot (SProxy :: _ "settings") unit Settings.component {} absurd
+          # authorize currentUser
+
       CreateList ->
         HH.slot (SProxy :: _ "createList") unit CreateList.component {} absurd
+          # authorize currentUser
 
       EditList _ ->
         HH.slot (SProxy :: _ "editList") unit EditList.component {} absurd
@@ -163,16 +175,6 @@ component = Connect.component $ H.mkComponent
       Done ->
         HH.slot (SProxy :: _ "done") unit Done.component {} absurd
           # authorize currentUser
-
-      Discover ->
-        HH.slot (SProxy :: _ "discover") unit Discover.component {} absurd
-
-      VerifyEmailSuccess ->
-        -- TODO: if the user is logged in navigate to the Dashboard instead
-        HH.slot (SProxy :: _ "verifySuccess") unit Login.component { redirect: true, success: true } absurd
-
-      VerifyEmailFailure ->
-        HH.slot (SProxy :: _ "verifyFailure") unit VerifyFailure.component {} absurd
 
     Nothing ->
       HH.div_ [ HH.text "Oh no! That page wasn't found." ]

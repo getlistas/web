@@ -49,7 +49,6 @@ newtype Token
 
 -- | No `newtype` instance allowed!
 derive instance eqToken :: Eq Token
-
 derive instance ordToken :: Ord Token
 
 -- | Manual instance to avoid revealing the token.
@@ -91,11 +90,7 @@ defaultRequest (BaseURL baseUrl) auth { endpoint, method } =
     Put b -> Tuple PUT b
     Delete -> Tuple DELETE Nothing
 
--- | The following data types and functions aren't a natural fit for this module,
--- | but they've been included here because they operate on tokens.
--- |
--- | We can't create or manipulate the `Token` type outside this module!
--- | These requests will be the only way to create an auth token in the system.
+-- TODO: move Register stuff out (only login uses the token)
 type RegisterFields
   = { email :: Email
     , password :: String
@@ -112,6 +107,11 @@ registerCodec =
     , slug: Username.codec
     }
 
+-- | The following data types and functions aren't a natural fit for this module,
+-- | but they've been included here because they operate on tokens.
+-- |
+-- | We can't create or manipulate the `Token` type outside this module!
+-- | These requests will be the only way to create an auth token in the system.
 type LoginFields
   = { email :: Email
     , password :: String
@@ -131,10 +131,12 @@ userCodec = CAR.object "user" { user: Profile.profileCodec }
 
 login :: forall m. MonadAff m => BaseURL -> LoginFields -> m (Either String (Tuple Token Profile))
 login baseUrl fields = do
-  res <- liftAff $ request $ defaultRequest baseUrl Nothing { endpoint: Login, method: Post $ Just $ Codec.encode loginCodec fields }
+  res <- liftAff $ request $ defaultRequest baseUrl Nothing conf
   case res of
     Left e -> pure $ Left $ printError e
-    Right v -> pure $ lmap printJwtError $ decodeAuthProfileFromToken =<< (lmap Jwt.JsonDecodeError $ Codec.decode CA.json v.body)
+    Right v -> pure $ lmap printJwtError $ decodeAuthProfileFromToken =<< decode v.body
+  where conf = { endpoint: Login, method: Post $ Just $ Codec.encode loginCodec fields }
+        decode = lmap Jwt.JsonDecodeError <<< Codec.decode CA.json
 
 printJwtError :: Jwt.JwtError JsonDecodeError -> String
 printJwtError = case _ of
@@ -147,20 +149,20 @@ printJwtError = case _ of
 -- | First, we'll decode the token field from the payload, and then we'll decode
 -- | the user's profile from the token itself.
 decodeAuthProfileFromToken :: Json -> Either (Jwt.JwtError JsonDecodeError) (Tuple Token Profile)
-decodeAuthProfileFromToken tokenPayload = do
-  { access_token } <- lmap Jwt.JsonDecodeError $ Codec.decode tokenResponseCodec tokenPayload
+decodeAuthProfileFromToken payload = do
+  { access_token } <- lmap Jwt.JsonDecodeError $ Codec.decode tokenCodec payload
   { user } <- Jwt.decodeWith (Codec.decode userCodec) access_token
-  pure (Tuple (Token access_token) user)
-  where
-  tokenResponseCodec = CAR.object "access_token" { access_token: CA.string }
+  pure $ Tuple (Token access_token) user
+  where tokenCodec = CAR.object "access_token" { access_token: CA.string }
 
 -- TODO: move to AppM (since it doesn't use token)
 register :: forall m. MonadAff m => BaseURL -> RegisterFields -> m (Either String Profile)
 register baseUrl fields = do
-  res <- liftAff $ request $ defaultRequest baseUrl Nothing { endpoint: Users, method: Post $ Just $ Codec.encode registerCodec fields }
-  case res of
-    Left e -> pure $ Left $ printError e
-    Right v -> pure $ lmap printJsonDecodeError $ Codec.decode Profile.profileCodec v.body
+  res <- liftAff $ request $ defaultRequest baseUrl Nothing conf
+  pure $ decode <$> _.body =<< lmap printError res
+  where method = Post $ Just $ Codec.encode registerCodec fields
+        conf = { endpoint: Users, method }
+        decode = lmap printJsonDecodeError <<< Codec.decode Profile.profileCodec
 
 tokenKey = "token" :: String
 

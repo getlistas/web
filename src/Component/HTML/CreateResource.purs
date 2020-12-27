@@ -165,8 +165,5 @@ formComponent =
           ]
       ]
     where handler = Just <<< F.injAction <<< HandleDropdown
-          listToItem { _id, title } = { value: _id."$oid", label: title }
-          ddInput =
-            { placeholder: "Choose a list"
-            , items: map (DDItem <<< listToItem) lists
-            }
+          listToItem { _id, title } = DDItem { value: _id."$oid", label: title }
+          ddInput = { placeholder: "Choose a list", items: map listToItem lists }
