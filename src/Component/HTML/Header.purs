@@ -9,7 +9,6 @@ import Halogen.HTML.Properties as HP
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem, cx)
 import Listasio.Data.Profile (ProfileRep)
 import Listasio.Data.Route (Route(..))
-import Listasio.Data.Username (Username)
 import Listasio.Data.Username as Username
 import Tailwind as T
 import Web.Event.Event (Event)
