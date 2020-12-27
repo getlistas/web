@@ -147,10 +147,6 @@ fontSemibold = ClassName "font-semibold"
 h6 :: ClassName
 h6 = ClassName "h-6"
 
--- | hoverBgGreen100
-hoverBgGreen100 :: ClassName
-hoverBgGreen100 = ClassName "hover:bg-green-100"
-
 -- | hoverBgPink700
 hoverBgPink700 :: ClassName
 hoverBgPink700 = ClassName "hover:bg-pink-700"
@@ -203,10 +199,6 @@ minHScreen = ClassName "min-h-screen"
 ml2 :: ClassName
 ml2 = ClassName "ml-2"
 
--- | mr1
-mr1 :: ClassName
-mr1 = ClassName "mr-1"
-
 -- | mr2
 mr2 :: ClassName
 mr2 = ClassName "mr-2"
@@ -239,6 +231,10 @@ my4 = ClassName "my-4"
 opacity50 :: ClassName
 opacity50 = ClassName "opacity-50"
 
+-- | p1
+p1 :: ClassName
+p1 = ClassName "p-1"
+
 -- | p2
 p2 :: ClassName
 p2 = ClassName "p-2"
@@ -270,10 +266,6 @@ py1 = ClassName "py-1"
 -- | py2
 py2 :: ClassName
 py2 = ClassName "py-2"
-
--- | roundedFull
-roundedFull :: ClassName
-roundedFull = ClassName "rounded-full"
 
 -- | roundedLg
 roundedLg :: ClassName
