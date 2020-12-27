@@ -39,6 +39,29 @@ submit buttonText disabled =
     , HP.disabled disabled
     ]
 
+cancel :: forall i p. String -> Boolean -> p -> HH.HTML i p
+cancel buttonText disabled action =
+  HH.input
+    [ HP.type_ HP.InputButton
+    , HP.value buttonText
+    , HE.onClick \_ -> Just action
+    , HP.classes
+        [ T.cursorPointer
+        , cx T.cursorNotAllowed disabled
+        , cx T.opacity50 disabled
+        , T.py2
+        , T.px4
+        , T.bgGray300
+        , T.textWhite
+        , T.fontSemibold
+        , T.roundedLg
+        , T.shadowMd
+        , T.hoverBgPink700
+        , T.focusOutlineNone
+        ]
+    , HP.disabled disabled
+    ]
+
 -- | This helper function creates an input field hooked up with Formless, including styles,
 -- | events, error handling, and more. The function ensures at compile-time that the field we
 -- | want actually exists in the form, that the input, error, and output types of the field are

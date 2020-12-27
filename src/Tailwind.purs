@@ -147,9 +147,9 @@ fontSemibold = ClassName "font-semibold"
 h6 :: ClassName
 h6 = ClassName "h-6"
 
--- | hoverBgPink100
-hoverBgPink100 :: ClassName
-hoverBgPink100 = ClassName "hover:bg-pink-100"
+-- | hoverBgGreen100
+hoverBgGreen100 :: ClassName
+hoverBgGreen100 = ClassName "hover:bg-green-100"
 
 -- | hoverBgPink700
 hoverBgPink700 :: ClassName

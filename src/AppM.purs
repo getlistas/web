@@ -132,5 +132,12 @@ instance manageListAppM :: ManageList AppM where
 
 instance manageResourceAppM :: ManageResource AppM where
   getListResources listId = do
-     mbJson <- mkAuthRequest { endpoint: ListResources listId, method: Get }
-     decode (CAC.array Resource.listResourceCodec) mbJson
+    mbJson <- mkAuthRequest { endpoint: ListResources listId, method: Get }
+    decode (CAC.array Resource.listResourceCodec) mbJson
+
+  createResource newResource listId = do
+    let
+      method = Post $ Just $ Codec.encode Resource.resourceCodec newResource
+    mbJson <- mkAuthRequest { endpoint: ListResources listId, method }
+    decode Resource.listResourceCodec mbJson
+

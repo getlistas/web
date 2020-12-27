@@ -10,6 +10,7 @@ type ListRep row
   = ( title :: String -- TODO should be NonEmptyString ?
     , description :: Maybe String
     , tags :: Array String
+    , is_public :: Boolean
     | row
     )
 
@@ -20,16 +21,12 @@ type List
 type ID
   = { "$oid" :: String }
 
+-- TODO should be NonEmptyString or newtype ID ?
+-- TODO:
+--   created_at  :: DateTime<Utc>
+--   updated_at  :: DateTime<Utc>
 type ListWithIdAndUser
-  = {
-    | ListRep
-      ( _id :: ID -- TODO should be NonEmptyString or newtype ID ?
-      , user :: ID
-    -- TODO
-    -- created_at  :: DateTime<Utc>
-    -- updated_at  :: DateTime<Utc>
-      )
-    }
+  = { | ListRep ( _id :: ID, user :: ID ) }
 
 listCodec :: JsonCodec List
 listCodec =
@@ -37,6 +34,7 @@ listCodec =
     { title: CA.string
     , description: CAC.maybe CA.string
     , tags: CAC.array CA.string
+    , is_public: CA.boolean
     }
 
 listWitIdAndUserCodec :: JsonCodec ListWithIdAndUser
@@ -47,4 +45,5 @@ listWitIdAndUserCodec =
     , description: CAC.maybe CA.string
     , tags: CAC.array CA.string
     , user: CAR.object "ID" { "$oid": CA.string }
+    , is_public: CA.boolean
     }
