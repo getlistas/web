@@ -24,8 +24,6 @@ codec :: JsonCodec Username
 codec = wrapIso Username CA.string
 
 -- | Enforce a username is non-empty.
--- |
--- | TODO: better validation
 parse :: String -> Maybe Username
 parse = case _ of
   "" -> Nothing

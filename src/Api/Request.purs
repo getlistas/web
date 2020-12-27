@@ -90,7 +90,6 @@ defaultRequest (BaseURL baseUrl) auth { endpoint, method } =
     Put b -> Tuple PUT b
     Delete -> Tuple DELETE Nothing
 
--- TODO: move Register stuff out (only login uses the token)
 type RegisterFields
   = { email :: Email
     , password :: String
@@ -155,7 +154,6 @@ decodeAuthProfileFromToken payload = do
   pure $ Tuple (Token access_token) user
   where tokenCodec = CAR.object "access_token" { access_token: CA.string }
 
--- TODO: move to AppM (since it doesn't use token)
 register :: forall m. MonadAff m => BaseURL -> RegisterFields -> m (Either String Profile)
 register baseUrl fields = do
   res <- liftAff $ request $ defaultRequest baseUrl Nothing conf

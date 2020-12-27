@@ -112,9 +112,7 @@ component = Connect.component $ H.mkComponent
           _ -> pure unit
       pure (Just a)
 
-  -- Display the login page instead of the expected page if there is no current user;
-  -- a simple way to restrict access.
-  -- TODO: navigate instead ?
+  -- Display the login page instead of the expected page if there is no current user
   authorize :: Maybe Profile -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
   authorize mbProfile html = case mbProfile of
     Nothing ->
@@ -148,11 +146,9 @@ component = Connect.component $ H.mkComponent
         HH.slot (SProxy :: _ "discover") unit Discover.component {} absurd
 
       VerifyEmailSuccess ->
-        -- TODO: if the user is logged in navigate to the Dashboard instead
         HH.slot (SProxy :: _ "verifySuccess") unit Login.component { redirect: true, success: true } absurd
 
       VerifyEmailFailure ->
-        -- TODO: if the user is logged in navigate to the Dashboard instead
         HH.slot (SProxy :: _ "verifyFailure") unit VerifyFailure.component {} absurd
 
       -- PRIVATE ---------------------------------------------------------------

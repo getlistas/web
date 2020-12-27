@@ -124,7 +124,6 @@ formComponent =
     $ F.defaultSpec
         { render = renderForm
         , handleEvent = handleEvent
-        -- TODO handleQuery like Login
         , handleAction = handleAction
         }
   where

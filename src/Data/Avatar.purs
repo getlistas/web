@@ -21,7 +21,6 @@ derive instance eqAvatar :: Eq Avatar
 codec :: JsonCodec Avatar
 codec = CA.prismaticCodec parse toString CA.string
 
--- | TODO: validate for URL
 parse :: String -> Maybe Avatar
 parse = case _ of
   "" -> Nothing
@@ -32,8 +31,6 @@ toString (Avatar str) = str
 
 -- | Avatars are optional, but we don't want to display broken images on our site.
 -- | This function provides a fallback avatar for when a user doesn't have one.
--- |
--- | TODO: default avatar URL
 toStringWithDefault :: Maybe Avatar -> String
 toStringWithDefault (Just av) = toString av
 toStringWithDefault Nothing =

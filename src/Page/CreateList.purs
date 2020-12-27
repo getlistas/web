@@ -158,7 +158,6 @@ formComponent =
               [ HP.placeholder "Title"
               , HP.type_ HP.InputText
               ]
-          -- TODO: use textarea
           , Field.input proxies.description form
               [ HP.placeholder "Description"
               , HP.type_ HP.InputText

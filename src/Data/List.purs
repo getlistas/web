@@ -7,7 +7,7 @@ import Data.Codec.Argonaut.Record as CAR
 import Data.Maybe (Maybe)
 
 type ListRep row
-  = ( title :: String -- TODO should be NonEmptyString ?
+  = ( title :: String
     , description :: Maybe String
     , tags :: Array String
     , is_public :: Boolean
@@ -17,14 +17,11 @@ type ListRep row
 type List
   = { | ListRep () }
 
--- TODO to string eventually
 type ID
   = { "$oid" :: String }
 
--- TODO should be NonEmptyString or newtype ID ?
--- TODO:
---   created_at  :: DateTime<Utc>
---   updated_at  :: DateTime<Utc>
+-- created_at  :: DateTime<Utc>
+-- updated_at  :: DateTime<Utc>
 type ListWithIdAndUser
   = { | ListRep ( _id :: ID, user :: ID ) }
 

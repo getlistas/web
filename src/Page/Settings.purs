@@ -95,7 +95,6 @@ component = Connect.component $ H.mkComponent
         [ HH.h1
             []
             [ HH.text "Settings" ]
-        -- TODO: settings form
         , whenElem false \_ -> HH.slot F._formless unit formComponent unit (Just <<< HandleForm)
         , HH.div
             [ HP.classes [ T.mt8 ] ]

@@ -16,21 +16,19 @@ type ResourceRep row
 type Resource
   = { | ResourceRep () }
 
--- TODO to string
 type ID = { "$oid" :: String }
 idCodec :: JsonCodec ID
 idCodec = CAR.object "ID" { "$oid": CA.string }
 
--- TODO:
---   created_at  :: DateTime<Utc>
---   updated_at  :: DateTime<Utc>
+-- created_at  :: DateTime<Utc>
+-- updated_at  :: DateTime<Utc>
 type ListResource
   = {
     | ResourceRep
-      ( list :: ID -- TODO Newtype
-      , _id :: ID -- TODO Newtype
-      , user :: ID -- TODO Newtype
-      , completed_at :: Maybe String -- TODO Date type
+      ( list :: ID
+      , _id :: ID
+      , user :: ID
+      , completed_at :: Maybe String
       )
     }
 

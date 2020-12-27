@@ -71,7 +71,6 @@ spec = Select.defaultSpec
   where
   render st =
     HH.div
-      -- TODO: classes
       [ HP.classes
           [ cx (HC.ClassName "dropdown is-active") (st.visibility == Select.On)
           , cx (HC.ClassName "dropdown") (st.visibility /= Select.On)
@@ -129,7 +128,6 @@ toggle props st =
              ]
          ]
       )
-      -- TODO: Gray out on placeholder case
       [ HH.text $ fromMaybe st.placeholder (toText <$> st.selected) ]
     ]
 
@@ -140,7 +138,6 @@ menu
   -> H.ComponentHTML (Select.Action act) ps m
 menu st =
   HH.div
-  -- TODO: classes
   [ HP.classes [ HC.ClassName "dropdown-menu" ] ]
   [ if st.visibility == Select.Off then HH.text "" else
     HH.div

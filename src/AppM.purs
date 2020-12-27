@@ -58,7 +58,6 @@ instance nowAppM :: Now AppM where
   nowTime = liftEffect Now.nowTime
   nowDateTime = liftEffect Now.nowDateTime
 
--- TODO: log to a service on production
 instance logMessagesAppM :: LogMessages AppM where
   logMessage log = do
     env <- ask
@@ -74,7 +73,6 @@ instance navigateAppM :: Navigate AppM where
     { state } <- locationState
     liftEffect $ pushState state $ print Route.routeCodec $ route
 
-  -- TODO: name
   navigate_ event route = do
     liftEffect $ preventDefault event
     navigate route

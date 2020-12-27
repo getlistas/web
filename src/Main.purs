@@ -41,7 +41,6 @@ main = HA.runHalogenAff do
     userBus <- Bus.make
 
     readToken >>= traverse_ \token -> do
-      -- TODO: log decoding error
       liftEffect $ Ref.write (hush $ decodeToken token) currentUser
 
     pure { currentUser, userBus }

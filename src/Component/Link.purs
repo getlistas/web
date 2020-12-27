@@ -52,6 +52,5 @@ component = H.mkComponent
   render :: State -> H.ComponentHTML Action () m
   render { label, route } =
     HH.a
-      -- TODO add classes
       [ safeHref route, HE.onClick $ Just <<< Navigate route ]
       [ HH.text label ]

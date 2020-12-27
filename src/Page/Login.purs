@@ -28,7 +28,7 @@ data Action
   | Navigate Route Event.Event
 
 type State
-  = { redirect :: Boolean -- TODO: Maybe Route instead
+  = { redirect :: Boolean
     , success :: Boolean
     }
 
@@ -145,7 +145,6 @@ formComponent =
         , handleAction = handleAction
         }
   where
-  -- TODO: more expressive error type than Boolean
   formInput :: i -> F.Input LoginForm ( loginError :: Boolean ) m
   formInput _ =
     { validators:

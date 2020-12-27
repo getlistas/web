@@ -80,8 +80,6 @@ maxLength :: ∀ form m. Monad m => Int -> F.Validation form m FormError String 
 maxLength n = F.hoistFnE_ $ cond (\str -> String.length str <= n) TooLong
 
 -- | A fairly naive requirement that it at least includes the `@` symbol.
--- |
--- | TODO: improve this validation
 emailFormat :: ∀ form m. Monad m => F.Validation form m FormError String Email
 emailFormat = F.hoistFnE_ $ map Email <<< cond (String.contains (String.Pattern "@")) InvalidEmail
 

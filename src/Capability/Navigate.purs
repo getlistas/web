@@ -10,7 +10,7 @@ import Web.Event.Event (Event)
 
 class Monad m <= Navigate m where
   navigate :: Route -> m Unit
-  navigate_ :: Event -> Route -> m Unit -- TODO better name !!!
+  navigate_ :: Event -> Route -> m Unit
   logout :: m Unit
   locationState :: m LocationState
 

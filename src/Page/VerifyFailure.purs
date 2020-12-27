@@ -51,8 +51,6 @@ component = Connect.component $ H.mkComponent
 
     Navigate route e -> navigate_ e route
 
-  -- TODO: add email field to resend verification email
-  -- TODO: if the user is logged in navigate to the Dashboard instead
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render { currentUser } =
     HH.div

@@ -82,7 +82,6 @@ component = Connect.component $ H.mkComponent
 
     Navigate route e -> navigate_ e route
 
-    -- TODO !!!
     LoadLists -> do
       H.modify_ _ { lists = Loading }
       lists <- RemoteData.fromEither <$> noteError <$> getLists
@@ -91,7 +90,6 @@ component = Connect.component $ H.mkComponent
       let resources = map (fromMaybe mempty) resourcesByList
       H.modify_ _ { lists = (\ls -> zipWith { list: _, resources: _} ls resources) <$> lists }
 
-    -- TODO !!!
     HandleCreateForm { description, title, url, list: listId } -> do
       { lists } <- H.get
       mbNewResource <- createResource { description, title, url } listId

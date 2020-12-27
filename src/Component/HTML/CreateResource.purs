@@ -45,7 +45,6 @@ newtype CreateResourceForm r f
 derive instance newtypeCreateResourceForm :: Newtype (CreateResourceForm r f) _
 
 data FormQuery a
-  -- TODO: use a more expressive type instead of Boolean
   = SetCreateError Boolean a
 
 derive instance functorFormQuery :: Functor FormQuery
@@ -79,7 +78,6 @@ formComponent =
     { validators:
         CreateResourceForm
           { title: V.required >>> V.minLength 3 >>> V.maxLength 50
-          -- TODO: fancy URL validation
           , url: V.required >>> V.minLength 5 >>> V.maxLength 500
           , description:  V.toOptional $ V.minLength 5 >>> V.maxLength 500
           , list: V.requiredFromOptional $ F.noValidation
@@ -148,12 +146,10 @@ formComponent =
               [ HP.placeholder "URL"
               , HP.type_ HP.InputText
               ]
-          -- TODO: use textarea
           , Field.input proxies.description form
               [ HP.placeholder "Description"
               , HP.type_ HP.InputText
               ]
-          -- TODO: show error when not selected
           , HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput handler
           , HH.div
               [ HP.classes [ T.flex, T.justifyEnd ] ]

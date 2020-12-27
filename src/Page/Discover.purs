@@ -91,7 +91,6 @@ component = Connect.component $ H.mkComponent
       H.modify_ _ { lists = RemoteData.fromEither lists, isLast = isLast }
 
     LoadMore -> do
-      -- TODO lenses
       state <- H.get
       H.modify_ _ { lists = map (_ { refreshing = true }) state.lists }
 
@@ -144,7 +143,6 @@ component = Connect.component $ H.mkComponent
 
     loadMore :: Boolean -> H.ComponentHTML Action slots m
     loadMore disabled =
-      -- TODO abstract button (not only submit & cancel)
       HH.input
         [ HP.type_ HP.InputButton
         , HP.value "Load more"

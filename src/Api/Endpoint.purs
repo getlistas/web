@@ -23,7 +23,7 @@ data Endpoint
   = Login
   | User
   | Users
-  | List String -- TODO user ID newtype
+  | List String
   | Lists
   | Discover Pagination
   | ListResources String
@@ -35,9 +35,9 @@ endpointCodec =
   root
     $ sum
         { "Login": "users" / "auth" / noArgs
-        , "User": "user" / noArgs -- TODO: Slug
+        , "User": "user" / noArgs
         , "Users": "users" / noArgs
-        , "List": "lists" / string segment -- TODO: Slug
+        , "List": "lists" / string segment
         , "Lists": "lists" / noArgs
         , "Discover": "discover" ?
             { skip: optional <<< int

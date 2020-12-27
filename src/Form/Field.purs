@@ -90,8 +90,6 @@ cancel buttonText disabled action =
 -- | type `String` at the label `sym` in the row `fields`. In short, we require at compile-time
 -- | that an input field of the correct type exists in our form state at the key we provided as
 -- | the function's first argument.
--- |
--- | TODO: remove this once I understand it :)
 input ::
   forall form act slots m sym fields inputs out t0 t1.
   IsSymbol sym =>
