@@ -17,9 +17,7 @@ newtype Username
   = Username String
 
 derive instance eqUsername :: Eq Username
-
 derive instance ordUsername :: Ord Username
-
 derive instance newtypeUsername :: Newtype Username _
 
 codec :: JsonCodec Username
@@ -27,11 +25,11 @@ codec = wrapIso Username CA.string
 
 -- | Enforce a username is non-empty.
 -- |
--- | TODO: better validation of usernames
+-- | TODO: better validation
 parse :: String -> Maybe Username
-parse "" = Nothing
-
-parse str = Just (Username str)
+parse = case _ of
+  "" -> Nothing
+  str -> Just (Username str)
 
 toString :: Username -> String
 toString (Username str) = str

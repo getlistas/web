@@ -57,13 +57,15 @@ component =
   handleAction = case _ of
     HandleLoginForm fields -> do
       -- broadcast the user changes to subscribed components so they receive the up-to-date value
-      loginUser fields
-        >>= case _ of
-            Nothing -> void $ H.query F._formless unit $ F.injQuery $ SetLoginError true unit
-            Just profile -> do
-              void $ H.query F._formless unit $ F.injQuery $ SetLoginError false unit
-              st <- H.get
-              when st.redirect (navigate Dashboard)
+      mbProfile <- loginUser fields
+      case mbProfile of
+        Nothing -> void $ H.query F._formless unit $ F.injQuery $ SetLoginError true unit
+
+        Just profile -> do
+          void $ H.query F._formless unit $ F.injQuery $ SetLoginError false unit
+          st <- H.get
+          when st.redirect (navigate Dashboard)
+
     Navigate route e -> navigate_ e route
 
   render :: State -> H.ComponentHTML Action ChildSlots m
@@ -108,7 +110,7 @@ component =
     container html =
       HH.div
         [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-        [ header Nothing Navigate Login
+        [ header Nothing Navigate $ Just Login
         , HH.div [] html
         ]
 
@@ -143,6 +145,7 @@ formComponent =
         , handleAction = handleAction
         }
   where
+  -- TODO: more expressive error type than Boolean
   formInput :: i -> F.Input LoginForm ( loginError :: Boolean ) m
   formInput _ =
     { validators:
@@ -176,7 +179,7 @@ formComponent =
       [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev ]
       [ whenElem loginError \_ ->
           HH.div
-            []
+            [ HP.classes [ T.textRed500 ] ]
             [ HH.text "Email or password is invalid" ]
       , HH.fieldset_
           [ Field.input proxies.email form

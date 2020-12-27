@@ -8,7 +8,7 @@ import Data.Maybe (Maybe(..))
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Component.HTML.Header (header)
 import Listasio.Data.Profile (Profile)
-import Listasio.Data.Route (Route(..))
+import Listasio.Data.Route (Route)
 import Listasio.Env (UserEnv)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -55,7 +55,7 @@ component = Connect.component $ H.mkComponent
   render { currentUser } =
     HH.div
       [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-      [ header currentUser Navigate Home -- TODO
+      [ header currentUser Navigate Nothing
       , HH.div
           [ HP.classes [ T.container, T.textCenter, T.mt10 ] ]
           [ HH.text "profile" ]

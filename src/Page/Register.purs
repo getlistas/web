@@ -61,13 +61,12 @@ component =
     HandleRegisterForm fields -> do
       result <- fromEither <$> note "Failed to register" <$> registerUser fields
       H.modify_ _ { registration = result }
+
     Navigate route e -> navigate_ e route
 
   render { registration } =
     container
-      [ HH.h1
-          []
-          [ HH.text "Sign Up" ]
+      [ HH.h1 [] [ HH.text "Sign Up" ]
       , HH.p
           []
           [ HH.a
@@ -75,8 +74,6 @@ component =
               [ HH.text "Already have an account?" ]
           ]
       , case registration of
-          NotAsked -> HH.slot F._formless unit formComponent unit (Just <<< HandleRegisterForm)
-          Loading -> HH.slot F._formless unit formComponent unit (Just <<< HandleRegisterForm) -- ???
           Success _ ->
             HH.div
               [ HP.classes
@@ -101,17 +98,17 @@ component =
                   , HH.div [ HP.classes [ T.textSm, T.textBase ] ] [ HH.text "Check your email" ]
                   ]
               ]
-          Failure _ ->
-            HH.div []
-              [ HH.text "Failed"
-              , HH.slot F._formless unit formComponent unit (Just <<< HandleRegisterForm)
-              ]
+
+          Failure _ -> HH.div [] [ HH.text "Failed" , form ]
+
+          _ -> form
       ]
     where
+    form = HH.slot F._formless unit formComponent unit (Just <<< HandleRegisterForm)
     container html =
       HH.div
         [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-        [ header Nothing Navigate Register
+        [ header Nothing Navigate $ Just Register
         , HH.div [] html
         ]
 

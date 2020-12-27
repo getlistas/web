@@ -7,7 +7,6 @@ import Listasio.Data.Profile (Profile)
 import Data.Maybe (Maybe)
 import Halogen (HalogenM, lift)
 
--- TODO: getUser
 class Monad m <= ManageUser m where
   loginUser :: LoginFields -> m (Maybe Profile)
   registerUser :: RegisterFields -> m (Maybe Profile)

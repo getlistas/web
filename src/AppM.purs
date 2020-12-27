@@ -18,7 +18,7 @@ import Effect.Ref as Ref
 import Listasio.Api.Endpoint (Endpoint(..))
 import Listasio.Api.Request (RequestMethod(..))
 import Listasio.Api.Request as Request
-import Listasio.Api.Utils (authenticate, decode, mkAuthRequest)
+import Listasio.Api.Utils (authenticate, decode, mkAuthRequest, mkRequest)
 import Listasio.Capability.LogMessages (class LogMessages, logError)
 import Listasio.Capability.Navigate (class Navigate, locationState, navigate)
 import Listasio.Capability.Now (class Now)
@@ -74,6 +74,7 @@ instance navigateAppM :: Navigate AppM where
     { state } <- locationState
     liftEffect $ pushState state $ print Route.routeCodec $ route
 
+  -- TODO: name
   navigate_ event route = do
     liftEffect $ preventDefault event
     navigate route
@@ -110,34 +111,32 @@ instance manageUserAppM :: ManageUser AppM where
           }
 
 instance manageListAppM :: ManageList AppM where
-  createList list = do
-    let
-      method = Post $ Just $ Codec.encode List.listCodec list
-    mbJson <- mkAuthRequest { endpoint: Lists, method }
-    decode List.listWitIdAndUserCodec mbJson
+  createList list =
+    decode List.listWitIdAndUserCodec =<< mkAuthRequest conf
+    where method = Post $ Just $ Codec.encode List.listCodec list
+          conf = { endpoint: Lists, method }
 
-  getList id = do
-    mbJson <- mkAuthRequest { endpoint: List id, method: Get }
-    decode List.listWitIdAndUserCodec mbJson
+  getList id =
+    decode List.listWitIdAndUserCodec =<< mkAuthRequest conf
+    where conf = { endpoint: List id, method: Get }
 
-  getLists = do
-    mbJson <- mkAuthRequest { endpoint: Lists, method: Get }
-    decode (CAC.array List.listWitIdAndUserCodec) mbJson
+  getLists =
+    decode (CAC.array List.listWitIdAndUserCodec) =<< mkAuthRequest conf
+    where conf = { endpoint: Lists, method: Get }
 
   deleteList id = void $ mkAuthRequest { endpoint: List id, method: Delete }
 
-  discoverLists pagination = do
-    mbJson <- mkAuthRequest { endpoint: Discover pagination, method: Get }
-    decode (CAC.array List.listWitIdAndUserCodec) mbJson
+  discoverLists pagination =
+    decode (CAC.array List.listWitIdAndUserCodec) =<< mkRequest conf
+    where conf = { endpoint: Discover pagination, method: Get }
 
 instance manageResourceAppM :: ManageResource AppM where
-  getListResources listId = do
-    mbJson <- mkAuthRequest { endpoint: ListResources listId, method: Get }
-    decode (CAC.array Resource.listResourceCodec) mbJson
+  getListResources listId =
+    decode (CAC.array Resource.listResourceCodec) =<< mkAuthRequest conf
+    where conf = { endpoint: ListResources listId, method: Get }
 
-  createResource newResource listId = do
-    let
-      method = Post $ Just $ Codec.encode Resource.resourceCodec newResource
-    mbJson <- mkAuthRequest { endpoint: ListResources listId, method }
-    decode Resource.listResourceCodec mbJson
+  createResource newResource listId =
+    decode Resource.listResourceCodec =<< mkAuthRequest conf
+    where method = Post $ Just $ Codec.encode Resource.resourceCodec newResource
+          conf = { endpoint: ListResources listId, method }
 

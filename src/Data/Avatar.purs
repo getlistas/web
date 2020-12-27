@@ -23,8 +23,9 @@ codec = CA.prismaticCodec parse toString CA.string
 
 -- | TODO: validate for URL
 parse :: String -> Maybe Avatar
-parse "" = Nothing
-parse str = Just (Avatar str)
+parse = case _ of
+  "" -> Nothing
+  str -> Just (Avatar str)
 
 toString :: Avatar -> String
 toString (Avatar str) = str

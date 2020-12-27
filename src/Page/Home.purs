@@ -55,7 +55,7 @@ component = Connect.component $ H.mkComponent
   render { currentUser } =
     HH.div
       [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-      [ header currentUser Navigate Home
+      [ header currentUser Navigate $ Just Home
       , HH.div
           [ HP.classes [ T.container, T.textCenter, T.mt10 ] ]
           [ HH.text "home" ]

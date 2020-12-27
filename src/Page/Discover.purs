@@ -48,7 +48,7 @@ noteError :: forall a. Maybe a -> Either String a
 noteError = note "Could not fetch top lists"
 
 perPage :: Int
-perPage = 2
+perPage = 20
 
 limit :: Maybe Int
 limit = Just perPage
@@ -112,7 +112,7 @@ component = Connect.component $ H.mkComponent
   render { currentUser, lists, isLast } =
     HH.div
       [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-      [ header currentUser Navigate Discover
+      [ header currentUser Navigate $ Just Discover
       , HH.div [ HP.classes [ T.mt10 ] ] [ feed ]
       ]
     where
@@ -144,6 +144,7 @@ component = Connect.component $ H.mkComponent
 
     loadMore :: Boolean -> H.ComponentHTML Action slots m
     loadMore disabled =
+      -- TODO abstract button (not only submit & cancel)
       HH.input
         [ HP.type_ HP.InputButton
         , HP.value "Load more"

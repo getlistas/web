@@ -2,25 +2,27 @@ module Listasio.Page.Settings where
 
 import Prelude
 
-import Data.Lens (preview)
+import Component.HOC.Connect as Connect
+import Control.Monad.Reader (class MonadAsk)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
-import Listasio.Capability.Navigate (class Navigate, logout, navigate_)
-import Listasio.Capability.Resource.User (class ManageUser, getCurrentUser, updateUser)
-import Listasio.Component.HTML.Header (header)
-import Listasio.Data.Profile (Profile)
-import Listasio.Data.Route (Route(..))
-import Listasio.Data.Username (Username)
-import Listasio.Data.Username as Username
-import Listasio.Form.Field as Field
-import Listasio.Form.Validation as V
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Network.RemoteData (RemoteData(..), _Success, fromMaybe)
+import Listasio.Capability.Navigate (class Navigate, logout, navigate_)
+import Listasio.Capability.Resource.User (class ManageUser, updateUser)
+import Listasio.Component.HTML.Header (header)
+import Listasio.Component.HTML.Utils (whenElem)
+import Listasio.Data.Profile (Profile)
+import Listasio.Data.Route (Route(..))
+import Listasio.Data.Username (Username)
+import Listasio.Data.Username as Username
+import Listasio.Env (UserEnv)
+import Listasio.Form.Field as Field
+import Listasio.Form.Validation as V
 import Tailwind as T
 import Web.Event.Event (Event)
 
@@ -35,82 +37,94 @@ newtype SettingsForm r f
 derive instance newtypeSettingsForm :: Newtype (SettingsForm r f) _
 
 data Action
-  = Initialize
+  = Receive { currentUser :: Maybe Profile }
   | HandleForm Profile
   | LogUserOut
   | Navigate Route Event
 
 type State
-  = { profile :: RemoteData String Profile }
+  = { currentUser :: Maybe Profile }
 
 component ::
-  forall q o m.
+  forall q o r m.
   MonadAff m =>
+  MonadAsk { userEnv :: UserEnv | r } m =>
   Navigate m =>
   ManageUser m =>
-  H.Component HH.HTML q Unit o m
-component =
-  H.mkComponent
-    { initialState: \_ -> { profile: NotAsked }
-    , render
-    , eval:
-        H.mkEval
-          $ H.defaultEval
-              { handleAction = handleAction
-              , initialize = Just Initialize
-              }
-    }
+  H.Component HH.HTML q {} o m
+component = Connect.component $ H.mkComponent
+  { initialState
+  , render
+  , eval:
+      H.mkEval
+        $ H.defaultEval
+            { handleAction = handleAction
+            , receive = Just <<< Receive
+            }
+  }
   where
+  initialState { currentUser } = { currentUser }
+
   handleAction = case _ of
-    Initialize -> do
-      H.modify_ _ { profile = Loading }
-      mbProfile <- getCurrentUser
-      H.modify_ _ { profile = fromMaybe mbProfile }
-      -- if profile cannot be located then something horrible went wrong
-      case mbProfile of
-        Nothing -> logout
-        Just profile -> do
-          let
-            newInputs =
-              F.wrapInputFields
-                { name: Username.toString profile.name
-                , slug: Username.toString profile.slug
-                }
-          void $ H.query F._formless unit $ F.asQuery $ F.loadForm newInputs
+    Receive { currentUser } -> do
+      H.modify_ _ { currentUser = currentUser }
+      case currentUser of
+       -- if we dont' have a profile something went completely wrong
+       Nothing -> logout
+       Just profile -> do
+         let
+           newInputs =
+             F.wrapInputFields
+               { name: Username.toString profile.name
+               , slug: Username.toString profile.slug
+               }
+         void $ H.query F._formless unit $ F.asQuery $ F.loadForm newInputs
+
     HandleForm fields -> do
       updateUser fields
-      mbProfile <- getCurrentUser
-      H.modify_ _ { profile = fromMaybe mbProfile }
+      H.modify_ _ { currentUser = Just fields }
+
     LogUserOut -> logout
+
     Navigate route e -> navigate_ e route
 
-  render { profile } =
-    container
-      [ HH.h1
-          []
-          [ HH.text "Your Settings" ]
-      , HH.slot F._formless unit formComponent unit (Just <<< HandleForm)
-      , HH.hr_
-      , HH.button
-          [ HE.onClick \_ -> Just LogUserOut ]
-          [ HH.text "Log out" ]
-      ]
-    where
-    container html =
-      HH.div_
-        [ header (preview _Success profile) Navigate Settings
-        , HH.div
+  render { currentUser } =
+    container $
+      HH.div
+        [ HP.classes [ T.mt10 ] ]
+        [ HH.h1
             []
-            [ HH.div
-                [ HP.classes [ T.container ] ]
-                [ HH.div
-                    []
-                    [ HH.div
-                        []
-                        html
+            [ HH.text "Settings" ]
+        -- TODO: settings form
+        , whenElem false \_ -> HH.slot F._formless unit formComponent unit (Just <<< HandleForm)
+        , HH.div
+            [ HP.classes [ T.mt8 ] ]
+            [ HH.button
+                [ HE.onClick \_ -> Just LogUserOut
+                , HP.classes
+                    [ T.cursorPointer
+                    , T.py2
+                    , T.px4
+                    , T.bgGray300
+                    , T.textWhite
+                    , T.fontSemibold
+                    , T.roundedLg
+                    , T.shadowMd
+                    , T.hoverBgPink700
+                    , T.focusOutlineNone
+                    , T.focusRing2
+                    , T.focusRingPurple600
                     ]
                 ]
+                [ HH.text "Log out" ]
             ]
+        ]
+    where
+    container html =
+      HH.div
+        [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
+        [ header currentUser Navigate $ Just Settings
+        , html
         ]
 
     formComponent :: forall query slots. F.Component SettingsForm query slots Unit Profile m
