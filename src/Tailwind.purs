@@ -7,6 +7,10 @@ import Halogen.HTML.Core (ClassName(..))
 appearanceNone :: ClassName
 appearanceNone = ClassName "appearance-none"
 
+-- | bgGray300
+bgGray300 :: ClassName
+bgGray300 = ClassName "bg-gray-300"
+
 -- | bgGreen100
 bgGreen100 :: ClassName
 bgGreen100 = ClassName "bg-green-100"
@@ -47,6 +51,10 @@ borderB2 = ClassName "border-b-2"
 borderGray200 :: ClassName
 borderGray200 = ClassName "border-gray-200"
 
+-- | borderGray300
+borderGray300 :: ClassName
+borderGray300 = ClassName "border-gray-300"
+
 -- | borderGreen300
 borderGreen300 :: ClassName
 borderGreen300 = ClassName "border-green-300"
@@ -62,6 +70,14 @@ borderRed600 = ClassName "border-red-600"
 -- | borderTransparent
 borderTransparent :: ClassName
 borderTransparent = ClassName "border-transparent"
+
+-- | checkedBgBlue600
+checkedBgBlue600 :: ClassName
+checkedBgBlue600 = ClassName "checked:bg-blue-600"
+
+-- | checkedBorderTransparent
+checkedBorderTransparent :: ClassName
+checkedBorderTransparent = ClassName "checked:border-transparent"
 
 -- | container
 container :: ClassName
@@ -131,6 +147,10 @@ fontSemibold = ClassName "font-semibold"
 h6 :: ClassName
 h6 = ClassName "h-6"
 
+-- | hoverBgPink100
+hoverBgPink100 :: ClassName
+hoverBgPink100 = ClassName "hover:bg-pink-100"
+
 -- | hoverBgPink700
 hoverBgPink700 :: ClassName
 hoverBgPink700 = ClassName "hover:bg-pink-700"
@@ -147,6 +167,10 @@ justifyAround = ClassName "justify-around"
 justifyCenter :: ClassName
 justifyCenter = ClassName "justify-center"
 
+-- | justifyEnd
+justifyEnd :: ClassName
+justifyEnd = ClassName "justify-end"
+
 -- | leadingNone
 leadingNone :: ClassName
 leadingNone = ClassName "leading-none"
@@ -158,6 +182,10 @@ m1 = ClassName "m-1"
 -- | m4
 m4 :: ClassName
 m4 = ClassName "m-4"
+
+-- | m6
+m6 :: ClassName
+m6 = ClassName "m-6"
 
 -- | maxWFull
 maxWFull :: ClassName
@@ -195,6 +223,10 @@ mt4 = ClassName "mt-4"
 mt8 :: ClassName
 mt8 = ClassName "mt-8"
 
+-- | my1
+my1 :: ClassName
+my1 = ClassName "my-1"
+
 -- | my2
 my2 :: ClassName
 my2 = ClassName "my-2"
@@ -214,6 +246,10 @@ p2 = ClassName "p-2"
 -- | p4
 p4 :: ClassName
 p4 = ClassName "p-4"
+
+-- | p6
+p6 :: ClassName
+p6 = ClassName "p-6"
 
 -- | placeholderGray400
 placeholderGray400 :: ClassName
@@ -302,6 +338,10 @@ textWhite = ClassName "text-white"
 -- | underline
 underline :: ClassName
 underline = ClassName "underline"
+
+-- | w1d2
+w1d2 :: ClassName
+w1d2 = ClassName "w-1/2"
 
 -- | w6
 w6 :: ClassName
