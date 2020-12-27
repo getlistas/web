@@ -4,22 +4,80 @@ import Prelude
 
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype, unwrap)
+import Data.Symbol (SProxy(..))
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Listasio.Capability.Resource.Resource (class ManageResource, createResource)
 import Listasio.Component.HTML.Dropdown as DD
 import Listasio.Component.HTML.Utils (whenElem)
 import Listasio.Data.List (ListWithIdAndUser)
-import Listasio.Data.Resource (ResourceRep)
+import Listasio.Data.Resource (ResourceRep, ListResource)
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation (class ToText)
 import Listasio.Form.Validation as V
 import Select as Select
 import Tailwind as T
 import Web.Event.Event as Event
+
+type ResourceWithList = { | ResourceRep ( list :: String ) }
+
+type Slot = forall query. H.Slot query Output Unit
+
+_createResource = SProxy :: SProxy "createResource"
+
+data Action
+  = Initialize
+  | HandleCreateForm ResourceWithList
+
+type State
+  = { lists :: Array ListWithIdAndUser  }
+
+type Input = { lists :: Array ListWithIdAndUser  }
+
+data Output
+  = Created ListResource
+
+type ChildSlots
+  = ( formless :: FormSlot )
+
+component :: forall q m.
+     MonadAff m
+  => ManageResource m
+  => H.Component HH.HTML q Input Output m
+component = H.mkComponent
+  { initialState
+  , render
+  , eval: H.mkEval $ H.defaultEval
+      { handleAction = handleAction
+      , initialize = Just Initialize
+      }
+  }
+  where
+  initialState = identity
+
+  handleAction :: Action -> H.HalogenM State Action ChildSlots Output m Unit
+  handleAction = case _ of
+    Initialize -> pure unit
+
+    HandleCreateForm { description, title, url, list: listId } -> do
+      { lists } <- H.get
+      mbNewResource <- createResource { description, title, url } listId
+      case mbNewResource of
+        Just resource -> do
+          H.raise $ Created resource
+          void $ H.query F._formless unit $ F.injQuery $ SetCreateError false unit
+
+        Nothing -> void $ H.query F._formless unit $ F.injQuery $ SetCreateError true unit
+
+  render :: State -> HH.ComponentHTML Action ChildSlots m
+  render { lists } =
+    HH.div
+      []
+      [ HH.slot F._formless unit formComponent { lists } (Just <<< HandleCreateForm) ]
 
 newtype DDItem = DDItem { label :: String, value :: String }
 
@@ -29,8 +87,8 @@ derive instance newtypeDDItem :: Newtype DDItem _
 instance toTextDDItem :: ToText DDItem where
   toText = _.label <<< unwrap
 
-type Slot
-  = F.Slot CreateResourceForm FormQuery ChildSlots ResourceWithList Unit
+type FormSlot
+  = F.Slot CreateResourceForm FormQuery FormChildSlots ResourceWithList Unit
 
 newtype CreateResourceForm r f
   = CreateResourceForm
@@ -54,16 +112,14 @@ data FormAction
   | HandleDropdown (DD.Message DDItem)
   | Reset
 
-type Input = { lists :: Array ListWithIdAndUser  }
+type FormInput = { lists :: Array ListWithIdAndUser  }
 
-type ResourceWithList = { | ResourceRep ( list :: String ) }
-
-type ChildSlots = ( dropdown :: DD.Slot DDItem Unit )
+type FormChildSlots = ( dropdown :: DD.Slot DDItem Unit )
 
 formComponent ::
   forall m.
   MonadAff m =>
-  F.Component CreateResourceForm FormQuery ChildSlots Input ResourceWithList m
+  F.Component CreateResourceForm FormQuery FormChildSlots FormInput ResourceWithList m
 formComponent =
   F.component formInput
     $ F.defaultSpec
@@ -73,7 +129,7 @@ formComponent =
         , handleAction = handleAction
         }
   where
-  formInput :: Input -> F.Input CreateResourceForm ( createError :: Boolean, lists :: Array ListWithIdAndUser ) m
+  formInput :: FormInput -> F.Input CreateResourceForm ( createError :: Boolean, lists :: Array ListWithIdAndUser ) m
   formInput { lists } =
     { validators:
         CreateResourceForm

@@ -25,8 +25,8 @@ idCodec = CAR.object "ID" { "$oid": CA.string }
 type ListResource
   = {
     | ResourceRep
-      ( list :: ID
-      , _id :: ID
+      ( _id :: ID
+      , list :: ID
       , user :: ID
       , completed_at :: Maybe String
       )
