@@ -18,7 +18,7 @@ let
   twpurs = import (builtins.fetchGit {
     name = "twpurs";
     url = "https://github.com/gillchristian/tailwind-purs";
-    rev = "df1a28567d577da0844594dd820c1ee7d5996a12";
+    rev = "01ea48d7b35be9f364dcc2ee5ea3bc9e0883501c";
   });
 
 in pkgs.stdenv.mkDerivation {
