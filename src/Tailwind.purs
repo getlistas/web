@@ -7,6 +7,14 @@ import Halogen.HTML.Core (ClassName(..))
 appearanceNone :: ClassName
 appearanceNone = ClassName "appearance-none"
 
+-- | bgDurazno
+bgDurazno :: ClassName
+bgDurazno = ClassName "bg-durazno"
+
+-- | bgGray100
+bgGray100 :: ClassName
+bgGray100 = ClassName "bg-gray-100"
+
 -- | bgGray300
 bgGray300 :: ClassName
 bgGray300 = ClassName "bg-gray-300"
@@ -14,6 +22,10 @@ bgGray300 = ClassName "bg-gray-300"
 -- | bgGreen100
 bgGreen100 :: ClassName
 bgGreen100 = ClassName "bg-green-100"
+
+-- | bgKiwi
+bgKiwi :: ClassName
+bgKiwi = ClassName "bg-kiwi"
 
 -- | bgPink300
 bgPink300 :: ClassName
@@ -34,6 +46,10 @@ bgRed200 = ClassName "bg-red-200"
 -- | bgWhite
 bgWhite :: ClassName
 bgWhite = ClassName "bg-white"
+
+-- | border2
+border2 :: ClassName
+border2 = ClassName "border-2"
 
 -- | border4
 border4 :: ClassName
@@ -63,9 +79,17 @@ borderGreen300 = ClassName "border-green-300"
 borderIndigo400 :: ClassName
 borderIndigo400 = ClassName "border-indigo-400"
 
+-- | borderKiwi
+borderKiwi :: ClassName
+borderKiwi = ClassName "border-kiwi"
+
 -- | borderRed600
 borderRed600 :: ClassName
 borderRed600 = ClassName "border-red-600"
+
+-- | borderT2
+borderT2 :: ClassName
+borderT2 = ClassName "border-t-2"
 
 -- | borderTransparent
 borderTransparent :: ClassName
@@ -82,10 +106,6 @@ checkedBorderTransparent = ClassName "checked:border-transparent"
 -- | container
 container :: ClassName
 container = ClassName "container"
-
--- | cursorNotAllowed
-cursorNotAllowed :: ClassName
-cursorNotAllowed = ClassName "cursor-not-allowed"
 
 -- | cursorPointer
 cursorPointer :: ClassName
@@ -131,9 +151,9 @@ focusOutlineNone = ClassName "focus:outline-none"
 focusRing2 :: ClassName
 focusRing2 = ClassName "focus:ring-2"
 
--- | focusRingPink600
-focusRingPink600 :: ClassName
-focusRingPink600 = ClassName "focus:ring-pink-600"
+-- | focusRingGreen900
+focusRingGreen900 :: ClassName
+focusRingGreen900 = ClassName "focus:ring-green-900"
 
 -- | focusRingPurple600
 focusRingPurple600 :: ClassName
@@ -155,6 +175,18 @@ fontNormal = ClassName "font-normal"
 fontSemibold :: ClassName
 fontSemibold = ClassName "font-semibold"
 
+-- | gap4
+gap4 :: ClassName
+gap4 = ClassName "gap-4"
+
+-- | grid
+grid :: ClassName
+grid = ClassName "grid"
+
+-- | gridCols3
+gridCols3 :: ClassName
+gridCols3 = ClassName "grid-cols-3"
+
 -- | h6
 h6 :: ClassName
 h6 = ClassName "h-6"
@@ -170,6 +202,10 @@ hoverBgPink700 = ClassName "hover:bg-pink-700"
 -- | itemsCenter
 itemsCenter :: ClassName
 itemsCenter = ClassName "items-center"
+
+-- | itemsStart
+itemsStart :: ClassName
+itemsStart = ClassName "items-start"
 
 -- | justifyAround
 justifyAround :: ClassName
@@ -190,6 +226,10 @@ justifyEnd = ClassName "justify-end"
 -- | leadingNone
 leadingNone :: ClassName
 leadingNone = ClassName "leading-none"
+
+-- | leadingNormal
+leadingNormal :: ClassName
+leadingNormal = ClassName "leading-normal"
 
 -- | m1
 m1 :: ClassName
@@ -219,6 +259,10 @@ minHScreen = ClassName "min-h-screen"
 ml2 :: ClassName
 ml2 = ClassName "ml-2"
 
+-- | ml6
+ml6 :: ClassName
+ml6 = ClassName "ml-6"
+
 -- | mr2
 mr2 :: ClassName
 mr2 = ClassName "mr-2"
@@ -235,6 +279,10 @@ mt4 = ClassName "mt-4"
 mt8 :: ClassName
 mt8 = ClassName "mt-8"
 
+-- | mx1
+mx1 :: ClassName
+mx1 = ClassName "mx-1"
+
 -- | my1
 my1 :: ClassName
 my1 = ClassName "my-1"
@@ -246,10 +294,6 @@ my2 = ClassName "my-2"
 -- | my4
 my4 :: ClassName
 my4 = ClassName "my-4"
-
--- | opacity50
-opacity50 :: ClassName
-opacity50 = ClassName "opacity-50"
 
 -- | p1
 p1 :: ClassName
@@ -266,6 +310,10 @@ p4 = ClassName "p-4"
 -- | p6
 p6 :: ClassName
 p6 = ClassName "p-6"
+
+-- | p8
+p8 :: ClassName
+p8 = ClassName "p-8"
 
 -- | placeholderGray400
 placeholderGray400 :: ClassName
@@ -299,6 +347,10 @@ roundedMd = ClassName "rounded-md"
 shadowMd :: ClassName
 shadowMd = ClassName "shadow-md"
 
+-- | spaceX2
+spaceX2 :: ClassName
+spaceX2 = ClassName "space-x-2"
+
 -- | text2xl
 text2xl :: ClassName
 text2xl = ClassName "text-2xl"
@@ -307,6 +359,10 @@ text2xl = ClassName "text-2xl"
 text4xl :: ClassName
 text4xl = ClassName "text-4xl"
 
+-- | text7xl
+text7xl :: ClassName
+text7xl = ClassName "text-7xl"
+
 -- | textBase
 textBase :: ClassName
 textBase = ClassName "text-base"
@@ -314,6 +370,18 @@ textBase = ClassName "text-base"
 -- | textCenter
 textCenter :: ClassName
 textCenter = ClassName "text-center"
+
+-- | textGray200
+textGray200 :: ClassName
+textGray200 = ClassName "text-gray-200"
+
+-- | textGray300
+textGray300 :: ClassName
+textGray300 = ClassName "text-gray-300"
+
+-- | textGray400
+textGray400 :: ClassName
+textGray400 = ClassName "text-gray-400"
 
 -- | textGray700
 textGray700 :: ClassName
@@ -326,6 +394,10 @@ textGray800 = ClassName "text-gray-800"
 -- | textGreen700
 textGreen700 :: ClassName
 textGreen700 = ClassName "text-green-700"
+
+-- | textKiwi
+textKiwi :: ClassName
+textKiwi = ClassName "text-kiwi"
 
 -- | textLg
 textLg :: ClassName
@@ -346,6 +418,10 @@ textSm = ClassName "text-sm"
 -- | textWhite
 textWhite :: ClassName
 textWhite = ClassName "text-white"
+
+-- | textXs
+textXs :: ClassName
+textXs = ClassName "text-xs"
 
 -- | underline
 underline :: ClassName

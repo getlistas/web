@@ -4,7 +4,7 @@ import Prelude
 
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
-import Data.Array (null)
+import Data.Array (snoc)
 import Data.Either (Either, note)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
@@ -88,41 +88,22 @@ component = Connect.component $ H.mkComponent
   render :: State -> H.ComponentHTML Action ChildSlots m
   render st =
     HH.div
-      [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
+      [ HP.classes [ T.bgGray100, T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
       [ header st.currentUser Navigate $ Just Dashboard
-      , HH.div
-          [ HP.classes [ T.mt10 ] ]
-          [ HH.a
-              [ safeHref CreateList
-              , HE.onClick (Just <<< Navigate CreateList <<< Mouse.toEvent)
-              , HP.classes
-                  [ T.cursorPointer
-                  , T.py2
-                  , T.px4
-                  , T.bgPink700
-                  , T.textWhite
-                  , T.fontSemibold
-                  , T.roundedLg
-                  , T.shadowMd
-                  , T.focusOutlineNone
-                  ]
-              ]
-            [ HH.text "Create new list" ]
-          ]
-      , HH.div [ HP.classes [ T.mt4 ] ] [ feed ]
+      , HH.div [ HP.classes [ T.container, T.mt10 ] ] [ feed ]
       ]
     where
     feed = case st.lists of
-      Success lists | null lists -> HH.text "Create a list :)"
       Success lists ->
         HH.div
           []
           [ HH.div
-              [ HP.classes [ T.flex, T.flexWrap ] ]
-              $ map (\list -> HH.slot List._list list._id."$oid" List.component { list } absurd) lists
-          , HH.div
-              [ HP.classes [ T.w1d2 ] ]
-              [ HH.slot CreateResource._createResource unit CreateResource.component { lists } (Just <<< HandleCreateResource) ]
+              [ HP.classes [ T.grid, T.gridCols3, T.gap4 ] ]
+              $ snoc
+                (map (\list -> HH.slot List._list list._id."$oid" List.component { list } absurd) lists)
+                listCreate
+          , HH.br_
+          , HH.slot CreateResource._createResource unit CreateResource.component { lists } (Just <<< HandleCreateResource)
           ]
 
       Failure msg ->
@@ -133,3 +114,22 @@ component = Connect.component $ H.mkComponent
           ]
 
       _ -> HH.div [ HP.classes [ T.textCenter ] ] [ HH.text "Loading ..." ]
+
+    listCreate =
+      HH.div
+        [ HP.classes [ T.border2, T.borderKiwi, T.roundedMd, T.flex, T.itemsCenter, T.justifyCenter, T.p8 ] ]
+        [ HH.a
+            [ safeHref CreateList
+            , HE.onClick (Just <<< Navigate CreateList <<< Mouse.toEvent)
+            , HP.classes
+                [ T.cursorPointer
+                , T.flex
+                , T.flexCol
+                , T.justifyCenter
+                , T.itemsCenter
+                ]
+            ]
+          [ HH.span [ HP.classes [ T.text7xl, T.textKiwi, T.leadingNone ] ] [ HH.text "+" ]
+          , HH.span [ HP.classes [ T.textGray400 ] ] [ HH.text "Create new list" ]
+          ]
+        ]

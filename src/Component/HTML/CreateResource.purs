@@ -181,12 +181,7 @@ formComponent =
 
   renderCreateResource { form, createError, lists, submitting, dirty } =
     HH.form
-      [ HP.classes
-          [ T.p6
-          , T.m6
-          , T.border4
-          , T.borderGreen300
-          ]
+      [ HP.classes [ T.p6, T.border4, T.borderGreen300 ]
       , HE.onSubmit \ev -> Just $ F.injAction $ Submit ev
       ]
       [ whenElem createError \_ ->
