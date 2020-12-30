@@ -3,11 +3,12 @@ module Listasio.AppM where
 import Prelude
 
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, ask, asks, runReaderT)
+import Data.Array (filter)
 import Data.Codec.Argonaut as Codec
 import Data.Codec.Argonaut.Compat as CAC
 import Data.Codec.Argonaut.Record as CAR
 import Data.Either (Either(..))
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), isNothing)
 import Effect.Aff (Aff)
 import Effect.Aff.Bus as Bus
 import Effect.Aff.Class (class MonadAff, liftAff)
@@ -129,8 +130,9 @@ instance manageListAppM :: ManageList AppM where
     where conf = { endpoint: Discover pagination, method: Get }
 
 instance manageResourceAppM :: ManageResource AppM where
-  getListResources listId =
-    decode (CAC.array Resource.listResourceCodec) =<< mkAuthRequest conf
+  getListResources listId = do
+    mbResources <- decode (CAC.array Resource.listResourceCodec) =<< mkAuthRequest conf
+    pure $ filter (isNothing <<< _.completed_at) <$> mbResources
     where conf = { endpoint: ListResources listId, method: Get }
 
   createResource newResource listId =

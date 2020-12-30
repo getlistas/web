@@ -2,7 +2,7 @@ module Listasio.Component.HTML.List where
 
 import Prelude
 
-import Data.Array (cons, drop, filter, head, null, snoc, tail)
+import Data.Array (cons, drop, head, null, snoc, tail)
 import Data.Either (note)
 import Data.Maybe (Maybe(..), isNothing)
 import Data.Symbol (SProxy(..))
@@ -61,7 +61,7 @@ component = H.mkComponent
     Initialize -> do
       H.modify_ _ { resources = Loading }
       { list } <- H.get
-      resources <- fromEither <$> note "Failed to load list resources" <$> map (filter (isNothing <<< _.completed_at)) <$> getListResources list._id."$oid"
+      resources <- fromEither <$> note "Failed to load list resources" <$> getListResources list._id."$oid"
       H.modify_ _ { resources = resources }
 
     ToggleShowMore ->
