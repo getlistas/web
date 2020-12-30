@@ -11,7 +11,7 @@ import Formless as F
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
+import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Form.Validation (errorToString)
 import Listasio.Form.Validation as V
 import Tailwind as T
