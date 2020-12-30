@@ -16,19 +16,23 @@ type ResourceRep row
 type Resource
   = { | ResourceRep () }
 
-type ID = { "$oid" :: String }
-idCodec :: JsonCodec ID
-idCodec = CAR.object "ID" { "$oid": CA.string }
+type MongoID = { "$oid" :: String }
+idCodec :: JsonCodec MongoID
+idCodec = CAR.object "MongoID" { "$oid": CA.string }
+
+type MongoDate = { "$date" :: String }
+mongoDateCodec :: JsonCodec MongoDate
+mongoDateCodec = CAR.object "MongoDate" { "$date": CA.string }
 
 -- created_at  :: DateTime<Utc>
 -- updated_at  :: DateTime<Utc>
 type ListResource
   = {
     | ResourceRep
-      ( _id :: ID
-      , list :: ID
-      , user :: ID
-      , completed_at :: Maybe String
+      ( _id :: MongoID
+      , list :: MongoID
+      , user :: MongoID
+      , completed_at :: Maybe MongoDate
       )
     }
 
@@ -49,5 +53,5 @@ listResourceCodec =
     , url: CA.string
     , title: CA.string
     , description: CAC.maybe CA.string
-    , completed_at: CAC.maybe CA.string
+    , completed_at: CAC.maybe mongoDateCodec
     }

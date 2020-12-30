@@ -9,7 +9,9 @@ import Listasio.Data.Resource (ListResource, Resource)
 class Monad m <= ManageResource m where
   getListResources :: String -> m (Maybe (Array ListResource))
   createResource :: Resource -> String -> m (Maybe ListResource)
+  completeResource :: ListResource -> m (Maybe Unit)
 
 instance manageResourceHalogenM :: ManageResource m => ManageResource (HalogenM st act slots msg m) where
   getListResources = lift <<< getListResources
   createResource resource id = lift $ createResource resource id
+  completeResource = lift <<< completeResource

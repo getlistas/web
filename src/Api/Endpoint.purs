@@ -27,6 +27,7 @@ data Endpoint
   | Lists
   | Discover Pagination
   | ListResources String
+  | CompleteResource String String
 
 derive instance genericEndpoint :: Generic Endpoint _
 
@@ -44,4 +45,5 @@ endpointCodec =
             , limit: optional <<< int
             }
         , "ListResources": "lists" / string segment / "resources"
+        , "CompleteResource": "lists" / string segment / "resources" / string segment / "complete"
         }

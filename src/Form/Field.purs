@@ -24,8 +24,8 @@ submit buttonText disabled =
     , HP.value buttonText
     , HP.classes
         [ T.cursorPointer
-        , cx T.cursorNotAllowed disabled
-        , cx T.opacity50 disabled
+        , T.disabledCursorNotAllowed
+        , T.disabledOpacity50
         , T.py2
         , T.px4
         , T.bgPink300
@@ -49,8 +49,8 @@ cancel buttonText disabled action =
     , HE.onClick \_ -> Just action
     , HP.classes
         [ T.cursorPointer
-        , cx T.cursorNotAllowed disabled
-        , cx T.opacity50 disabled
+        , T.disabledCursorNotAllowed
+        , T.disabledOpacity50
         , T.py2
         , T.px4
         , T.bgGray300

@@ -91,6 +91,14 @@ cursorNotAllowed = ClassName "cursor-not-allowed"
 cursorPointer :: ClassName
 cursorPointer = ClassName "cursor-pointer"
 
+-- | disabledCursorNotAllowed
+disabledCursorNotAllowed :: ClassName
+disabledCursorNotAllowed = ClassName "disabled:cursor-not-allowed"
+
+-- | disabledOpacity50
+disabledOpacity50 :: ClassName
+disabledOpacity50 = ClassName "disabled:opacity-50"
+
 -- | flex1
 flex1 :: ClassName
 flex1 = ClassName "flex-1"
@@ -123,6 +131,10 @@ focusOutlineNone = ClassName "focus:outline-none"
 focusRing2 :: ClassName
 focusRing2 = ClassName "focus:ring-2"
 
+-- | focusRingPink600
+focusRingPink600 :: ClassName
+focusRingPink600 = ClassName "focus:ring-pink-600"
+
 -- | focusRingPurple600
 focusRingPurple600 :: ClassName
 focusRingPurple600 = ClassName "focus:ring-purple-600"
@@ -147,6 +159,10 @@ fontSemibold = ClassName "font-semibold"
 h6 :: ClassName
 h6 = ClassName "h-6"
 
+-- | hoverBgGreen700
+hoverBgGreen700 :: ClassName
+hoverBgGreen700 = ClassName "hover:bg-green-700"
+
 -- | hoverBgPink700
 hoverBgPink700 :: ClassName
 hoverBgPink700 = ClassName "hover:bg-pink-700"
@@ -158,6 +174,10 @@ itemsCenter = ClassName "items-center"
 -- | justifyAround
 justifyAround :: ClassName
 justifyAround = ClassName "justify-around"
+
+-- | justifyBetween
+justifyBetween :: ClassName
+justifyBetween = ClassName "justify-between"
 
 -- | justifyCenter
 justifyCenter :: ClassName
