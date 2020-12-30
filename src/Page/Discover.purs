@@ -157,8 +157,8 @@ component = Connect.component $ H.mkComponent
             , T.shadowMd
             , T.hoverBgPink700
             , T.focusOutlineNone
-            , cx T.cursorNotAllowed disabled
-            , cx T.opacity50 disabled
+            , T.disabledCursorNotAllowed
+            , T.disabledOpacity50
             ]
         , HP.disabled disabled
         , HE.onClick \_ -> Just LoadMore

@@ -138,3 +138,7 @@ instance manageResourceAppM :: ManageResource AppM where
     where method = Post $ Just $ Codec.encode Resource.resourceCodec newResource
           conf = { endpoint: ListResources listId, method }
 
+  completeResource { _id, list } =
+    map (const unit) <$> mkAuthRequest conf
+    where conf = { endpoint: CompleteResource list."$oid" _id."$oid", method: Post Nothing }
+
