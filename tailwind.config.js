@@ -6,12 +6,12 @@ module.exports = {
   },
   variants: {
     extend: {
-      backgroundColor: ['checked'],
-      borderColor: ['checked'],
-      borderWidth: ['hover'],
-    }
+      backgroundColor: ["checked"],
+      borderColor: ["checked"],
+      borderWidth: ["hover"],
+      cursor: ["disabled"],
+      opacity: ["disabled"],
+    },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-  ],
-}
+  plugins: [require("@tailwindcss/forms")],
+};
