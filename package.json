@@ -19,7 +19,7 @@
     "css:lock": "twpurs gen-purs --classes css/tailwind-classes.txt",
     "css:lock:watch": "twpurs gen-purs --classes css/tailwind-classes.txt --watch",
     "css:purge": "twpurs gen-css --classes css/tailwind-classes.txt --css dev/tailwind.css -o prod/tailwind.css",
-    "prep-prod": "rm -rf dist",
+    "prep-prod": "rm -rf dist && git checkout dist/vercel.json",
     "serve-dev": "parcel dev/index.html --open",
     "test": "spago test",
     "watch": "spago build --watch"
