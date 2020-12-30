@@ -578,6 +578,11 @@ select {
   background-color: rgba(37, 99, 235, var(--tw-bg-opacity));
 }
 
+.hover\:bg-green-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgba(4, 120, 87, var(--tw-bg-opacity));
+}
+
 .hover\:bg-pink-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgba(190, 24, 93, var(--tw-bg-opacity));
@@ -644,7 +649,7 @@ select {
   cursor: pointer;
 }
 
-.cursor-not-allowed {
+.disabled\:cursor-not-allowed:disabled {
   cursor: not-allowed;
 }
 
@@ -670,6 +675,10 @@ select {
 
 .justify-center {
   justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
 }
 
 .justify-around {
@@ -792,13 +801,17 @@ select {
   min-height: 100vh;
 }
 
-.opacity-50 {
+.disabled\:opacity-50:disabled {
   opacity: 0.5;
 }
 
 .focus\:outline-none:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
+}
+
+.p-1 {
+  padding: 0.25rem;
 }
 
 .p-2 {
@@ -875,6 +888,11 @@ select {
 .focus\:ring-purple-600:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgba(124, 58, 237, var(--tw-ring-opacity));
+}
+
+.focus\:ring-pink-600:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgba(219, 39, 119, var(--tw-ring-opacity));
 }
 
 .text-center {
