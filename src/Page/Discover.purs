@@ -15,7 +15,7 @@ import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, discoverLists)
 import Listasio.Component.HTML.Header (header)
-import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
+import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Route (Route(..))
