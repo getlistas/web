@@ -199,6 +199,10 @@ hoverBgGreen700 = ClassName "hover:bg-green-700"
 hoverBgPink700 :: ClassName
 hoverBgPink700 = ClassName "hover:bg-pink-700"
 
+-- | inlineBlock
+inlineBlock :: ClassName
+inlineBlock = ClassName "inline-block"
+
 -- | itemsCenter
 itemsCenter :: ClassName
 itemsCenter = ClassName "items-center"
