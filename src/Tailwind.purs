@@ -31,10 +31,6 @@ bgKiwi = ClassName "bg-kiwi"
 bgPink300 :: ClassName
 bgPink300 = ClassName "bg-pink-300"
 
--- | bgPink700
-bgPink700 :: ClassName
-bgPink700 = ClassName "bg-pink-700"
-
 -- | bgRed100
 bgRed100 :: ClassName
 bgRed100 = ClassName "bg-red-100"
@@ -134,6 +130,10 @@ flexCol = ClassName "flex-col"
 -- | flexInitial
 flexInitial :: ClassName
 flexInitial = ClassName "flex-initial"
+
+-- | flexNone
+flexNone :: ClassName
+flexNone = ClassName "flex-none"
 
 -- | flexWrap
 flexWrap :: ClassName
@@ -239,13 +239,13 @@ m1 = ClassName "m-1"
 m4 :: ClassName
 m4 = ClassName "m-4"
 
--- | m6
-m6 :: ClassName
-m6 = ClassName "m-6"
-
 -- | maxWFull
 maxWFull :: ClassName
 maxWFull = ClassName "max-w-full"
+
+-- | mb1
+mb1 :: ClassName
+mb1 = ClassName "mb-1"
 
 -- | mb4
 mb4 :: ClassName
@@ -262,6 +262,10 @@ ml2 = ClassName "ml-2"
 -- | ml6
 ml6 :: ClassName
 ml6 = ClassName "ml-6"
+
+-- | mr1
+mr1 :: ClassName
+mr1 = ClassName "mr-1"
 
 -- | mr2
 mr2 :: ClassName
@@ -427,9 +431,9 @@ textXs = ClassName "text-xs"
 underline :: ClassName
 underline = ClassName "underline"
 
--- | w1d2
-w1d2 :: ClassName
-w1d2 = ClassName "w-1/2"
+-- | w32
+w32 :: ClassName
+w32 = ClassName "w-32"
 
 -- | w6
 w6 :: ClassName

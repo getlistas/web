@@ -5,7 +5,7 @@ import Prelude
 import Data.Array (cons, drop, head, null, snoc, tail)
 import Data.Either (hush, note)
 import Data.Filterable (filter)
-import Data.Maybe (Maybe(..), fromMaybe, isNothing)
+import Data.Maybe (Maybe(..), isNothing)
 import Data.String (replace, Pattern(..), Replacement(..))
 import Data.String.Regex (regex, replace) as Regex
 import Data.String.Regex.Flags (noFlags) as Regex
@@ -92,22 +92,21 @@ component = H.mkComponent
       , footer
       ]
     where
-    -- TODO: vertical padding is off (compared to "Mark as done" button)
     tag text =
       HH.span
-        [ HP.classes [ T.leadingNormal, T.px2, T.bgDurazno, T.textWhite, T.textXs, T.roundedMd ] ]
+        [ HP.classes [ T.leadingNormal, T.mr1, T.mb1, T.px2, T.bgDurazno, T.textWhite, T.textXs, T.roundedMd ] ]
         [ HH.text text ]
 
     shortUrl url =
-      HH.div [ HP.classes [ T.textGray300, T.textSm ] ] [ HH.text short ]
+      maybeElem mbShort \short ->
+        HH.div [ HP.classes [ T.textGray300, T.textSm, T.mb1, T.mr2 ] ] [ HH.text short ]
       where
-      noFoo =
-        replace (Pattern "https://") empty
-          $ replace (Pattern "http://") empty
-          $ replace (Pattern "www.") empty url
-      empty = Replacement ""
-      rplz x = Regex.replace x "" noFoo
-      short = fromMaybe "hola" $ hush $ rplz <$> Regex.regex "/.*$" Regex.noFlags
+      url' =
+        replace (Pattern "https://") (Replacement "")
+          $ replace (Pattern "http://") (Replacement "")
+          $ replace (Pattern "www.") (Replacement "") url
+      rplz x = Regex.replace x "" url'
+      mbShort = hush $ rplz <$> Regex.regex "/.*$" Regex.noFlags
 
     toRead next =
       HH.div
@@ -126,18 +125,19 @@ component = H.mkComponent
         , HH.div
             [ HP.classes [ T.mt4, T.flex, T.justifyBetween, T.itemsStart ] ]
             [ HH.div
-                [ HP.classes [ T.flex, T.itemsCenter, T.spaceX2 ] ]
+                [ HP.classes [ T.flex, T.flexWrap, T.itemsCenter ] ]
                 [ shortUrl next.url
                 -- TODO: resource tags
                 , whenElem (not $ null list.tags) \_ ->
-                    HH.div [ HP.classes [ T.flex, T.spaceX2 ] ] $ map tag list.tags
+                    HH.div [ HP.classes [ T.flex, T.flexWrap ] ] $ map tag list.tags
                 ]
             , HH.button
                 [ HE.onClick \_ -> Just $ CompleteResource next
                 , HP.classes
-                    [ T.cursorPointer
+                    [ T.flexNone
+                    , T.cursorPointer
                     , T.leadingNormal
-                    , T.px4
+                    , T.w32
                     , T.bgKiwi
                     , T.textWhite
                     , T.textXs
