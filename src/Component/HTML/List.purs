@@ -3,11 +3,12 @@ module Listasio.Component.HTML.List where
 import Prelude
 
 import Data.Array (cons, drop, head, null, snoc, tail)
-import Data.Either (hush, note)
+import Data.Array.NonEmpty as NEA
+import Data.Either (Either(..), hush, note)
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), isNothing)
 import Data.String (replace, Pattern(..), Replacement(..))
-import Data.String.Regex (regex, replace) as Regex
+import Data.String.Regex (regex, match) as Regex
 import Data.String.Regex.Flags (noFlags) as Regex
 import Data.Symbol (SProxy(..))
 import Effect.Aff.Class (class MonadAff)
@@ -101,12 +102,14 @@ component = H.mkComponent
       maybeElem mbShort \short ->
         HH.div [ HP.classes [ T.textGray300, T.textSm, T.mb1, T.mr2 ] ] [ HH.text short ]
       where
-      url' =
-        replace (Pattern "https://") (Replacement "")
-          $ replace (Pattern "http://") (Replacement "")
-          $ replace (Pattern "www.") (Replacement "") url
-      rplz x = Regex.replace x "" url'
-      mbShort = hush $ rplz <$> Regex.regex "/.*$" Regex.noFlags
+      mbShort =
+        map (replace (Pattern "www.") (Replacement ""))
+          $ (NEA.head =<< _)
+          $ join
+          $ hush
+          $ (\rgx -> Regex.match <$> rgx <*> Right url)
+          -- https://regexr.com/5jf24
+          $ Regex.regex "[a-zA-Z-_]+(?:\\.[a-zA-Z-_]+)+" Regex.noFlags
 
     toRead next =
       HH.div
