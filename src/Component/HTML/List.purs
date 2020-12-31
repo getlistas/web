@@ -130,6 +130,7 @@ component = H.mkComponent
         str | contains (Pattern "podcasts.apple.com") str -> "Apple Podcasts"
         str | contains (Pattern "itunes.apple.com") str && contains (Pattern "music") str -> "Apple Music"
         str | contains (Pattern "music.apple.com") str -> "Apple Music"
+        str | contains (Pattern "twitch.tv") str -> "Twitch"
         str -> str
 
     toRead next =
