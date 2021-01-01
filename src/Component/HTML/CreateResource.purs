@@ -162,6 +162,7 @@ formComponent =
         DD.Cleared ->
           eval $ F.setValidate proxies.list Nothing
 
+    -- TODO: do handle this action while submitting
     Reset -> do
       void $ H.query DD._dropdown unit DD.clear
       eval F.resetAll
