@@ -184,6 +184,8 @@ formComponent =
 
   proxies = F.mkSProxies (F.FormProxy :: _ CreateResourceForm)
 
+  -- TODO: submitting is only true while the form component is submitting
+  --       but the async action actually happens in the parent component
   renderCreateResource { form, createError, lists, submitting, dirty } =
     HH.form
       [ HP.classes [ T.p6, T.border4, T.borderGreen300 ]
@@ -211,7 +213,7 @@ formComponent =
               [ HP.classes [ T.flex, T.justifyEnd ] ]
               [ HH.div
                   [ HP.classes [ T.mr2 ] ]
-                  [ Field.cancel "Cancel" false $ F.injAction Reset ]
+                  [ Field.cancel "Cancel" submitting $ F.injAction Reset ]
               , Field.submit "Add resource" submitting
               ]
           ]
