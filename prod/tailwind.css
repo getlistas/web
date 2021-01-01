@@ -578,6 +578,11 @@ select {
   background-color: rgba(137, 176, 174, var(--tw-bg-opacity));
 }
 
+.bg-durazno-light {
+  --tw-bg-opacity: 1;
+  background-color: rgba(248, 215, 190, var(--tw-bg-opacity));
+}
+
 .bg-durazno {
   --tw-bg-opacity: 1;
   background-color: rgba(249, 183, 169, var(--tw-bg-opacity));
@@ -596,6 +601,11 @@ select {
 .hover\:bg-pink-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgba(190, 24, 93, var(--tw-bg-opacity));
+}
+
+.hover\:bg-durazno:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgba(249, 183, 169, var(--tw-bg-opacity));
 }
 
 .border-transparent {
@@ -674,6 +684,10 @@ select {
 
 .disabled\:cursor-not-allowed:disabled {
   cursor: not-allowed;
+}
+
+.inline-block {
+  display: inline-block;
 }
 
 .flex {
@@ -927,6 +941,18 @@ select {
   color: rgba(86, 91, 108, var(--tw-placeholder-opacity));
 }
 
+.fixed {
+  position: fixed;
+}
+
+.right-4 {
+  right: 1rem;
+}
+
+.bottom-4 {
+  bottom: 1rem;
+}
+
 * {
   --tw-shadow: 0 0 #0000;
 }
@@ -959,6 +985,11 @@ select {
 .focus\:ring-purple-600:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgba(124, 58, 237, var(--tw-ring-opacity));
+}
+
+.focus\:ring-durazno:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgba(249, 183, 169, var(--tw-ring-opacity));
 }
 
 .text-center {
@@ -1043,8 +1074,8 @@ select {
   gap: 1rem;
 }
 
-.grid-cols-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
 @-webkit-keyframes spin {
@@ -1114,5 +1145,17 @@ select {
     transform: none;
     -webkit-animation-timing-function: cubic-bezier(0,0,0.2,1);
             animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+
+@media (min-width: 640px) {
+  .sm\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
