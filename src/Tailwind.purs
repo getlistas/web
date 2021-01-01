@@ -11,6 +11,10 @@ appearanceNone = ClassName "appearance-none"
 bgDurazno :: ClassName
 bgDurazno = ClassName "bg-durazno"
 
+-- | bgDuraznoLight
+bgDuraznoLight :: ClassName
+bgDuraznoLight = ClassName "bg-durazno-light"
+
 -- | bgGray100
 bgGray100 :: ClassName
 bgGray100 = ClassName "bg-gray-100"
@@ -91,6 +95,10 @@ borderT2 = ClassName "border-t-2"
 borderTransparent :: ClassName
 borderTransparent = ClassName "border-transparent"
 
+-- | bottom4
+bottom4 :: ClassName
+bottom4 = ClassName "bottom-4"
+
 -- | checkedBgBlue600
 checkedBgBlue600 :: ClassName
 checkedBgBlue600 = ClassName "checked:bg-blue-600"
@@ -114,6 +122,10 @@ disabledCursorNotAllowed = ClassName "disabled:cursor-not-allowed"
 -- | disabledOpacity50
 disabledOpacity50 :: ClassName
 disabledOpacity50 = ClassName "disabled:opacity-50"
+
+-- | fixed
+fixed :: ClassName
+fixed = ClassName "fixed"
 
 -- | flex1
 flex1 :: ClassName
@@ -150,6 +162,10 @@ focusOutlineNone = ClassName "focus:outline-none"
 -- | focusRing2
 focusRing2 :: ClassName
 focusRing2 = ClassName "focus:ring-2"
+
+-- | focusRingDurazno
+focusRingDurazno :: ClassName
+focusRingDurazno = ClassName "focus:ring-durazno"
 
 -- | focusRingGreen900
 focusRingGreen900 :: ClassName
@@ -190,6 +206,10 @@ gridCols3 = ClassName "grid-cols-3"
 -- | h6
 h6 :: ClassName
 h6 = ClassName "h-6"
+
+-- | hoverBgDurazno
+hoverBgDurazno :: ClassName
+hoverBgDurazno = ClassName "hover:bg-durazno"
 
 -- | hoverBgGreen700
 hoverBgGreen700 :: ClassName
@@ -343,6 +363,10 @@ py1 = ClassName "py-1"
 py2 :: ClassName
 py2 = ClassName "py-2"
 
+-- | right4
+right4 :: ClassName
+right4 = ClassName "right-4"
+
 -- | roundedLg
 roundedLg :: ClassName
 roundedLg = ClassName "rounded-lg"
@@ -354,10 +378,6 @@ roundedMd = ClassName "rounded-md"
 -- | shadowMd
 shadowMd :: ClassName
 shadowMd = ClassName "shadow-md"
-
--- | spaceX2
-spaceX2 :: ClassName
-spaceX2 = ClassName "space-x-2"
 
 -- | text2xl
 text2xl :: ClassName

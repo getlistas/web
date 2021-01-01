@@ -30,8 +30,7 @@ type Slot = forall query. H.Slot query Output Unit
 _createResource = SProxy :: SProxy "createResource"
 
 data Action
-  = Initialize
-  | HandleCreateForm ResourceWithList
+  = HandleFormMessage FormMessage
 
 type State
   = { lists :: Array ListWithIdAndUser  }
@@ -40,6 +39,7 @@ type Input = { lists :: Array ListWithIdAndUser  }
 
 data Output
   = Created ListResource
+  | Cancel
 
 type ChildSlots
   = ( formless :: FormSlot )
@@ -51,19 +51,16 @@ component :: forall q m.
 component = H.mkComponent
   { initialState
   , render
-  , eval: H.mkEval $ H.defaultEval
-      { handleAction = handleAction
-      , initialize = Just Initialize
-      }
+  , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
   }
   where
   initialState = identity
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots Output m Unit
   handleAction = case _ of
-    Initialize -> pure unit
+    HandleFormMessage FormCancel -> H.raise Cancel
 
-    HandleCreateForm { description, title, url, list: listId } -> do
+    HandleFormMessage (FormSubmitted { description, title, url, list: listId }) -> do
       { lists } <- H.get
       mbNewResource <- createResource { description, title, url } listId
       case mbNewResource of
@@ -77,7 +74,7 @@ component = H.mkComponent
   render { lists } =
     HH.div
       []
-      [ HH.slot F._formless unit formComponent { lists } (Just <<< HandleCreateForm) ]
+      [ HH.slot F._formless unit formComponent { lists } (Just <<< HandleFormMessage) ]
 
 newtype DDItem = DDItem { label :: String, value :: String }
 
@@ -87,8 +84,12 @@ derive instance newtypeDDItem :: Newtype DDItem _
 instance toTextDDItem :: ToText DDItem where
   toText = _.label <<< unwrap
 
+data FormMessage
+  = FormCancel
+  | FormSubmitted ResourceWithList
+
 type FormSlot
-  = F.Slot CreateResourceForm FormQuery FormChildSlots ResourceWithList Unit
+  = F.Slot CreateResourceForm FormQuery FormChildSlots FormMessage Unit
 
 newtype CreateResourceForm r f
   = CreateResourceForm
@@ -119,7 +120,7 @@ type FormChildSlots = ( dropdown :: DD.Slot DDItem Unit )
 formComponent ::
   forall m.
   MonadAff m =>
-  F.Component CreateResourceForm FormQuery FormChildSlots FormInput ResourceWithList m
+  F.Component CreateResourceForm FormQuery FormChildSlots FormInput FormMessage m
 formComponent =
   F.component formInput
     $ F.defaultSpec
@@ -143,7 +144,10 @@ formComponent =
     , lists
     }
 
-  handleEvent = F.raiseResult
+  handleEvent = case _ of
+    F.Submitted outputs ->
+      H.raise $ FormSubmitted $ F.unwrapOutputFields outputs
+    _ -> pure unit
 
   handleAction = case _ of
     Submit event -> do
@@ -161,6 +165,7 @@ formComponent =
     Reset -> do
       void $ H.query DD._dropdown unit DD.clear
       eval F.resetAll
+      H.raise FormCancel
 
     where
     eval act = F.handleAction handleAction handleEvent act
@@ -206,7 +211,7 @@ formComponent =
               [ HP.classes [ T.flex, T.justifyEnd ] ]
               [ HH.div
                   [ HP.classes [ T.mr2 ] ]
-                  [ Field.cancel "Clear" (submitting || not dirty) $ F.injAction Reset ]
+                  [ Field.cancel "Cancel" false $ F.injAction Reset ]
               , Field.submit "Add resource" submitting
               ]
           ]

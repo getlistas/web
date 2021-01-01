@@ -18,7 +18,7 @@ import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Component.HTML.CreateResource as CreateResource
 import Listasio.Component.HTML.Header (header)
 import Listasio.Component.HTML.List as List
-import Listasio.Component.HTML.Utils (safeHref)
+import Listasio.Component.HTML.Utils (safeHref, whenElem)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Route (Route(..))
@@ -34,11 +34,13 @@ data Action
   | Receive { currentUser :: Maybe Profile }
   | Navigate Route Event
   | LoadLists
+  | ToggleCreateResource
   | HandleCreateResource CreateResource.Output
 
 type State
   = { currentUser :: Maybe Profile
     , lists :: RemoteData String (Array ListWithIdAndUser)
+    , showCreateResource :: Boolean
     }
 
 type ChildSlots
@@ -67,7 +69,8 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState { currentUser } = { currentUser, lists: NotAsked }
+  initialState { currentUser } =
+    { currentUser, lists: NotAsked, showCreateResource: false }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
@@ -82,8 +85,15 @@ component = Connect.component $ H.mkComponent
       lists <- RemoteData.fromEither <$> noteError <$> getLists
       H.modify_ _ { lists = lists }
 
-    HandleCreateResource (CreateResource.Created resource) ->
+    HandleCreateResource (CreateResource.Created resource) -> do
       void $ H.query List._list resource.list."$oid" $ H.tell $ List.ResourceAdded resource
+      H.modify_ _ { showCreateResource = false }
+
+    HandleCreateResource (CreateResource.Cancel) ->
+      H.modify_ _ { showCreateResource = false }
+
+    ToggleCreateResource ->
+      H.modify_ \s -> s { showCreateResource = not s.showCreateResource }
 
   render :: State -> H.ComponentHTML Action ChildSlots m
   render st =
@@ -102,8 +112,34 @@ component = Connect.component $ H.mkComponent
               $ snoc
                 (map (\list -> HH.slot List._list list._id."$oid" List.component { list } absurd) lists)
                 listCreate
-          , HH.br_
-          , HH.slot CreateResource._createResource unit CreateResource.component { lists } (Just <<< HandleCreateResource)
+          , whenElem (not st.showCreateResource) \_ ->
+              HH.div
+                [ HP.classes [ T.fixed, T.bottom4, T.right4 ] ]
+                [  HH.button
+                  [ HE.onClick \_ -> Just $ ToggleCreateResource
+                  , HP.classes
+                      [ T.flexNone
+                      , T.cursorPointer
+                      , T.leadingNormal
+                      , T.py2
+                      , T.px4
+                      , T.bgDuraznoLight
+                      , T.textWhite
+                      , T.fontSemibold
+                      , T.roundedMd
+                      , T.shadowMd
+                      , T.hoverBgDurazno
+                      , T.focusOutlineNone
+                      , T.focusRing2
+                      , T.focusRingDurazno
+                      ]
+                  ]
+                  [ HH.text "Create Resource" ]
+                ]
+          , whenElem st.showCreateResource \_ ->
+              HH.div
+                [ HP.classes [ T.fixed, T.bottom4, T.right4, T.bgGray300 ] ]
+                [ HH.slot CreateResource._createResource unit CreateResource.component { lists } (Just <<< HandleCreateResource) ]
           ]
 
       Failure msg ->
