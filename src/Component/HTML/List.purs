@@ -137,10 +137,8 @@ component = H.mkComponent
       HH.div
         [ HP.classes [ T.px2, T.py2 ] ]
         [ HH.a
-            [ HP.href next.url, HP.classes [ T.cursorPointer ] ]
-            [ HH.div
-                []
-                []
+            [ HP.href next.url, HP.target "_blank", HP.rel "noreferrer noopener nofollow",  HP.classes [ T.cursorPointer ] ]
+            [ HH.div [] []
             , HH.div
                 []
                 [ HH.div [ HP.classes [ T.textBase, T.textGray400 ] ] [ HH.text next.title ]

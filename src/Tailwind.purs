@@ -199,6 +199,10 @@ gap4 = ClassName "gap-4"
 grid :: ClassName
 grid = ClassName "grid"
 
+-- | gridCols1
+gridCols1 :: ClassName
+gridCols1 = ClassName "grid-cols-1"
+
 -- | gridCols3
 gridCols3 :: ClassName
 gridCols3 = ClassName "grid-cols-3"
@@ -254,6 +258,10 @@ leadingNone = ClassName "leading-none"
 -- | leadingNormal
 leadingNormal :: ClassName
 leadingNormal = ClassName "leading-normal"
+
+-- | lgGridCols3
+lgGridCols3 :: ClassName
+lgGridCols3 = ClassName "lg:grid-cols-3"
 
 -- | m1
 m1 :: ClassName
@@ -378,6 +386,10 @@ roundedMd = ClassName "rounded-md"
 -- | shadowMd
 shadowMd :: ClassName
 shadowMd = ClassName "shadow-md"
+
+-- | smGridCols2
+smGridCols2 :: ClassName
+smGridCols2 = ClassName "sm:grid-cols-2"
 
 -- | text2xl
 text2xl :: ClassName
