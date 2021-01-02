@@ -17,70 +17,71 @@ import Web.UIEvent.MouseEvent (toEvent)
 header :: forall i p r. Maybe { | ProfileRep r } -> (Route -> Event -> p) -> Maybe Route -> HH.HTML i p
 header currentUser navigate route =
   HH.nav
-    [ HP.classes
-        [ T.py2
-        , T.container
-        , T.bgRed100
-        , T.flex
-        , T.flexCol
-        , T.justifyCenter
-        , T.itemsCenter
-        , T.textGray800
+    [ HP.classes [ T.py12, T.container, T.flex, T.justifyBetween, T.itemsCenter, T.flexWrap ] ]
+    [ HH.a
+        [ HP.classes [ T.border2, T.py3, T.px2, T.borderGray400 ]
+        , safeHref Home
+        , HE.onClick (onNavigate Home)
         ]
-    ]
-    [ HH.h1
-        [ HP.classes [ T.text4xl, T.leadingNone ] ]
-        [ HH.a [ safeHref Home, HE.onClick (onNavigate Home) ] [ HH.text "listas.io" ] ]
+        [ HH.h1
+            [ HP.classes [ T.text2xl, T.leadingNone, T.textGray400 ] ]
+            [ HH.text "listas.io" ]
+        ]
     , HH.div
-        [ HP.classes [ T.flex, T.justifyAround, T.mt8, T.w6d12 ] ]
-        [ whenElem (isJust currentUser) \_ ->
-            HH.a
-              [ safeHref Dashboard
-              , HE.onClick (onNavigate Dashboard)
-              , HP.classes [ cx T.fontBold $ route == Just Dashboard, cx T.underline $ route == Just Dashboard ]
-              ]
-              [ HH.text "Dashboard" ]
-        , whenElem (isJust currentUser) \_ ->
-            HH.a
-              [ safeHref Done
-              , HE.onClick (onNavigate Done)
-              , HP.classes [ cx T.fontBold $ route == Just Done, cx T.underline $ route == Just Done ]
-              ]
-              [ HH.text "Done" ]
-        , HH.a
-            [ safeHref About
-            , HE.onClick (onNavigate About)
-            , HP.classes [ cx T.fontBold $ route == Just About, cx T.underline $ route == Just About ]
-            ]
-            [ HH.text "About" ]
-        , HH.a
-            [ safeHref Discover
-            , HE.onClick (onNavigate Discover)
-            , HP.classes [ cx T.fontBold $ route == Just Discover, cx T.underline $ route == Just Discover ]
-            ]
-            [ HH.text "Discover" ]
-        , whenElem (isNothing currentUser) \_ ->
-            HH.a
-              [ safeHref Login
-              , HE.onClick (onNavigate Login)
-              , HP.classes [ cx T.fontBold $ route == Just Login, cx T.underline $ route == Just Login ]
-              ]
-              [ HH.text "Login" ]
-        , whenElem (isNothing currentUser) \_ ->
-            HH.a
-              [ safeHref Register
-              , HE.onClick (onNavigate Register)
-              , HP.classes [ cx T.fontBold $ route == Just Register, cx T.underline $ route == Just Register ]
-              ]
-              [ HH.text "Register" ]
+        [ HP.classes [ T.flex, T.flexWrap, T.justifyBetween, T.itemsCenter ] ]
+        [ whenElem (isJust currentUser) \_ -> navLink Dashboard "Dashboard"
+        , whenElem (isJust currentUser) \_ -> navLink Done "Done"
+        , navLink Discover "Discover"
+        , navLink About "About"
+        , whenElem (isNothing currentUser) \_ -> navLink Register "Try for free"
+        , whenElem (isNothing currentUser) \_ -> navLink Login "Sign in"
         , maybeElem currentUser \{ slug } ->
             HH.a
               [ safeHref Settings
               , HE.onClick (onNavigate Settings)
-              , HP.classes [ cx T.fontBold $ route == Just Settings, cx T.underline $ route == Just Settings ]
+              , HP.classes
+                  [ T.flex
+                  , T.itemsCenter
+                  ]
               ]
-              [ HH.text $ Username.toString slug ]
+              [ HH.span
+                  [ HP.classes
+                      [ cx T.fontBold $ isRoute Settings
+                      , cx T.textGray400 $ isRoute Settings
+                      , cx T.fontBold $ isRoute Settings
+                      , cx T.textGray300 $ not $ isRoute Settings
+                      , T.borderB2
+                      , cx T.borderTransparent $ not $ isRoute Settings
+                      , cx T.borderKiwi $ isRoute Settings
+                      , T.hoverBorderB2
+                      , T.hoverBorderKiwi
+                      , T.mr2
+                      ]
+                  ]
+                  [ HH.text $ Username.toString slug ]
+              , HH.img [ HP.classes [ T.w8, T.h8, T.roundedFull ], HP.src "https://avatars2.githubusercontent.com/u/8309423?s=460&u=0f306a70fdcc2359d21b4918efaabf617a396c91&v=4" ]
+              ]
         ]
     ]
   where
   onNavigate r = Just <<< navigate r <<< toEvent
+  isRoute expected = Just expected == route
+  navLink route' text =
+    HH.a
+      [ safeHref route'
+      , HE.onClick (onNavigate route')
+      , HP.classes
+          [ cx T.fontBold isCurrent
+          , cx T.textGray400 isCurrent
+          , cx T.fontBold isCurrent
+          , cx T.textGray300 $ not isCurrent
+          , T.borderB2
+          , cx T.borderTransparent $ not isCurrent
+          , cx T.borderKiwi isCurrent
+          , T.hoverBorderB2
+          , T.hoverBorderKiwi
+          , T.mr8
+          ]
+      ]
+      [ HH.text text ]
+    where isCurrent = isRoute route'

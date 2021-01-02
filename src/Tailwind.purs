@@ -71,6 +71,10 @@ borderGray200 = ClassName "border-gray-200"
 borderGray300 :: ClassName
 borderGray300 = ClassName "border-gray-300"
 
+-- | borderGray400
+borderGray400 :: ClassName
+borderGray400 = ClassName "border-gray-400"
+
 -- | borderGreen300
 borderGreen300 :: ClassName
 borderGreen300 = ClassName "border-green-300"
@@ -203,13 +207,13 @@ grid = ClassName "grid"
 gridCols1 :: ClassName
 gridCols1 = ClassName "grid-cols-1"
 
--- | gridCols3
-gridCols3 :: ClassName
-gridCols3 = ClassName "grid-cols-3"
-
 -- | h6
 h6 :: ClassName
 h6 = ClassName "h-6"
+
+-- | h8
+h8 :: ClassName
+h8 = ClassName "h-8"
 
 -- | hoverBgDurazno
 hoverBgDurazno :: ClassName
@@ -222,6 +226,14 @@ hoverBgGreen700 = ClassName "hover:bg-green-700"
 -- | hoverBgPink700
 hoverBgPink700 :: ClassName
 hoverBgPink700 = ClassName "hover:bg-pink-700"
+
+-- | hoverBorderB2
+hoverBorderB2 :: ClassName
+hoverBorderB2 = ClassName "hover:border-b-2"
+
+-- | hoverBorderKiwi
+hoverBorderKiwi :: ClassName
+hoverBorderKiwi = ClassName "hover:border-kiwi"
 
 -- | inlineBlock
 inlineBlock :: ClassName
@@ -303,6 +315,10 @@ mr1 = ClassName "mr-1"
 mr2 :: ClassName
 mr2 = ClassName "mr-2"
 
+-- | mr8
+mr8 :: ClassName
+mr8 = ClassName "mr-8"
+
 -- | mt10
 mt10 :: ClassName
 mt10 = ClassName "mt-10"
@@ -363,6 +379,10 @@ px2 = ClassName "px-2"
 px4 :: ClassName
 px4 = ClassName "px-4"
 
+-- | py12
+py12 :: ClassName
+py12 = ClassName "py-12"
+
 -- | py1
 py1 :: ClassName
 py1 = ClassName "py-1"
@@ -371,9 +391,17 @@ py1 = ClassName "py-1"
 py2 :: ClassName
 py2 = ClassName "py-2"
 
+-- | py3
+py3 :: ClassName
+py3 = ClassName "py-3"
+
 -- | right4
 right4 :: ClassName
 right4 = ClassName "right-4"
+
+-- | roundedFull
+roundedFull :: ClassName
+roundedFull = ClassName "rounded-full"
 
 -- | roundedLg
 roundedLg :: ClassName
@@ -478,6 +506,10 @@ w6 = ClassName "w-6"
 -- | w6d12
 w6d12 :: ClassName
 w6d12 = ClassName "w-6/12"
+
+-- | w8
+w8 :: ClassName
+w8 = ClassName "w-8"
 
 -- | wFull
 wFull :: ClassName
