@@ -16,8 +16,8 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, createList)
-import Listasio.Component.HTML.Header (header)
-import Listasio.Component.HTML.Utils (whenElem)
+import Listasio.Component.HTML.Layout as Layout
+import Listasio.Component.HTML.Utils (safeHref, whenElem)
 import Listasio.Data.List (List)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Route (Route(..))
@@ -26,6 +26,7 @@ import Listasio.Form.Field as Field
 import Listasio.Form.Validation as V
 import Tailwind as T
 import Web.Event.Event as Event
+import Web.UIEvent.MouseEvent (toEvent)
 
 data Action
   = Initialize
@@ -74,14 +75,24 @@ component = Connect.component $ H.mkComponent
 
   render :: State -> H.ComponentHTML Action ChildSlots m
   render { currentUser } =
-    HH.div
-      [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-      [ header currentUser Navigate Nothing
-      , HH.div
-          [ HP.classes [ T.container, T.textCenter, T.mt10 ] ]
-          [ HH.text "create list" ]
-      , HH.slot F._formless unit formComponent unit (Just <<< HandleCreateForm)
-      ]
+    Layout.dashboard
+      currentUser
+      Navigate
+      Nothing
+      title
+      $ HH.slot F._formless unit formComponent unit (Just <<< HandleCreateForm)
+    where
+    title =
+      HH.div
+        [ HP.classes [ T.flex, T.itemsCenter ] ]
+        [ HH.a
+            [ safeHref Dashboard
+            , HE.onClick \e -> Just $ Navigate Dashboard $ toEvent e
+            , HP.classes [ T.textGray200, T.mr8 ]
+            ]
+            [ HH.text "ᐸ" ]
+        , HH.text "Create List"
+        ]
 
 newtype CreateListForm r f
   = CreateListForm
@@ -163,7 +174,7 @@ formComponent =
               , HP.type_ HP.InputText
               ]
           , Field.input proxies.tags form
-              [ HP.placeholder "Tags (comman separated)"
+              [ HP.placeholder "Tags (comma separated)"
               , HP.type_ HP.InputText
               ]
           , HH.label
