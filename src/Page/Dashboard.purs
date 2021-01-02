@@ -16,7 +16,7 @@ import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Component.HTML.CreateResource as CreateResource
-import Listasio.Component.HTML.Header (header)
+import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.List as List
 import Listasio.Component.HTML.Utils (safeHref, whenElem)
 import Listasio.Data.List (ListWithIdAndUser)
@@ -97,11 +97,12 @@ component = Connect.component $ H.mkComponent
 
   render :: State -> H.ComponentHTML Action ChildSlots m
   render st =
-    HH.div
-      [ HP.classes [ T.bgGray100, T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-      [ header st.currentUser Navigate $ Just Dashboard
-      , HH.div [ HP.classes [ T.container, T.mt10 ] ] [ feed ]
-      ]
+    Layout.dashboard
+      st.currentUser
+      Navigate
+      (Just Dashboard)
+      (HH.text "Read Next")
+      $ HH.div [ HP.classes [ T.container ] ] [ feed ]
     where
     feed = case st.lists of
       Success lists ->

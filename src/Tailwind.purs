@@ -295,6 +295,10 @@ mb1 = ClassName "mb-1"
 mb4 :: ClassName
 mb4 = ClassName "mb-4"
 
+-- | mb6
+mb6 :: ClassName
+mb6 = ClassName "mb-6"
+
 -- | minHScreen
 minHScreen :: ClassName
 minHScreen = ClassName "min-h-screen"
@@ -334,6 +338,10 @@ mt8 = ClassName "mt-8"
 -- | mx1
 mx1 :: ClassName
 mx1 = ClassName "mx-1"
+
+-- | mxAuto
+mxAuto :: ClassName
+mxAuto = ClassName "mx-auto"
 
 -- | my1
 my1 :: ClassName
