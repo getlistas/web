@@ -7,7 +7,7 @@ import Data.Newtype (class Newtype)
 import Listasio.Api.Request (RegisterFields)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, registerUser)
-import Listasio.Component.HTML.Header (header)
+import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Utils (safeHref)
 import Listasio.Data.Email (Email)
 import Listasio.Data.Route (Route(..))
@@ -65,52 +65,56 @@ component =
     Navigate route e -> navigate_ e route
 
   render { registration } =
-    container
-      [ HH.h1 [] [ HH.text "Sign Up" ]
-      , HH.p
-          []
-          [ HH.a
-              [ safeHref Login, HE.onClick (Just <<< Navigate Login <<< Mouse.toEvent) ]
-              [ HH.text "Already have an account?" ]
+    Layout.noheader
+      Nothing
+      Navigate
+      (Just Register)
+      $ HH.div
+          [ HP.classes [ T.mt12, T.flex, T.flexCol, T.itemsCenter ] ]
+          [ HH.h1
+              [ HP.classes [ T.textGray400, T.text2xl, T.fontBold, T.mb6 ] ]
+              [ HH.text "Create Account" ]
+          , case registration of
+              Success _ ->
+                HH.div
+                  [ HP.classes
+                      [ T.flex
+                      , T.justifyCenter
+                      , T.itemsCenter
+                      , T.m1
+                      , T.fontMedium
+                      , T.py1
+                      , T.px2
+                      , T.bgWhite
+                      , T.roundedMd
+                      , T.textGreen700
+                      , T.bgGreen100
+                      , T.border
+                      , T.borderGreen300
+                      ]
+                  ]
+                  [ HH.div
+                      [ HP.classes [ T.text2xl, T.fontNormal, T.maxWFull, T.flexInitial ] ]
+                      [ HH.text "Account created :)"
+                      , HH.div [ HP.classes [ T.textSm, T.textBase ] ] [ HH.text "Check your email" ]
+                      ]
+                  ]
+
+              Failure _ -> HH.div [] [ HH.text "Failed" , form ]
+
+              _ -> form
+          , HH.p
+              [ HP.classes [ T.mt4 ] ]
+              [ HH.span [ HP.classes [ T.textGray400 ] ] [HH.text "Already have an account? " ]
+              , HH.a
+                  [ HP.classes [ T.textDurazno ]
+                  , safeHref Register, HE.onClick (Just <<< Navigate Login <<< Mouse.toEvent)
+                  ]
+                  [ HH.text "Sign in" ]
+              ]
           ]
-      , case registration of
-          Success _ ->
-            HH.div
-              [ HP.classes
-                  [ T.flex
-                  , T.justifyCenter
-                  , T.itemsCenter
-                  , T.m1
-                  , T.fontMedium
-                  , T.py1
-                  , T.px2
-                  , T.bgWhite
-                  , T.roundedMd
-                  , T.textGreen700
-                  , T.bgGreen100
-                  , T.border
-                  , T.borderGreen300
-                  ]
-              ]
-              [ HH.div
-                  [ HP.classes [ T.text2xl, T.fontNormal, T.maxWFull, T.flexInitial ] ]
-                  [ HH.text "Account created :)"
-                  , HH.div [ HP.classes [ T.textSm, T.textBase ] ] [ HH.text "Check your email" ]
-                  ]
-              ]
-
-          Failure _ -> HH.div [] [ HH.text "Failed" , form ]
-
-          _ -> form
-      ]
     where
     form = HH.slot F._formless unit formComponent unit (Just <<< HandleRegisterForm)
-    container html =
-      HH.div
-        [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-        [ header Nothing Navigate $ Just Register
-        , HH.div [] html
-        ]
 
 data FormAction
   = Submit Event.Event
@@ -151,9 +155,11 @@ formComponent =
   renderForm { form, submitting } =
     HH.form
       [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev ]
-      [ HH.fieldset_
-          [ name
-          , slug
+      [ HH.fieldset
+          [ HP.classes [ T.w96, T.maxWFull ] ]
+          [ HH.div
+              [ HP.classes [ T.grid, T.gridCols2, T.gap4 ] ]
+              [ name, slug ]
           , email
           , password
           ]
@@ -163,17 +169,17 @@ formComponent =
     proxies = F.mkSProxies (F.FormProxy :: _ RegisterForm)
 
     name =
-      Field.input proxies.name form
-        [ HP.placeholder "Username", HP.type_ HP.InputText ]
+      Field.input "Username" proxies.name form
+        [ HP.placeholder "John Doe", HP.type_ HP.InputText ]
 
     slug =
-      Field.input proxies.slug form
-        [ HP.placeholder "Slug", HP.type_ HP.InputText ]
+      Field.input "Slug" proxies.slug form
+        [ HP.placeholder "john-doe", HP.type_ HP.InputText ]
 
     email =
-      Field.input proxies.email form
-        [ HP.placeholder "Email", HP.type_ HP.InputEmail ]
+      Field.input "Email address" proxies.email form
+        [ HP.placeholder "john.doe@email.com", HP.type_ HP.InputEmail ]
 
     password =
-      Field.input proxies.password form
-        [ HP.placeholder "Password", HP.type_ HP.InputPassword ]
+      Field.input "Password" proxies.password form
+        [ HP.placeholder "********", HP.type_ HP.InputPassword ]

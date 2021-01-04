@@ -41,7 +41,7 @@ routeCodec =
     $ sum
         { "Home": noArgs
         , "About": "about" / noArgs
-        , "Login": "login" / noArgs
+        , "Login": "signin" / noArgs
         , "Register": "register" / noArgs
         , "Settings": "settings" / noArgs
         , "Profile": "profile" / uname segment

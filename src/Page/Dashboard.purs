@@ -139,7 +139,7 @@ component = Connect.component $ H.mkComponent
                 ]
           , whenElem st.showCreateResource \_ ->
               HH.div
-                [ HP.classes [ T.fixed, T.bottom4, T.right4, T.bgGray300 ] ]
+                [ HP.classes [ T.fixed, T.bottom4, T.right4, T.bgGray100 ] ]
                 [ HH.slot CreateResource._createResource unit CreateResource.component { lists } (Just <<< HandleCreateResource) ]
           ]
 

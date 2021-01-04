@@ -14,7 +14,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, logout, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, updateUser)
-import Listasio.Component.HTML.Header (header)
+import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Utils (whenElem)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Route (Route(..))
@@ -89,43 +89,37 @@ component = Connect.component $ H.mkComponent
     Navigate route e -> navigate_ e route
 
   render { currentUser } =
-    container $
-      HH.div
-        [ HP.classes [ T.mt10 ] ]
-        [ HH.h1
-            []
-            [ HH.text "Settings" ]
-        , whenElem false \_ -> HH.slot F._formless unit formComponent unit (Just <<< HandleForm)
-        , HH.div
-            [ HP.classes [ T.mt8 ] ]
-            [ HH.button
-                [ HE.onClick \_ -> Just LogUserOut
-                , HP.classes
-                    [ T.cursorPointer
-                    , T.py2
-                    , T.px4
-                    , T.bgGray300
-                    , T.textWhite
-                    , T.fontSemibold
-                    , T.roundedLg
-                    , T.shadowMd
-                    , T.hoverBgPink700
-                    , T.focusOutlineNone
-                    , T.focusRing2
-                    , T.focusRingPurple600
-                    ]
-                ]
-                [ HH.text "Log out" ]
-            ]
-        ]
+    Layout.dashboard
+      currentUser
+      Navigate
+      (Just Settings)
+      (HH.text "Settings")
+      $ HH.div
+          []
+          [ whenElem false \_ -> HH.slot F._formless unit formComponent unit (Just <<< HandleForm)
+          , HH.div
+              [ HP.classes [ T.mt8 ] ]
+              [ HH.button
+                  [ HE.onClick \_ -> Just LogUserOut
+                  , HP.classes
+                      [ T.cursorPointer
+                      , T.py2
+                      , T.px4
+                      , T.bgGray300
+                      , T.textWhite
+                      , T.fontSemibold
+                      , T.roundedLg
+                      , T.shadowMd
+                      , T.hoverBgPink700
+                      , T.focusOutlineNone
+                      , T.focusRing2
+                      , T.focusRingPurple600
+                      ]
+                  ]
+                  [ HH.text "Log out" ]
+              ]
+          ]
     where
-    container html =
-      HH.div
-        [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-        [ header currentUser Navigate $ Just Settings
-        , html
-        ]
-
     formComponent :: forall query slots. F.Component SettingsForm query slots Unit Profile m
     formComponent =
       F.component formInput
@@ -156,9 +150,9 @@ component = Connect.component $ H.mkComponent
         proxies = F.mkSProxies (F.FormProxy :: _ SettingsForm)
 
         name =
-          Field.input proxies.name form
-            [ HP.placeholder "Your name", HP.type_ HP.InputText ]
+          Field.input "Your name" proxies.name form
+            [ HP.placeholder "John Dow", HP.type_ HP.InputText ]
 
         slug =
-          Field.input proxies.slug form
-            [ HP.placeholder "Your slug", HP.type_ HP.InputText ]
+          Field.input "Your slug" proxies.slug form
+            [ HP.placeholder "john-doe", HP.type_ HP.InputText ]

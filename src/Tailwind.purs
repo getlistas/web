@@ -35,10 +35,6 @@ bgKiwi = ClassName "bg-kiwi"
 bgPink300 :: ClassName
 bgPink300 = ClassName "bg-pink-300"
 
--- | bgRed100
-bgRed100 :: ClassName
-bgRed100 = ClassName "bg-red-100"
-
 -- | bgRed200
 bgRed200 :: ClassName
 bgRed200 = ClassName "bg-red-200"
@@ -86,6 +82,10 @@ borderIndigo400 = ClassName "border-indigo-400"
 -- | borderKiwi
 borderKiwi :: ClassName
 borderKiwi = ClassName "border-kiwi"
+
+-- | borderNone
+borderNone :: ClassName
+borderNone = ClassName "border-none"
 
 -- | borderRed600
 borderRed600 :: ClassName
@@ -175,6 +175,22 @@ focusRingDurazno = ClassName "focus:ring-durazno"
 focusRingGreen900 :: ClassName
 focusRingGreen900 = ClassName "focus:ring-green-900"
 
+-- | focusRingKiwi
+focusRingKiwi :: ClassName
+focusRingKiwi = ClassName "focus:ring-kiwi"
+
+-- | focusRingManzana
+focusRingManzana :: ClassName
+focusRingManzana = ClassName "focus:ring-manzana"
+
+-- | focusRingOffset2
+focusRingOffset2 :: ClassName
+focusRingOffset2 = ClassName "focus:ring-offset-2"
+
+-- | focusRingOffsetGray100
+focusRingOffsetGray100 :: ClassName
+focusRingOffsetGray100 = ClassName "focus:ring-offset-gray-100"
+
 -- | focusRingPurple600
 focusRingPurple600 :: ClassName
 focusRingPurple600 = ClassName "focus:ring-purple-600"
@@ -207,6 +223,10 @@ grid = ClassName "grid"
 gridCols1 :: ClassName
 gridCols1 = ClassName "grid-cols-1"
 
+-- | gridCols2
+gridCols2 :: ClassName
+gridCols2 = ClassName "grid-cols-2"
+
 -- | h6
 h6 :: ClassName
 h6 = ClassName "h-6"
@@ -222,6 +242,10 @@ hoverBgDurazno = ClassName "hover:bg-durazno"
 -- | hoverBgGreen700
 hoverBgGreen700 :: ClassName
 hoverBgGreen700 = ClassName "hover:bg-green-700"
+
+-- | hoverBgOpacity75
+hoverBgOpacity75 :: ClassName
+hoverBgOpacity75 = ClassName "hover:bg-opacity-75"
 
 -- | hoverBgPink700
 hoverBgPink700 :: ClassName
@@ -246,10 +270,6 @@ itemsCenter = ClassName "items-center"
 -- | itemsStart
 itemsStart :: ClassName
 itemsStart = ClassName "items-start"
-
--- | justifyAround
-justifyAround :: ClassName
-justifyAround = ClassName "justify-around"
 
 -- | justifyBetween
 justifyBetween :: ClassName
@@ -327,6 +347,14 @@ mr8 = ClassName "mr-8"
 mt10 :: ClassName
 mt10 = ClassName "mt-10"
 
+-- | mt12
+mt12 :: ClassName
+mt12 = ClassName "mt-12"
+
+-- | mt2
+mt2 :: ClassName
+mt2 = ClassName "mt-2"
+
 -- | mt4
 mt4 :: ClassName
 mt4 = ClassName "mt-4"
@@ -374,6 +402,10 @@ p6 = ClassName "p-6"
 -- | p8
 p8 :: ClassName
 p8 = ClassName "p-8"
+
+-- | placeholderGray300
+placeholderGray300 :: ClassName
+placeholderGray300 = ClassName "placeholder-gray-300"
 
 -- | placeholderGray400
 placeholderGray400 :: ClassName
@@ -447,6 +479,10 @@ textBase = ClassName "text-base"
 textCenter :: ClassName
 textCenter = ClassName "text-center"
 
+-- | textDurazno
+textDurazno :: ClassName
+textDurazno = ClassName "text-durazno"
+
 -- | textGray200
 textGray200 :: ClassName
 textGray200 = ClassName "text-gray-200"
@@ -463,10 +499,6 @@ textGray400 = ClassName "text-gray-400"
 textGray700 :: ClassName
 textGray700 = ClassName "text-gray-700"
 
--- | textGray800
-textGray800 :: ClassName
-textGray800 = ClassName "text-gray-800"
-
 -- | textGreen700
 textGreen700 :: ClassName
 textGreen700 = ClassName "text-green-700"
@@ -478,6 +510,10 @@ textKiwi = ClassName "text-kiwi"
 -- | textLg
 textLg :: ClassName
 textLg = ClassName "text-lg"
+
+-- | textManzana
+textManzana :: ClassName
+textManzana = ClassName "text-manzana"
 
 -- | textRed500
 textRed500 :: ClassName
@@ -511,13 +547,13 @@ w32 = ClassName "w-32"
 w6 :: ClassName
 w6 = ClassName "w-6"
 
--- | w6d12
-w6d12 :: ClassName
-w6d12 = ClassName "w-6/12"
-
 -- | w8
 w8 :: ClassName
 w8 = ClassName "w-8"
+
+-- | w96
+w96 :: ClassName
+w96 = ClassName "w-96"
 
 -- | wFull
 wFull :: ClassName

@@ -3,7 +3,8 @@ module Listasio.Form.Field where
 import Prelude
 
 import DOM.HTML.Indexed (HTMLinput)
-import Data.Maybe (Maybe(..))
+import Data.Filterable (filter)
+import Data.Maybe (Maybe(..), isJust)
 import Data.Newtype (class Newtype)
 import Data.Symbol (class IsSymbol, SProxy)
 import Data.Variant (Variant)
@@ -11,7 +12,7 @@ import Formless as F
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Listasio.Component.HTML.Utils (maybeElem, whenElem)
+import Listasio.Component.HTML.Utils (cx, maybeElem)
 import Listasio.Form.Validation (errorToString)
 import Listasio.Form.Validation as V
 import Tailwind as T
@@ -23,20 +24,23 @@ submit buttonText disabled =
     [ HP.type_ HP.InputSubmit
     , HP.value buttonText
     , HP.classes
-        [ T.cursorPointer
+        [ T.flex1
+        , T.wFull
+        , T.cursorPointer
         , T.disabledCursorNotAllowed
         , T.disabledOpacity50
         , T.py2
         , T.px4
-        , T.bgPink300
+        , T.bgKiwi
         , T.textWhite
-        , T.fontSemibold
-        , T.roundedLg
+        , T.roundedMd
         , T.shadowMd
-        , T.hoverBgPink700
+        , T.hoverBgOpacity75
         , T.focusOutlineNone
         , T.focusRing2
-        , T.focusRingPurple600
+        , T.focusRingOffset2
+        , T.focusRingOffsetGray100
+        , T.focusRingKiwi
         ]
     , HP.disabled disabled
     ]
@@ -48,7 +52,9 @@ cancel buttonText disabled action =
     , HP.value buttonText
     , HE.onClick \_ -> Just action
     , HP.classes
-        [ T.cursorPointer
+        [ T.flex1
+        , T.wFull
+        , T.cursorPointer
         , T.disabledCursorNotAllowed
         , T.disabledOpacity50
         , T.py2
@@ -56,12 +62,15 @@ cancel buttonText disabled action =
         , T.bgGray300
         , T.textWhite
         , T.fontSemibold
-        , T.roundedLg
+        , T.roundedMd
         , T.shadowMd
-        , T.hoverBgPink700
+        , T.hoverBgOpacity75
         , T.focusOutlineNone
+
         , T.focusRing2
-        , T.focusRingPurple600
+        , T.focusRingOffset2
+        , T.focusRingOffsetGray100
+        , T.focusRingKiwi
         ]
     , HP.disabled disabled
     ]
@@ -97,45 +106,48 @@ input ::
   Newtype (form Variant F.InputFunction) (Variant inputs) =>
   Row.Cons sym (F.FormField V.FormError String out) t0 fields =>
   Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs =>
+  String ->
   SProxy sym ->
   form Record F.FormField ->
   Array (HH.IProp HTMLinput (F.Action form act)) ->
   F.ComponentHTML form act slots m
-input sym form props =
+input label sym form props =
   HH.fieldset
     [ HP.classes [ T.my4 ] ]
-    [ HH.input
+    [ HH.label
+        [ HP.classes [ T.textGray400, T.textLg ] ]
+        [ HH.text label ]
+    , HH.input
         ( append
             [ HP.value $ F.getInput sym form
             , HE.onValueInput $ Just <<< F.setValidate sym
             , HP.classes
                 [ T.flex1
                 , T.appearanceNone
-                , T.border
-                , T.borderTransparent
+                , T.borderNone
                 , T.wFull
+                , T.mt2
                 , T.py2
                 , T.px4
-                , T.bgWhite
-                , T.textGray700
-                , T.placeholderGray400
-                , T.shadowMd
-                , T.roundedLg
+                , T.bgWhite -- TODO
+                , T.textGray400
+                , T.placeholderGray300
+                , T.roundedMd
                 , T.textBase
                 , T.focusOutlineNone
                 , T.focusRing2
-                , T.focusRingPurple600
+                , T.focusRingOffset2
+                , T.focusRingOffsetGray100
+                , cx T.focusRingKiwi $ not hasError
+                , cx T.focusRingManzana hasError
                 ]
             ]
             props
         )
-    , maybeElem (F.getError sym form) \err ->
-        whenElem (F.getTouched sym form) \_ ->
-          HH.div
-            [ HP.classes
-                [ T.textRed500
-                , T.my2
-                ]
-            ]
-            [ HH.text $ errorToString err ]
+    , maybeElem mbError \err ->
+        HH.div
+          [ HP.classes [ T.textManzana, T.my2 ] ]
+          [ HH.text $ errorToString err ]
     ]
+  where mbError = filter (const $ F.getTouched sym form) $ F.getError sym form
+        hasError = isJust mbError

@@ -28,3 +28,19 @@ dashboard currentUser navigate route title content =
         , content
         ]
     ]
+
+noheader :: forall i p r.
+     Maybe { | ProfileRep r }
+  -> (Route -> Event -> p)
+  -> Maybe Route
+  -> HH.HTML i p
+  -> HH.HTML i p
+noheader currentUser navigate route content =
+  HH.div
+    [ HP.classes [ T.minHScreen, T.wScreen, T.bgGray100 ] ]
+    [ HH.div
+        [ HP.classes [ T.container, T.mxAuto, T.px2, T.flex, T.flexCol ] ]
+        [ header currentUser navigate route
+        , content
+        ]
+    ]

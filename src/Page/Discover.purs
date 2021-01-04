@@ -12,9 +12,9 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Listasio.Component.HTML.Layout as Layout
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, discoverLists)
-import Listasio.Component.HTML.Header (header)
 import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Profile (Profile)
@@ -109,11 +109,12 @@ component = Connect.component $ H.mkComponent
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render { currentUser, lists, isLast } =
-    HH.div
-      [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-      [ header currentUser Navigate $ Just Discover
-      , HH.div [ HP.classes [ T.mt10 ] ] [ feed ]
-      ]
+    Layout.dashboard
+      currentUser
+      Navigate
+      (Just Discover)
+      (HH.text "Discover")
+      feed
     where
     feed = case lists of
       Success { refreshing, items } ->

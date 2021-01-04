@@ -165,16 +165,16 @@ formComponent =
             []
             [ HH.text "Failed to create form" ]
       , HH.fieldset_
-          [ Field.input proxies.title form
-              [ HP.placeholder "Title"
+          [ Field.input "Title" proxies.title form
+              [ HP.placeholder "YouTube Videos"
               , HP.type_ HP.InputText
               ]
-          , Field.input proxies.description form
-              [ HP.placeholder "Description"
+          , Field.input "Description" proxies.description form
+              [ HP.placeholder "Videos to watch all night long"
               , HP.type_ HP.InputText
               ]
-          , Field.input proxies.tags form
-              [ HP.placeholder "Tags (comma separated)"
+          , Field.input "Tags" proxies.tags form
+              [ HP.placeholder "videos,chill"
               , HP.type_ HP.InputText
               ]
           , HH.label
