@@ -13,7 +13,7 @@ import Halogen.HTML.Properties as HP
 import Listasio.Api.Request (LoginFields)
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, loginUser)
-import Listasio.Component.HTML.Header (header)
+import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Utils (safeHref, whenElem)
 import Listasio.Data.Email (Email)
 import Listasio.Data.Route (Route(..))
@@ -70,49 +70,50 @@ component =
 
   render :: State -> H.ComponentHTML Action ChildSlots m
   render { success } =
-    container
-      [ HH.h1
-          []
-          [ HH.text "Sign In" ]
-      , HH.p
-          []
-          [ HH.a
-              [ safeHref Register, HE.onClick (Just <<< Navigate Register <<< Mouse.toEvent) ]
-              [ HH.text "Need an account?" ]
+    Layout.noheader
+      Nothing
+      Navigate
+      (Just Login)
+      $ HH.div
+          [ HP.classes [ T.mt12, T.flex, T.flexCol, T.itemsCenter ] ]
+          [ HH.h1
+              [ HP.classes [ T.textGray400, T.text2xl, T.fontBold, T.mb6 ] ]
+              [ HH.text "Welcome to Listas" ]
+          , whenElem success \_ ->
+              HH.div
+                [ HP.classes
+                    [ T.flex
+                    , T.justifyCenter
+                    , T.itemsCenter
+                    , T.m1
+                    , T.fontMedium
+                    , T.py1
+                    , T.px2
+                    , T.bgWhite
+                    , T.roundedMd
+                    , T.textGreen700
+                    , T.bgGreen100
+                    , T.border
+                    , T.borderGreen300
+                    ]
+                ]
+                [ HH.div
+                    [ HP.classes [ T.text2xl, T.fontNormal, T.maxWFull, T.flexInitial ] ]
+                    [ HH.text "Registration succesful :)"
+                    , HH.div [ HP.classes [ T.textSm, T.textBase ] ] [ HH.text "Login to start using the app" ]
+                    ]
+                ]
+          , HH.slot F._formless unit formComponent unit (Just <<< HandleLoginForm)
+          , HH.p
+              [ HP.classes [ T.mt4 ] ]
+              [ HH.span [ HP.classes [ T.textGray400 ] ] [HH.text "Don't have an account? " ]
+              , HH.a
+                  [ HP.classes [ T.textDurazno ]
+                  , safeHref Register, HE.onClick (Just <<< Navigate Register <<< Mouse.toEvent)
+                  ]
+                  [ HH.text "Sign up for free" ]
+              ]
           ]
-      , whenElem success \_ ->
-          HH.div
-            [ HP.classes
-                [ T.flex
-                , T.justifyCenter
-                , T.itemsCenter
-                , T.m1
-                , T.fontMedium
-                , T.py1
-                , T.px2
-                , T.bgWhite
-                , T.roundedMd
-                , T.textGreen700
-                , T.bgGreen100
-                , T.border
-                , T.borderGreen300
-                ]
-            ]
-            [ HH.div
-                [ HP.classes [ T.text2xl, T.fontNormal, T.maxWFull, T.flexInitial ] ]
-                [ HH.text "Registration succesful :)"
-                , HH.div [ HP.classes [ T.textSm, T.textBase ] ] [ HH.text "Login to start using the app" ]
-                ]
-            ]
-      , HH.slot F._formless unit formComponent unit (Just <<< HandleLoginForm)
-      ]
-    where
-    container html =
-      HH.div
-        [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-        [ header Nothing Navigate $ Just Login
-        , HH.div [] html
-        ]
 
 newtype LoginForm r f
   = LoginForm
@@ -180,15 +181,16 @@ formComponent =
           HH.div
             [ HP.classes [ T.textRed500 ] ]
             [ HH.text "Email or password is invalid" ]
-      , HH.fieldset_
-          [ Field.input proxies.email form
-              [ HP.placeholder "Email"
+      , HH.fieldset
+          [ HP.classes [ T.w96, T.maxWFull ] ]
+          [ Field.input "Email address" proxies.email form
+              [ HP.placeholder "jonh.doe@email.com"
               , HP.type_ HP.InputEmail
               ]
-          , Field.input proxies.password form
-              [ HP.placeholder "Password"
+          , Field.input "Password" proxies.password form
+              [ HP.placeholder "********"
               , HP.type_ HP.InputPassword
               ]
-          , Field.submit "Log in" submitting
+          , Field.submit "Sign in" submitting
           ]
       ]

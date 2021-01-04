@@ -5,15 +5,15 @@ import Prelude
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Maybe (Maybe(..))
-import Listasio.Capability.Navigate (class Navigate, navigate_)
-import Listasio.Component.HTML.Header (header)
-import Listasio.Data.Profile (Profile)
-import Listasio.Data.Route (Route(..))
-import Listasio.Env (UserEnv)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
+import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Component.HTML.Layout as Layout
+import Listasio.Data.Profile (Profile)
+import Listasio.Data.Route (Route(..))
+import Listasio.Env (UserEnv)
 import Tailwind as T
 import Web.Event.Event (Event)
 
@@ -53,10 +53,17 @@ component = Connect.component $ H.mkComponent
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render { currentUser } =
-    HH.div
-      [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-      [ header currentUser Navigate $ Just Done
-      , HH.div
-          [ HP.classes [ T.container, T.textCenter, T.mt10 ] ]
-          [ HH.text "done" ]
-      ]
+    Layout.dashboard
+      currentUser
+      Navigate
+      (Just Done)
+      (HH.text "Done")
+      $ HH.div
+          []
+          [ HH.h2
+              [ HP.classes [ T.text2xl, T.textGray300 ] ]
+              [ HH.text "🚧 Work in Progress 👷" ]
+          , HH.p
+              [ HP.classes [ T.textLg, T.textGray300, T.mt4 ] ]
+              [ HH.text "Completed resources will be showed here 🔜" ]
+          ]

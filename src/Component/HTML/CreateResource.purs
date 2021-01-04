@@ -189,7 +189,7 @@ formComponent =
   --       but the async action actually happens in the parent component
   renderCreateResource { form, createError, lists, submitting, dirty } =
     HH.form
-      [ HP.classes [ T.p6, T.border4, T.borderGreen300 ]
+      [ HP.classes [ T.p6, T.border4, T.borderKiwi, T.roundedMd ]
       , HE.onSubmit \ev -> Just $ F.injAction $ Submit ev
       ]
       [ whenElem createError \_ ->
@@ -197,16 +197,16 @@ formComponent =
             []
             [ HH.text "Failed to add resource" ]
       , HH.fieldset_
-          [ Field.input proxies.title form
-              [ HP.placeholder "Title"
+          [ Field.input "Title" proxies.title form
+              [ HP.placeholder "Life of a Programmer in Simple Jokes"
               , HP.type_ HP.InputText
               ]
-          , Field.input proxies.url form
-              [ HP.placeholder "URL"
+          , Field.input "URL" proxies.url form
+              [ HP.placeholder "https://medium.com/javascript-in-plain-english/life-of-a-programmer-in-simple-jokes-that-will-make-you-laugh-52ccfbf77438"
               , HP.type_ HP.InputText
               ]
-          , Field.input proxies.description form
-              [ HP.placeholder "Description"
+          , Field.input "Description" proxies.description form
+              [ HP.placeholder "You don’t have to be a programmer to laugh at their humor."
               , HP.type_ HP.InputText
               ]
           , HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput handler

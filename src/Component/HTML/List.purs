@@ -5,8 +5,8 @@ import Prelude
 import Data.Array (cons, drop, head, null, snoc, tail)
 import Data.Array.NonEmpty as NEA
 import Data.Either (Either(..), hush, note)
-import Data.Filterable (filter)
-import Data.Maybe (Maybe(..), isNothing)
+import Data.Filterable (class Filterable, filter)
+import Data.Maybe (Maybe(..), isJust, isNothing)
 import Data.String (Pattern(..), Replacement(..), contains, replace)
 import Data.String.Regex (regex, match) as Regex
 import Data.String.Regex.Flags (noFlags) as Regex
@@ -196,8 +196,12 @@ component = H.mkComponent
         , HH.div [ HP.classes [ T.textSm, T.textGray200 ] ] [ HH.text "Last seen 8 days ago" ]
         ]
 
+    mbResources = filterNotEmpty $ toMaybe resources
+    mbRest = filterNotEmpty $ tail =<< mbResources
+    hasMore = isJust mbRest
+
     footer =
-      maybeElem (filter (not <<< null) $ tail =<< toMaybe resources) \rest ->
+      maybeElem mbResources \_ ->
         HH.div
           [ HP.classes [ T.p1, T.borderT2, T.borderGray200, T.flex, T.justifyCenter ] ]
           [ HH.div
@@ -206,7 +210,15 @@ component = H.mkComponent
                   [ HP.classes [ T.flex, T.justifyCenter ] ]
                   [ HH.button
                       [ HE.onClick \_ -> Just ToggleShowMore
-                      , HP.classes [ T.focusOutlineNone, T.flex , T.flexCol, T.itemsCenter ]
+                      , HP.disabled $ not hasMore
+                      , HP.classes
+                          [ T.focusOutlineNone
+                          , T.flex
+                          , T.flexCol
+                          , T.itemsCenter
+                          , T.disabledCursorNotAllowed
+                          , T.disabledOpacity50
+                          ]
                       ]
                       [ HH.span
                           [ HP.classes [ T.textSm, T.textGray200 ] ]
@@ -216,9 +228,13 @@ component = H.mkComponent
                           [ HH.text $ if showMore then "▲" else "▼" ]
                       ]
                   ]
-              , whenElem showMore \_ ->
-                  HH.div
-                    [ HP.classes [ T.mt4, T.flex, T.flexCol ] ]
-                    $ map (\{ url, title } -> HH.a [ HP.classes [ T.underline ], HP.href url ] [ HH.text title ]) rest
+              , maybeElem mbRest \rest ->
+                  whenElem showMore \_ ->
+                    HH.div
+                      [ HP.classes [ T.mt4, T.flex, T.flexCol ] ]
+                      $ map (\{ url, title } -> HH.a [ HP.classes [ T.underline ], HP.href url ] [ HH.text title ]) rest
               ]
           ]
+
+filterNotEmpty :: forall t a. Filterable t => t (Array a) -> t (Array a)
+filterNotEmpty = filter (not <<< null)

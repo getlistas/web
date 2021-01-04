@@ -5,15 +5,16 @@ import Prelude
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Maybe (Maybe(..))
-import Listasio.Capability.Navigate (class Navigate, navigate_)
-import Listasio.Component.HTML.Header (header)
-import Listasio.Data.Profile (Profile)
-import Listasio.Data.Route (Route(..))
-import Listasio.Env (UserEnv)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
+import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Component.HTML.Header (header)
+import Listasio.Component.HTML.Layout as Layout
+import Listasio.Data.Profile (Profile)
+import Listasio.Data.Route (Route(..))
+import Listasio.Env (UserEnv)
 import Tailwind as T
 import Web.Event.Event (Event)
 
@@ -53,13 +54,20 @@ component = Connect.component $ H.mkComponent
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render { currentUser } =
-    HH.div
-      [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-      [ header currentUser Navigate $ Just About
-      , HH.div
-          [ HP.classes [ T.container, T.textCenter, T.mt10 ] ]
+    Layout.dashboard
+      currentUser
+      Navigate
+      (Just About)
+      (HH.text "About")
+      $ HH.div
+          [ HP.classes [ T.textGray400 ] ]
           [ HH.div [] [ HH.text "listas.io your favorite digital consumption manager" ]
-          , HH.div [ HP.classes [ T.mt10 ] ] [ HH.text "@ndelvalle <> @DvNahuel <> @gillchristian" ]
+          , HH.div
+              [ HP.classes [ T.mt4 ] ]
+              [ HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://github.com/ndelvalle" ] [ HH.text "@ndelvalle" ]
+              , HH.text " <> "
+              , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://twitter.com/DvNahuel" ] [ HH.text "@DvNahuel" ]
+              , HH.text " <> "
+              , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://gillchristian.xyz" ] [ HH.text "@gillchristian" ]
+              ]
           ]
-      ]
-
