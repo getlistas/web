@@ -6,7 +6,7 @@ import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Array (snoc)
 import Data.Either (Either, note)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), isJust)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -23,7 +23,7 @@ import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Route (Route(..))
 import Listasio.Env (UserEnv)
-import Network.RemoteData (RemoteData(..))
+import Network.RemoteData (RemoteData(..), toMaybe)
 import Network.RemoteData as RemoteData
 import Tailwind as T
 import Web.Event.Event (Event)
@@ -101,9 +101,43 @@ component = Connect.component $ H.mkComponent
       st.currentUser
       Navigate
       (Just Dashboard)
-      (HH.text "Read Next")
-      $ HH.div [ HP.classes [ T.container ] ] [ feed ]
+      $ HH.div
+          []
+          [ header
+          , HH.div [ HP.classes [ T.container ] ] [ feed ]
+          ]
     where
+    header =
+      HH.div
+        [ HP.classes [ T.flex, T.justifyBetween, T.wFull ] ]
+        [ HH.h1
+            [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
+            [ HH.text "Read Next" ]
+        , whenElem (not st.showCreateResource && isJust (toMaybe st.lists)) \_ ->
+            HH.div
+              []
+              [  HH.button
+                [ HE.onClick \_ -> Just $ ToggleCreateResource
+                , HP.classes
+                    [ T.flexNone
+                    , T.cursorPointer
+                    , T.leadingNormal
+                    , T.py2
+                    , T.px4
+                    , T.bgDuraznoLight
+                    , T.textWhite
+                    , T.fontSemibold
+                    , T.roundedMd
+                    , T.shadowMd
+                    , T.hoverBgDurazno
+                    , T.focusOutlineNone
+                    , T.focusRing2
+                    , T.focusRingDurazno
+                    ]
+                ]
+                [ HH.text "Create Resource" ]
+              ]
+        ]
     feed = case st.lists of
       Success lists ->
         HH.div
@@ -113,33 +147,9 @@ component = Connect.component $ H.mkComponent
               $ snoc
                 (map (\list -> HH.slot List._list list._id."$oid" List.component { list } absurd) lists)
                 listCreate
-          , whenElem (not st.showCreateResource) \_ ->
-              HH.div
-                [ HP.classes [ T.fixed, T.bottom4, T.right4 ] ]
-                [  HH.button
-                  [ HE.onClick \_ -> Just $ ToggleCreateResource
-                  , HP.classes
-                      [ T.flexNone
-                      , T.cursorPointer
-                      , T.leadingNormal
-                      , T.py2
-                      , T.px4
-                      , T.bgDuraznoLight
-                      , T.textWhite
-                      , T.fontSemibold
-                      , T.roundedMd
-                      , T.shadowMd
-                      , T.hoverBgDurazno
-                      , T.focusOutlineNone
-                      , T.focusRing2
-                      , T.focusRingDurazno
-                      ]
-                  ]
-                  [ HH.text "Create Resource" ]
-                ]
           , whenElem st.showCreateResource \_ ->
               HH.div
-                [ HP.classes [ T.fixed, T.bottom4, T.right4, T.bgGray100 ] ]
+                [ HP.classes [ T.fixed, T.top4, T.right4, T.bgGray100 ] ]
                 [ HH.slot CreateResource._createResource unit CreateResource.component { lists } (Just <<< HandleCreateResource) ]
           ]
 

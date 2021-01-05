@@ -57,10 +57,12 @@ component = Connect.component $ H.mkComponent
       currentUser
       Navigate
       (Just Done)
-      (HH.text "Done")
       $ HH.div
           []
-          [ HH.h2
+          [ HH.h1
+              [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
+              [ HH.text "Done" ]
+          , HH.h2
               [ HP.classes [ T.text2xl, T.textGray300 ] ]
               [ HH.text "🚧 Work in Progress 👷" ]
           , HH.p

@@ -15,16 +15,12 @@ dashboard :: forall i p r.
   -> Maybe Route
   -> HH.HTML i p
   -> HH.HTML i p
-  -> HH.HTML i p
-dashboard currentUser navigate route title content =
+dashboard currentUser navigate route content =
   HH.div
     [ HP.classes [ T.minHScreen, T.wScreen, T.bgGray100 ] ]
     [ HH.div
-        [ HP.classes [ T.container, T.mxAuto, T.px2, T.flex, T.flexCol ] ]
+        [ HP.classes [ T.container, T.mxAuto, T.px2 ] ]
         [ header currentUser navigate route
-        , HH.h1
-            [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-            [ title ]
         , content
         ]
     ]

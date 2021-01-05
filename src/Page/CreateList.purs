@@ -79,12 +79,15 @@ component = Connect.component $ H.mkComponent
       currentUser
       Navigate
       Nothing
-      title
-      $ HH.slot F._formless unit formComponent unit (Just <<< HandleCreateForm)
+      $ HH.div
+          []
+          [ title
+          , HH.slot F._formless unit formComponent unit (Just <<< HandleCreateForm)
+          ]
     where
     title =
       HH.div
-        [ HP.classes [ T.flex, T.itemsCenter ] ]
+        [ HP.classes [ T.flex, T.itemsCenter, T.textGray400, T.mb6, T.text4xl, T.fontBold  ] ]
         [ HH.a
             [ safeHref Dashboard
             , HE.onClick \e -> Just $ Navigate Dashboard $ toEvent e

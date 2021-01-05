@@ -99,10 +99,6 @@ borderT2 = ClassName "border-t-2"
 borderTransparent :: ClassName
 borderTransparent = ClassName "border-transparent"
 
--- | bottom4
-bottom4 :: ClassName
-bottom4 = ClassName "bottom-4"
-
 -- | checkedBgBlue600
 checkedBgBlue600 :: ClassName
 checkedBgBlue600 = ClassName "checked:bg-blue-600"
@@ -154,10 +150,6 @@ flexNone = ClassName "flex-none"
 -- | flexWrap
 flexWrap :: ClassName
 flexWrap = ClassName "flex-wrap"
-
--- | focusBorderTransparent
-focusBorderTransparent :: ClassName
-focusBorderTransparent = ClassName "focus:border-transparent"
 
 -- | focusOutlineNone
 focusOutlineNone :: ClassName
@@ -310,6 +302,10 @@ maxWFull = ClassName "max-w-full"
 -- | mb1
 mb1 :: ClassName
 mb1 = ClassName "mb-1"
+
+-- | mb2
+mb2 :: ClassName
+mb2 = ClassName "mb-2"
 
 -- | mb4
 mb4 :: ClassName
@@ -495,10 +491,6 @@ textGray300 = ClassName "text-gray-300"
 textGray400 :: ClassName
 textGray400 = ClassName "text-gray-400"
 
--- | textGray700
-textGray700 :: ClassName
-textGray700 = ClassName "text-gray-700"
-
 -- | textGreen700
 textGreen700 :: ClassName
 textGreen700 = ClassName "text-green-700"
@@ -534,6 +526,10 @@ textWhite = ClassName "text-white"
 -- | textXs
 textXs :: ClassName
 textXs = ClassName "text-xs"
+
+-- | top4
+top4 :: ClassName
+top4 = ClassName "top-4"
 
 -- | underline
 underline :: ClassName
