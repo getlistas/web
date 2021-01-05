@@ -124,11 +124,11 @@ component = Connect.component $ H.mkComponent
                     , T.leadingNormal
                     , T.py2
                     , T.px4
-                    , T.bgManzana
                     , T.textWhite
                     , T.roundedMd
                     , T.shadowMd
-                    , T.hoverBgDurazno
+                    , T.bgDurazno
+                    , T.hoverBgDuraznoLight
                     , T.focusOutlineNone
                     , T.focusRing2
                     , T.focusRingDurazno

@@ -259,6 +259,10 @@ h8 = ClassName "h-8"
 hoverBgDurazno :: ClassName
 hoverBgDurazno = ClassName "hover:bg-durazno"
 
+-- | hoverBgDuraznoLight
+hoverBgDuraznoLight :: ClassName
+hoverBgDuraznoLight = ClassName "hover:bg-durazno-light"
+
 -- | hoverBgOpacity100
 hoverBgOpacity100 :: ClassName
 hoverBgOpacity100 = ClassName "hover:bg-opacity-100"
