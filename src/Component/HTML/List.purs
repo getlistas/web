@@ -23,6 +23,13 @@ import Listasio.Data.Resource (ListResource)
 import Network.RemoteData (RemoteData(..), fromEither, toMaybe)
 import Tailwind as T
 
+type ListResources
+  = { items :: Array ListResource
+    , total :: Int
+    , read :: Int
+    , last_done :: Maybe String
+    }
+
 type Slot = H.Slot Query Void String
 
 _list = SProxy :: SProxy "list"
@@ -40,7 +47,7 @@ data Query a
 
 type State
   = { list :: ListWithIdAndUser
-    , resources :: RemoteData String (Array ListResource)
+    , resources :: RemoteData String ListResources
     , showMore :: Boolean
     , markingAsDone :: Boolean
     }
@@ -59,7 +66,12 @@ component = H.mkComponent
       }
   }
   where
-  initialState { list } = { list, resources: NotAsked, showMore: false, markingAsDone: false }
+  initialState { list } =
+    { list
+    , resources: NotAsked
+    , showMore: false
+    , markingAsDone: false
+    }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
@@ -73,15 +85,17 @@ component = H.mkComponent
       H.modify_ \s -> s { showMore = not s.showMore }
 
     CompleteResource toComplete -> do
-      H.modify_ \s -> s { resources = drop 1 <$> s.resources, markingAsDone = true }
+      -- TODO: uses lenses for F sake!
+      -- TODO: update last_done
+      H.modify_ \s -> s { resources = (\r -> r { items = drop 1 r.items, read = r.read + 1 }) <$> s.resources, markingAsDone = true }
       result <- completeResource toComplete
-      when (isNothing result)$ H.modify_ \s -> s { resources = cons toComplete <$> s.resources }
+      when (isNothing result) $ H.modify_ \s -> s { resources = (\r -> r { items = cons toComplete r.items, read = r.read - 1 }) <$> s.resources }
       H.modify_ _ { markingAsDone = false }
 
   handleQuery :: forall slots a. Query a -> H.HalogenM State Action slots o m (Maybe a)
   handleQuery = case _ of
     ResourceAdded resource a -> do
-      H.modify_ \s -> s { resources = flip snoc resource <$> s.resources }
+      H.modify_ \s -> s { resources = (\r -> r { items = snoc r.items resource, total = r.total + 1 }) <$> s.resources }
       pure $ Just a
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
@@ -140,7 +154,7 @@ component = H.mkComponent
         str -> str
 
     toRead =
-      case (head <$> resources) of
+      case head <$> _.items <$> resources of
         Success Nothing ->
           HH.div
             [ HP.classes
@@ -253,18 +267,20 @@ component = H.mkComponent
             [ HH.div
                 [ HP.classes [ T.text2xl, T.textGray400, T.fontBold, T.truncate ] ]
                 [ HH.text list.title ]
-            , HH.div
-                [ HP.classes [ T.ml6 ] ]
-                [ HH.span [ HP.classes [ T.mr2 ] ] [ HH.text "🔗" ]
-                , HH.span [ HP.classes [ T.textLg, T.textGray400 ] ] [ HH.text "14" ]
-                , HH.span [ HP.classes [ T.textLg, T.textGray400, T.mx1 ] ] [ HH.text "/" ]
-                , HH.span [ HP.classes [ T.textLg, T.textGray300 ] ] [ HH.text "20" ]
-                ]
+                , maybeElem (toMaybe resources) \{total, read} ->
+                    HH.div
+                      [ HP.classes [ T.ml6 ] ]
+                      [ HH.span [ HP.classes [ T.mr2 ] ] [ HH.text "🔗" ]
+                      , HH.span [ HP.classes [ T.textLg, T.textGray400 ] ] [ HH.text $ show read ]
+                      , HH.span [ HP.classes [ T.textLg, T.textGray400, T.mx1 ] ] [ HH.text "/" ]
+                      , HH.span [ HP.classes [ T.textLg, T.textGray300 ] ] [ HH.text $ show total ]
+                      ]
             ]
-        , HH.div [ HP.classes [ T.textSm, T.textGray200 ] ] [ HH.text "Last seen 8 days ago" ]
+        , maybeElem (_.last_done =<< toMaybe resources) \last_done ->
+            HH.div [ HP.classes [ T.textSm, T.textGray200 ] ] [ HH.text $ "Last seen " <> last_done ]
         ]
 
-    mbRest = filterNotEmpty $ tail =<< (filterNotEmpty $ toMaybe resources)
+    mbRest = filterNotEmpty $ tail =<< (filterNotEmpty $ _.items <$> toMaybe resources)
     hasMore = isJust mbRest
     rest = fromMaybe [] mbRest
 
