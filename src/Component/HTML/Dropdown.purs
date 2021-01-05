@@ -157,9 +157,10 @@ menu st =
                     ix
                     [ HP.classes
                         [ T.cursorPointer
-                        , T.my1
-                        , T.p2
+                        , T.py1
+                        , T.px2
                         , T.roundedMd
+                        , T.textSm
                         , cx T.textWhite $ Just ix == st.highlightedIndex
                         , cx T.textGray400 $ Just ix /= st.highlightedIndex
                         , cx T.bgDurazno $ Just ix == st.highlightedIndex
