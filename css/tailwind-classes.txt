@@ -53,6 +53,7 @@ _32xlBgGradientToT;32xl:bg-gradient-to-t
 _32xlBgGradientToTl;32xl:bg-gradient-to-tl
 _32xlBgGradientToTr;32xl:bg-gradient-to-tr
 _32xlBgGray100;32xl:bg-gray-100
+_32xlBgGray10;32xl:bg-gray-10
 _32xlBgGray200;32xl:bg-gray-200
 _32xlBgGray300;32xl:bg-gray-300
 _32xlBgGray400;32xl:bg-gray-400
@@ -187,6 +188,7 @@ _32xlBorderDouble;32xl:border-double
 _32xlBorderDurazno;32xl:border-durazno
 _32xlBorderDuraznoLight;32xl:border-durazno-light
 _32xlBorderGray100;32xl:border-gray-100
+_32xlBorderGray10;32xl:border-gray-10
 _32xlBorderGray200;32xl:border-gray-200
 _32xlBorderGray300;32xl:border-gray-300
 _32xlBorderGray400;32xl:border-gray-400
@@ -357,6 +359,7 @@ _32xlCheckedBgCurrent;32xl:checked:bg-current
 _32xlCheckedBgDurazno;32xl:checked:bg-durazno
 _32xlCheckedBgDuraznoLight;32xl:checked:bg-durazno-light
 _32xlCheckedBgGray100;32xl:checked:bg-gray-100
+_32xlCheckedBgGray10;32xl:checked:bg-gray-10
 _32xlCheckedBgGray200;32xl:checked:bg-gray-200
 _32xlCheckedBgGray300;32xl:checked:bg-gray-300
 _32xlCheckedBgGray400;32xl:checked:bg-gray-400
@@ -445,6 +448,7 @@ _32xlCheckedBorderCurrent;32xl:checked:border-current
 _32xlCheckedBorderDurazno;32xl:checked:border-durazno
 _32xlCheckedBorderDuraznoLight;32xl:checked:border-durazno-light
 _32xlCheckedBorderGray100;32xl:checked:border-gray-100
+_32xlCheckedBorderGray10;32xl:checked:border-gray-10
 _32xlCheckedBorderGray200;32xl:checked:border-gray-200
 _32xlCheckedBorderGray300;32xl:checked:border-gray-300
 _32xlCheckedBorderGray400;32xl:checked:border-gray-400
@@ -628,6 +632,7 @@ _32xlDivideDouble;32xl:divide-double
 _32xlDivideDurazno;32xl:divide-durazno
 _32xlDivideDuraznoLight;32xl:divide-durazno-light
 _32xlDivideGray100;32xl:divide-gray-100
+_32xlDivideGray10;32xl:divide-gray-10
 _32xlDivideGray200;32xl:divide-gray-200
 _32xlDivideGray300;32xl:divide-gray-300
 _32xlDivideGray400;32xl:divide-gray-400
@@ -779,6 +784,7 @@ _32xlFocusBgCurrent;32xl:focus:bg-current
 _32xlFocusBgDurazno;32xl:focus:bg-durazno
 _32xlFocusBgDuraznoLight;32xl:focus:bg-durazno-light
 _32xlFocusBgGray100;32xl:focus:bg-gray-100
+_32xlFocusBgGray10;32xl:focus:bg-gray-10
 _32xlFocusBgGray200;32xl:focus:bg-gray-200
 _32xlFocusBgGray300;32xl:focus:bg-gray-300
 _32xlFocusBgGray400;32xl:focus:bg-gray-400
@@ -882,6 +888,7 @@ _32xlFocusBorderCurrent;32xl:focus:border-current
 _32xlFocusBorderDurazno;32xl:focus:border-durazno
 _32xlFocusBorderDuraznoLight;32xl:focus:border-durazno-light
 _32xlFocusBorderGray100;32xl:focus:border-gray-100
+_32xlFocusBorderGray10;32xl:focus:border-gray-10
 _32xlFocusBorderGray200;32xl:focus:border-gray-200
 _32xlFocusBorderGray300;32xl:focus:border-gray-300
 _32xlFocusBorderGray400;32xl:focus:border-gray-400
@@ -985,6 +992,7 @@ _32xlFocusFromCurrent;32xl:focus:from-current
 _32xlFocusFromDurazno;32xl:focus:from-durazno
 _32xlFocusFromDuraznoLight;32xl:focus:from-durazno-light
 _32xlFocusFromGray100;32xl:focus:from-gray-100
+_32xlFocusFromGray10;32xl:focus:from-gray-10
 _32xlFocusFromGray200;32xl:focus:from-gray-200
 _32xlFocusFromGray300;32xl:focus:from-gray-300
 _32xlFocusFromGray400;32xl:focus:from-gray-400
@@ -1196,6 +1204,7 @@ _32xlFocusPlaceholderCurrent;32xl:focus:placeholder-current
 _32xlFocusPlaceholderDurazno;32xl:focus:placeholder-durazno
 _32xlFocusPlaceholderDuraznoLight;32xl:focus:placeholder-durazno-light
 _32xlFocusPlaceholderGray100;32xl:focus:placeholder-gray-100
+_32xlFocusPlaceholderGray10;32xl:focus:placeholder-gray-10
 _32xlFocusPlaceholderGray200;32xl:focus:placeholder-gray-200
 _32xlFocusPlaceholderGray300;32xl:focus:placeholder-gray-300
 _32xlFocusPlaceholderGray400;32xl:focus:placeholder-gray-400
@@ -1305,6 +1314,7 @@ _32xlFocusRingCurrent;32xl:focus:ring-current
 _32xlFocusRingDurazno;32xl:focus:ring-durazno
 _32xlFocusRingDuraznoLight;32xl:focus:ring-durazno-light
 _32xlFocusRingGray100;32xl:focus:ring-gray-100
+_32xlFocusRingGray10;32xl:focus:ring-gray-10
 _32xlFocusRingGray200;32xl:focus:ring-gray-200
 _32xlFocusRingGray300;32xl:focus:ring-gray-300
 _32xlFocusRingGray400;32xl:focus:ring-gray-400
@@ -1357,6 +1367,7 @@ _32xlFocusRingOffsetCurrent;32xl:focus:ring-offset-current
 _32xlFocusRingOffsetDurazno;32xl:focus:ring-offset-durazno
 _32xlFocusRingOffsetDuraznoLight;32xl:focus:ring-offset-durazno-light
 _32xlFocusRingOffsetGray100;32xl:focus:ring-offset-gray-100
+_32xlFocusRingOffsetGray10;32xl:focus:ring-offset-gray-10
 _32xlFocusRingOffsetGray200;32xl:focus:ring-offset-gray-200
 _32xlFocusRingOffsetGray300;32xl:focus:ring-offset-gray-300
 _32xlFocusRingOffsetGray400;32xl:focus:ring-offset-gray-400
@@ -1562,6 +1573,7 @@ _32xlFocusTextCurrent;32xl:focus:text-current
 _32xlFocusTextDurazno;32xl:focus:text-durazno
 _32xlFocusTextDuraznoLight;32xl:focus:text-durazno-light
 _32xlFocusTextGray100;32xl:focus:text-gray-100
+_32xlFocusTextGray10;32xl:focus:text-gray-10
 _32xlFocusTextGray200;32xl:focus:text-gray-200
 _32xlFocusTextGray300;32xl:focus:text-gray-300
 _32xlFocusTextGray400;32xl:focus:text-gray-400
@@ -1665,6 +1677,7 @@ _32xlFocusToCurrent;32xl:focus:to-current
 _32xlFocusToDurazno;32xl:focus:to-durazno
 _32xlFocusToDuraznoLight;32xl:focus:to-durazno-light
 _32xlFocusToGray100;32xl:focus:to-gray-100
+_32xlFocusToGray10;32xl:focus:to-gray-10
 _32xlFocusToGray200;32xl:focus:to-gray-200
 _32xlFocusToGray300;32xl:focus:to-gray-300
 _32xlFocusToGray400;32xl:focus:to-gray-400
@@ -1838,6 +1851,7 @@ _32xlFocusViaCurrent;32xl:focus:via-current
 _32xlFocusViaDurazno;32xl:focus:via-durazno
 _32xlFocusViaDuraznoLight;32xl:focus:via-durazno-light
 _32xlFocusViaGray100;32xl:focus:via-gray-100
+_32xlFocusViaGray10;32xl:focus:via-gray-10
 _32xlFocusViaGray200;32xl:focus:via-gray-200
 _32xlFocusViaGray300;32xl:focus:via-gray-300
 _32xlFocusViaGray400;32xl:focus:via-gray-400
@@ -1926,6 +1940,7 @@ _32xlFocusWithinBgCurrent;32xl:focus-within:bg-current
 _32xlFocusWithinBgDurazno;32xl:focus-within:bg-durazno
 _32xlFocusWithinBgDuraznoLight;32xl:focus-within:bg-durazno-light
 _32xlFocusWithinBgGray100;32xl:focus-within:bg-gray-100
+_32xlFocusWithinBgGray10;32xl:focus-within:bg-gray-10
 _32xlFocusWithinBgGray200;32xl:focus-within:bg-gray-200
 _32xlFocusWithinBgGray300;32xl:focus-within:bg-gray-300
 _32xlFocusWithinBgGray400;32xl:focus-within:bg-gray-400
@@ -2029,6 +2044,7 @@ _32xlFocusWithinBorderCurrent;32xl:focus-within:border-current
 _32xlFocusWithinBorderDurazno;32xl:focus-within:border-durazno
 _32xlFocusWithinBorderDuraznoLight;32xl:focus-within:border-durazno-light
 _32xlFocusWithinBorderGray100;32xl:focus-within:border-gray-100
+_32xlFocusWithinBorderGray10;32xl:focus-within:border-gray-10
 _32xlFocusWithinBorderGray200;32xl:focus-within:border-gray-200
 _32xlFocusWithinBorderGray300;32xl:focus-within:border-gray-300
 _32xlFocusWithinBorderGray400;32xl:focus-within:border-gray-400
@@ -2159,6 +2175,7 @@ _32xlFocusWithinRingCurrent;32xl:focus-within:ring-current
 _32xlFocusWithinRingDurazno;32xl:focus-within:ring-durazno
 _32xlFocusWithinRingDuraznoLight;32xl:focus-within:ring-durazno-light
 _32xlFocusWithinRingGray100;32xl:focus-within:ring-gray-100
+_32xlFocusWithinRingGray10;32xl:focus-within:ring-gray-10
 _32xlFocusWithinRingGray200;32xl:focus-within:ring-gray-200
 _32xlFocusWithinRingGray300;32xl:focus-within:ring-gray-300
 _32xlFocusWithinRingGray400;32xl:focus-within:ring-gray-400
@@ -2211,6 +2228,7 @@ _32xlFocusWithinRingOffsetCurrent;32xl:focus-within:ring-offset-current
 _32xlFocusWithinRingOffsetDurazno;32xl:focus-within:ring-offset-durazno
 _32xlFocusWithinRingOffsetDuraznoLight;32xl:focus-within:ring-offset-durazno-light
 _32xlFocusWithinRingOffsetGray100;32xl:focus-within:ring-offset-gray-100
+_32xlFocusWithinRingOffsetGray10;32xl:focus-within:ring-offset-gray-10
 _32xlFocusWithinRingOffsetGray200;32xl:focus-within:ring-offset-gray-200
 _32xlFocusWithinRingOffsetGray300;32xl:focus-within:ring-offset-gray-300
 _32xlFocusWithinRingOffsetGray400;32xl:focus-within:ring-offset-gray-400
@@ -2365,6 +2383,7 @@ _32xlFocusWithinTextCurrent;32xl:focus-within:text-current
 _32xlFocusWithinTextDurazno;32xl:focus-within:text-durazno
 _32xlFocusWithinTextDuraznoLight;32xl:focus-within:text-durazno-light
 _32xlFocusWithinTextGray100;32xl:focus-within:text-gray-100
+_32xlFocusWithinTextGray10;32xl:focus-within:text-gray-10
 _32xlFocusWithinTextGray200;32xl:focus-within:text-gray-200
 _32xlFocusWithinTextGray300;32xl:focus-within:text-gray-300
 _32xlFocusWithinTextGray400;32xl:focus-within:text-gray-400
@@ -2495,6 +2514,7 @@ _32xlFromCurrent;32xl:from-current
 _32xlFromDurazno;32xl:from-durazno
 _32xlFromDuraznoLight;32xl:from-durazno-light
 _32xlFromGray100;32xl:from-gray-100
+_32xlFromGray10;32xl:from-gray-10
 _32xlFromGray200;32xl:from-gray-200
 _32xlFromGray300;32xl:from-gray-300
 _32xlFromGray400;32xl:from-gray-400
@@ -2767,6 +2787,7 @@ _32xlHoverBgCurrent;32xl:hover:bg-current
 _32xlHoverBgDurazno;32xl:hover:bg-durazno
 _32xlHoverBgDuraznoLight;32xl:hover:bg-durazno-light
 _32xlHoverBgGray100;32xl:hover:bg-gray-100
+_32xlHoverBgGray10;32xl:hover:bg-gray-10
 _32xlHoverBgGray200;32xl:hover:bg-gray-200
 _32xlHoverBgGray300;32xl:hover:bg-gray-300
 _32xlHoverBgGray400;32xl:hover:bg-gray-400
@@ -2880,6 +2901,7 @@ _32xlHoverBorderCurrent;32xl:hover:border-current
 _32xlHoverBorderDurazno;32xl:hover:border-durazno
 _32xlHoverBorderDuraznoLight;32xl:hover:border-durazno-light
 _32xlHoverBorderGray100;32xl:hover:border-gray-100
+_32xlHoverBorderGray10;32xl:hover:border-gray-10
 _32xlHoverBorderGray200;32xl:hover:border-gray-200
 _32xlHoverBorderGray300;32xl:hover:border-gray-300
 _32xlHoverBorderGray400;32xl:hover:border-gray-400
@@ -2998,6 +3020,7 @@ _32xlHoverFromCurrent;32xl:hover:from-current
 _32xlHoverFromDurazno;32xl:hover:from-durazno
 _32xlHoverFromDuraznoLight;32xl:hover:from-durazno-light
 _32xlHoverFromGray100;32xl:hover:from-gray-100
+_32xlHoverFromGray10;32xl:hover:from-gray-10
 _32xlHoverFromGray200;32xl:hover:from-gray-200
 _32xlHoverFromGray300;32xl:hover:from-gray-300
 _32xlHoverFromGray400;32xl:hover:from-gray-400
@@ -3264,6 +3287,7 @@ _32xlHoverTextCurrent;32xl:hover:text-current
 _32xlHoverTextDurazno;32xl:hover:text-durazno
 _32xlHoverTextDuraznoLight;32xl:hover:text-durazno-light
 _32xlHoverTextGray100;32xl:hover:text-gray-100
+_32xlHoverTextGray10;32xl:hover:text-gray-10
 _32xlHoverTextGray200;32xl:hover:text-gray-200
 _32xlHoverTextGray300;32xl:hover:text-gray-300
 _32xlHoverTextGray400;32xl:hover:text-gray-400
@@ -3367,6 +3391,7 @@ _32xlHoverToCurrent;32xl:hover:to-current
 _32xlHoverToDurazno;32xl:hover:to-durazno
 _32xlHoverToDuraznoLight;32xl:hover:to-durazno-light
 _32xlHoverToGray100;32xl:hover:to-gray-100
+_32xlHoverToGray10;32xl:hover:to-gray-10
 _32xlHoverToGray200;32xl:hover:to-gray-200
 _32xlHoverToGray300;32xl:hover:to-gray-300
 _32xlHoverToGray400;32xl:hover:to-gray-400
@@ -3540,6 +3565,7 @@ _32xlHoverViaCurrent;32xl:hover:via-current
 _32xlHoverViaDurazno;32xl:hover:via-durazno
 _32xlHoverViaDuraznoLight;32xl:hover:via-durazno-light
 _32xlHoverViaGray100;32xl:hover:via-gray-100
+_32xlHoverViaGray10;32xl:hover:via-gray-10
 _32xlHoverViaGray200;32xl:hover:via-gray-200
 _32xlHoverViaGray300;32xl:hover:via-gray-300
 _32xlHoverViaGray400;32xl:hover:via-gray-400
@@ -5086,6 +5112,7 @@ _32xlPlaceholderCurrent;32xl:placeholder-current
 _32xlPlaceholderDurazno;32xl:placeholder-durazno
 _32xlPlaceholderDuraznoLight;32xl:placeholder-durazno-light
 _32xlPlaceholderGray100;32xl:placeholder-gray-100
+_32xlPlaceholderGray10;32xl:placeholder-gray-10
 _32xlPlaceholderGray200;32xl:placeholder-gray-200
 _32xlPlaceholderGray300;32xl:placeholder-gray-300
 _32xlPlaceholderGray400;32xl:placeholder-gray-400
@@ -5386,6 +5413,7 @@ _32xlRingCurrent;32xl:ring-current
 _32xlRingDurazno;32xl:ring-durazno
 _32xlRingDuraznoLight;32xl:ring-durazno-light
 _32xlRingGray100;32xl:ring-gray-100
+_32xlRingGray10;32xl:ring-gray-10
 _32xlRingGray200;32xl:ring-gray-200
 _32xlRingGray300;32xl:ring-gray-300
 _32xlRingGray400;32xl:ring-gray-400
@@ -5438,6 +5466,7 @@ _32xlRingOffsetCurrent;32xl:ring-offset-current
 _32xlRingOffsetDurazno;32xl:ring-offset-durazno
 _32xlRingOffsetDuraznoLight;32xl:ring-offset-durazno-light
 _32xlRingOffsetGray100;32xl:ring-offset-gray-100
+_32xlRingOffsetGray10;32xl:ring-offset-gray-10
 _32xlRingOffsetGray200;32xl:ring-offset-gray-200
 _32xlRingOffsetGray300;32xl:ring-offset-gray-300
 _32xlRingOffsetGray400;32xl:ring-offset-gray-400
@@ -5860,6 +5889,7 @@ _32xlTextCurrent;32xl:text-current
 _32xlTextDurazno;32xl:text-durazno
 _32xlTextDuraznoLight;32xl:text-durazno-light
 _32xlTextGray100;32xl:text-gray-100
+_32xlTextGray10;32xl:text-gray-10
 _32xlTextGray200;32xl:text-gray-200
 _32xlTextGray300;32xl:text-gray-300
 _32xlTextGray400;32xl:text-gray-400
@@ -5970,6 +6000,7 @@ _32xlToCurrent;32xl:to-current
 _32xlToDurazno;32xl:to-durazno
 _32xlToDuraznoLight;32xl:to-durazno-light
 _32xlToGray100;32xl:to-gray-100
+_32xlToGray10;32xl:to-gray-10
 _32xlToGray200;32xl:to-gray-200
 _32xlToGray300;32xl:to-gray-300
 _32xlToGray400;32xl:to-gray-400
@@ -6204,6 +6235,7 @@ _32xlViaCurrent;32xl:via-current
 _32xlViaDurazno;32xl:via-durazno
 _32xlViaDuraznoLight;32xl:via-durazno-light
 _32xlViaGray100;32xl:via-gray-100
+_32xlViaGray10;32xl:via-gray-10
 _32xlViaGray200;32xl:via-gray-200
 _32xlViaGray300;32xl:via-gray-300
 _32xlViaGray400;32xl:via-gray-400
@@ -6411,6 +6443,7 @@ bgGradientToT;bg-gradient-to-t
 bgGradientToTl;bg-gradient-to-tl
 bgGradientToTr;bg-gradient-to-tr
 bgGray100;bg-gray-100
+bgGray10;bg-gray-10
 bgGray200;bg-gray-200
 bgGray300;bg-gray-300
 bgGray400;bg-gray-400
@@ -6545,6 +6578,7 @@ borderDouble;border-double
 borderDurazno;border-durazno
 borderDuraznoLight;border-durazno-light
 borderGray100;border-gray-100
+borderGray10;border-gray-10
 borderGray200;border-gray-200
 borderGray300;border-gray-300
 borderGray400;border-gray-400
@@ -6715,6 +6749,7 @@ checkedBgCurrent;checked:bg-current
 checkedBgDurazno;checked:bg-durazno
 checkedBgDuraznoLight;checked:bg-durazno-light
 checkedBgGray100;checked:bg-gray-100
+checkedBgGray10;checked:bg-gray-10
 checkedBgGray200;checked:bg-gray-200
 checkedBgGray300;checked:bg-gray-300
 checkedBgGray400;checked:bg-gray-400
@@ -6803,6 +6838,7 @@ checkedBorderCurrent;checked:border-current
 checkedBorderDurazno;checked:border-durazno
 checkedBorderDuraznoLight;checked:border-durazno-light
 checkedBorderGray100;checked:border-gray-100
+checkedBorderGray10;checked:border-gray-10
 checkedBorderGray200;checked:border-gray-200
 checkedBorderGray300;checked:border-gray-300
 checkedBorderGray400;checked:border-gray-400
@@ -6986,6 +7022,7 @@ divideDouble;divide-double
 divideDurazno;divide-durazno
 divideDuraznoLight;divide-durazno-light
 divideGray100;divide-gray-100
+divideGray10;divide-gray-10
 divideGray200;divide-gray-200
 divideGray300;divide-gray-300
 divideGray400;divide-gray-400
@@ -7137,6 +7174,7 @@ focusBgCurrent;focus:bg-current
 focusBgDurazno;focus:bg-durazno
 focusBgDuraznoLight;focus:bg-durazno-light
 focusBgGray100;focus:bg-gray-100
+focusBgGray10;focus:bg-gray-10
 focusBgGray200;focus:bg-gray-200
 focusBgGray300;focus:bg-gray-300
 focusBgGray400;focus:bg-gray-400
@@ -7240,6 +7278,7 @@ focusBorderCurrent;focus:border-current
 focusBorderDurazno;focus:border-durazno
 focusBorderDuraznoLight;focus:border-durazno-light
 focusBorderGray100;focus:border-gray-100
+focusBorderGray10;focus:border-gray-10
 focusBorderGray200;focus:border-gray-200
 focusBorderGray300;focus:border-gray-300
 focusBorderGray400;focus:border-gray-400
@@ -7343,6 +7382,7 @@ focusFromCurrent;focus:from-current
 focusFromDurazno;focus:from-durazno
 focusFromDuraznoLight;focus:from-durazno-light
 focusFromGray100;focus:from-gray-100
+focusFromGray10;focus:from-gray-10
 focusFromGray200;focus:from-gray-200
 focusFromGray300;focus:from-gray-300
 focusFromGray400;focus:from-gray-400
@@ -7554,6 +7594,7 @@ focusPlaceholderCurrent;focus:placeholder-current
 focusPlaceholderDurazno;focus:placeholder-durazno
 focusPlaceholderDuraznoLight;focus:placeholder-durazno-light
 focusPlaceholderGray100;focus:placeholder-gray-100
+focusPlaceholderGray10;focus:placeholder-gray-10
 focusPlaceholderGray200;focus:placeholder-gray-200
 focusPlaceholderGray300;focus:placeholder-gray-300
 focusPlaceholderGray400;focus:placeholder-gray-400
@@ -7663,6 +7704,7 @@ focusRingCurrent;focus:ring-current
 focusRingDurazno;focus:ring-durazno
 focusRingDuraznoLight;focus:ring-durazno-light
 focusRingGray100;focus:ring-gray-100
+focusRingGray10;focus:ring-gray-10
 focusRingGray200;focus:ring-gray-200
 focusRingGray300;focus:ring-gray-300
 focusRingGray400;focus:ring-gray-400
@@ -7715,6 +7757,7 @@ focusRingOffsetCurrent;focus:ring-offset-current
 focusRingOffsetDurazno;focus:ring-offset-durazno
 focusRingOffsetDuraznoLight;focus:ring-offset-durazno-light
 focusRingOffsetGray100;focus:ring-offset-gray-100
+focusRingOffsetGray10;focus:ring-offset-gray-10
 focusRingOffsetGray200;focus:ring-offset-gray-200
 focusRingOffsetGray300;focus:ring-offset-gray-300
 focusRingOffsetGray400;focus:ring-offset-gray-400
@@ -7920,6 +7963,7 @@ focusTextCurrent;focus:text-current
 focusTextDurazno;focus:text-durazno
 focusTextDuraznoLight;focus:text-durazno-light
 focusTextGray100;focus:text-gray-100
+focusTextGray10;focus:text-gray-10
 focusTextGray200;focus:text-gray-200
 focusTextGray300;focus:text-gray-300
 focusTextGray400;focus:text-gray-400
@@ -8023,6 +8067,7 @@ focusToCurrent;focus:to-current
 focusToDurazno;focus:to-durazno
 focusToDuraznoLight;focus:to-durazno-light
 focusToGray100;focus:to-gray-100
+focusToGray10;focus:to-gray-10
 focusToGray200;focus:to-gray-200
 focusToGray300;focus:to-gray-300
 focusToGray400;focus:to-gray-400
@@ -8196,6 +8241,7 @@ focusViaCurrent;focus:via-current
 focusViaDurazno;focus:via-durazno
 focusViaDuraznoLight;focus:via-durazno-light
 focusViaGray100;focus:via-gray-100
+focusViaGray10;focus:via-gray-10
 focusViaGray200;focus:via-gray-200
 focusViaGray300;focus:via-gray-300
 focusViaGray400;focus:via-gray-400
@@ -8284,6 +8330,7 @@ focusWithinBgCurrent;focus-within:bg-current
 focusWithinBgDurazno;focus-within:bg-durazno
 focusWithinBgDuraznoLight;focus-within:bg-durazno-light
 focusWithinBgGray100;focus-within:bg-gray-100
+focusWithinBgGray10;focus-within:bg-gray-10
 focusWithinBgGray200;focus-within:bg-gray-200
 focusWithinBgGray300;focus-within:bg-gray-300
 focusWithinBgGray400;focus-within:bg-gray-400
@@ -8387,6 +8434,7 @@ focusWithinBorderCurrent;focus-within:border-current
 focusWithinBorderDurazno;focus-within:border-durazno
 focusWithinBorderDuraznoLight;focus-within:border-durazno-light
 focusWithinBorderGray100;focus-within:border-gray-100
+focusWithinBorderGray10;focus-within:border-gray-10
 focusWithinBorderGray200;focus-within:border-gray-200
 focusWithinBorderGray300;focus-within:border-gray-300
 focusWithinBorderGray400;focus-within:border-gray-400
@@ -8517,6 +8565,7 @@ focusWithinRingCurrent;focus-within:ring-current
 focusWithinRingDurazno;focus-within:ring-durazno
 focusWithinRingDuraznoLight;focus-within:ring-durazno-light
 focusWithinRingGray100;focus-within:ring-gray-100
+focusWithinRingGray10;focus-within:ring-gray-10
 focusWithinRingGray200;focus-within:ring-gray-200
 focusWithinRingGray300;focus-within:ring-gray-300
 focusWithinRingGray400;focus-within:ring-gray-400
@@ -8569,6 +8618,7 @@ focusWithinRingOffsetCurrent;focus-within:ring-offset-current
 focusWithinRingOffsetDurazno;focus-within:ring-offset-durazno
 focusWithinRingOffsetDuraznoLight;focus-within:ring-offset-durazno-light
 focusWithinRingOffsetGray100;focus-within:ring-offset-gray-100
+focusWithinRingOffsetGray10;focus-within:ring-offset-gray-10
 focusWithinRingOffsetGray200;focus-within:ring-offset-gray-200
 focusWithinRingOffsetGray300;focus-within:ring-offset-gray-300
 focusWithinRingOffsetGray400;focus-within:ring-offset-gray-400
@@ -8723,6 +8773,7 @@ focusWithinTextCurrent;focus-within:text-current
 focusWithinTextDurazno;focus-within:text-durazno
 focusWithinTextDuraznoLight;focus-within:text-durazno-light
 focusWithinTextGray100;focus-within:text-gray-100
+focusWithinTextGray10;focus-within:text-gray-10
 focusWithinTextGray200;focus-within:text-gray-200
 focusWithinTextGray300;focus-within:text-gray-300
 focusWithinTextGray400;focus-within:text-gray-400
@@ -8853,6 +8904,7 @@ fromCurrent;from-current
 fromDurazno;from-durazno
 fromDuraznoLight;from-durazno-light
 fromGray100;from-gray-100
+fromGray10;from-gray-10
 fromGray200;from-gray-200
 fromGray300;from-gray-300
 fromGray400;from-gray-400
@@ -9126,6 +9178,7 @@ hoverBgCurrent;hover:bg-current
 hoverBgDurazno;hover:bg-durazno
 hoverBgDuraznoLight;hover:bg-durazno-light
 hoverBgGray100;hover:bg-gray-100
+hoverBgGray10;hover:bg-gray-10
 hoverBgGray200;hover:bg-gray-200
 hoverBgGray300;hover:bg-gray-300
 hoverBgGray400;hover:bg-gray-400
@@ -9239,6 +9292,7 @@ hoverBorderCurrent;hover:border-current
 hoverBorderDurazno;hover:border-durazno
 hoverBorderDuraznoLight;hover:border-durazno-light
 hoverBorderGray100;hover:border-gray-100
+hoverBorderGray10;hover:border-gray-10
 hoverBorderGray200;hover:border-gray-200
 hoverBorderGray300;hover:border-gray-300
 hoverBorderGray400;hover:border-gray-400
@@ -9357,6 +9411,7 @@ hoverFromCurrent;hover:from-current
 hoverFromDurazno;hover:from-durazno
 hoverFromDuraznoLight;hover:from-durazno-light
 hoverFromGray100;hover:from-gray-100
+hoverFromGray10;hover:from-gray-10
 hoverFromGray200;hover:from-gray-200
 hoverFromGray300;hover:from-gray-300
 hoverFromGray400;hover:from-gray-400
@@ -9588,6 +9643,95 @@ hoverScaleY50;hover:scale-y-50
 hoverScaleY75;hover:scale-y-75
 hoverScaleY90;hover:scale-y-90
 hoverScaleY95;hover:scale-y-95
+hoverScrollbarThumbBlack;hover:scrollbar-thumb-black
+hoverScrollbarThumbBlue100;hover:scrollbar-thumb-blue-100
+hoverScrollbarThumbBlue200;hover:scrollbar-thumb-blue-200
+hoverScrollbarThumbBlue300;hover:scrollbar-thumb-blue-300
+hoverScrollbarThumbBlue400;hover:scrollbar-thumb-blue-400
+hoverScrollbarThumbBlue500;hover:scrollbar-thumb-blue-500
+hoverScrollbarThumbBlue50;hover:scrollbar-thumb-blue-50
+hoverScrollbarThumbBlue600;hover:scrollbar-thumb-blue-600
+hoverScrollbarThumbBlue700;hover:scrollbar-thumb-blue-700
+hoverScrollbarThumbBlue800;hover:scrollbar-thumb-blue-800
+hoverScrollbarThumbBlue900;hover:scrollbar-thumb-blue-900
+hoverScrollbarThumbCurrent;hover:scrollbar-thumb-current
+hoverScrollbarThumbDuraznoDefault;hover:scrollbar-thumb-durazno-DEFAULT
+hoverScrollbarThumbDuraznoLight;hover:scrollbar-thumb-durazno-light
+hoverScrollbarThumbGray100;hover:scrollbar-thumb-gray-100
+hoverScrollbarThumbGray10;hover:scrollbar-thumb-gray-10
+hoverScrollbarThumbGray200;hover:scrollbar-thumb-gray-200
+hoverScrollbarThumbGray300;hover:scrollbar-thumb-gray-300
+hoverScrollbarThumbGray400;hover:scrollbar-thumb-gray-400
+hoverScrollbarThumbGray500;hover:scrollbar-thumb-gray-500
+hoverScrollbarThumbGray50;hover:scrollbar-thumb-gray-50
+hoverScrollbarThumbGray600;hover:scrollbar-thumb-gray-600
+hoverScrollbarThumbGray700;hover:scrollbar-thumb-gray-700
+hoverScrollbarThumbGray800;hover:scrollbar-thumb-gray-800
+hoverScrollbarThumbGray900;hover:scrollbar-thumb-gray-900
+hoverScrollbarThumbGreen100;hover:scrollbar-thumb-green-100
+hoverScrollbarThumbGreen200;hover:scrollbar-thumb-green-200
+hoverScrollbarThumbGreen300;hover:scrollbar-thumb-green-300
+hoverScrollbarThumbGreen400;hover:scrollbar-thumb-green-400
+hoverScrollbarThumbGreen500;hover:scrollbar-thumb-green-500
+hoverScrollbarThumbGreen50;hover:scrollbar-thumb-green-50
+hoverScrollbarThumbGreen600;hover:scrollbar-thumb-green-600
+hoverScrollbarThumbGreen700;hover:scrollbar-thumb-green-700
+hoverScrollbarThumbGreen800;hover:scrollbar-thumb-green-800
+hoverScrollbarThumbGreen900;hover:scrollbar-thumb-green-900
+hoverScrollbarThumbIndigo100;hover:scrollbar-thumb-indigo-100
+hoverScrollbarThumbIndigo200;hover:scrollbar-thumb-indigo-200
+hoverScrollbarThumbIndigo300;hover:scrollbar-thumb-indigo-300
+hoverScrollbarThumbIndigo400;hover:scrollbar-thumb-indigo-400
+hoverScrollbarThumbIndigo500;hover:scrollbar-thumb-indigo-500
+hoverScrollbarThumbIndigo50;hover:scrollbar-thumb-indigo-50
+hoverScrollbarThumbIndigo600;hover:scrollbar-thumb-indigo-600
+hoverScrollbarThumbIndigo700;hover:scrollbar-thumb-indigo-700
+hoverScrollbarThumbIndigo800;hover:scrollbar-thumb-indigo-800
+hoverScrollbarThumbIndigo900;hover:scrollbar-thumb-indigo-900
+hoverScrollbarThumbKiwiDefault;hover:scrollbar-thumb-kiwi-DEFAULT
+hoverScrollbarThumbManzanaDefault;hover:scrollbar-thumb-manzana-DEFAULT
+hoverScrollbarThumbPink100;hover:scrollbar-thumb-pink-100
+hoverScrollbarThumbPink200;hover:scrollbar-thumb-pink-200
+hoverScrollbarThumbPink300;hover:scrollbar-thumb-pink-300
+hoverScrollbarThumbPink400;hover:scrollbar-thumb-pink-400
+hoverScrollbarThumbPink500;hover:scrollbar-thumb-pink-500
+hoverScrollbarThumbPink50;hover:scrollbar-thumb-pink-50
+hoverScrollbarThumbPink600;hover:scrollbar-thumb-pink-600
+hoverScrollbarThumbPink700;hover:scrollbar-thumb-pink-700
+hoverScrollbarThumbPink800;hover:scrollbar-thumb-pink-800
+hoverScrollbarThumbPink900;hover:scrollbar-thumb-pink-900
+hoverScrollbarThumbPurple100;hover:scrollbar-thumb-purple-100
+hoverScrollbarThumbPurple200;hover:scrollbar-thumb-purple-200
+hoverScrollbarThumbPurple300;hover:scrollbar-thumb-purple-300
+hoverScrollbarThumbPurple400;hover:scrollbar-thumb-purple-400
+hoverScrollbarThumbPurple500;hover:scrollbar-thumb-purple-500
+hoverScrollbarThumbPurple50;hover:scrollbar-thumb-purple-50
+hoverScrollbarThumbPurple600;hover:scrollbar-thumb-purple-600
+hoverScrollbarThumbPurple700;hover:scrollbar-thumb-purple-700
+hoverScrollbarThumbPurple800;hover:scrollbar-thumb-purple-800
+hoverScrollbarThumbPurple900;hover:scrollbar-thumb-purple-900
+hoverScrollbarThumbRed100;hover:scrollbar-thumb-red-100
+hoverScrollbarThumbRed200;hover:scrollbar-thumb-red-200
+hoverScrollbarThumbRed300;hover:scrollbar-thumb-red-300
+hoverScrollbarThumbRed400;hover:scrollbar-thumb-red-400
+hoverScrollbarThumbRed500;hover:scrollbar-thumb-red-500
+hoverScrollbarThumbRed50;hover:scrollbar-thumb-red-50
+hoverScrollbarThumbRed600;hover:scrollbar-thumb-red-600
+hoverScrollbarThumbRed700;hover:scrollbar-thumb-red-700
+hoverScrollbarThumbRed800;hover:scrollbar-thumb-red-800
+hoverScrollbarThumbRed900;hover:scrollbar-thumb-red-900
+hoverScrollbarThumbTransparent;hover:scrollbar-thumb-transparent
+hoverScrollbarThumbWhite;hover:scrollbar-thumb-white
+hoverScrollbarThumbYellow100;hover:scrollbar-thumb-yellow-100
+hoverScrollbarThumbYellow200;hover:scrollbar-thumb-yellow-200
+hoverScrollbarThumbYellow300;hover:scrollbar-thumb-yellow-300
+hoverScrollbarThumbYellow400;hover:scrollbar-thumb-yellow-400
+hoverScrollbarThumbYellow500;hover:scrollbar-thumb-yellow-500
+hoverScrollbarThumbYellow50;hover:scrollbar-thumb-yellow-50
+hoverScrollbarThumbYellow600;hover:scrollbar-thumb-yellow-600
+hoverScrollbarThumbYellow700;hover:scrollbar-thumb-yellow-700
+hoverScrollbarThumbYellow800;hover:scrollbar-thumb-yellow-800
+hoverScrollbarThumbYellow900;hover:scrollbar-thumb-yellow-900
 hoverShadow2xl;hover:shadow-2xl
 hoverShadow;hover:shadow
 hoverShadowInner;hover:shadow-inner
@@ -9623,6 +9767,7 @@ hoverTextCurrent;hover:text-current
 hoverTextDurazno;hover:text-durazno
 hoverTextDuraznoLight;hover:text-durazno-light
 hoverTextGray100;hover:text-gray-100
+hoverTextGray10;hover:text-gray-10
 hoverTextGray200;hover:text-gray-200
 hoverTextGray300;hover:text-gray-300
 hoverTextGray400;hover:text-gray-400
@@ -9726,6 +9871,7 @@ hoverToCurrent;hover:to-current
 hoverToDurazno;hover:to-durazno
 hoverToDuraznoLight;hover:to-durazno-light
 hoverToGray100;hover:to-gray-100
+hoverToGray10;hover:to-gray-10
 hoverToGray200;hover:to-gray-200
 hoverToGray300;hover:to-gray-300
 hoverToGray400;hover:to-gray-400
@@ -9899,6 +10045,7 @@ hoverViaCurrent;hover:via-current
 hoverViaDurazno;hover:via-durazno
 hoverViaDuraznoLight;hover:via-durazno-light
 hoverViaGray100;hover:via-gray-100
+hoverViaGray10;hover:via-gray-10
 hoverViaGray200;hover:via-gray-200
 hoverViaGray300;hover:via-gray-300
 hoverViaGray400;hover:via-gray-400
@@ -10240,6 +10387,7 @@ lgBgGradientToT;lg:bg-gradient-to-t
 lgBgGradientToTl;lg:bg-gradient-to-tl
 lgBgGradientToTr;lg:bg-gradient-to-tr
 lgBgGray100;lg:bg-gray-100
+lgBgGray10;lg:bg-gray-10
 lgBgGray200;lg:bg-gray-200
 lgBgGray300;lg:bg-gray-300
 lgBgGray400;lg:bg-gray-400
@@ -10374,6 +10522,7 @@ lgBorderDouble;lg:border-double
 lgBorderDurazno;lg:border-durazno
 lgBorderDuraznoLight;lg:border-durazno-light
 lgBorderGray100;lg:border-gray-100
+lgBorderGray10;lg:border-gray-10
 lgBorderGray200;lg:border-gray-200
 lgBorderGray300;lg:border-gray-300
 lgBorderGray400;lg:border-gray-400
@@ -10544,6 +10693,7 @@ lgCheckedBgCurrent;lg:checked:bg-current
 lgCheckedBgDurazno;lg:checked:bg-durazno
 lgCheckedBgDuraznoLight;lg:checked:bg-durazno-light
 lgCheckedBgGray100;lg:checked:bg-gray-100
+lgCheckedBgGray10;lg:checked:bg-gray-10
 lgCheckedBgGray200;lg:checked:bg-gray-200
 lgCheckedBgGray300;lg:checked:bg-gray-300
 lgCheckedBgGray400;lg:checked:bg-gray-400
@@ -10632,6 +10782,7 @@ lgCheckedBorderCurrent;lg:checked:border-current
 lgCheckedBorderDurazno;lg:checked:border-durazno
 lgCheckedBorderDuraznoLight;lg:checked:border-durazno-light
 lgCheckedBorderGray100;lg:checked:border-gray-100
+lgCheckedBorderGray10;lg:checked:border-gray-10
 lgCheckedBorderGray200;lg:checked:border-gray-200
 lgCheckedBorderGray300;lg:checked:border-gray-300
 lgCheckedBorderGray400;lg:checked:border-gray-400
@@ -10815,6 +10966,7 @@ lgDivideDouble;lg:divide-double
 lgDivideDurazno;lg:divide-durazno
 lgDivideDuraznoLight;lg:divide-durazno-light
 lgDivideGray100;lg:divide-gray-100
+lgDivideGray10;lg:divide-gray-10
 lgDivideGray200;lg:divide-gray-200
 lgDivideGray300;lg:divide-gray-300
 lgDivideGray400;lg:divide-gray-400
@@ -10966,6 +11118,7 @@ lgFocusBgCurrent;lg:focus:bg-current
 lgFocusBgDurazno;lg:focus:bg-durazno
 lgFocusBgDuraznoLight;lg:focus:bg-durazno-light
 lgFocusBgGray100;lg:focus:bg-gray-100
+lgFocusBgGray10;lg:focus:bg-gray-10
 lgFocusBgGray200;lg:focus:bg-gray-200
 lgFocusBgGray300;lg:focus:bg-gray-300
 lgFocusBgGray400;lg:focus:bg-gray-400
@@ -11069,6 +11222,7 @@ lgFocusBorderCurrent;lg:focus:border-current
 lgFocusBorderDurazno;lg:focus:border-durazno
 lgFocusBorderDuraznoLight;lg:focus:border-durazno-light
 lgFocusBorderGray100;lg:focus:border-gray-100
+lgFocusBorderGray10;lg:focus:border-gray-10
 lgFocusBorderGray200;lg:focus:border-gray-200
 lgFocusBorderGray300;lg:focus:border-gray-300
 lgFocusBorderGray400;lg:focus:border-gray-400
@@ -11172,6 +11326,7 @@ lgFocusFromCurrent;lg:focus:from-current
 lgFocusFromDurazno;lg:focus:from-durazno
 lgFocusFromDuraznoLight;lg:focus:from-durazno-light
 lgFocusFromGray100;lg:focus:from-gray-100
+lgFocusFromGray10;lg:focus:from-gray-10
 lgFocusFromGray200;lg:focus:from-gray-200
 lgFocusFromGray300;lg:focus:from-gray-300
 lgFocusFromGray400;lg:focus:from-gray-400
@@ -11383,6 +11538,7 @@ lgFocusPlaceholderCurrent;lg:focus:placeholder-current
 lgFocusPlaceholderDurazno;lg:focus:placeholder-durazno
 lgFocusPlaceholderDuraznoLight;lg:focus:placeholder-durazno-light
 lgFocusPlaceholderGray100;lg:focus:placeholder-gray-100
+lgFocusPlaceholderGray10;lg:focus:placeholder-gray-10
 lgFocusPlaceholderGray200;lg:focus:placeholder-gray-200
 lgFocusPlaceholderGray300;lg:focus:placeholder-gray-300
 lgFocusPlaceholderGray400;lg:focus:placeholder-gray-400
@@ -11492,6 +11648,7 @@ lgFocusRingCurrent;lg:focus:ring-current
 lgFocusRingDurazno;lg:focus:ring-durazno
 lgFocusRingDuraznoLight;lg:focus:ring-durazno-light
 lgFocusRingGray100;lg:focus:ring-gray-100
+lgFocusRingGray10;lg:focus:ring-gray-10
 lgFocusRingGray200;lg:focus:ring-gray-200
 lgFocusRingGray300;lg:focus:ring-gray-300
 lgFocusRingGray400;lg:focus:ring-gray-400
@@ -11544,6 +11701,7 @@ lgFocusRingOffsetCurrent;lg:focus:ring-offset-current
 lgFocusRingOffsetDurazno;lg:focus:ring-offset-durazno
 lgFocusRingOffsetDuraznoLight;lg:focus:ring-offset-durazno-light
 lgFocusRingOffsetGray100;lg:focus:ring-offset-gray-100
+lgFocusRingOffsetGray10;lg:focus:ring-offset-gray-10
 lgFocusRingOffsetGray200;lg:focus:ring-offset-gray-200
 lgFocusRingOffsetGray300;lg:focus:ring-offset-gray-300
 lgFocusRingOffsetGray400;lg:focus:ring-offset-gray-400
@@ -11749,6 +11907,7 @@ lgFocusTextCurrent;lg:focus:text-current
 lgFocusTextDurazno;lg:focus:text-durazno
 lgFocusTextDuraznoLight;lg:focus:text-durazno-light
 lgFocusTextGray100;lg:focus:text-gray-100
+lgFocusTextGray10;lg:focus:text-gray-10
 lgFocusTextGray200;lg:focus:text-gray-200
 lgFocusTextGray300;lg:focus:text-gray-300
 lgFocusTextGray400;lg:focus:text-gray-400
@@ -11852,6 +12011,7 @@ lgFocusToCurrent;lg:focus:to-current
 lgFocusToDurazno;lg:focus:to-durazno
 lgFocusToDuraznoLight;lg:focus:to-durazno-light
 lgFocusToGray100;lg:focus:to-gray-100
+lgFocusToGray10;lg:focus:to-gray-10
 lgFocusToGray200;lg:focus:to-gray-200
 lgFocusToGray300;lg:focus:to-gray-300
 lgFocusToGray400;lg:focus:to-gray-400
@@ -12025,6 +12185,7 @@ lgFocusViaCurrent;lg:focus:via-current
 lgFocusViaDurazno;lg:focus:via-durazno
 lgFocusViaDuraznoLight;lg:focus:via-durazno-light
 lgFocusViaGray100;lg:focus:via-gray-100
+lgFocusViaGray10;lg:focus:via-gray-10
 lgFocusViaGray200;lg:focus:via-gray-200
 lgFocusViaGray300;lg:focus:via-gray-300
 lgFocusViaGray400;lg:focus:via-gray-400
@@ -12113,6 +12274,7 @@ lgFocusWithinBgCurrent;lg:focus-within:bg-current
 lgFocusWithinBgDurazno;lg:focus-within:bg-durazno
 lgFocusWithinBgDuraznoLight;lg:focus-within:bg-durazno-light
 lgFocusWithinBgGray100;lg:focus-within:bg-gray-100
+lgFocusWithinBgGray10;lg:focus-within:bg-gray-10
 lgFocusWithinBgGray200;lg:focus-within:bg-gray-200
 lgFocusWithinBgGray300;lg:focus-within:bg-gray-300
 lgFocusWithinBgGray400;lg:focus-within:bg-gray-400
@@ -12216,6 +12378,7 @@ lgFocusWithinBorderCurrent;lg:focus-within:border-current
 lgFocusWithinBorderDurazno;lg:focus-within:border-durazno
 lgFocusWithinBorderDuraznoLight;lg:focus-within:border-durazno-light
 lgFocusWithinBorderGray100;lg:focus-within:border-gray-100
+lgFocusWithinBorderGray10;lg:focus-within:border-gray-10
 lgFocusWithinBorderGray200;lg:focus-within:border-gray-200
 lgFocusWithinBorderGray300;lg:focus-within:border-gray-300
 lgFocusWithinBorderGray400;lg:focus-within:border-gray-400
@@ -12346,6 +12509,7 @@ lgFocusWithinRingCurrent;lg:focus-within:ring-current
 lgFocusWithinRingDurazno;lg:focus-within:ring-durazno
 lgFocusWithinRingDuraznoLight;lg:focus-within:ring-durazno-light
 lgFocusWithinRingGray100;lg:focus-within:ring-gray-100
+lgFocusWithinRingGray10;lg:focus-within:ring-gray-10
 lgFocusWithinRingGray200;lg:focus-within:ring-gray-200
 lgFocusWithinRingGray300;lg:focus-within:ring-gray-300
 lgFocusWithinRingGray400;lg:focus-within:ring-gray-400
@@ -12398,6 +12562,7 @@ lgFocusWithinRingOffsetCurrent;lg:focus-within:ring-offset-current
 lgFocusWithinRingOffsetDurazno;lg:focus-within:ring-offset-durazno
 lgFocusWithinRingOffsetDuraznoLight;lg:focus-within:ring-offset-durazno-light
 lgFocusWithinRingOffsetGray100;lg:focus-within:ring-offset-gray-100
+lgFocusWithinRingOffsetGray10;lg:focus-within:ring-offset-gray-10
 lgFocusWithinRingOffsetGray200;lg:focus-within:ring-offset-gray-200
 lgFocusWithinRingOffsetGray300;lg:focus-within:ring-offset-gray-300
 lgFocusWithinRingOffsetGray400;lg:focus-within:ring-offset-gray-400
@@ -12552,6 +12717,7 @@ lgFocusWithinTextCurrent;lg:focus-within:text-current
 lgFocusWithinTextDurazno;lg:focus-within:text-durazno
 lgFocusWithinTextDuraznoLight;lg:focus-within:text-durazno-light
 lgFocusWithinTextGray100;lg:focus-within:text-gray-100
+lgFocusWithinTextGray10;lg:focus-within:text-gray-10
 lgFocusWithinTextGray200;lg:focus-within:text-gray-200
 lgFocusWithinTextGray300;lg:focus-within:text-gray-300
 lgFocusWithinTextGray400;lg:focus-within:text-gray-400
@@ -12682,6 +12848,7 @@ lgFromCurrent;lg:from-current
 lgFromDurazno;lg:from-durazno
 lgFromDuraznoLight;lg:from-durazno-light
 lgFromGray100;lg:from-gray-100
+lgFromGray10;lg:from-gray-10
 lgFromGray200;lg:from-gray-200
 lgFromGray300;lg:from-gray-300
 lgFromGray400;lg:from-gray-400
@@ -12954,6 +13121,7 @@ lgHoverBgCurrent;lg:hover:bg-current
 lgHoverBgDurazno;lg:hover:bg-durazno
 lgHoverBgDuraznoLight;lg:hover:bg-durazno-light
 lgHoverBgGray100;lg:hover:bg-gray-100
+lgHoverBgGray10;lg:hover:bg-gray-10
 lgHoverBgGray200;lg:hover:bg-gray-200
 lgHoverBgGray300;lg:hover:bg-gray-300
 lgHoverBgGray400;lg:hover:bg-gray-400
@@ -13067,6 +13235,7 @@ lgHoverBorderCurrent;lg:hover:border-current
 lgHoverBorderDurazno;lg:hover:border-durazno
 lgHoverBorderDuraznoLight;lg:hover:border-durazno-light
 lgHoverBorderGray100;lg:hover:border-gray-100
+lgHoverBorderGray10;lg:hover:border-gray-10
 lgHoverBorderGray200;lg:hover:border-gray-200
 lgHoverBorderGray300;lg:hover:border-gray-300
 lgHoverBorderGray400;lg:hover:border-gray-400
@@ -13185,6 +13354,7 @@ lgHoverFromCurrent;lg:hover:from-current
 lgHoverFromDurazno;lg:hover:from-durazno
 lgHoverFromDuraznoLight;lg:hover:from-durazno-light
 lgHoverFromGray100;lg:hover:from-gray-100
+lgHoverFromGray10;lg:hover:from-gray-10
 lgHoverFromGray200;lg:hover:from-gray-200
 lgHoverFromGray300;lg:hover:from-gray-300
 lgHoverFromGray400;lg:hover:from-gray-400
@@ -13451,6 +13621,7 @@ lgHoverTextCurrent;lg:hover:text-current
 lgHoverTextDurazno;lg:hover:text-durazno
 lgHoverTextDuraznoLight;lg:hover:text-durazno-light
 lgHoverTextGray100;lg:hover:text-gray-100
+lgHoverTextGray10;lg:hover:text-gray-10
 lgHoverTextGray200;lg:hover:text-gray-200
 lgHoverTextGray300;lg:hover:text-gray-300
 lgHoverTextGray400;lg:hover:text-gray-400
@@ -13554,6 +13725,7 @@ lgHoverToCurrent;lg:hover:to-current
 lgHoverToDurazno;lg:hover:to-durazno
 lgHoverToDuraznoLight;lg:hover:to-durazno-light
 lgHoverToGray100;lg:hover:to-gray-100
+lgHoverToGray10;lg:hover:to-gray-10
 lgHoverToGray200;lg:hover:to-gray-200
 lgHoverToGray300;lg:hover:to-gray-300
 lgHoverToGray400;lg:hover:to-gray-400
@@ -13727,6 +13899,7 @@ lgHoverViaCurrent;lg:hover:via-current
 lgHoverViaDurazno;lg:hover:via-durazno
 lgHoverViaDuraznoLight;lg:hover:via-durazno-light
 lgHoverViaGray100;lg:hover:via-gray-100
+lgHoverViaGray10;lg:hover:via-gray-10
 lgHoverViaGray200;lg:hover:via-gray-200
 lgHoverViaGray300;lg:hover:via-gray-300
 lgHoverViaGray400;lg:hover:via-gray-400
@@ -15273,6 +15446,7 @@ lgPlaceholderCurrent;lg:placeholder-current
 lgPlaceholderDurazno;lg:placeholder-durazno
 lgPlaceholderDuraznoLight;lg:placeholder-durazno-light
 lgPlaceholderGray100;lg:placeholder-gray-100
+lgPlaceholderGray10;lg:placeholder-gray-10
 lgPlaceholderGray200;lg:placeholder-gray-200
 lgPlaceholderGray300;lg:placeholder-gray-300
 lgPlaceholderGray400;lg:placeholder-gray-400
@@ -15573,6 +15747,7 @@ lgRingCurrent;lg:ring-current
 lgRingDurazno;lg:ring-durazno
 lgRingDuraznoLight;lg:ring-durazno-light
 lgRingGray100;lg:ring-gray-100
+lgRingGray10;lg:ring-gray-10
 lgRingGray200;lg:ring-gray-200
 lgRingGray300;lg:ring-gray-300
 lgRingGray400;lg:ring-gray-400
@@ -15625,6 +15800,7 @@ lgRingOffsetCurrent;lg:ring-offset-current
 lgRingOffsetDurazno;lg:ring-offset-durazno
 lgRingOffsetDuraznoLight;lg:ring-offset-durazno-light
 lgRingOffsetGray100;lg:ring-offset-gray-100
+lgRingOffsetGray10;lg:ring-offset-gray-10
 lgRingOffsetGray200;lg:ring-offset-gray-200
 lgRingOffsetGray300;lg:ring-offset-gray-300
 lgRingOffsetGray400;lg:ring-offset-gray-400
@@ -16047,6 +16223,7 @@ lgTextCurrent;lg:text-current
 lgTextDurazno;lg:text-durazno
 lgTextDuraznoLight;lg:text-durazno-light
 lgTextGray100;lg:text-gray-100
+lgTextGray10;lg:text-gray-10
 lgTextGray200;lg:text-gray-200
 lgTextGray300;lg:text-gray-300
 lgTextGray400;lg:text-gray-400
@@ -16157,6 +16334,7 @@ lgToCurrent;lg:to-current
 lgToDurazno;lg:to-durazno
 lgToDuraznoLight;lg:to-durazno-light
 lgToGray100;lg:to-gray-100
+lgToGray10;lg:to-gray-10
 lgToGray200;lg:to-gray-200
 lgToGray300;lg:to-gray-300
 lgToGray400;lg:to-gray-400
@@ -16391,6 +16569,7 @@ lgViaCurrent;lg:via-current
 lgViaDurazno;lg:via-durazno
 lgViaDuraznoLight;lg:via-durazno-light
 lgViaGray100;lg:via-gray-100
+lgViaGray10;lg:via-gray-10
 lgViaGray200;lg:via-gray-200
 lgViaGray300;lg:via-gray-300
 lgViaGray400;lg:via-gray-400
@@ -16737,6 +16916,7 @@ mdBgGradientToT;md:bg-gradient-to-t
 mdBgGradientToTl;md:bg-gradient-to-tl
 mdBgGradientToTr;md:bg-gradient-to-tr
 mdBgGray100;md:bg-gray-100
+mdBgGray10;md:bg-gray-10
 mdBgGray200;md:bg-gray-200
 mdBgGray300;md:bg-gray-300
 mdBgGray400;md:bg-gray-400
@@ -16871,6 +17051,7 @@ mdBorderDouble;md:border-double
 mdBorderDurazno;md:border-durazno
 mdBorderDuraznoLight;md:border-durazno-light
 mdBorderGray100;md:border-gray-100
+mdBorderGray10;md:border-gray-10
 mdBorderGray200;md:border-gray-200
 mdBorderGray300;md:border-gray-300
 mdBorderGray400;md:border-gray-400
@@ -17041,6 +17222,7 @@ mdCheckedBgCurrent;md:checked:bg-current
 mdCheckedBgDurazno;md:checked:bg-durazno
 mdCheckedBgDuraznoLight;md:checked:bg-durazno-light
 mdCheckedBgGray100;md:checked:bg-gray-100
+mdCheckedBgGray10;md:checked:bg-gray-10
 mdCheckedBgGray200;md:checked:bg-gray-200
 mdCheckedBgGray300;md:checked:bg-gray-300
 mdCheckedBgGray400;md:checked:bg-gray-400
@@ -17129,6 +17311,7 @@ mdCheckedBorderCurrent;md:checked:border-current
 mdCheckedBorderDurazno;md:checked:border-durazno
 mdCheckedBorderDuraznoLight;md:checked:border-durazno-light
 mdCheckedBorderGray100;md:checked:border-gray-100
+mdCheckedBorderGray10;md:checked:border-gray-10
 mdCheckedBorderGray200;md:checked:border-gray-200
 mdCheckedBorderGray300;md:checked:border-gray-300
 mdCheckedBorderGray400;md:checked:border-gray-400
@@ -17312,6 +17495,7 @@ mdDivideDouble;md:divide-double
 mdDivideDurazno;md:divide-durazno
 mdDivideDuraznoLight;md:divide-durazno-light
 mdDivideGray100;md:divide-gray-100
+mdDivideGray10;md:divide-gray-10
 mdDivideGray200;md:divide-gray-200
 mdDivideGray300;md:divide-gray-300
 mdDivideGray400;md:divide-gray-400
@@ -17463,6 +17647,7 @@ mdFocusBgCurrent;md:focus:bg-current
 mdFocusBgDurazno;md:focus:bg-durazno
 mdFocusBgDuraznoLight;md:focus:bg-durazno-light
 mdFocusBgGray100;md:focus:bg-gray-100
+mdFocusBgGray10;md:focus:bg-gray-10
 mdFocusBgGray200;md:focus:bg-gray-200
 mdFocusBgGray300;md:focus:bg-gray-300
 mdFocusBgGray400;md:focus:bg-gray-400
@@ -17566,6 +17751,7 @@ mdFocusBorderCurrent;md:focus:border-current
 mdFocusBorderDurazno;md:focus:border-durazno
 mdFocusBorderDuraznoLight;md:focus:border-durazno-light
 mdFocusBorderGray100;md:focus:border-gray-100
+mdFocusBorderGray10;md:focus:border-gray-10
 mdFocusBorderGray200;md:focus:border-gray-200
 mdFocusBorderGray300;md:focus:border-gray-300
 mdFocusBorderGray400;md:focus:border-gray-400
@@ -17669,6 +17855,7 @@ mdFocusFromCurrent;md:focus:from-current
 mdFocusFromDurazno;md:focus:from-durazno
 mdFocusFromDuraznoLight;md:focus:from-durazno-light
 mdFocusFromGray100;md:focus:from-gray-100
+mdFocusFromGray10;md:focus:from-gray-10
 mdFocusFromGray200;md:focus:from-gray-200
 mdFocusFromGray300;md:focus:from-gray-300
 mdFocusFromGray400;md:focus:from-gray-400
@@ -17880,6 +18067,7 @@ mdFocusPlaceholderCurrent;md:focus:placeholder-current
 mdFocusPlaceholderDurazno;md:focus:placeholder-durazno
 mdFocusPlaceholderDuraznoLight;md:focus:placeholder-durazno-light
 mdFocusPlaceholderGray100;md:focus:placeholder-gray-100
+mdFocusPlaceholderGray10;md:focus:placeholder-gray-10
 mdFocusPlaceholderGray200;md:focus:placeholder-gray-200
 mdFocusPlaceholderGray300;md:focus:placeholder-gray-300
 mdFocusPlaceholderGray400;md:focus:placeholder-gray-400
@@ -17989,6 +18177,7 @@ mdFocusRingCurrent;md:focus:ring-current
 mdFocusRingDurazno;md:focus:ring-durazno
 mdFocusRingDuraznoLight;md:focus:ring-durazno-light
 mdFocusRingGray100;md:focus:ring-gray-100
+mdFocusRingGray10;md:focus:ring-gray-10
 mdFocusRingGray200;md:focus:ring-gray-200
 mdFocusRingGray300;md:focus:ring-gray-300
 mdFocusRingGray400;md:focus:ring-gray-400
@@ -18041,6 +18230,7 @@ mdFocusRingOffsetCurrent;md:focus:ring-offset-current
 mdFocusRingOffsetDurazno;md:focus:ring-offset-durazno
 mdFocusRingOffsetDuraznoLight;md:focus:ring-offset-durazno-light
 mdFocusRingOffsetGray100;md:focus:ring-offset-gray-100
+mdFocusRingOffsetGray10;md:focus:ring-offset-gray-10
 mdFocusRingOffsetGray200;md:focus:ring-offset-gray-200
 mdFocusRingOffsetGray300;md:focus:ring-offset-gray-300
 mdFocusRingOffsetGray400;md:focus:ring-offset-gray-400
@@ -18246,6 +18436,7 @@ mdFocusTextCurrent;md:focus:text-current
 mdFocusTextDurazno;md:focus:text-durazno
 mdFocusTextDuraznoLight;md:focus:text-durazno-light
 mdFocusTextGray100;md:focus:text-gray-100
+mdFocusTextGray10;md:focus:text-gray-10
 mdFocusTextGray200;md:focus:text-gray-200
 mdFocusTextGray300;md:focus:text-gray-300
 mdFocusTextGray400;md:focus:text-gray-400
@@ -18349,6 +18540,7 @@ mdFocusToCurrent;md:focus:to-current
 mdFocusToDurazno;md:focus:to-durazno
 mdFocusToDuraznoLight;md:focus:to-durazno-light
 mdFocusToGray100;md:focus:to-gray-100
+mdFocusToGray10;md:focus:to-gray-10
 mdFocusToGray200;md:focus:to-gray-200
 mdFocusToGray300;md:focus:to-gray-300
 mdFocusToGray400;md:focus:to-gray-400
@@ -18522,6 +18714,7 @@ mdFocusViaCurrent;md:focus:via-current
 mdFocusViaDurazno;md:focus:via-durazno
 mdFocusViaDuraznoLight;md:focus:via-durazno-light
 mdFocusViaGray100;md:focus:via-gray-100
+mdFocusViaGray10;md:focus:via-gray-10
 mdFocusViaGray200;md:focus:via-gray-200
 mdFocusViaGray300;md:focus:via-gray-300
 mdFocusViaGray400;md:focus:via-gray-400
@@ -18610,6 +18803,7 @@ mdFocusWithinBgCurrent;md:focus-within:bg-current
 mdFocusWithinBgDurazno;md:focus-within:bg-durazno
 mdFocusWithinBgDuraznoLight;md:focus-within:bg-durazno-light
 mdFocusWithinBgGray100;md:focus-within:bg-gray-100
+mdFocusWithinBgGray10;md:focus-within:bg-gray-10
 mdFocusWithinBgGray200;md:focus-within:bg-gray-200
 mdFocusWithinBgGray300;md:focus-within:bg-gray-300
 mdFocusWithinBgGray400;md:focus-within:bg-gray-400
@@ -18713,6 +18907,7 @@ mdFocusWithinBorderCurrent;md:focus-within:border-current
 mdFocusWithinBorderDurazno;md:focus-within:border-durazno
 mdFocusWithinBorderDuraznoLight;md:focus-within:border-durazno-light
 mdFocusWithinBorderGray100;md:focus-within:border-gray-100
+mdFocusWithinBorderGray10;md:focus-within:border-gray-10
 mdFocusWithinBorderGray200;md:focus-within:border-gray-200
 mdFocusWithinBorderGray300;md:focus-within:border-gray-300
 mdFocusWithinBorderGray400;md:focus-within:border-gray-400
@@ -18843,6 +19038,7 @@ mdFocusWithinRingCurrent;md:focus-within:ring-current
 mdFocusWithinRingDurazno;md:focus-within:ring-durazno
 mdFocusWithinRingDuraznoLight;md:focus-within:ring-durazno-light
 mdFocusWithinRingGray100;md:focus-within:ring-gray-100
+mdFocusWithinRingGray10;md:focus-within:ring-gray-10
 mdFocusWithinRingGray200;md:focus-within:ring-gray-200
 mdFocusWithinRingGray300;md:focus-within:ring-gray-300
 mdFocusWithinRingGray400;md:focus-within:ring-gray-400
@@ -18895,6 +19091,7 @@ mdFocusWithinRingOffsetCurrent;md:focus-within:ring-offset-current
 mdFocusWithinRingOffsetDurazno;md:focus-within:ring-offset-durazno
 mdFocusWithinRingOffsetDuraznoLight;md:focus-within:ring-offset-durazno-light
 mdFocusWithinRingOffsetGray100;md:focus-within:ring-offset-gray-100
+mdFocusWithinRingOffsetGray10;md:focus-within:ring-offset-gray-10
 mdFocusWithinRingOffsetGray200;md:focus-within:ring-offset-gray-200
 mdFocusWithinRingOffsetGray300;md:focus-within:ring-offset-gray-300
 mdFocusWithinRingOffsetGray400;md:focus-within:ring-offset-gray-400
@@ -19049,6 +19246,7 @@ mdFocusWithinTextCurrent;md:focus-within:text-current
 mdFocusWithinTextDurazno;md:focus-within:text-durazno
 mdFocusWithinTextDuraznoLight;md:focus-within:text-durazno-light
 mdFocusWithinTextGray100;md:focus-within:text-gray-100
+mdFocusWithinTextGray10;md:focus-within:text-gray-10
 mdFocusWithinTextGray200;md:focus-within:text-gray-200
 mdFocusWithinTextGray300;md:focus-within:text-gray-300
 mdFocusWithinTextGray400;md:focus-within:text-gray-400
@@ -19179,6 +19377,7 @@ mdFromCurrent;md:from-current
 mdFromDurazno;md:from-durazno
 mdFromDuraznoLight;md:from-durazno-light
 mdFromGray100;md:from-gray-100
+mdFromGray10;md:from-gray-10
 mdFromGray200;md:from-gray-200
 mdFromGray300;md:from-gray-300
 mdFromGray400;md:from-gray-400
@@ -19451,6 +19650,7 @@ mdHoverBgCurrent;md:hover:bg-current
 mdHoverBgDurazno;md:hover:bg-durazno
 mdHoverBgDuraznoLight;md:hover:bg-durazno-light
 mdHoverBgGray100;md:hover:bg-gray-100
+mdHoverBgGray10;md:hover:bg-gray-10
 mdHoverBgGray200;md:hover:bg-gray-200
 mdHoverBgGray300;md:hover:bg-gray-300
 mdHoverBgGray400;md:hover:bg-gray-400
@@ -19564,6 +19764,7 @@ mdHoverBorderCurrent;md:hover:border-current
 mdHoverBorderDurazno;md:hover:border-durazno
 mdHoverBorderDuraznoLight;md:hover:border-durazno-light
 mdHoverBorderGray100;md:hover:border-gray-100
+mdHoverBorderGray10;md:hover:border-gray-10
 mdHoverBorderGray200;md:hover:border-gray-200
 mdHoverBorderGray300;md:hover:border-gray-300
 mdHoverBorderGray400;md:hover:border-gray-400
@@ -19682,6 +19883,7 @@ mdHoverFromCurrent;md:hover:from-current
 mdHoverFromDurazno;md:hover:from-durazno
 mdHoverFromDuraznoLight;md:hover:from-durazno-light
 mdHoverFromGray100;md:hover:from-gray-100
+mdHoverFromGray10;md:hover:from-gray-10
 mdHoverFromGray200;md:hover:from-gray-200
 mdHoverFromGray300;md:hover:from-gray-300
 mdHoverFromGray400;md:hover:from-gray-400
@@ -19948,6 +20150,7 @@ mdHoverTextCurrent;md:hover:text-current
 mdHoverTextDurazno;md:hover:text-durazno
 mdHoverTextDuraznoLight;md:hover:text-durazno-light
 mdHoverTextGray100;md:hover:text-gray-100
+mdHoverTextGray10;md:hover:text-gray-10
 mdHoverTextGray200;md:hover:text-gray-200
 mdHoverTextGray300;md:hover:text-gray-300
 mdHoverTextGray400;md:hover:text-gray-400
@@ -20051,6 +20254,7 @@ mdHoverToCurrent;md:hover:to-current
 mdHoverToDurazno;md:hover:to-durazno
 mdHoverToDuraznoLight;md:hover:to-durazno-light
 mdHoverToGray100;md:hover:to-gray-100
+mdHoverToGray10;md:hover:to-gray-10
 mdHoverToGray200;md:hover:to-gray-200
 mdHoverToGray300;md:hover:to-gray-300
 mdHoverToGray400;md:hover:to-gray-400
@@ -20224,6 +20428,7 @@ mdHoverViaCurrent;md:hover:via-current
 mdHoverViaDurazno;md:hover:via-durazno
 mdHoverViaDuraznoLight;md:hover:via-durazno-light
 mdHoverViaGray100;md:hover:via-gray-100
+mdHoverViaGray10;md:hover:via-gray-10
 mdHoverViaGray200;md:hover:via-gray-200
 mdHoverViaGray300;md:hover:via-gray-300
 mdHoverViaGray400;md:hover:via-gray-400
@@ -21770,6 +21975,7 @@ mdPlaceholderCurrent;md:placeholder-current
 mdPlaceholderDurazno;md:placeholder-durazno
 mdPlaceholderDuraznoLight;md:placeholder-durazno-light
 mdPlaceholderGray100;md:placeholder-gray-100
+mdPlaceholderGray10;md:placeholder-gray-10
 mdPlaceholderGray200;md:placeholder-gray-200
 mdPlaceholderGray300;md:placeholder-gray-300
 mdPlaceholderGray400;md:placeholder-gray-400
@@ -22070,6 +22276,7 @@ mdRingCurrent;md:ring-current
 mdRingDurazno;md:ring-durazno
 mdRingDuraznoLight;md:ring-durazno-light
 mdRingGray100;md:ring-gray-100
+mdRingGray10;md:ring-gray-10
 mdRingGray200;md:ring-gray-200
 mdRingGray300;md:ring-gray-300
 mdRingGray400;md:ring-gray-400
@@ -22122,6 +22329,7 @@ mdRingOffsetCurrent;md:ring-offset-current
 mdRingOffsetDurazno;md:ring-offset-durazno
 mdRingOffsetDuraznoLight;md:ring-offset-durazno-light
 mdRingOffsetGray100;md:ring-offset-gray-100
+mdRingOffsetGray10;md:ring-offset-gray-10
 mdRingOffsetGray200;md:ring-offset-gray-200
 mdRingOffsetGray300;md:ring-offset-gray-300
 mdRingOffsetGray400;md:ring-offset-gray-400
@@ -22544,6 +22752,7 @@ mdTextCurrent;md:text-current
 mdTextDurazno;md:text-durazno
 mdTextDuraznoLight;md:text-durazno-light
 mdTextGray100;md:text-gray-100
+mdTextGray10;md:text-gray-10
 mdTextGray200;md:text-gray-200
 mdTextGray300;md:text-gray-300
 mdTextGray400;md:text-gray-400
@@ -22654,6 +22863,7 @@ mdToCurrent;md:to-current
 mdToDurazno;md:to-durazno
 mdToDuraznoLight;md:to-durazno-light
 mdToGray100;md:to-gray-100
+mdToGray10;md:to-gray-10
 mdToGray200;md:to-gray-200
 mdToGray300;md:to-gray-300
 mdToGray400;md:to-gray-400
@@ -22888,6 +23098,7 @@ mdViaCurrent;md:via-current
 mdViaDurazno;md:via-durazno
 mdViaDuraznoLight;md:via-durazno-light
 mdViaGray100;md:via-gray-100
+mdViaGray10;md:via-gray-10
 mdViaGray200;md:via-gray-200
 mdViaGray300;md:via-gray-300
 mdViaGray400;md:via-gray-400
@@ -24161,6 +24372,7 @@ placeholderCurrent;placeholder-current
 placeholderDurazno;placeholder-durazno
 placeholderDuraznoLight;placeholder-durazno-light
 placeholderGray100;placeholder-gray-100
+placeholderGray10;placeholder-gray-10
 placeholderGray200;placeholder-gray-200
 placeholderGray300;placeholder-gray-300
 placeholderGray400;placeholder-gray-400
@@ -24461,6 +24673,7 @@ ringCurrent;ring-current
 ringDurazno;ring-durazno
 ringDuraznoLight;ring-durazno-light
 ringGray100;ring-gray-100
+ringGray10;ring-gray-10
 ringGray200;ring-gray-200
 ringGray300;ring-gray-300
 ringGray400;ring-gray-400
@@ -24513,6 +24726,7 @@ ringOffsetCurrent;ring-offset-current
 ringOffsetDurazno;ring-offset-durazno
 ringOffsetDuraznoLight;ring-offset-durazno-light
 ringOffsetGray100;ring-offset-gray-100
+ringOffsetGray10;ring-offset-gray-10
 ringOffsetGray200;ring-offset-gray-200
 ringOffsetGray300;ring-offset-gray-300
 ringOffsetGray400;ring-offset-gray-400
@@ -24787,6 +25001,186 @@ scaleY50;scale-y-50
 scaleY75;scale-y-75
 scaleY90;scale-y-90
 scaleY95;scale-y-95
+scrollbar;scrollbar
+scrollbarThin;scrollbar-thin
+scrollbarThumbBlack;scrollbar-thumb-black
+scrollbarThumbBlue100;scrollbar-thumb-blue-100
+scrollbarThumbBlue200;scrollbar-thumb-blue-200
+scrollbarThumbBlue300;scrollbar-thumb-blue-300
+scrollbarThumbBlue400;scrollbar-thumb-blue-400
+scrollbarThumbBlue500;scrollbar-thumb-blue-500
+scrollbarThumbBlue50;scrollbar-thumb-blue-50
+scrollbarThumbBlue600;scrollbar-thumb-blue-600
+scrollbarThumbBlue700;scrollbar-thumb-blue-700
+scrollbarThumbBlue800;scrollbar-thumb-blue-800
+scrollbarThumbBlue900;scrollbar-thumb-blue-900
+scrollbarThumbCurrent;scrollbar-thumb-current
+scrollbarThumbDuraznoDefault;scrollbar-thumb-durazno-DEFAULT
+scrollbarThumbDuraznoLight;scrollbar-thumb-durazno-light
+scrollbarThumbGray100;scrollbar-thumb-gray-100
+scrollbarThumbGray10;scrollbar-thumb-gray-10
+scrollbarThumbGray200;scrollbar-thumb-gray-200
+scrollbarThumbGray300;scrollbar-thumb-gray-300
+scrollbarThumbGray400;scrollbar-thumb-gray-400
+scrollbarThumbGray500;scrollbar-thumb-gray-500
+scrollbarThumbGray50;scrollbar-thumb-gray-50
+scrollbarThumbGray600;scrollbar-thumb-gray-600
+scrollbarThumbGray700;scrollbar-thumb-gray-700
+scrollbarThumbGray800;scrollbar-thumb-gray-800
+scrollbarThumbGray900;scrollbar-thumb-gray-900
+scrollbarThumbGreen100;scrollbar-thumb-green-100
+scrollbarThumbGreen200;scrollbar-thumb-green-200
+scrollbarThumbGreen300;scrollbar-thumb-green-300
+scrollbarThumbGreen400;scrollbar-thumb-green-400
+scrollbarThumbGreen500;scrollbar-thumb-green-500
+scrollbarThumbGreen50;scrollbar-thumb-green-50
+scrollbarThumbGreen600;scrollbar-thumb-green-600
+scrollbarThumbGreen700;scrollbar-thumb-green-700
+scrollbarThumbGreen800;scrollbar-thumb-green-800
+scrollbarThumbGreen900;scrollbar-thumb-green-900
+scrollbarThumbIndigo100;scrollbar-thumb-indigo-100
+scrollbarThumbIndigo200;scrollbar-thumb-indigo-200
+scrollbarThumbIndigo300;scrollbar-thumb-indigo-300
+scrollbarThumbIndigo400;scrollbar-thumb-indigo-400
+scrollbarThumbIndigo500;scrollbar-thumb-indigo-500
+scrollbarThumbIndigo50;scrollbar-thumb-indigo-50
+scrollbarThumbIndigo600;scrollbar-thumb-indigo-600
+scrollbarThumbIndigo700;scrollbar-thumb-indigo-700
+scrollbarThumbIndigo800;scrollbar-thumb-indigo-800
+scrollbarThumbIndigo900;scrollbar-thumb-indigo-900
+scrollbarThumbKiwiDefault;scrollbar-thumb-kiwi-DEFAULT
+scrollbarThumbManzanaDefault;scrollbar-thumb-manzana-DEFAULT
+scrollbarThumbPink100;scrollbar-thumb-pink-100
+scrollbarThumbPink200;scrollbar-thumb-pink-200
+scrollbarThumbPink300;scrollbar-thumb-pink-300
+scrollbarThumbPink400;scrollbar-thumb-pink-400
+scrollbarThumbPink500;scrollbar-thumb-pink-500
+scrollbarThumbPink50;scrollbar-thumb-pink-50
+scrollbarThumbPink600;scrollbar-thumb-pink-600
+scrollbarThumbPink700;scrollbar-thumb-pink-700
+scrollbarThumbPink800;scrollbar-thumb-pink-800
+scrollbarThumbPink900;scrollbar-thumb-pink-900
+scrollbarThumbPurple100;scrollbar-thumb-purple-100
+scrollbarThumbPurple200;scrollbar-thumb-purple-200
+scrollbarThumbPurple300;scrollbar-thumb-purple-300
+scrollbarThumbPurple400;scrollbar-thumb-purple-400
+scrollbarThumbPurple500;scrollbar-thumb-purple-500
+scrollbarThumbPurple50;scrollbar-thumb-purple-50
+scrollbarThumbPurple600;scrollbar-thumb-purple-600
+scrollbarThumbPurple700;scrollbar-thumb-purple-700
+scrollbarThumbPurple800;scrollbar-thumb-purple-800
+scrollbarThumbPurple900;scrollbar-thumb-purple-900
+scrollbarThumbRed100;scrollbar-thumb-red-100
+scrollbarThumbRed200;scrollbar-thumb-red-200
+scrollbarThumbRed300;scrollbar-thumb-red-300
+scrollbarThumbRed400;scrollbar-thumb-red-400
+scrollbarThumbRed500;scrollbar-thumb-red-500
+scrollbarThumbRed50;scrollbar-thumb-red-50
+scrollbarThumbRed600;scrollbar-thumb-red-600
+scrollbarThumbRed700;scrollbar-thumb-red-700
+scrollbarThumbRed800;scrollbar-thumb-red-800
+scrollbarThumbRed900;scrollbar-thumb-red-900
+scrollbarThumbTransparent;scrollbar-thumb-transparent
+scrollbarThumbWhite;scrollbar-thumb-white
+scrollbarThumbYellow100;scrollbar-thumb-yellow-100
+scrollbarThumbYellow200;scrollbar-thumb-yellow-200
+scrollbarThumbYellow300;scrollbar-thumb-yellow-300
+scrollbarThumbYellow400;scrollbar-thumb-yellow-400
+scrollbarThumbYellow500;scrollbar-thumb-yellow-500
+scrollbarThumbYellow50;scrollbar-thumb-yellow-50
+scrollbarThumbYellow600;scrollbar-thumb-yellow-600
+scrollbarThumbYellow700;scrollbar-thumb-yellow-700
+scrollbarThumbYellow800;scrollbar-thumb-yellow-800
+scrollbarThumbYellow900;scrollbar-thumb-yellow-900
+scrollbarTrackBlack;scrollbar-track-black
+scrollbarTrackBlue100;scrollbar-track-blue-100
+scrollbarTrackBlue200;scrollbar-track-blue-200
+scrollbarTrackBlue300;scrollbar-track-blue-300
+scrollbarTrackBlue400;scrollbar-track-blue-400
+scrollbarTrackBlue500;scrollbar-track-blue-500
+scrollbarTrackBlue50;scrollbar-track-blue-50
+scrollbarTrackBlue600;scrollbar-track-blue-600
+scrollbarTrackBlue700;scrollbar-track-blue-700
+scrollbarTrackBlue800;scrollbar-track-blue-800
+scrollbarTrackBlue900;scrollbar-track-blue-900
+scrollbarTrackCurrent;scrollbar-track-current
+scrollbarTrackDuraznoDefault;scrollbar-track-durazno-DEFAULT
+scrollbarTrackDuraznoLight;scrollbar-track-durazno-light
+scrollbarTrackGray100;scrollbar-track-gray-100
+scrollbarTrackGray10;scrollbar-track-gray-10
+scrollbarTrackGray200;scrollbar-track-gray-200
+scrollbarTrackGray300;scrollbar-track-gray-300
+scrollbarTrackGray400;scrollbar-track-gray-400
+scrollbarTrackGray500;scrollbar-track-gray-500
+scrollbarTrackGray50;scrollbar-track-gray-50
+scrollbarTrackGray600;scrollbar-track-gray-600
+scrollbarTrackGray700;scrollbar-track-gray-700
+scrollbarTrackGray800;scrollbar-track-gray-800
+scrollbarTrackGray900;scrollbar-track-gray-900
+scrollbarTrackGreen100;scrollbar-track-green-100
+scrollbarTrackGreen200;scrollbar-track-green-200
+scrollbarTrackGreen300;scrollbar-track-green-300
+scrollbarTrackGreen400;scrollbar-track-green-400
+scrollbarTrackGreen500;scrollbar-track-green-500
+scrollbarTrackGreen50;scrollbar-track-green-50
+scrollbarTrackGreen600;scrollbar-track-green-600
+scrollbarTrackGreen700;scrollbar-track-green-700
+scrollbarTrackGreen800;scrollbar-track-green-800
+scrollbarTrackGreen900;scrollbar-track-green-900
+scrollbarTrackIndigo100;scrollbar-track-indigo-100
+scrollbarTrackIndigo200;scrollbar-track-indigo-200
+scrollbarTrackIndigo300;scrollbar-track-indigo-300
+scrollbarTrackIndigo400;scrollbar-track-indigo-400
+scrollbarTrackIndigo500;scrollbar-track-indigo-500
+scrollbarTrackIndigo50;scrollbar-track-indigo-50
+scrollbarTrackIndigo600;scrollbar-track-indigo-600
+scrollbarTrackIndigo700;scrollbar-track-indigo-700
+scrollbarTrackIndigo800;scrollbar-track-indigo-800
+scrollbarTrackIndigo900;scrollbar-track-indigo-900
+scrollbarTrackKiwiDefault;scrollbar-track-kiwi-DEFAULT
+scrollbarTrackManzanaDefault;scrollbar-track-manzana-DEFAULT
+scrollbarTrackPink100;scrollbar-track-pink-100
+scrollbarTrackPink200;scrollbar-track-pink-200
+scrollbarTrackPink300;scrollbar-track-pink-300
+scrollbarTrackPink400;scrollbar-track-pink-400
+scrollbarTrackPink500;scrollbar-track-pink-500
+scrollbarTrackPink50;scrollbar-track-pink-50
+scrollbarTrackPink600;scrollbar-track-pink-600
+scrollbarTrackPink700;scrollbar-track-pink-700
+scrollbarTrackPink800;scrollbar-track-pink-800
+scrollbarTrackPink900;scrollbar-track-pink-900
+scrollbarTrackPurple100;scrollbar-track-purple-100
+scrollbarTrackPurple200;scrollbar-track-purple-200
+scrollbarTrackPurple300;scrollbar-track-purple-300
+scrollbarTrackPurple400;scrollbar-track-purple-400
+scrollbarTrackPurple500;scrollbar-track-purple-500
+scrollbarTrackPurple50;scrollbar-track-purple-50
+scrollbarTrackPurple600;scrollbar-track-purple-600
+scrollbarTrackPurple700;scrollbar-track-purple-700
+scrollbarTrackPurple800;scrollbar-track-purple-800
+scrollbarTrackPurple900;scrollbar-track-purple-900
+scrollbarTrackRed100;scrollbar-track-red-100
+scrollbarTrackRed200;scrollbar-track-red-200
+scrollbarTrackRed300;scrollbar-track-red-300
+scrollbarTrackRed400;scrollbar-track-red-400
+scrollbarTrackRed500;scrollbar-track-red-500
+scrollbarTrackRed50;scrollbar-track-red-50
+scrollbarTrackRed600;scrollbar-track-red-600
+scrollbarTrackRed700;scrollbar-track-red-700
+scrollbarTrackRed800;scrollbar-track-red-800
+scrollbarTrackRed900;scrollbar-track-red-900
+scrollbarTrackTransparent;scrollbar-track-transparent
+scrollbarTrackWhite;scrollbar-track-white
+scrollbarTrackYellow100;scrollbar-track-yellow-100
+scrollbarTrackYellow200;scrollbar-track-yellow-200
+scrollbarTrackYellow300;scrollbar-track-yellow-300
+scrollbarTrackYellow400;scrollbar-track-yellow-400
+scrollbarTrackYellow500;scrollbar-track-yellow-500
+scrollbarTrackYellow50;scrollbar-track-yellow-50
+scrollbarTrackYellow600;scrollbar-track-yellow-600
+scrollbarTrackYellow700;scrollbar-track-yellow-700
+scrollbarTrackYellow800;scrollbar-track-yellow-800
+scrollbarTrackYellow900;scrollbar-track-yellow-900
 selectAll;select-all
 selectAuto;select-auto
 selectNone;select-none
@@ -24872,6 +25266,7 @@ smBgGradientToT;sm:bg-gradient-to-t
 smBgGradientToTl;sm:bg-gradient-to-tl
 smBgGradientToTr;sm:bg-gradient-to-tr
 smBgGray100;sm:bg-gray-100
+smBgGray10;sm:bg-gray-10
 smBgGray200;sm:bg-gray-200
 smBgGray300;sm:bg-gray-300
 smBgGray400;sm:bg-gray-400
@@ -25006,6 +25401,7 @@ smBorderDouble;sm:border-double
 smBorderDurazno;sm:border-durazno
 smBorderDuraznoLight;sm:border-durazno-light
 smBorderGray100;sm:border-gray-100
+smBorderGray10;sm:border-gray-10
 smBorderGray200;sm:border-gray-200
 smBorderGray300;sm:border-gray-300
 smBorderGray400;sm:border-gray-400
@@ -25176,6 +25572,7 @@ smCheckedBgCurrent;sm:checked:bg-current
 smCheckedBgDurazno;sm:checked:bg-durazno
 smCheckedBgDuraznoLight;sm:checked:bg-durazno-light
 smCheckedBgGray100;sm:checked:bg-gray-100
+smCheckedBgGray10;sm:checked:bg-gray-10
 smCheckedBgGray200;sm:checked:bg-gray-200
 smCheckedBgGray300;sm:checked:bg-gray-300
 smCheckedBgGray400;sm:checked:bg-gray-400
@@ -25264,6 +25661,7 @@ smCheckedBorderCurrent;sm:checked:border-current
 smCheckedBorderDurazno;sm:checked:border-durazno
 smCheckedBorderDuraznoLight;sm:checked:border-durazno-light
 smCheckedBorderGray100;sm:checked:border-gray-100
+smCheckedBorderGray10;sm:checked:border-gray-10
 smCheckedBorderGray200;sm:checked:border-gray-200
 smCheckedBorderGray300;sm:checked:border-gray-300
 smCheckedBorderGray400;sm:checked:border-gray-400
@@ -25447,6 +25845,7 @@ smDivideDouble;sm:divide-double
 smDivideDurazno;sm:divide-durazno
 smDivideDuraznoLight;sm:divide-durazno-light
 smDivideGray100;sm:divide-gray-100
+smDivideGray10;sm:divide-gray-10
 smDivideGray200;sm:divide-gray-200
 smDivideGray300;sm:divide-gray-300
 smDivideGray400;sm:divide-gray-400
@@ -25598,6 +25997,7 @@ smFocusBgCurrent;sm:focus:bg-current
 smFocusBgDurazno;sm:focus:bg-durazno
 smFocusBgDuraznoLight;sm:focus:bg-durazno-light
 smFocusBgGray100;sm:focus:bg-gray-100
+smFocusBgGray10;sm:focus:bg-gray-10
 smFocusBgGray200;sm:focus:bg-gray-200
 smFocusBgGray300;sm:focus:bg-gray-300
 smFocusBgGray400;sm:focus:bg-gray-400
@@ -25701,6 +26101,7 @@ smFocusBorderCurrent;sm:focus:border-current
 smFocusBorderDurazno;sm:focus:border-durazno
 smFocusBorderDuraznoLight;sm:focus:border-durazno-light
 smFocusBorderGray100;sm:focus:border-gray-100
+smFocusBorderGray10;sm:focus:border-gray-10
 smFocusBorderGray200;sm:focus:border-gray-200
 smFocusBorderGray300;sm:focus:border-gray-300
 smFocusBorderGray400;sm:focus:border-gray-400
@@ -25804,6 +26205,7 @@ smFocusFromCurrent;sm:focus:from-current
 smFocusFromDurazno;sm:focus:from-durazno
 smFocusFromDuraznoLight;sm:focus:from-durazno-light
 smFocusFromGray100;sm:focus:from-gray-100
+smFocusFromGray10;sm:focus:from-gray-10
 smFocusFromGray200;sm:focus:from-gray-200
 smFocusFromGray300;sm:focus:from-gray-300
 smFocusFromGray400;sm:focus:from-gray-400
@@ -26015,6 +26417,7 @@ smFocusPlaceholderCurrent;sm:focus:placeholder-current
 smFocusPlaceholderDurazno;sm:focus:placeholder-durazno
 smFocusPlaceholderDuraznoLight;sm:focus:placeholder-durazno-light
 smFocusPlaceholderGray100;sm:focus:placeholder-gray-100
+smFocusPlaceholderGray10;sm:focus:placeholder-gray-10
 smFocusPlaceholderGray200;sm:focus:placeholder-gray-200
 smFocusPlaceholderGray300;sm:focus:placeholder-gray-300
 smFocusPlaceholderGray400;sm:focus:placeholder-gray-400
@@ -26124,6 +26527,7 @@ smFocusRingCurrent;sm:focus:ring-current
 smFocusRingDurazno;sm:focus:ring-durazno
 smFocusRingDuraznoLight;sm:focus:ring-durazno-light
 smFocusRingGray100;sm:focus:ring-gray-100
+smFocusRingGray10;sm:focus:ring-gray-10
 smFocusRingGray200;sm:focus:ring-gray-200
 smFocusRingGray300;sm:focus:ring-gray-300
 smFocusRingGray400;sm:focus:ring-gray-400
@@ -26176,6 +26580,7 @@ smFocusRingOffsetCurrent;sm:focus:ring-offset-current
 smFocusRingOffsetDurazno;sm:focus:ring-offset-durazno
 smFocusRingOffsetDuraznoLight;sm:focus:ring-offset-durazno-light
 smFocusRingOffsetGray100;sm:focus:ring-offset-gray-100
+smFocusRingOffsetGray10;sm:focus:ring-offset-gray-10
 smFocusRingOffsetGray200;sm:focus:ring-offset-gray-200
 smFocusRingOffsetGray300;sm:focus:ring-offset-gray-300
 smFocusRingOffsetGray400;sm:focus:ring-offset-gray-400
@@ -26381,6 +26786,7 @@ smFocusTextCurrent;sm:focus:text-current
 smFocusTextDurazno;sm:focus:text-durazno
 smFocusTextDuraznoLight;sm:focus:text-durazno-light
 smFocusTextGray100;sm:focus:text-gray-100
+smFocusTextGray10;sm:focus:text-gray-10
 smFocusTextGray200;sm:focus:text-gray-200
 smFocusTextGray300;sm:focus:text-gray-300
 smFocusTextGray400;sm:focus:text-gray-400
@@ -26484,6 +26890,7 @@ smFocusToCurrent;sm:focus:to-current
 smFocusToDurazno;sm:focus:to-durazno
 smFocusToDuraznoLight;sm:focus:to-durazno-light
 smFocusToGray100;sm:focus:to-gray-100
+smFocusToGray10;sm:focus:to-gray-10
 smFocusToGray200;sm:focus:to-gray-200
 smFocusToGray300;sm:focus:to-gray-300
 smFocusToGray400;sm:focus:to-gray-400
@@ -26657,6 +27064,7 @@ smFocusViaCurrent;sm:focus:via-current
 smFocusViaDurazno;sm:focus:via-durazno
 smFocusViaDuraznoLight;sm:focus:via-durazno-light
 smFocusViaGray100;sm:focus:via-gray-100
+smFocusViaGray10;sm:focus:via-gray-10
 smFocusViaGray200;sm:focus:via-gray-200
 smFocusViaGray300;sm:focus:via-gray-300
 smFocusViaGray400;sm:focus:via-gray-400
@@ -26745,6 +27153,7 @@ smFocusWithinBgCurrent;sm:focus-within:bg-current
 smFocusWithinBgDurazno;sm:focus-within:bg-durazno
 smFocusWithinBgDuraznoLight;sm:focus-within:bg-durazno-light
 smFocusWithinBgGray100;sm:focus-within:bg-gray-100
+smFocusWithinBgGray10;sm:focus-within:bg-gray-10
 smFocusWithinBgGray200;sm:focus-within:bg-gray-200
 smFocusWithinBgGray300;sm:focus-within:bg-gray-300
 smFocusWithinBgGray400;sm:focus-within:bg-gray-400
@@ -26848,6 +27257,7 @@ smFocusWithinBorderCurrent;sm:focus-within:border-current
 smFocusWithinBorderDurazno;sm:focus-within:border-durazno
 smFocusWithinBorderDuraznoLight;sm:focus-within:border-durazno-light
 smFocusWithinBorderGray100;sm:focus-within:border-gray-100
+smFocusWithinBorderGray10;sm:focus-within:border-gray-10
 smFocusWithinBorderGray200;sm:focus-within:border-gray-200
 smFocusWithinBorderGray300;sm:focus-within:border-gray-300
 smFocusWithinBorderGray400;sm:focus-within:border-gray-400
@@ -26978,6 +27388,7 @@ smFocusWithinRingCurrent;sm:focus-within:ring-current
 smFocusWithinRingDurazno;sm:focus-within:ring-durazno
 smFocusWithinRingDuraznoLight;sm:focus-within:ring-durazno-light
 smFocusWithinRingGray100;sm:focus-within:ring-gray-100
+smFocusWithinRingGray10;sm:focus-within:ring-gray-10
 smFocusWithinRingGray200;sm:focus-within:ring-gray-200
 smFocusWithinRingGray300;sm:focus-within:ring-gray-300
 smFocusWithinRingGray400;sm:focus-within:ring-gray-400
@@ -27030,6 +27441,7 @@ smFocusWithinRingOffsetCurrent;sm:focus-within:ring-offset-current
 smFocusWithinRingOffsetDurazno;sm:focus-within:ring-offset-durazno
 smFocusWithinRingOffsetDuraznoLight;sm:focus-within:ring-offset-durazno-light
 smFocusWithinRingOffsetGray100;sm:focus-within:ring-offset-gray-100
+smFocusWithinRingOffsetGray10;sm:focus-within:ring-offset-gray-10
 smFocusWithinRingOffsetGray200;sm:focus-within:ring-offset-gray-200
 smFocusWithinRingOffsetGray300;sm:focus-within:ring-offset-gray-300
 smFocusWithinRingOffsetGray400;sm:focus-within:ring-offset-gray-400
@@ -27184,6 +27596,7 @@ smFocusWithinTextCurrent;sm:focus-within:text-current
 smFocusWithinTextDurazno;sm:focus-within:text-durazno
 smFocusWithinTextDuraznoLight;sm:focus-within:text-durazno-light
 smFocusWithinTextGray100;sm:focus-within:text-gray-100
+smFocusWithinTextGray10;sm:focus-within:text-gray-10
 smFocusWithinTextGray200;sm:focus-within:text-gray-200
 smFocusWithinTextGray300;sm:focus-within:text-gray-300
 smFocusWithinTextGray400;sm:focus-within:text-gray-400
@@ -27314,6 +27727,7 @@ smFromCurrent;sm:from-current
 smFromDurazno;sm:from-durazno
 smFromDuraznoLight;sm:from-durazno-light
 smFromGray100;sm:from-gray-100
+smFromGray10;sm:from-gray-10
 smFromGray200;sm:from-gray-200
 smFromGray300;sm:from-gray-300
 smFromGray400;sm:from-gray-400
@@ -27586,6 +28000,7 @@ smHoverBgCurrent;sm:hover:bg-current
 smHoverBgDurazno;sm:hover:bg-durazno
 smHoverBgDuraznoLight;sm:hover:bg-durazno-light
 smHoverBgGray100;sm:hover:bg-gray-100
+smHoverBgGray10;sm:hover:bg-gray-10
 smHoverBgGray200;sm:hover:bg-gray-200
 smHoverBgGray300;sm:hover:bg-gray-300
 smHoverBgGray400;sm:hover:bg-gray-400
@@ -27699,6 +28114,7 @@ smHoverBorderCurrent;sm:hover:border-current
 smHoverBorderDurazno;sm:hover:border-durazno
 smHoverBorderDuraznoLight;sm:hover:border-durazno-light
 smHoverBorderGray100;sm:hover:border-gray-100
+smHoverBorderGray10;sm:hover:border-gray-10
 smHoverBorderGray200;sm:hover:border-gray-200
 smHoverBorderGray300;sm:hover:border-gray-300
 smHoverBorderGray400;sm:hover:border-gray-400
@@ -27817,6 +28233,7 @@ smHoverFromCurrent;sm:hover:from-current
 smHoverFromDurazno;sm:hover:from-durazno
 smHoverFromDuraznoLight;sm:hover:from-durazno-light
 smHoverFromGray100;sm:hover:from-gray-100
+smHoverFromGray10;sm:hover:from-gray-10
 smHoverFromGray200;sm:hover:from-gray-200
 smHoverFromGray300;sm:hover:from-gray-300
 smHoverFromGray400;sm:hover:from-gray-400
@@ -28083,6 +28500,7 @@ smHoverTextCurrent;sm:hover:text-current
 smHoverTextDurazno;sm:hover:text-durazno
 smHoverTextDuraznoLight;sm:hover:text-durazno-light
 smHoverTextGray100;sm:hover:text-gray-100
+smHoverTextGray10;sm:hover:text-gray-10
 smHoverTextGray200;sm:hover:text-gray-200
 smHoverTextGray300;sm:hover:text-gray-300
 smHoverTextGray400;sm:hover:text-gray-400
@@ -28186,6 +28604,7 @@ smHoverToCurrent;sm:hover:to-current
 smHoverToDurazno;sm:hover:to-durazno
 smHoverToDuraznoLight;sm:hover:to-durazno-light
 smHoverToGray100;sm:hover:to-gray-100
+smHoverToGray10;sm:hover:to-gray-10
 smHoverToGray200;sm:hover:to-gray-200
 smHoverToGray300;sm:hover:to-gray-300
 smHoverToGray400;sm:hover:to-gray-400
@@ -28359,6 +28778,7 @@ smHoverViaCurrent;sm:hover:via-current
 smHoverViaDurazno;sm:hover:via-durazno
 smHoverViaDuraznoLight;sm:hover:via-durazno-light
 smHoverViaGray100;sm:hover:via-gray-100
+smHoverViaGray10;sm:hover:via-gray-10
 smHoverViaGray200;sm:hover:via-gray-200
 smHoverViaGray300;sm:hover:via-gray-300
 smHoverViaGray400;sm:hover:via-gray-400
@@ -29905,6 +30325,7 @@ smPlaceholderCurrent;sm:placeholder-current
 smPlaceholderDurazno;sm:placeholder-durazno
 smPlaceholderDuraznoLight;sm:placeholder-durazno-light
 smPlaceholderGray100;sm:placeholder-gray-100
+smPlaceholderGray10;sm:placeholder-gray-10
 smPlaceholderGray200;sm:placeholder-gray-200
 smPlaceholderGray300;sm:placeholder-gray-300
 smPlaceholderGray400;sm:placeholder-gray-400
@@ -30205,6 +30626,7 @@ smRingCurrent;sm:ring-current
 smRingDurazno;sm:ring-durazno
 smRingDuraznoLight;sm:ring-durazno-light
 smRingGray100;sm:ring-gray-100
+smRingGray10;sm:ring-gray-10
 smRingGray200;sm:ring-gray-200
 smRingGray300;sm:ring-gray-300
 smRingGray400;sm:ring-gray-400
@@ -30257,6 +30679,7 @@ smRingOffsetCurrent;sm:ring-offset-current
 smRingOffsetDurazno;sm:ring-offset-durazno
 smRingOffsetDuraznoLight;sm:ring-offset-durazno-light
 smRingOffsetGray100;sm:ring-offset-gray-100
+smRingOffsetGray10;sm:ring-offset-gray-10
 smRingOffsetGray200;sm:ring-offset-gray-200
 smRingOffsetGray300;sm:ring-offset-gray-300
 smRingOffsetGray400;sm:ring-offset-gray-400
@@ -30679,6 +31102,7 @@ smTextCurrent;sm:text-current
 smTextDurazno;sm:text-durazno
 smTextDuraznoLight;sm:text-durazno-light
 smTextGray100;sm:text-gray-100
+smTextGray10;sm:text-gray-10
 smTextGray200;sm:text-gray-200
 smTextGray300;sm:text-gray-300
 smTextGray400;sm:text-gray-400
@@ -30789,6 +31213,7 @@ smToCurrent;sm:to-current
 smToDurazno;sm:to-durazno
 smToDuraznoLight;sm:to-durazno-light
 smToGray100;sm:to-gray-100
+smToGray10;sm:to-gray-10
 smToGray200;sm:to-gray-200
 smToGray300;sm:to-gray-300
 smToGray400;sm:to-gray-400
@@ -31023,6 +31448,7 @@ smViaCurrent;sm:via-current
 smViaDurazno;sm:via-durazno
 smViaDuraznoLight;sm:via-durazno-light
 smViaGray100;sm:via-gray-100
+smViaGray10;sm:via-gray-10
 smViaGray200;sm:via-gray-200
 smViaGray300;sm:via-gray-300
 smViaGray400;sm:via-gray-400
@@ -31293,6 +31719,7 @@ textCurrent;text-current
 textDurazno;text-durazno
 textDuraznoLight;text-durazno-light
 textGray100;text-gray-100
+textGray10;text-gray-10
 textGray200;text-gray-200
 textGray300;text-gray-300
 textGray400;text-gray-400
@@ -31403,6 +31830,7 @@ toCurrent;to-current
 toDurazno;to-durazno
 toDuraznoLight;to-durazno-light
 toGray100;to-gray-100
+toGray10;to-gray-10
 toGray200;to-gray-200
 toGray300;to-gray-300
 toGray400;to-gray-400
@@ -31637,6 +32065,7 @@ viaCurrent;via-current
 viaDurazno;via-durazno
 viaDuraznoLight;via-durazno-light
 viaGray100;via-gray-100
+viaGray10;via-gray-10
 viaGray200;via-gray-200
 viaGray300;via-gray-300
 viaGray400;via-gray-400
@@ -31837,6 +32266,7 @@ xlBgGradientToT;xl:bg-gradient-to-t
 xlBgGradientToTl;xl:bg-gradient-to-tl
 xlBgGradientToTr;xl:bg-gradient-to-tr
 xlBgGray100;xl:bg-gray-100
+xlBgGray10;xl:bg-gray-10
 xlBgGray200;xl:bg-gray-200
 xlBgGray300;xl:bg-gray-300
 xlBgGray400;xl:bg-gray-400
@@ -31971,6 +32401,7 @@ xlBorderDouble;xl:border-double
 xlBorderDurazno;xl:border-durazno
 xlBorderDuraznoLight;xl:border-durazno-light
 xlBorderGray100;xl:border-gray-100
+xlBorderGray10;xl:border-gray-10
 xlBorderGray200;xl:border-gray-200
 xlBorderGray300;xl:border-gray-300
 xlBorderGray400;xl:border-gray-400
@@ -32141,6 +32572,7 @@ xlCheckedBgCurrent;xl:checked:bg-current
 xlCheckedBgDurazno;xl:checked:bg-durazno
 xlCheckedBgDuraznoLight;xl:checked:bg-durazno-light
 xlCheckedBgGray100;xl:checked:bg-gray-100
+xlCheckedBgGray10;xl:checked:bg-gray-10
 xlCheckedBgGray200;xl:checked:bg-gray-200
 xlCheckedBgGray300;xl:checked:bg-gray-300
 xlCheckedBgGray400;xl:checked:bg-gray-400
@@ -32229,6 +32661,7 @@ xlCheckedBorderCurrent;xl:checked:border-current
 xlCheckedBorderDurazno;xl:checked:border-durazno
 xlCheckedBorderDuraznoLight;xl:checked:border-durazno-light
 xlCheckedBorderGray100;xl:checked:border-gray-100
+xlCheckedBorderGray10;xl:checked:border-gray-10
 xlCheckedBorderGray200;xl:checked:border-gray-200
 xlCheckedBorderGray300;xl:checked:border-gray-300
 xlCheckedBorderGray400;xl:checked:border-gray-400
@@ -32412,6 +32845,7 @@ xlDivideDouble;xl:divide-double
 xlDivideDurazno;xl:divide-durazno
 xlDivideDuraznoLight;xl:divide-durazno-light
 xlDivideGray100;xl:divide-gray-100
+xlDivideGray10;xl:divide-gray-10
 xlDivideGray200;xl:divide-gray-200
 xlDivideGray300;xl:divide-gray-300
 xlDivideGray400;xl:divide-gray-400
@@ -32563,6 +32997,7 @@ xlFocusBgCurrent;xl:focus:bg-current
 xlFocusBgDurazno;xl:focus:bg-durazno
 xlFocusBgDuraznoLight;xl:focus:bg-durazno-light
 xlFocusBgGray100;xl:focus:bg-gray-100
+xlFocusBgGray10;xl:focus:bg-gray-10
 xlFocusBgGray200;xl:focus:bg-gray-200
 xlFocusBgGray300;xl:focus:bg-gray-300
 xlFocusBgGray400;xl:focus:bg-gray-400
@@ -32666,6 +33101,7 @@ xlFocusBorderCurrent;xl:focus:border-current
 xlFocusBorderDurazno;xl:focus:border-durazno
 xlFocusBorderDuraznoLight;xl:focus:border-durazno-light
 xlFocusBorderGray100;xl:focus:border-gray-100
+xlFocusBorderGray10;xl:focus:border-gray-10
 xlFocusBorderGray200;xl:focus:border-gray-200
 xlFocusBorderGray300;xl:focus:border-gray-300
 xlFocusBorderGray400;xl:focus:border-gray-400
@@ -32769,6 +33205,7 @@ xlFocusFromCurrent;xl:focus:from-current
 xlFocusFromDurazno;xl:focus:from-durazno
 xlFocusFromDuraznoLight;xl:focus:from-durazno-light
 xlFocusFromGray100;xl:focus:from-gray-100
+xlFocusFromGray10;xl:focus:from-gray-10
 xlFocusFromGray200;xl:focus:from-gray-200
 xlFocusFromGray300;xl:focus:from-gray-300
 xlFocusFromGray400;xl:focus:from-gray-400
@@ -32980,6 +33417,7 @@ xlFocusPlaceholderCurrent;xl:focus:placeholder-current
 xlFocusPlaceholderDurazno;xl:focus:placeholder-durazno
 xlFocusPlaceholderDuraznoLight;xl:focus:placeholder-durazno-light
 xlFocusPlaceholderGray100;xl:focus:placeholder-gray-100
+xlFocusPlaceholderGray10;xl:focus:placeholder-gray-10
 xlFocusPlaceholderGray200;xl:focus:placeholder-gray-200
 xlFocusPlaceholderGray300;xl:focus:placeholder-gray-300
 xlFocusPlaceholderGray400;xl:focus:placeholder-gray-400
@@ -33089,6 +33527,7 @@ xlFocusRingCurrent;xl:focus:ring-current
 xlFocusRingDurazno;xl:focus:ring-durazno
 xlFocusRingDuraznoLight;xl:focus:ring-durazno-light
 xlFocusRingGray100;xl:focus:ring-gray-100
+xlFocusRingGray10;xl:focus:ring-gray-10
 xlFocusRingGray200;xl:focus:ring-gray-200
 xlFocusRingGray300;xl:focus:ring-gray-300
 xlFocusRingGray400;xl:focus:ring-gray-400
@@ -33141,6 +33580,7 @@ xlFocusRingOffsetCurrent;xl:focus:ring-offset-current
 xlFocusRingOffsetDurazno;xl:focus:ring-offset-durazno
 xlFocusRingOffsetDuraznoLight;xl:focus:ring-offset-durazno-light
 xlFocusRingOffsetGray100;xl:focus:ring-offset-gray-100
+xlFocusRingOffsetGray10;xl:focus:ring-offset-gray-10
 xlFocusRingOffsetGray200;xl:focus:ring-offset-gray-200
 xlFocusRingOffsetGray300;xl:focus:ring-offset-gray-300
 xlFocusRingOffsetGray400;xl:focus:ring-offset-gray-400
@@ -33346,6 +33786,7 @@ xlFocusTextCurrent;xl:focus:text-current
 xlFocusTextDurazno;xl:focus:text-durazno
 xlFocusTextDuraznoLight;xl:focus:text-durazno-light
 xlFocusTextGray100;xl:focus:text-gray-100
+xlFocusTextGray10;xl:focus:text-gray-10
 xlFocusTextGray200;xl:focus:text-gray-200
 xlFocusTextGray300;xl:focus:text-gray-300
 xlFocusTextGray400;xl:focus:text-gray-400
@@ -33449,6 +33890,7 @@ xlFocusToCurrent;xl:focus:to-current
 xlFocusToDurazno;xl:focus:to-durazno
 xlFocusToDuraznoLight;xl:focus:to-durazno-light
 xlFocusToGray100;xl:focus:to-gray-100
+xlFocusToGray10;xl:focus:to-gray-10
 xlFocusToGray200;xl:focus:to-gray-200
 xlFocusToGray300;xl:focus:to-gray-300
 xlFocusToGray400;xl:focus:to-gray-400
@@ -33622,6 +34064,7 @@ xlFocusViaCurrent;xl:focus:via-current
 xlFocusViaDurazno;xl:focus:via-durazno
 xlFocusViaDuraznoLight;xl:focus:via-durazno-light
 xlFocusViaGray100;xl:focus:via-gray-100
+xlFocusViaGray10;xl:focus:via-gray-10
 xlFocusViaGray200;xl:focus:via-gray-200
 xlFocusViaGray300;xl:focus:via-gray-300
 xlFocusViaGray400;xl:focus:via-gray-400
@@ -33710,6 +34153,7 @@ xlFocusWithinBgCurrent;xl:focus-within:bg-current
 xlFocusWithinBgDurazno;xl:focus-within:bg-durazno
 xlFocusWithinBgDuraznoLight;xl:focus-within:bg-durazno-light
 xlFocusWithinBgGray100;xl:focus-within:bg-gray-100
+xlFocusWithinBgGray10;xl:focus-within:bg-gray-10
 xlFocusWithinBgGray200;xl:focus-within:bg-gray-200
 xlFocusWithinBgGray300;xl:focus-within:bg-gray-300
 xlFocusWithinBgGray400;xl:focus-within:bg-gray-400
@@ -33813,6 +34257,7 @@ xlFocusWithinBorderCurrent;xl:focus-within:border-current
 xlFocusWithinBorderDurazno;xl:focus-within:border-durazno
 xlFocusWithinBorderDuraznoLight;xl:focus-within:border-durazno-light
 xlFocusWithinBorderGray100;xl:focus-within:border-gray-100
+xlFocusWithinBorderGray10;xl:focus-within:border-gray-10
 xlFocusWithinBorderGray200;xl:focus-within:border-gray-200
 xlFocusWithinBorderGray300;xl:focus-within:border-gray-300
 xlFocusWithinBorderGray400;xl:focus-within:border-gray-400
@@ -33943,6 +34388,7 @@ xlFocusWithinRingCurrent;xl:focus-within:ring-current
 xlFocusWithinRingDurazno;xl:focus-within:ring-durazno
 xlFocusWithinRingDuraznoLight;xl:focus-within:ring-durazno-light
 xlFocusWithinRingGray100;xl:focus-within:ring-gray-100
+xlFocusWithinRingGray10;xl:focus-within:ring-gray-10
 xlFocusWithinRingGray200;xl:focus-within:ring-gray-200
 xlFocusWithinRingGray300;xl:focus-within:ring-gray-300
 xlFocusWithinRingGray400;xl:focus-within:ring-gray-400
@@ -33995,6 +34441,7 @@ xlFocusWithinRingOffsetCurrent;xl:focus-within:ring-offset-current
 xlFocusWithinRingOffsetDurazno;xl:focus-within:ring-offset-durazno
 xlFocusWithinRingOffsetDuraznoLight;xl:focus-within:ring-offset-durazno-light
 xlFocusWithinRingOffsetGray100;xl:focus-within:ring-offset-gray-100
+xlFocusWithinRingOffsetGray10;xl:focus-within:ring-offset-gray-10
 xlFocusWithinRingOffsetGray200;xl:focus-within:ring-offset-gray-200
 xlFocusWithinRingOffsetGray300;xl:focus-within:ring-offset-gray-300
 xlFocusWithinRingOffsetGray400;xl:focus-within:ring-offset-gray-400
@@ -34149,6 +34596,7 @@ xlFocusWithinTextCurrent;xl:focus-within:text-current
 xlFocusWithinTextDurazno;xl:focus-within:text-durazno
 xlFocusWithinTextDuraznoLight;xl:focus-within:text-durazno-light
 xlFocusWithinTextGray100;xl:focus-within:text-gray-100
+xlFocusWithinTextGray10;xl:focus-within:text-gray-10
 xlFocusWithinTextGray200;xl:focus-within:text-gray-200
 xlFocusWithinTextGray300;xl:focus-within:text-gray-300
 xlFocusWithinTextGray400;xl:focus-within:text-gray-400
@@ -34279,6 +34727,7 @@ xlFromCurrent;xl:from-current
 xlFromDurazno;xl:from-durazno
 xlFromDuraznoLight;xl:from-durazno-light
 xlFromGray100;xl:from-gray-100
+xlFromGray10;xl:from-gray-10
 xlFromGray200;xl:from-gray-200
 xlFromGray300;xl:from-gray-300
 xlFromGray400;xl:from-gray-400
@@ -34551,6 +35000,7 @@ xlHoverBgCurrent;xl:hover:bg-current
 xlHoverBgDurazno;xl:hover:bg-durazno
 xlHoverBgDuraznoLight;xl:hover:bg-durazno-light
 xlHoverBgGray100;xl:hover:bg-gray-100
+xlHoverBgGray10;xl:hover:bg-gray-10
 xlHoverBgGray200;xl:hover:bg-gray-200
 xlHoverBgGray300;xl:hover:bg-gray-300
 xlHoverBgGray400;xl:hover:bg-gray-400
@@ -34664,6 +35114,7 @@ xlHoverBorderCurrent;xl:hover:border-current
 xlHoverBorderDurazno;xl:hover:border-durazno
 xlHoverBorderDuraznoLight;xl:hover:border-durazno-light
 xlHoverBorderGray100;xl:hover:border-gray-100
+xlHoverBorderGray10;xl:hover:border-gray-10
 xlHoverBorderGray200;xl:hover:border-gray-200
 xlHoverBorderGray300;xl:hover:border-gray-300
 xlHoverBorderGray400;xl:hover:border-gray-400
@@ -34782,6 +35233,7 @@ xlHoverFromCurrent;xl:hover:from-current
 xlHoverFromDurazno;xl:hover:from-durazno
 xlHoverFromDuraznoLight;xl:hover:from-durazno-light
 xlHoverFromGray100;xl:hover:from-gray-100
+xlHoverFromGray10;xl:hover:from-gray-10
 xlHoverFromGray200;xl:hover:from-gray-200
 xlHoverFromGray300;xl:hover:from-gray-300
 xlHoverFromGray400;xl:hover:from-gray-400
@@ -35048,6 +35500,7 @@ xlHoverTextCurrent;xl:hover:text-current
 xlHoverTextDurazno;xl:hover:text-durazno
 xlHoverTextDuraznoLight;xl:hover:text-durazno-light
 xlHoverTextGray100;xl:hover:text-gray-100
+xlHoverTextGray10;xl:hover:text-gray-10
 xlHoverTextGray200;xl:hover:text-gray-200
 xlHoverTextGray300;xl:hover:text-gray-300
 xlHoverTextGray400;xl:hover:text-gray-400
@@ -35151,6 +35604,7 @@ xlHoverToCurrent;xl:hover:to-current
 xlHoverToDurazno;xl:hover:to-durazno
 xlHoverToDuraznoLight;xl:hover:to-durazno-light
 xlHoverToGray100;xl:hover:to-gray-100
+xlHoverToGray10;xl:hover:to-gray-10
 xlHoverToGray200;xl:hover:to-gray-200
 xlHoverToGray300;xl:hover:to-gray-300
 xlHoverToGray400;xl:hover:to-gray-400
@@ -35324,6 +35778,7 @@ xlHoverViaCurrent;xl:hover:via-current
 xlHoverViaDurazno;xl:hover:via-durazno
 xlHoverViaDuraznoLight;xl:hover:via-durazno-light
 xlHoverViaGray100;xl:hover:via-gray-100
+xlHoverViaGray10;xl:hover:via-gray-10
 xlHoverViaGray200;xl:hover:via-gray-200
 xlHoverViaGray300;xl:hover:via-gray-300
 xlHoverViaGray400;xl:hover:via-gray-400
@@ -36870,6 +37325,7 @@ xlPlaceholderCurrent;xl:placeholder-current
 xlPlaceholderDurazno;xl:placeholder-durazno
 xlPlaceholderDuraznoLight;xl:placeholder-durazno-light
 xlPlaceholderGray100;xl:placeholder-gray-100
+xlPlaceholderGray10;xl:placeholder-gray-10
 xlPlaceholderGray200;xl:placeholder-gray-200
 xlPlaceholderGray300;xl:placeholder-gray-300
 xlPlaceholderGray400;xl:placeholder-gray-400
@@ -37170,6 +37626,7 @@ xlRingCurrent;xl:ring-current
 xlRingDurazno;xl:ring-durazno
 xlRingDuraznoLight;xl:ring-durazno-light
 xlRingGray100;xl:ring-gray-100
+xlRingGray10;xl:ring-gray-10
 xlRingGray200;xl:ring-gray-200
 xlRingGray300;xl:ring-gray-300
 xlRingGray400;xl:ring-gray-400
@@ -37222,6 +37679,7 @@ xlRingOffsetCurrent;xl:ring-offset-current
 xlRingOffsetDurazno;xl:ring-offset-durazno
 xlRingOffsetDuraznoLight;xl:ring-offset-durazno-light
 xlRingOffsetGray100;xl:ring-offset-gray-100
+xlRingOffsetGray10;xl:ring-offset-gray-10
 xlRingOffsetGray200;xl:ring-offset-gray-200
 xlRingOffsetGray300;xl:ring-offset-gray-300
 xlRingOffsetGray400;xl:ring-offset-gray-400
@@ -37644,6 +38102,7 @@ xlTextCurrent;xl:text-current
 xlTextDurazno;xl:text-durazno
 xlTextDuraznoLight;xl:text-durazno-light
 xlTextGray100;xl:text-gray-100
+xlTextGray10;xl:text-gray-10
 xlTextGray200;xl:text-gray-200
 xlTextGray300;xl:text-gray-300
 xlTextGray400;xl:text-gray-400
@@ -37754,6 +38213,7 @@ xlToCurrent;xl:to-current
 xlToDurazno;xl:to-durazno
 xlToDuraznoLight;xl:to-durazno-light
 xlToGray100;xl:to-gray-100
+xlToGray10;xl:to-gray-10
 xlToGray200;xl:to-gray-200
 xlToGray300;xl:to-gray-300
 xlToGray400;xl:to-gray-400
@@ -37988,6 +38448,7 @@ xlViaCurrent;xl:via-current
 xlViaDurazno;xl:via-durazno
 xlViaDuraznoLight;xl:via-durazno-light
 xlViaGray100;xl:via-gray-100
+xlViaGray10;xl:via-gray-10
 xlViaGray200;xl:via-gray-200
 xlViaGray300;xl:via-gray-300
 xlViaGray400;xl:via-gray-400

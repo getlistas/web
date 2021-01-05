@@ -39,7 +39,7 @@ submit buttonText disabled =
         , T.focusOutlineNone
         , T.focusRing2
         , T.focusRingOffset2
-        , T.focusRingOffsetGray100
+        , T.focusRingOffsetGray10
         , T.focusRingKiwi
         ]
     , HP.disabled disabled
@@ -69,7 +69,7 @@ cancel buttonText disabled action =
 
         , T.focusRing2
         , T.focusRingOffset2
-        , T.focusRingOffsetGray100
+        , T.focusRingOffsetGray10
         , T.focusRingKiwi
         ]
     , HP.disabled disabled
@@ -129,15 +129,16 @@ input label sym form props =
                 , T.mt2
                 , T.py2
                 , T.px4
-                , T.bgWhite -- TODO
+                , T.bgGray100
                 , T.textGray400
                 , T.placeholderGray300
                 , T.roundedMd
                 , T.textBase
+                , T.focusBgWhite
                 , T.focusOutlineNone
                 , T.focusRing2
                 , T.focusRingOffset2
-                , T.focusRingOffsetGray100
+                , T.focusRingOffsetGray10
                 , cx T.focusRingKiwi $ not hasError
                 , cx T.focusRingManzana hasError
                 ]

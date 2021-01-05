@@ -149,7 +149,7 @@ component = Connect.component $ H.mkComponent
                 listCreate
           , whenElem st.showCreateResource \_ ->
               HH.div
-                [ HP.classes [ T.fixed, T.top4, T.right4, T.bgGray100 ] ]
+                [ HP.classes [ T.fixed, T.top4, T.right4, T.bgWhite ] ]
                 [ HH.slot CreateResource._createResource unit CreateResource.component { lists } (Just <<< HandleCreateResource) ]
           ]
 
@@ -163,12 +163,13 @@ component = Connect.component $ H.mkComponent
       _ -> HH.div [ HP.classes [ T.textCenter ] ] [ HH.text "Loading ..." ]
 
     listCreate =
-      HH.div
-        [ HP.classes [ T.border2, T.borderKiwi, T.roundedMd, T.flex, T.itemsCenter, T.justifyCenter, T.p8 ] ]
-        [ HH.a
-            [ safeHref CreateList
-            , HE.onClick (Just <<< Navigate CreateList <<< Mouse.toEvent)
-            , HP.classes
+      HH.a
+        [ safeHref CreateList
+        , HE.onClick (Just <<< Navigate CreateList <<< Mouse.toEvent)
+        , HP.classes [ T.border2, T.borderKiwi, T.roundedMd, T.flex, T.itemsCenter, T.justifyCenter, T.p8, T.bgWhite ]
+        ]
+        [ HH.div
+            [ HP.classes
                 [ T.cursorPointer
                 , T.flex
                 , T.flexCol
@@ -176,7 +177,7 @@ component = Connect.component $ H.mkComponent
                 , T.itemsCenter
                 ]
             ]
-          [ HH.span [ HP.classes [ T.text7xl, T.textKiwi, T.leadingNone ] ] [ HH.text "+" ]
-          , HH.span [ HP.classes [ T.textGray400 ] ] [ HH.text "Create new list" ]
-          ]
+            [ HH.span [ HP.classes [ T.text7xl, T.textKiwi, T.leadingNone ] ] [ HH.text "+" ]
+            , HH.span [ HP.classes [ T.textGray400 ] ] [ HH.text "Create new list" ]
+            ]
         ]
