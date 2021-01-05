@@ -87,7 +87,7 @@ component = H.mkComponent
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render { list, resources, showMore, markingAsDone } =
     HH.div
-      [ HP.classes [ T.border2, T.borderKiwi, T.roundedMd ] ]
+      [ HP.classes [ T.border2, T.borderKiwi, T.roundedMd, T.flex, T.flexCol ] ]
       [ header
       , maybeElem (head =<< toMaybe resources) toRead
       , footer
@@ -135,7 +135,7 @@ component = H.mkComponent
 
     toRead next =
       HH.div
-        [ HP.classes [ T.px2, T.py2 ] ]
+        [ HP.classes [ T.flex1, T.px2, T.py2 ] ]
         [ HH.a
             [ HP.href next.url, HP.target "_blank", HP.rel "noreferrer noopener nofollow",  HP.classes [ T.cursorPointer ] ]
             [ HH.div [] []

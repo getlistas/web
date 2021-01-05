@@ -113,8 +113,13 @@ component = Connect.component $ H.mkComponent
       currentUser
       Navigate
       (Just Discover)
-      (HH.text "Discover")
-      feed
+      $ HH.div
+          []
+          [ HH.h1
+              [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
+              [ HH.text "Discover" ]
+          , feed
+          ]
     where
     feed = case lists of
       Success { refreshing, items } ->

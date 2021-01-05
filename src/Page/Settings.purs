@@ -93,30 +93,35 @@ component = Connect.component $ H.mkComponent
       currentUser
       Navigate
       (Just Settings)
-      (HH.text "Settings")
       $ HH.div
           []
-          [ whenElem false \_ -> HH.slot F._formless unit formComponent unit (Just <<< HandleForm)
+          [ HH.h1
+              [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
+              [ HH.text "Settings" ]
           , HH.div
-              [ HP.classes [ T.mt8 ] ]
-              [ HH.button
-                  [ HE.onClick \_ -> Just LogUserOut
-                  , HP.classes
-                      [ T.cursorPointer
-                      , T.py2
-                      , T.px4
-                      , T.bgGray300
-                      , T.textWhite
-                      , T.fontSemibold
-                      , T.roundedLg
-                      , T.shadowMd
-                      , T.hoverBgPink700
-                      , T.focusOutlineNone
-                      , T.focusRing2
-                      , T.focusRingPurple600
+              []
+              [ whenElem false \_ -> HH.slot F._formless unit formComponent unit (Just <<< HandleForm)
+              , HH.div
+                  [ HP.classes [ T.mt8 ] ]
+                  [ HH.button
+                      [ HE.onClick \_ -> Just LogUserOut
+                      , HP.classes
+                          [ T.cursorPointer
+                          , T.py2
+                          , T.px4
+                          , T.bgGray300
+                          , T.textWhite
+                          , T.fontSemibold
+                          , T.roundedLg
+                          , T.shadowMd
+                          , T.hoverBgPink700
+                          , T.focusOutlineNone
+                          , T.focusRing2
+                          , T.focusRingPurple600
+                          ]
                       ]
+                      [ HH.text "Log out" ]
                   ]
-                  [ HH.text "Log out" ]
               ]
           ]
     where

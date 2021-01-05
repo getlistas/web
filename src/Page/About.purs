@@ -58,16 +58,21 @@ component = Connect.component $ H.mkComponent
       currentUser
       Navigate
       (Just About)
-      (HH.text "About")
       $ HH.div
-          [ HP.classes [ T.textGray400 ] ]
-          [ HH.div [] [ HH.text "listas.io your favorite digital consumption manager" ]
+          []
+          [ HH.h1
+              [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
+              [ HH.text "About" ]
           , HH.div
-              [ HP.classes [ T.mt4 ] ]
-              [ HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://github.com/ndelvalle" ] [ HH.text "@ndelvalle" ]
-              , HH.text " <> "
-              , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://twitter.com/DvNahuel" ] [ HH.text "@DvNahuel" ]
-              , HH.text " <> "
-              , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://gillchristian.xyz" ] [ HH.text "@gillchristian" ]
+              [ HP.classes [ T.textGray400 ] ]
+              [ HH.div [] [ HH.text "listas.io your favorite digital consumption manager" ]
+              , HH.div
+                  [ HP.classes [ T.mt4 ] ]
+                  [ HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://github.com/ndelvalle" ] [ HH.text "@ndelvalle" ]
+                  , HH.text " <> "
+                  , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://twitter.com/DvNahuel" ] [ HH.text "@DvNahuel" ]
+                  , HH.text " <> "
+                  , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://gillchristian.xyz" ] [ HH.text "@gillchristian" ]
+                  ]
               ]
           ]
