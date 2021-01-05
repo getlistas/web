@@ -10,7 +10,6 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
-import Listasio.Component.HTML.Header (header)
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Route (Route(..))
