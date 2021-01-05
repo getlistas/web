@@ -86,7 +86,7 @@ component = Connect.component $ H.mkComponent
       H.modify_ _ { lists = lists }
 
     HandleCreateResource (CreateResource.Created resource) -> do
-      void $ H.query List._list resource.list."$oid" $ H.tell $ List.ResourceAdded resource
+      void $ H.query List._list resource.list $ H.tell $ List.ResourceAdded resource
       H.modify_ _ { showCreateResource = false }
 
     HandleCreateResource (CreateResource.Cancel) ->
@@ -144,7 +144,7 @@ component = Connect.component $ H.mkComponent
           [ HH.div
               [ HP.classes [ T.grid, T.gridCols1, T.smGridCols2, T.lgGridCols3, T.gap4, T.itemsStart ] ]
               $ snoc
-                (map (\list -> HH.slot List._list list._id."$oid" List.component { list } absurd) lists)
+                (map (\list -> HH.slot List._list list.id List.component { list } absurd) lists)
                 listCreate
           , whenElem st.showCreateResource \_ ->
               HH.div

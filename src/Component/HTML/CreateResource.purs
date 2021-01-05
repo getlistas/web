@@ -15,15 +15,13 @@ import Listasio.Capability.Resource.Resource (class ManageResource, createResour
 import Listasio.Component.HTML.Dropdown as DD
 import Listasio.Component.HTML.Utils (whenElem)
 import Listasio.Data.List (ListWithIdAndUser)
-import Listasio.Data.Resource (ResourceRep, ListResource)
+import Listasio.Data.Resource (ListResource, Resource)
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation (class ToText)
 import Listasio.Form.Validation as V
 import Select as Select
 import Tailwind as T
 import Web.Event.Event as Event
-
-type ResourceWithList = { | ResourceRep ( list :: String ) }
 
 type Slot = forall query. H.Slot query Output Unit
 
@@ -60,9 +58,9 @@ component = H.mkComponent
   handleAction = case _ of
     HandleFormMessage FormCancel -> H.raise Cancel
 
-    HandleFormMessage (FormSubmitted { description, title, url, list: listId }) -> do
+    HandleFormMessage (FormSubmitted { description, title, url, list }) -> do
       { lists } <- H.get
-      mbNewResource <- createResource { description, title, url } listId
+      mbNewResource <- createResource { description, title, url, list }
       case mbNewResource of
         Just resource -> do
           H.raise $ Created resource
@@ -86,7 +84,7 @@ instance toTextDDItem :: ToText DDItem where
 
 data FormMessage
   = FormCancel
-  | FormSubmitted ResourceWithList
+  | FormSubmitted Resource
 
 type FormSlot
   = F.Slot CreateResourceForm FormQuery FormChildSlots FormMessage Unit
@@ -229,5 +227,5 @@ formComponent =
           ]
       ]
     where handler = Just <<< F.injAction <<< HandleDropdown
-          listToItem { _id, title } = DDItem { value: _id."$oid", label: title }
+          listToItem { id, title } = DDItem { value: id, label: title }
           ddInput = { placeholder: "Choose a list", items: map listToItem lists }

@@ -5,23 +5,30 @@ module.exports = {
     extend: {
       colors: {
         gray: {
-          400: '#565B6C',
-          300: '#7B829A',
-          200: '#A0AEC0',
-          100: '#ECEDF1',
-          10: '#FAF9F9'
+          400: "#565B6C",
+          300: "#7B829A",
+          200: "#A0AEC0",
+          100: "#ECEDF1",
+          10: "#FAF9F9",
         },
         kiwi: {
-          DEFAULT: '#89B0AE'
+          DEFAULT: "#89B0AE",
         },
         durazno: {
-          light: '#F8D7BE',
-          DEFAULT: '#F9B7A9'
+          light: "#F8D7BE",
+          DEFAULT: "#F9B7A9",
         },
         manzana: {
-          DEFAULT: '#E9755B'
+          DEFAULT: "#E9755B",
         },
-      }
+      },
+    },
+    truncate: {
+      lines: {
+        3: "3",
+        5: "5",
+        8: "8",
+      },
     },
   },
   variants: {
@@ -33,5 +40,9 @@ module.exports = {
       opacity: ["disabled"],
     },
   },
-  plugins: [require("@tailwindcss/forms"), require('tailwind-scrollbar')],
+  plugins: [
+    require("@tailwindcss/forms"),
+    require("tailwind-scrollbar"),
+    require("tailwindcss-truncate-multiline")(),
+  ],
 };

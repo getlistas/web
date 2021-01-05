@@ -26,8 +26,9 @@ data Endpoint
   | List String
   | Lists
   | Discover Pagination
-  | ListResources String
-  | CompleteResource String String
+  | Resources
+  | ResourcesByList { list :: String }
+  | CompleteResource String
 
 derive instance genericEndpoint :: Generic Endpoint _
 
@@ -44,6 +45,7 @@ endpointCodec =
             { skip: optional <<< int
             , limit: optional <<< int
             }
-        , "ListResources": "lists" / string segment / "resources"
-        , "CompleteResource": "lists" / string segment / "resources" / string segment / "complete"
+        , "Resources": "resources" / noArgs
+        , "ResourcesByList": "resources" ? { list: string }
+        , "CompleteResource": "resources" / string segment / "complete"
         }

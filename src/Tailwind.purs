@@ -3,10 +3,6 @@ module Tailwind where
 
 import Halogen.HTML.Core (ClassName(..))
 
--- | absolute
-absolute :: ClassName
-absolute = ClassName "absolute"
-
 -- | appearanceNone
 appearanceNone :: ClassName
 appearanceNone = ClassName "appearance-none"
@@ -119,17 +115,9 @@ borderTransparent = ClassName "border-transparent"
 borderWhite :: ClassName
 borderWhite = ClassName "border-white"
 
--- | checkedBgBlue600
-checkedBgBlue600 :: ClassName
-checkedBgBlue600 = ClassName "checked:bg-blue-600"
-
 -- | checkedBgKiwi
 checkedBgKiwi :: ClassName
 checkedBgKiwi = ClassName "checked:bg-kiwi"
-
--- | checkedBorderTransparent
-checkedBorderTransparent :: ClassName
-checkedBorderTransparent = ClassName "checked:border-transparent"
 
 -- | container
 container :: ClassName
@@ -246,6 +234,10 @@ gridCols2 = ClassName "grid-cols-2"
 -- | h16
 h16 :: ClassName
 h16 = ClassName "h-16"
+
+-- | h28
+h28 :: ClassName
+h28 = ClassName "h-28"
 
 -- | h40
 h40 :: ClassName
@@ -383,6 +375,10 @@ mt10 = ClassName "mt-10"
 mt12 :: ClassName
 mt12 = ClassName "mt-12"
 
+-- | mt1
+mt1 :: ClassName
+mt1 = ClassName "mt-1"
+
 -- | mt2
 mt2 :: ClassName
 mt2 = ClassName "mt-2"
@@ -403,13 +399,13 @@ mx1 = ClassName "mx-1"
 mxAuto :: ClassName
 mxAuto = ClassName "mx-auto"
 
--- | my2
-my2 :: ClassName
-my2 = ClassName "my-2"
-
 -- | my4
 my4 :: ClassName
 my4 = ClassName "my-4"
+
+-- | overflowYHidden
+overflowYHidden :: ClassName
+overflowYHidden = ClassName "overflow-y-hidden"
 
 -- | p2
 p2 :: ClassName
@@ -470,10 +466,6 @@ py2 = ClassName "py-2"
 -- | py3
 py3 :: ClassName
 py3 = ClassName "py-3"
-
--- | relative
-relative :: ClassName
-relative = ClassName "relative"
 
 -- | right4
 right4 :: ClassName
@@ -586,6 +578,14 @@ textXs = ClassName "text-xs"
 -- | top4
 top4 :: ClassName
 top4 = ClassName "top-4"
+
+-- | truncate3Lines
+truncate3Lines :: ClassName
+truncate3Lines = ClassName "truncate-3-lines"
+
+-- | truncate
+truncate :: ClassName
+truncate = ClassName "truncate"
 
 -- | w32
 w32 :: ClassName
