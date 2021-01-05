@@ -196,22 +196,31 @@ formComponent =
           HH.div
             []
             [ HH.text "Failed to add resource" ]
-      , HH.fieldset_
-          [ Field.input "Title" proxies.title form
-              [ HP.placeholder "Life of a Programmer in Simple Jokes"
-              , HP.type_ HP.InputText
-              ]
-          , Field.input "URL" proxies.url form
+      , HH.fieldset
+          []
+          [ Field.input Nothing proxies.url form
               [ HP.placeholder "https://medium.com/javascript-in-plain-english/life-of-a-programmer-in-simple-jokes-that-will-make-you-laugh-52ccfbf77438"
               , HP.type_ HP.InputText
               ]
-          , Field.input "Description" proxies.description form
-              [ HP.placeholder "You don’t have to be a programmer to laugh at their humor."
-              , HP.type_ HP.InputText
-              ]
-          , HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput handler
           , HH.div
-              [ HP.classes [ T.flex, T.justifyEnd ] ]
+              [ HP.classes [ T.mt4 ] ]
+              [ Field.input Nothing proxies.title form
+                  [ HP.placeholder "Life of a Programmer in Simple Jokes"
+                  , HP.type_ HP.InputText
+                  ]
+              ]
+          , HH.div
+              [ HP.classes [ T.mt4 ] ]
+              [ Field.input Nothing proxies.description form
+                  [ HP.placeholder "You don’t have to be a programmer to laugh at their humor."
+                  , HP.type_ HP.InputText
+                  ]
+              ]
+          , HH.div
+              [ HP.classes [ T.mt4 ] ]
+              [ HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput handler ]
+          , HH.div
+              [ HP.classes [ T.mt4, T.flex, T.justifyEnd ] ]
               [ HH.div
                   [ HP.classes [ T.mr2 ] ]
                   [ Field.cancel "Cancel" submitting $ F.injAction Reset ]

@@ -147,17 +147,19 @@ component = Connect.component $ H.mkComponent
         HH.form_
           [ HH.fieldset_
               [ name
-              , slug
-              , Field.submit "Update settings" submitting
+              , HH.div [ HP.classes [ T.mt4 ] ] [ slug ]
+              , HH.div
+                  [ HP.classes [ T.mt4 ] ]
+                  [ Field.submit "Update settings" submitting ]
               ]
           ]
         where
         proxies = F.mkSProxies (F.FormProxy :: _ SettingsForm)
 
         name =
-          Field.input "Your name" proxies.name form
+          Field.input (Just "Your name") proxies.name form
             [ HP.placeholder "John Dow", HP.type_ HP.InputText ]
 
         slug =
-          Field.input "Your slug" proxies.slug form
+          Field.input (Just "Your slug") proxies.slug form
             [ HP.placeholder "john-doe", HP.type_ HP.InputText ]
