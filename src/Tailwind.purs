@@ -235,6 +235,10 @@ gridCols2 = ClassName "grid-cols-2"
 h16 :: ClassName
 h16 = ClassName "h-16"
 
+-- | h20
+h20 :: ClassName
+h20 = ClassName "h-20"
+
 -- | h28
 h28 :: ClassName
 h28 = ClassName "h-28"
@@ -367,6 +371,10 @@ mr1 = ClassName "mr-1"
 mr2 :: ClassName
 mr2 = ClassName "mr-2"
 
+-- | mr4
+mr4 :: ClassName
+mr4 = ClassName "mr-4"
+
 -- | mr8
 mr8 :: ClassName
 mr8 = ClassName "mr-8"
@@ -407,6 +415,10 @@ mxAuto = ClassName "mx-auto"
 my4 :: ClassName
 my4 = ClassName "my-4"
 
+-- | overflowHidden
+overflowHidden :: ClassName
+overflowHidden = ClassName "overflow-hidden"
+
 -- | overflowYHidden
 overflowYHidden :: ClassName
 overflowYHidden = ClassName "overflow-y-hidden"
@@ -446,6 +458,10 @@ pt1 = ClassName "pt-1"
 -- | pt2
 pt2 :: ClassName
 pt2 = ClassName "pt-2"
+
+-- | pt4
+pt4 :: ClassName
+pt4 = ClassName "pt-4"
 
 -- | px2
 px2 :: ClassName
@@ -590,6 +606,10 @@ truncate3Lines = ClassName "truncate-3-lines"
 -- | truncate
 truncate :: ClassName
 truncate = ClassName "truncate"
+
+-- | w20
+w20 :: ClassName
+w20 = ClassName "w-20"
 
 -- | w32
 w32 :: ClassName

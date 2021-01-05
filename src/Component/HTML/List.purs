@@ -162,17 +162,17 @@ component = H.mkComponent
 
         Success (Just next) ->
           HH.div
-            [ HP.classes [ T.px4, T.py2, T.flex, T.flexCol, T.justifyBetween, T.h40 ] ]
+            [ HP.classes [ T.px4, T.pb2, T.pt4, T.flex, T.flexCol, T.justifyBetween, T.h40 ] ]
             [ HH.a
                 [ HP.href next.url
                 , HP.target "_blank"
                 , HP.rel "noreferrer noopener nofollow"
-                , HP.classes [ T.cursorPointer, T.overflowYHidden ]
+                , HP.classes [ T.cursorPointer, T.flex ]
                 ]
-                [ HH.div [] [] -- TODO: add image
+                [ HH.img [ HP.classes [ T.h20, T.w20, T.mr4 ], HP.src "https://via.placeholder.com/87" ]
                 , HH.div
-                    []
-                    [ HH.div [ HP.classes [ T.textBase, T.textGray400, T.truncate ] ] [ HH.text next.title ]
+                    [ HP.classes [ T.overflowHidden ] ]
+                    [ HH.div [ HP.classes [ T.textBase, T.textGray400, T.leadingNone, T.truncate ] ] [ HH.text next.title ]
                     , maybeElem next.description \des ->
                         HH.div [ HP.classes [ T.mt1, T.textSm, T.textGray400, T.truncate3Lines ] ] [ HH.text des ]
                     ]
