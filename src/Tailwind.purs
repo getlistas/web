@@ -35,6 +35,10 @@ bgGreen100 = ClassName "bg-green-100"
 bgKiwi :: ClassName
 bgKiwi = ClassName "bg-kiwi"
 
+-- | bgManzana
+bgManzana :: ClassName
+bgManzana = ClassName "bg-manzana"
+
 -- | bgPink300
 bgPink300 :: ClassName
 bgPink300 = ClassName "bg-pink-300"
@@ -231,10 +235,6 @@ gridCols2 = ClassName "grid-cols-2"
 h16 :: ClassName
 h16 = ClassName "h-16"
 
--- | h24
-h24 :: ClassName
-h24 = ClassName "h-24"
-
 -- | h40
 h40 :: ClassName
 h40 = ClassName "h-40"
@@ -254,10 +254,6 @@ h72 = ClassName "h-72"
 -- | h8
 h8 :: ClassName
 h8 = ClassName "h-8"
-
--- | h96
-h96 :: ClassName
-h96 = ClassName "h-96"
 
 -- | hFull
 hFull :: ClassName
@@ -490,18 +486,6 @@ roundedLg = ClassName "rounded-lg"
 -- | roundedMd
 roundedMd :: ClassName
 roundedMd = ClassName "rounded-md"
-
--- | scrollbarThin
-scrollbarThin :: ClassName
-scrollbarThin = ClassName "scrollbar-thin"
-
--- | scrollbarThumbGray200
-scrollbarThumbGray200 :: ClassName
-scrollbarThumbGray200 = ClassName "scrollbar-thumb-gray-200"
-
--- | scrollbarTrackGray100
-scrollbarTrackGray100 :: ClassName
-scrollbarTrackGray100 = ClassName "scrollbar-track-gray-100"
 
 -- | shadowMd
 shadowMd :: ClassName

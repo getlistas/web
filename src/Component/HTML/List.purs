@@ -94,8 +94,6 @@ component = H.mkComponent
           , T.flex
           , T.flexCol
           , T.bgWhite
-          , cx T.h72 $ not showMore
-          , cx T.h96 showMore
           ]
       ]
       [ header, toRead, footer ]
@@ -149,7 +147,6 @@ component = H.mkComponent
                 [ T.px2
                 , T.py2
                 , T.wFull
-                , T.hFull
                 , T.flex
                 , T.flexCol
                 , T.itemsCenter
@@ -215,7 +212,6 @@ component = H.mkComponent
                 [ T.px2
                 , T.py2
                 , T.wFull
-                , T.hFull
                 , T.flex
                 , T.flexCol
                 , T.itemsCenter
@@ -232,7 +228,6 @@ component = H.mkComponent
                 [ T.px2
                 , T.py2
                 , T.wFull
-                , T.hFull
                 , T.flex
                 , T.flexCol
                 , T.itemsCenter
@@ -245,7 +240,7 @@ component = H.mkComponent
 
     header =
       HH.div
-        [ HP.classes [ T.p2, T.borderB2, T.borderGray200 ] ]
+        [ HP.classes [ T.p2, T.borderB2, T.borderGray200, T.h16 ] ]
         [ HH.div
             [ HP.classes [ T.flex, T.justifyBetween, T.itemsCenter ] ]
             [ HH.div [ HP.classes [ T.text2xl, T.textGray400, T.fontBold ] ] [ HH.text list.title ]
@@ -273,6 +268,7 @@ component = H.mkComponent
             , T.flex
             , T.flexCol
             , T.itemsCenter
+            , cx T.h16 $ not showMore
             ]
         ]
         [ HH.div
@@ -306,11 +302,6 @@ component = H.mkComponent
                   , T.mt2
                   , T.borderT2
                   , T.borderGray200
-                  , T.overflowYScroll
-                  , T.scrollbarThin
-                  , T.scrollbarThumbGray200
-                  , T.scrollbarTrackGray100
-                  , T.h24
                   ]
               ]
               $ map nextItem rest

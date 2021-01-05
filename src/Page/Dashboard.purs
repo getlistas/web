@@ -124,9 +124,8 @@ component = Connect.component $ H.mkComponent
                     , T.leadingNormal
                     , T.py2
                     , T.px4
-                    , T.bgDuraznoLight
+                    , T.bgManzana
                     , T.textWhite
-                    , T.fontSemibold
                     , T.roundedMd
                     , T.shadowMd
                     , T.hoverBgDurazno
@@ -143,7 +142,7 @@ component = Connect.component $ H.mkComponent
         HH.div
           []
           [ HH.div
-              [ HP.classes [ T.grid, T.gridCols1, T.smGridCols2, T.lgGridCols3, T.gap4 ] ]
+              [ HP.classes [ T.grid, T.gridCols1, T.smGridCols2, T.lgGridCols3, T.gap4, T.itemsStart ] ]
               $ snoc
                 (map (\list -> HH.slot List._list list._id."$oid" List.component { list } absurd) lists)
                 listCreate
@@ -166,7 +165,7 @@ component = Connect.component $ H.mkComponent
       HH.a
         [ safeHref CreateList
         , HE.onClick (Just <<< Navigate CreateList <<< Mouse.toEvent)
-        , HP.classes [ T.border2, T.borderKiwi, T.roundedMd, T.flex, T.itemsCenter, T.justifyCenter, T.p8, T.bgWhite ]
+        , HP.classes [ T.border2, T.borderKiwi, T.roundedMd, T.flex, T.itemsCenter, T.justifyCenter, T.p8, T.bgWhite, T.h72 ]
         ]
         [ HH.div
             [ HP.classes
