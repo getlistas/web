@@ -130,17 +130,17 @@ instance manageListAppM :: ManageList AppM where
     where conf = { endpoint: Discover pagination, method: Get }
 
 instance manageResourceAppM :: ManageResource AppM where
-  getListResources listId = do
+  getListResources list = do
     mbResources <- decode (CAC.array Resource.listResourceCodec) =<< mkAuthRequest conf
     pure $ filter (isNothing <<< _.completed_at) <$> mbResources
-    where conf = { endpoint: ListResources listId, method: Get }
+    where conf = { endpoint: ResourcesByList { list }, method: Get }
 
-  createResource newResource listId =
+  createResource newResource =
     decode Resource.listResourceCodec =<< mkAuthRequest conf
     where method = Post $ Just $ Codec.encode Resource.resourceCodec newResource
-          conf = { endpoint: ListResources listId, method }
+          conf = { endpoint: Resources, method }
 
-  completeResource { _id, list } =
+  completeResource { id } =
     map (const unit) <$> mkAuthRequest conf
-    where conf = { endpoint: CompleteResource list."$oid" _id."$oid", method: Post Nothing }
+    where conf = { endpoint: CompleteResource id, method: Post Nothing }
 

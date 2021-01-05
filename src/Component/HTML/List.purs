@@ -66,7 +66,7 @@ component = H.mkComponent
     Initialize -> do
       H.modify_ _ { resources = Loading }
       { list } <- H.get
-      resources <- fromEither <$> note "Failed to load list resources" <$> getListResources list._id."$oid"
+      resources <- fromEither <$> note "Failed to load list resources" <$> getListResources list.id
       H.modify_ _ { resources = resources }
 
     ToggleShowMore ->
@@ -164,12 +164,17 @@ component = H.mkComponent
           HH.div
             [ HP.classes [ T.px4, T.py2, T.flex, T.flexCol, T.justifyBetween, T.h40 ] ]
             [ HH.a
-                [ HP.href next.url, HP.target "_blank", HP.rel "noreferrer noopener nofollow",  HP.classes [ T.cursorPointer ] ]
-                [ HH.div [] []
+                [ HP.href next.url
+                , HP.target "_blank"
+                , HP.rel "noreferrer noopener nofollow"
+                , HP.classes [ T.cursorPointer, T.overflowYHidden ]
+                ]
+                [ HH.div [] [] -- TODO: add image
                 , HH.div
                     []
-                    [ HH.div [ HP.classes [ T.textBase, T.textGray400 ] ] [ HH.text next.title ]
-                    , maybeElem next.description \des -> HH.div [ HP.classes [ T.textSm, T.textGray400 ] ] [ HH.text des ]
+                    [ HH.div [ HP.classes [ T.textBase, T.textGray400, T.truncate ] ] [ HH.text next.title ]
+                    , maybeElem next.description \des ->
+                        HH.div [ HP.classes [ T.mt1, T.textSm, T.textGray400, T.truncate3Lines ] ] [ HH.text des ]
                     ]
                 ]
             , HH.div
@@ -245,7 +250,9 @@ component = H.mkComponent
         [ HP.classes [ T.px4, T.py2, T.borderB2, T.borderGray200, T.h16 ] ]
         [ HH.div
             [ HP.classes [ T.flex, T.justifyBetween, T.itemsCenter ] ]
-            [ HH.div [ HP.classes [ T.text2xl, T.textGray400, T.fontBold ] ] [ HH.text list.title ]
+            [ HH.div
+                [ HP.classes [ T.text2xl, T.textGray400, T.fontBold, T.truncate ] ]
+                [ HH.text list.title ]
             , HH.div
                 [ HP.classes [ T.ml6 ] ]
                 [ HH.span [ HP.classes [ T.mr2 ] ] [ HH.text "🔗" ]

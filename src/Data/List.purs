@@ -17,13 +17,10 @@ type ListRep row
 type List
   = { | ListRep () }
 
-type ID
-  = { "$oid" :: String }
-
 -- created_at  :: DateTime<Utc>
 -- updated_at  :: DateTime<Utc>
 type ListWithIdAndUser
-  = { | ListRep ( _id :: ID, user :: ID ) }
+  = { | ListRep ( id :: String, user :: String ) }
 
 listCodec :: JsonCodec List
 listCodec =
@@ -37,10 +34,10 @@ listCodec =
 listWitIdAndUserCodec :: JsonCodec ListWithIdAndUser
 listWitIdAndUserCodec =
   CAR.object "List"
-    { _id: CAR.object "ID" { "$oid": CA.string }
+    { id: CA.string
     , title: CA.string
     , description: CAC.maybe CA.string
     , tags: CAC.array CA.string
-    , user: CAR.object "ID" { "$oid": CA.string }
+    , user: CA.string
     , is_public: CA.boolean
     }

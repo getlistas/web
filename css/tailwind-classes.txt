@@ -32047,6 +32047,9 @@ translateY96;translate-y-96
 translateY9;translate-y-9
 translateYFull;translate-y-full
 translateYPx;translate-y-px
+truncate3Lines;truncate-3-lines
+truncate5Lines;truncate-5-lines
+truncate8Lines;truncate-8-lines
 truncate;truncate
 underline;underline
 uppercase;uppercase
