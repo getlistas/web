@@ -17,7 +17,7 @@ dashboard :: forall i p r.
   -> HH.HTML i p
 dashboard currentUser navigate route content =
   HH.div
-    [ HP.classes [ T.minHScreen, T.wScreen, T.bgGray100 ] ]
+    [ HP.classes [ T.minHScreen, T.wScreen, T.bgGray10 ] ]
     [ HH.div
         [ HP.classes [ T.container, T.mxAuto, T.px2 ] ]
         [ header currentUser navigate route
@@ -33,7 +33,7 @@ noheader :: forall i p r.
   -> HH.HTML i p
 noheader currentUser navigate route content =
   HH.div
-    [ HP.classes [ T.minHScreen, T.wScreen, T.bgGray100 ] ]
+    [ HP.classes [ T.minHScreen, T.wScreen, T.bgGray10 ] ]
     [ HH.div
         [ HP.classes [ T.container, T.mxAuto, T.px2, T.flex, T.flexCol ] ]
         [ header currentUser navigate route

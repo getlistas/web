@@ -116,7 +116,7 @@ toggle props st =
              , T.wFull
              , T.py2
              , T.px4
-             , T.bgWhite
+             , T.bgGray100
              , cx T.textGray400 $ isJust st.selected
              , cx T.textGray300 $ isNothing st.selected
              , T.placeholderGray400
@@ -125,7 +125,7 @@ toggle props st =
              , T.focusOutlineNone
              , T.focusRing2
              , T.focusRingOffset2
-             , T.focusRingOffsetGray100
+             , T.focusRingOffsetGray10
              , T.focusRingKiwi
              ]
          ]
@@ -162,7 +162,7 @@ menu st =
                         , T.roundedMd
                         , cx T.textWhite $ Just ix == st.highlightedIndex
                         , cx T.textGray400 $ Just ix /= st.highlightedIndex
-                        , cx T.bgKiwi $ Just ix == st.highlightedIndex
+                        , cx T.bgDurazno $ Just ix == st.highlightedIndex
                         ]
                     ]
                 )

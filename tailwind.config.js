@@ -8,7 +8,8 @@ module.exports = {
           400: '#565B6C',
           300: '#7B829A',
           200: '#A0AEC0',
-          100: '#FAF9F9',
+          100: '#ECEDF1',
+          10: '#FAF9F9'
         },
         kiwi: {
           DEFAULT: '#89B0AE'
@@ -32,5 +33,5 @@ module.exports = {
       opacity: ["disabled"],
     },
   },
-  plugins: [require("@tailwindcss/forms")],
+  plugins: [require("@tailwindcss/forms"), require('tailwind-scrollbar')],
 };

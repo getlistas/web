@@ -19,6 +19,10 @@ bgDuraznoLight = ClassName "bg-durazno-light"
 bgGray100 :: ClassName
 bgGray100 = ClassName "bg-gray-100"
 
+-- | bgGray10
+bgGray10 :: ClassName
+bgGray10 = ClassName "bg-gray-10"
+
 -- | bgGray300
 bgGray300 :: ClassName
 bgGray300 = ClassName "bg-gray-300"
@@ -151,6 +155,10 @@ flexNone = ClassName "flex-none"
 flexWrap :: ClassName
 flexWrap = ClassName "flex-wrap"
 
+-- | focusBgWhite
+focusBgWhite :: ClassName
+focusBgWhite = ClassName "focus:bg-white"
+
 -- | focusOutlineNone
 focusOutlineNone :: ClassName
 focusOutlineNone = ClassName "focus:outline-none"
@@ -179,9 +187,9 @@ focusRingManzana = ClassName "focus:ring-manzana"
 focusRingOffset2 :: ClassName
 focusRingOffset2 = ClassName "focus:ring-offset-2"
 
--- | focusRingOffsetGray100
-focusRingOffsetGray100 :: ClassName
-focusRingOffsetGray100 = ClassName "focus:ring-offset-gray-100"
+-- | focusRingOffsetGray10
+focusRingOffsetGray10 :: ClassName
+focusRingOffsetGray10 = ClassName "focus:ring-offset-gray-10"
 
 -- | focusRingPurple600
 focusRingPurple600 :: ClassName
@@ -219,13 +227,41 @@ gridCols1 = ClassName "grid-cols-1"
 gridCols2 :: ClassName
 gridCols2 = ClassName "grid-cols-2"
 
+-- | h16
+h16 :: ClassName
+h16 = ClassName "h-16"
+
+-- | h24
+h24 :: ClassName
+h24 = ClassName "h-24"
+
+-- | h40
+h40 :: ClassName
+h40 = ClassName "h-40"
+
+-- | h48
+h48 :: ClassName
+h48 = ClassName "h-48"
+
 -- | h6
 h6 :: ClassName
 h6 = ClassName "h-6"
 
+-- | h72
+h72 :: ClassName
+h72 = ClassName "h-72"
+
 -- | h8
 h8 :: ClassName
 h8 = ClassName "h-8"
+
+-- | h96
+h96 :: ClassName
+h96 = ClassName "h-96"
+
+-- | hFull
+hFull :: ClassName
+hFull = ClassName "h-full"
 
 -- | hoverBgDurazno
 hoverBgDurazno :: ClassName
@@ -250,6 +286,10 @@ hoverBorderB2 = ClassName "hover:border-b-2"
 -- | hoverBorderKiwi
 hoverBorderKiwi :: ClassName
 hoverBorderKiwi = ClassName "hover:border-kiwi"
+
+-- | hoverTextWhite
+hoverTextWhite :: ClassName
+hoverTextWhite = ClassName "hover:text-white"
 
 -- | inlineBlock
 inlineBlock :: ClassName
@@ -379,9 +419,9 @@ my2 = ClassName "my-2"
 my4 :: ClassName
 my4 = ClassName "my-4"
 
--- | p1
-p1 :: ClassName
-p1 = ClassName "p-1"
+-- | overflowYScroll
+overflowYScroll :: ClassName
+overflowYScroll = ClassName "overflow-y-scroll"
 
 -- | p2
 p2 :: ClassName
@@ -406,6 +446,10 @@ placeholderGray300 = ClassName "placeholder-gray-300"
 -- | placeholderGray400
 placeholderGray400 :: ClassName
 placeholderGray400 = ClassName "placeholder-gray-400"
+
+-- | pt2
+pt2 :: ClassName
+pt2 = ClassName "pt-2"
 
 -- | px2
 px2 :: ClassName
@@ -446,6 +490,18 @@ roundedLg = ClassName "rounded-lg"
 -- | roundedMd
 roundedMd :: ClassName
 roundedMd = ClassName "rounded-md"
+
+-- | scrollbarThin
+scrollbarThin :: ClassName
+scrollbarThin = ClassName "scrollbar-thin"
+
+-- | scrollbarThumbGray200
+scrollbarThumbGray200 :: ClassName
+scrollbarThumbGray200 = ClassName "scrollbar-thumb-gray-200"
+
+-- | scrollbarTrackGray100
+scrollbarTrackGray100 :: ClassName
+scrollbarTrackGray100 = ClassName "scrollbar-track-gray-100"
 
 -- | shadowMd
 shadowMd :: ClassName
@@ -530,10 +586,6 @@ textXs = ClassName "text-xs"
 -- | top4
 top4 :: ClassName
 top4 = ClassName "top-4"
-
--- | underline
-underline :: ClassName
-underline = ClassName "underline"
 
 -- | w32
 w32 :: ClassName
