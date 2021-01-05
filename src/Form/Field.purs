@@ -66,7 +66,6 @@ cancel buttonText disabled action =
         , T.shadowMd
         , T.hoverBgOpacity75
         , T.focusOutlineNone
-
         , T.focusRing2
         , T.focusRingOffset2
         , T.focusRingOffsetGray10
@@ -106,17 +105,18 @@ input ::
   Newtype (form Variant F.InputFunction) (Variant inputs) =>
   Row.Cons sym (F.FormField V.FormError String out) t0 fields =>
   Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs =>
-  String ->
+  Maybe String ->
   SProxy sym ->
   form Record F.FormField ->
   Array (HH.IProp HTMLinput (F.Action form act)) ->
   F.ComponentHTML form act slots m
-input label sym form props =
+input mbLabel sym form props =
   HH.fieldset
-    [ HP.classes [ T.my4 ] ]
-    [ HH.label
-        [ HP.classes [ T.textGray400, T.textLg ] ]
-        [ HH.text label ]
+    []
+    [ maybeElem mbLabel \label ->
+        HH.label
+          [ HP.classes [ T.textGray400, T.textLg ] ]
+          [ HH.text label ]
     , HH.input
         ( append
             [ HP.value $ F.getInput sym form
@@ -126,7 +126,7 @@ input label sym form props =
                 , T.appearanceNone
                 , T.borderNone
                 , T.wFull
-                , T.mt2
+                , cx T.mt2 $ isJust mbLabel
                 , T.py2
                 , T.px4
                 , T.bgGray100
@@ -147,7 +147,7 @@ input label sym form props =
         )
     , maybeElem mbError \err ->
         HH.div
-          [ HP.classes [ T.textManzana, T.my2 ] ]
+          [ HP.classes [ T.textManzana, T.mt2 ] ]
           [ HH.text $ errorToString err ]
     ]
   where mbError = filter (const $ F.getTouched sym form) $ F.getError sym form

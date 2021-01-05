@@ -72,8 +72,11 @@ spec = Select.defaultSpec
   render st =
     HH.div
       [ HP.classes
-          [ cx (HC.ClassName "dropdown is-active") (st.visibility == Select.On) -- TODO ???
-          , cx (HC.ClassName "dropdown") (st.visibility /= Select.On)           -- TODO ???
+          [ cx (HC.ClassName "dropdown is-active") $ st.visibility == Select.On -- TODO ???
+          , cx (HC.ClassName "dropdown") $ st.visibility /= Select.On           -- TODO ???
+          , cx T.bgGray100 $ st.visibility == Select.On
+          , cx T.roundedMd $ st.visibility /= Select.On
+          , cx T.roundedTMd $ st.visibility == Select.On
           ]
       ]
       [ toggle [] st
@@ -100,14 +103,14 @@ spec = Select.defaultSpec
     _ -> pure unit
 
 toggle
-  :: forall item act ps m r
+  :: forall item act ps m st
    . ToText item
   => Array (HH.IProp HTMLbutton (Select.Action act))
-  -> { placeholder :: String, selected :: Maybe item | r }
+  -> Select.State (placeholder :: String, selected :: Maybe item | st)
   -> H.ComponentHTML (Select.Action act) ps m
 toggle props st =
   HH.div
-    [ HP.classes [ T.my4 ] ]
+    []
     [ HH.button
       ( Setters.setToggleProps props
       <> [ HP.classes
@@ -123,10 +126,6 @@ toggle props st =
              , T.roundedMd
              , T.textBase
              , T.focusOutlineNone
-             , T.focusRing2
-             , T.focusRingOffset2
-             , T.focusRingOffsetGray10
-             , T.focusRingKiwi
              ]
          ]
       )
@@ -142,7 +141,14 @@ menu st =
   HH.div
   [ HP.classes
       [ HC.ClassName "dropdown-menu" -- TODO ???
-      , cx T.mb2 $ st.visibility == Select.On
+      , cx T.pt1 $ st.visibility == Select.On
+      , cx T.pb2 $ st.visibility == Select.On
+      , cx T.px4 $ st.visibility == Select.On
+      , cx T.borderT2 $ st.visibility == Select.On
+      , cx T.borderWhite $ st.visibility == Select.On
+      , cx T.wFull $ st.visibility == Select.On
+      , cx T.bgGray100 $ st.visibility == Select.On
+      , cx T.roundedBMd $ st.visibility == Select.On
       ]
   ]
   [ if st.visibility == Select.Off
@@ -156,10 +162,11 @@ menu st =
                 ( Setters.setItemProps
                     ix
                     [ HP.classes
-                        [ T.cursorPointer
+                        [ T.textCenter
+                        , T.cursorPointer
                         , T.py1
                         , T.px2
-                        , T.roundedMd
+                        , T.roundedSm
                         , T.textSm
                         , cx T.textWhite $ Just ix == st.highlightedIndex
                         , cx T.textGray400 $ Just ix /= st.highlightedIndex

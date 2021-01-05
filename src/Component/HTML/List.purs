@@ -100,7 +100,7 @@ component = H.mkComponent
     where
     tag text =
       HH.span
-        [ HP.classes [ T.leadingNormal, T.mr1, T.mb1, T.px2, T.bgDurazno, T.textWhite, T.textXs, T.roundedMd ] ]
+        [ HP.classes [ T.leadingNormal, T.mr1, T.mb1, T.px2, T.bgDuraznoLight, T.textWhite, T.textXs, T.roundedSm ] ]
         [ HH.text text ]
 
     shortUrl url =
@@ -144,7 +144,7 @@ component = H.mkComponent
         Success Nothing ->
           HH.div
             [ HP.classes
-                [ T.px2
+                [ T.px4
                 , T.py2
                 , T.wFull
                 , T.flex
@@ -162,7 +162,7 @@ component = H.mkComponent
 
         Success (Just next) ->
           HH.div
-            [ HP.classes [ T.px2, T.py2, T.flex, T.flexCol, T.justifyBetween, T.h40 ] ]
+            [ HP.classes [ T.px4, T.py2, T.flex, T.flexCol, T.justifyBetween, T.h40 ] ]
             [ HH.a
                 [ HP.href next.url, HP.target "_blank", HP.rel "noreferrer noopener nofollow",  HP.classes [ T.cursorPointer ] ]
                 [ HH.div [] []
@@ -191,14 +191,16 @@ component = H.mkComponent
                         , T.bgKiwi
                         , T.textWhite
                         , T.textXs
-                        , T.roundedMd
-                        , T.shadowMd
-                        , T.hoverBgGreen700
-                        , T.focusOutlineNone
-                        , T.focusRing2
-                        , T.focusRingGreen900
+                        , T.roundedSm
+                        , T.bgOpacity75
+                        , T.hoverBgOpacity100
                         , T.disabledCursorNotAllowed
                         , T.disabledOpacity50
+                        , T.focusOutlineNone
+                        , T.focusRing2
+                        , T.focusRingOffset2
+                        , T.focusRingOffsetGray10
+                        , T.focusRingKiwi
                         ]
                     , HP.disabled markingAsDone
                     ]
@@ -209,7 +211,7 @@ component = H.mkComponent
         Failure _ ->
           HH.div
             [ HP.classes
-                [ T.px2
+                [ T.px4
                 , T.py2
                 , T.wFull
                 , T.flex
@@ -225,7 +227,7 @@ component = H.mkComponent
         _ ->
           HH.div
             [ HP.classes
-                [ T.px2
+                [ T.px4
                 , T.py2
                 , T.wFull
                 , T.flex
@@ -240,7 +242,7 @@ component = H.mkComponent
 
     header =
       HH.div
-        [ HP.classes [ T.p2, T.borderB2, T.borderGray200, T.h16 ] ]
+        [ HP.classes [ T.px4, T.py2, T.borderB2, T.borderGray200, T.h16 ] ]
         [ HH.div
             [ HP.classes [ T.flex, T.justifyBetween, T.itemsCenter ] ]
             [ HH.div [ HP.classes [ T.text2xl, T.textGray400, T.fontBold ] ] [ HH.text list.title ]

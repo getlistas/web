@@ -160,26 +160,28 @@ formComponent =
           [ HH.div
               [ HP.classes [ T.grid, T.gridCols2, T.gap4 ] ]
               [ name, slug ]
-          , email
-          , password
+          , HH.div [ HP.classes [ T.mt4 ] ] [ email ]
+          , HH.div [ HP.classes [ T.mt4 ] ] [ password ]
           ]
-      , Field.submit "Sign up" submitting
+      , HH.div
+          [ HP.classes [ T.mt4 ] ]
+          [ Field.submit "Sign up" submitting ]
       ]
     where
     proxies = F.mkSProxies (F.FormProxy :: _ RegisterForm)
 
     name =
-      Field.input "Username" proxies.name form
+      Field.input (Just "Username") proxies.name form
         [ HP.placeholder "John Doe", HP.type_ HP.InputText ]
 
     slug =
-      Field.input "Slug" proxies.slug form
+      Field.input (Just "Slug") proxies.slug form
         [ HP.placeholder "john-doe", HP.type_ HP.InputText ]
 
     email =
-      Field.input "Email address" proxies.email form
+      Field.input (Just "Email address") proxies.email form
         [ HP.placeholder "john.doe@email.com", HP.type_ HP.InputEmail ]
 
     password =
-      Field.input "Password" proxies.password form
+      Field.input (Just "Password") proxies.password form
         [ HP.placeholder "********", HP.type_ HP.InputPassword ]

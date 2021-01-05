@@ -3,6 +3,10 @@ module Tailwind where
 
 import Halogen.HTML.Core (ClassName(..))
 
+-- | absolute
+absolute :: ClassName
+absolute = ClassName "absolute"
+
 -- | appearanceNone
 appearanceNone :: ClassName
 appearanceNone = ClassName "appearance-none"
@@ -38,6 +42,10 @@ bgKiwi = ClassName "bg-kiwi"
 -- | bgManzana
 bgManzana :: ClassName
 bgManzana = ClassName "bg-manzana"
+
+-- | bgOpacity75
+bgOpacity75 :: ClassName
+bgOpacity75 = ClassName "bg-opacity-75"
 
 -- | bgPink300
 bgPink300 :: ClassName
@@ -107,9 +115,17 @@ borderT2 = ClassName "border-t-2"
 borderTransparent :: ClassName
 borderTransparent = ClassName "border-transparent"
 
+-- | borderWhite
+borderWhite :: ClassName
+borderWhite = ClassName "border-white"
+
 -- | checkedBgBlue600
 checkedBgBlue600 :: ClassName
 checkedBgBlue600 = ClassName "checked:bg-blue-600"
+
+-- | checkedBgKiwi
+checkedBgKiwi :: ClassName
+checkedBgKiwi = ClassName "checked:bg-kiwi"
 
 -- | checkedBorderTransparent
 checkedBorderTransparent :: ClassName
@@ -175,10 +191,6 @@ focusRing2 = ClassName "focus:ring-2"
 focusRingDurazno :: ClassName
 focusRingDurazno = ClassName "focus:ring-durazno"
 
--- | focusRingGreen900
-focusRingGreen900 :: ClassName
-focusRingGreen900 = ClassName "focus:ring-green-900"
-
 -- | focusRingKiwi
 focusRingKiwi :: ClassName
 focusRingKiwi = ClassName "focus:ring-kiwi"
@@ -239,10 +251,6 @@ h16 = ClassName "h-16"
 h40 :: ClassName
 h40 = ClassName "h-40"
 
--- | h48
-h48 :: ClassName
-h48 = ClassName "h-48"
-
 -- | h6
 h6 :: ClassName
 h6 = ClassName "h-6"
@@ -255,17 +263,13 @@ h72 = ClassName "h-72"
 h8 :: ClassName
 h8 = ClassName "h-8"
 
--- | hFull
-hFull :: ClassName
-hFull = ClassName "h-full"
-
 -- | hoverBgDurazno
 hoverBgDurazno :: ClassName
 hoverBgDurazno = ClassName "hover:bg-durazno"
 
--- | hoverBgGreen700
-hoverBgGreen700 :: ClassName
-hoverBgGreen700 = ClassName "hover:bg-green-700"
+-- | hoverBgOpacity100
+hoverBgOpacity100 :: ClassName
+hoverBgOpacity100 = ClassName "hover:bg-opacity-100"
 
 -- | hoverBgOpacity75
 hoverBgOpacity75 :: ClassName
@@ -339,10 +343,6 @@ maxWFull = ClassName "max-w-full"
 mb1 :: ClassName
 mb1 = ClassName "mb-1"
 
--- | mb2
-mb2 :: ClassName
-mb2 = ClassName "mb-2"
-
 -- | mb4
 mb4 :: ClassName
 mb4 = ClassName "mb-4"
@@ -403,10 +403,6 @@ mx1 = ClassName "mx-1"
 mxAuto :: ClassName
 mxAuto = ClassName "mx-auto"
 
--- | my1
-my1 :: ClassName
-my1 = ClassName "my-1"
-
 -- | my2
 my2 :: ClassName
 my2 = ClassName "my-2"
@@ -414,10 +410,6 @@ my2 = ClassName "my-2"
 -- | my4
 my4 :: ClassName
 my4 = ClassName "my-4"
-
--- | overflowYScroll
-overflowYScroll :: ClassName
-overflowYScroll = ClassName "overflow-y-scroll"
 
 -- | p2
 p2 :: ClassName
@@ -435,6 +427,10 @@ p6 = ClassName "p-6"
 p8 :: ClassName
 p8 = ClassName "p-8"
 
+-- | pb2
+pb2 :: ClassName
+pb2 = ClassName "pb-2"
+
 -- | placeholderGray300
 placeholderGray300 :: ClassName
 placeholderGray300 = ClassName "placeholder-gray-300"
@@ -442,6 +438,10 @@ placeholderGray300 = ClassName "placeholder-gray-300"
 -- | placeholderGray400
 placeholderGray400 :: ClassName
 placeholderGray400 = ClassName "placeholder-gray-400"
+
+-- | pt1
+pt1 :: ClassName
+pt1 = ClassName "pt-1"
 
 -- | pt2
 pt2 :: ClassName
@@ -471,9 +471,17 @@ py2 = ClassName "py-2"
 py3 :: ClassName
 py3 = ClassName "py-3"
 
+-- | relative
+relative :: ClassName
+relative = ClassName "relative"
+
 -- | right4
 right4 :: ClassName
 right4 = ClassName "right-4"
+
+-- | roundedBMd
+roundedBMd :: ClassName
+roundedBMd = ClassName "rounded-b-md"
 
 -- | roundedFull
 roundedFull :: ClassName
@@ -486,6 +494,14 @@ roundedLg = ClassName "rounded-lg"
 -- | roundedMd
 roundedMd :: ClassName
 roundedMd = ClassName "rounded-md"
+
+-- | roundedSm
+roundedSm :: ClassName
+roundedSm = ClassName "rounded-sm"
+
+-- | roundedTMd
+roundedTMd :: ClassName
+roundedTMd = ClassName "rounded-t-md"
 
 -- | shadowMd
 shadowMd :: ClassName

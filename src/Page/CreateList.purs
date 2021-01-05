@@ -168,34 +168,38 @@ formComponent =
             []
             [ HH.text "Failed to create form" ]
       , HH.fieldset_
-          [ Field.input "Title" proxies.title form
+          [ Field.input (Just "Title") proxies.title form
               [ HP.placeholder "YouTube Videos"
               , HP.type_ HP.InputText
               ]
-          , Field.input "Description" proxies.description form
-              [ HP.placeholder "Videos to watch all night long"
-              , HP.type_ HP.InputText
+          , HH.div
+              [ HP.classes [ T.mt4 ] ]
+              [ Field.input (Just "Description") proxies.description form
+                  [ HP.placeholder "Videos to watch all night long"
+                  , HP.type_ HP.InputText
+                  ]
               ]
-          , Field.input "Tags" proxies.tags form
-              [ HP.placeholder "videos,chill"
-              , HP.type_ HP.InputText
+          , HH.div
+              [ HP.classes [ T.mt4 ] ]
+              [ Field.input (Just "Tags") proxies.tags form
+                  [ HP.placeholder "videos,chill"
+                  , HP.type_ HP.InputText
+                  ]
               ]
           , HH.label
-              [ HP.classes [ T.flex, T.itemsCenter, T.my4 ] ]
+              [ HP.classes [ T.flex, T.itemsCenter, T.my4, T.cursorPointer ] ]
               [ HH.input
                   [ HP.type_ HP.InputCheckbox
                   , HP.checked $ F.getInput proxies.is_public form
                   , HE.onChange $ \_ -> Just $ F.modify proxies.is_public not
                   , HP.classes
-                      [ T.appearanceNone
-                      , T.h6
+                      [ T.h6
                       , T.w6
-                      , T.border
                       , T.borderGray300
                       , T.roundedMd
-                      , T.checkedBgBlue600
-                      , T.checkedBorderTransparent
-                      , T.focusOutlineNone
+                      , T.checkedBgKiwi
+                      , T.focusRingKiwi
+                      , T.textKiwi
                       ]
                   ]
               , HH.span

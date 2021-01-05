@@ -183,14 +183,19 @@ formComponent =
             [ HH.text "Email or password is invalid" ]
       , HH.fieldset
           [ HP.classes [ T.w96, T.maxWFull ] ]
-          [ Field.input "Email address" proxies.email form
+          [ Field.input (Just "Email address") proxies.email form
               [ HP.placeholder "jonh.doe@email.com"
               , HP.type_ HP.InputEmail
               ]
-          , Field.input "Password" proxies.password form
-              [ HP.placeholder "********"
-              , HP.type_ HP.InputPassword
-              ]
-          , Field.submit "Sign in" submitting
+          , HH.div
+              [ HP.classes [ T.mt4 ] ]
+              [ Field.input (Just "Password") proxies.password form
+                  [ HP.placeholder "********"
+                  , HP.type_ HP.InputPassword
+                  ]
+                ]
+          , HH.div
+              [ HP.classes [ T.mt4 ] ]
+              [ Field.submit "Sign in" submitting ]
           ]
       ]
