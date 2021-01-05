@@ -3,12 +3,12 @@ module Listasio.AppM where
 import Prelude
 
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, ask, asks, runReaderT)
-import Data.Array (filter)
+import Data.Array (filter, head, length, sortWith)
 import Data.Codec.Argonaut as Codec
 import Data.Codec.Argonaut.Compat as CAC
 import Data.Codec.Argonaut.Record as CAR
 import Data.Either (Either(..))
-import Data.Maybe (Maybe(..), isNothing)
+import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
 import Effect.Aff (Aff)
 import Effect.Aff.Bus as Bus
 import Effect.Aff.Class (class MonadAff, liftAff)
@@ -132,7 +132,15 @@ instance manageListAppM :: ManageList AppM where
 instance manageResourceAppM :: ManageResource AppM where
   getListResources list = do
     mbResources <- decode (CAC.array Resource.listResourceCodec) =<< mkAuthRequest conf
-    pure $ filter (isNothing <<< _.completed_at) <$> mbResources
+    let total = fromMaybe 0 $ length <$> mbResources
+        items = filter (isNothing <<< _.completed_at) <$> mbResources
+
+        last_done :: Maybe String
+        last_done = _.completed_at =<< head =<< sortWith _.completed_at <$> filter (isJust <<< _.completed_at) <$> mbResources
+
+        notRead = fromMaybe 0 $ length <$> items
+        read = total - notRead
+    pure $ (\is -> { items: is, total, read, last_done }) <$> items
     where conf = { endpoint: ResourcesByList { list }, method: Get }
 
   createResource newResource =
