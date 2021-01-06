@@ -70,7 +70,10 @@ component = Connect.component $ H.mkComponent
   }
   where
   initialState { currentUser } =
-    { currentUser, lists: NotAsked, showCreateResource: false }
+    { currentUser
+    , lists: NotAsked
+    , showCreateResource: false
+    }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of

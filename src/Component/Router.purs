@@ -29,7 +29,7 @@ import Listasio.Page.About as About
 import Listasio.Page.CreateList as CreateList
 import Listasio.Page.Dashboard as Dashboard
 import Listasio.Page.Discover as Discover
-import Listasio.Page.Done as Done
+import Listasio.Page.Resources as Resources
 import Listasio.Page.EditList as EditList
 import Listasio.Page.Home as Home
 import Listasio.Page.Login as Login
@@ -168,8 +168,8 @@ component = Connect.component $ H.mkComponent
         HH.slot (SProxy :: _ "dashboard") unit Dashboard.component {} absurd
           # authorize currentUser
 
-      Done ->
-        HH.slot (SProxy :: _ "done") unit Done.component {} absurd
+      Resources ->
+        HH.slot (SProxy :: _ "done") unit Resources.component {} absurd
           # authorize currentUser
 
     Nothing ->

@@ -143,6 +143,10 @@ instance manageResourceAppM :: ManageResource AppM where
     pure $ (\is -> { items: is, total, read, last_done }) <$> items
     where conf = { endpoint: ResourcesByList { list }, method: Get }
 
+  getResources = do
+    decode (CAC.array Resource.listResourceCodec) =<< mkAuthRequest conf
+    where conf = { endpoint: Resources, method: Get }
+
   createResource newResource =
     decode Resource.listResourceCodec =<< mkAuthRequest conf
     where method = Post $ Just $ Codec.encode Resource.resourceCodec newResource
