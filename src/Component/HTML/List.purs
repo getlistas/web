@@ -334,7 +334,7 @@ component = H.mkComponent
       where
       nextItem { url, title } =
         HH.div
-          [ HP.classes [ T.textGray300, T.textSm, T.mb1, T.mr2, T.flex, T.py1, T.px2, T.itemsCenter, T.hoverTextWhite, T.hoverBgDurazno, T.roundedMd ] ]
+          [ HP.classes [ T.textGray300, T.textSm, T.mb1, T.mr2, T.flex, T.py1, T.px2, T.hoverTextWhite, T.hoverBgDurazno, T.roundedMd ] ]
           [ HH.img [ HP.classes [ T.inlineBlock, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
           , HH.text title
           ]

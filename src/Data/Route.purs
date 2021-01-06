@@ -23,7 +23,7 @@ data Route
   | ViewList Slug
   | EditList Slug
   | Dashboard
-  | Done
+  | Resources
   | Discover
   | VerifyEmailSuccess
   | VerifyEmailFailure
@@ -49,7 +49,7 @@ routeCodec =
         , "ViewList": "list" / slug segment
         , "EditList": "list" / slug segment / "edit"
         , "Dashboard": "dashboard" / noArgs
-        , "Done": "dashboard" / "done" / noArgs
+        , "Resources": "dashboard" / "resources" / noArgs
         , "Discover": "discover" / noArgs
         , "VerifyEmailSuccess": "verify-email" / "success" / noArgs
         , "VerifyEmailFailure": "verify-email" / "failure" / noArgs
