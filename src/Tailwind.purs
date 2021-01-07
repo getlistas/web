@@ -39,6 +39,10 @@ bgGreen100 = ClassName "bg-green-100"
 bgKiwi :: ClassName
 bgKiwi = ClassName "bg-kiwi"
 
+-- | bgManzana
+bgManzana :: ClassName
+bgManzana = ClassName "bg-manzana"
+
 -- | bgOpacity75
 bgOpacity75 :: ClassName
 bgOpacity75 = ClassName "bg-opacity-75"
@@ -311,10 +315,6 @@ hoverBorderKiwi = ClassName "hover:border-kiwi"
 hoverTextWhite :: ClassName
 hoverTextWhite = ClassName "hover:text-white"
 
--- | inline
-inline :: ClassName
-inline = ClassName "inline"
-
 -- | inlineBlock
 inlineBlock :: ClassName
 inlineBlock = ClassName "inline-block"
@@ -566,6 +566,10 @@ shadowMd = ClassName "shadow-md"
 -- | smGridCols2
 smGridCols2 :: ClassName
 smGridCols2 = ClassName "sm:grid-cols-2"
+
+-- | spaceX4
+spaceX4 :: ClassName
+spaceX4 = ClassName "space-x-4"
 
 -- | srOnly
 srOnly :: ClassName
