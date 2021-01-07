@@ -257,7 +257,7 @@ component = Connect.component $ H.mkComponent
           case groupBy of
             GroupNone ->
               HH.div
-                [ HP.classes [ T.grid, T.gridCols1, T.smGridCols2, T.mdGridCols3, T.lgGridCols4, T.gap4 ] ]
+                [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.lgGridCols3, T.xlGridCols4, T.gap4 ] ]
                 $ map item
                 $ filterByDoneFn grouped.all
 
@@ -286,7 +286,7 @@ component = Connect.component $ H.mkComponent
           []
           [ HH.div [ HP.classes [ T.textXl, T.textGray400, T.mt6, T.mb4 ] ] [ HH.text l.title ]
           , HH.div
-              [ HP.classes [ T.grid, T.gridCols3, T.gap4 ] ]
+              [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.lgGridCols3, T.xlGridCols4, T.gap4 ] ]
               $ map item
               $ filterByDoneFn
               $ toArray items
@@ -297,7 +297,7 @@ component = Connect.component $ H.mkComponent
         []
         [ HH.div [ HP.classes [ T.textXl, T.textGray400, T.mt6, T.mb4 ] ] [ HH.text date ]
         , HH.div
-            [ HP.classes [ T.grid, T.gridCols3, T.gap4 ] ]
+            [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.lgGridCols3, T.xlGridCols4, T.gap4 ] ]
             $ map item
             $ filterByDoneFn
             $ toArray items
