@@ -379,10 +379,6 @@ leadingNormal = ClassName "leading-normal"
 lgGridCols3 :: ClassName
 lgGridCols3 = ClassName "lg:grid-cols-3"
 
--- | lgGridCols4
-lgGridCols4 :: ClassName
-lgGridCols4 = ClassName "lg:grid-cols-4"
-
 -- | m1
 m1 :: ClassName
 m1 = ClassName "m-1"
@@ -407,9 +403,9 @@ mb4 = ClassName "mb-4"
 mb6 :: ClassName
 mb6 = ClassName "mb-6"
 
--- | mdGridCols3
-mdGridCols3 :: ClassName
-mdGridCols3 = ClassName "md:grid-cols-3"
+-- | mdGridCols2
+mdGridCols2 :: ClassName
+mdGridCols2 = ClassName "md:grid-cols-2"
 
 -- | minHScreen
 minHScreen :: ClassName
@@ -762,4 +758,8 @@ wFull = ClassName "w-full"
 -- | wScreen
 wScreen :: ClassName
 wScreen = ClassName "w-screen"
+
+-- | xlGridCols4
+xlGridCols4 :: ClassName
+xlGridCols4 = ClassName "xl:grid-cols-4"
 
