@@ -3,13 +3,9 @@ module Listasio.Component.HTML.List where
 import Prelude
 
 import Data.Array (cons, drop, head, null, snoc, tail)
-import Data.Array.NonEmpty as NEA
-import Data.Either (Either(..), hush, note)
+import Data.Either (note)
 import Data.Filterable (class Filterable, filter)
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
-import Data.String (Pattern(..), Replacement(..), contains, replace)
-import Data.String.Regex (regex, match) as Regex
-import Data.String.Regex.Flags (noFlags) as Regex
 import Data.Symbol (SProxy(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -22,6 +18,7 @@ import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Resource (ListResource)
 import Network.RemoteData (RemoteData(..), fromEither, toMaybe)
 import Tailwind as T
+import Util (takeDomain)
 
 type ListResources
   = { items :: Array ListResource
@@ -118,40 +115,12 @@ component = H.mkComponent
         [ HH.text text ]
 
     shortUrl url =
-      maybeElem mbShort \short ->
+      maybeElem (takeDomain url) \short ->
         HH.div
           [ HP.classes [ T.textGray300, T.textSm, T.mb1, T.mr2, T.flex, T.itemsCenter ] ]
           [ HH.img [ HP.classes [ T.inlineBlock, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
           , HH.text short
           ]
-      where
-      mbShort =
-        map toWebsiteName
-          $ map (replace (Pattern "www.") (Replacement ""))
-          $ (NEA.head =<< _)
-          $ join
-          $ hush
-          $ (\rgx -> Regex.match <$> rgx <*> Right url)
-          -- https://regexr.com/5jf24
-          $ Regex.regex "[a-zA-Z-_]+(?:\\.[a-zA-Z-_]+)+" Regex.noFlags
-
-      toWebsiteName = case _ of
-        str | contains (Pattern "twitter.com") str -> "Twitter"
-        str | contains (Pattern "music.youtube.com") str -> "YouTube Music"
-        str | contains (Pattern "youtube.com") str -> "YouTube"
-        str | contains (Pattern "youtu.be") str -> "YouTube"
-        str | contains (Pattern "vimeo.com") str -> "Vimeo"
-        str | contains (Pattern "reddit.com") str -> "Reddit" -- TODO: include the subreddit
-        str | contains (Pattern "spotify.com") str -> "Spotify"
-        str | contains (Pattern "medium.com") str -> "Medium"
-        str | contains (Pattern "dev.to") str -> "DEV Community"
-        str | contains (Pattern "itunes.apple.com") str && contains (Pattern "podcast") str -> "Apple Podcasts"
-        str | contains (Pattern "podcasts.apple.com") str -> "Apple Podcasts"
-        str | contains (Pattern "itunes.apple.com") str && contains (Pattern "music") str -> "Apple Music"
-        str | contains (Pattern "music.apple.com") str -> "Apple Music"
-        str | contains (Pattern "twitch.tv") str -> "Twitch"
-        str | contains (Pattern "github.com") str -> "GitHub"
-        str -> str
 
     toRead =
       case head <$> _.items <$> resources of

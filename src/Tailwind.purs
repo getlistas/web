@@ -55,6 +55,10 @@ bgPink300 = ClassName "bg-pink-300"
 bgRed200 :: ClassName
 bgRed200 = ClassName "bg-red-200"
 
+-- | bgTransparent
+bgTransparent :: ClassName
+bgTransparent = ClassName "bg-transparent"
+
 -- | bgWhite
 bgWhite :: ClassName
 bgWhite = ClassName "bg-white"
@@ -127,6 +131,10 @@ checkedBgKiwi = ClassName "checked:bg-kiwi"
 container :: ClassName
 container = ClassName "container"
 
+-- | cursorNotAllowed
+cursorNotAllowed :: ClassName
+cursorNotAllowed = ClassName "cursor-not-allowed"
+
 -- | cursorPointer
 cursorPointer :: ClassName
 cursorPointer = ClassName "cursor-pointer"
@@ -138,6 +146,14 @@ disabledCursorNotAllowed = ClassName "disabled:cursor-not-allowed"
 -- | disabledOpacity50
 disabledOpacity50 :: ClassName
 disabledOpacity50 = ClassName "disabled:opacity-50"
+
+-- | divideWhite
+divideWhite :: ClassName
+divideWhite = ClassName "divide-white"
+
+-- | divideX2
+divideX2 :: ClassName
+divideX2 = ClassName "divide-x-2"
 
 -- | duration200
 duration200 :: ClassName
@@ -194,6 +210,14 @@ focusRing2 = ClassName "focus:ring-2"
 -- | focusRingDurazno
 focusRingDurazno :: ClassName
 focusRingDurazno = ClassName "focus:ring-durazno"
+
+-- | focusRingGray300
+focusRingGray300 :: ClassName
+focusRingGray300 = ClassName "focus:ring-gray-300"
+
+-- | focusRingInset
+focusRingInset :: ClassName
+focusRingInset = ClassName "focus:ring-inset"
 
 -- | focusRingKiwi
 focusRingKiwi :: ClassName
@@ -355,6 +379,10 @@ leadingNormal = ClassName "leading-normal"
 lgGridCols3 :: ClassName
 lgGridCols3 = ClassName "lg:grid-cols-3"
 
+-- | lgGridCols4
+lgGridCols4 :: ClassName
+lgGridCols4 = ClassName "lg:grid-cols-4"
+
 -- | m1
 m1 :: ClassName
 m1 = ClassName "m-1"
@@ -378,6 +406,10 @@ mb4 = ClassName "mb-4"
 -- | mb6
 mb6 :: ClassName
 mb6 = ClassName "mb-6"
+
+-- | mdGridCols3
+mdGridCols3 :: ClassName
+mdGridCols3 = ClassName "md:grid-cols-3"
 
 -- | minHScreen
 minHScreen :: ClassName
@@ -494,6 +526,10 @@ pt2 = ClassName "pt-2"
 -- | pt4
 pt4 :: ClassName
 pt4 = ClassName "pt-4"
+
+-- | px1
+px1 :: ClassName
+px1 = ClassName "px-1"
 
 -- | px2
 px2 :: ClassName

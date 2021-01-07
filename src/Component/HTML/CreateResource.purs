@@ -132,7 +132,7 @@ formComponent =
   formInput { lists } =
     { validators:
         CreateResourceForm
-          { title: V.required >>> V.minLength 3 >>> V.maxLength 50
+          { title: V.required >>> V.minLength 3 >>> V.maxLength 150
           , url: V.required >>> V.minLength 5 >>> V.maxLength 500
           , description:  V.toOptional $ V.minLength 5 >>> V.maxLength 500
           , list: V.requiredFromOptional $ F.noValidation
