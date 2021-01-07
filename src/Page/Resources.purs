@@ -4,13 +4,14 @@ import Prelude
 
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
-import Data.Array (find, groupBy, null, sortWith)
+import Data.Array (find, groupBy, mapMaybe, null, sortWith)
 import Data.Array.NonEmpty (NonEmptyArray, head, toArray)
 import Data.Either (Either, note)
 import Data.Filterable (filter)
 import Data.FunctorWithIndex (mapWithIndex)
 import Data.Map (Map, fromFoldable, toUnfoldable)
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
+import Data.String (take)
 import Data.Tuple (Tuple(..), snd)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -21,7 +22,7 @@ import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource, getResources)
 import Listasio.Component.HTML.Layout as Layout
-import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
+import Listasio.Component.HTML.Utils (cx, maybeElem)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Resource (ListResource)
@@ -29,6 +30,7 @@ import Listasio.Data.Route (Route(..))
 import Listasio.Env (UserEnv)
 import Network.RemoteData (RemoteData(..), fromEither)
 import Tailwind as T
+import Util (takeDomain)
 import Web.Event.Event (Event)
 
 data Action
@@ -72,10 +74,11 @@ toggleGroupByDate :: GroupBy -> GroupBy
 toggleGroupByDate GroupDate = GroupNone
 toggleGroupByDate _ = GroupDate
 
--- grouped -- :: Map String (NonEmptyArray ListResource)
---   # map toArray
---   # fold
---   # GroupNone
+type GroupedResources
+  = { byList :: Map String (NonEmptyArray ListResource)
+    , byDate :: Map String (NonEmptyArray ListResource) -- TODO: key :: { year :: Int, month :: Month }
+    , all :: Array ListResource
+    }
 
 groupResources :: Array ListResource -> GroupedResources
 groupResources all = { byList, byDate, all }
@@ -89,16 +92,11 @@ groupResources all = { byList, byDate, all }
   byDate =
     all
       # filter (isJust <<< _.completed_at)
-      # sortWith _.list
-      # groupBy (\a b -> a.list == b.list)
-      # map (\is -> Tuple (_.list $ head is) is)
+      # sortWith _.completed_at
+      -- TODO take 7
+      # groupBy (\a b -> (take 10 <$> a.completed_at) == (take 10 <$> b.completed_at))
+      # mapMaybe (\is -> flip Tuple is <$> (map (take 10) $ _.completed_at $ head is))
       # fromFoldable
-
-type GroupedResources
-  = { byList :: Map String (NonEmptyArray ListResource)
-    , byDate :: Map String (NonEmptyArray ListResource) -- TODO: key :: { year :: Int, month :: Month }
-    , all :: Array ListResource
-    }
 
 type State
   = { currentUser :: Maybe Profile
@@ -187,103 +185,61 @@ component = Connect.component $ H.mkComponent
     where
     settings =
       HH.div
-        [ HP.classes [ T.flex, T.my6, T.spaceX4 ] ]
-        [ HH.div
-            []
-            [ HH.div
-                [ HP.classes [ T.w40, T.flex, T.itemsCenter, T.justifyBetween, T.my4 ] ]
-                [ HH.span
-                    [ HP.classes [ T.textSm, T.fontMedium, T.textGray400] ]
-                    [ HH.text "Group by list" ]
-                , toggle (Just ToggleGroupByList) false $ groupBy == GroupList
-                ]
-            , HH.div
-                [ HP.classes [ T.w40, T.flex, T.itemsCenter, T.justifyBetween, T.my4 ] ]
-                [ HH.span
-                    [ HP.classes [ T.textSm, T.fontMedium, T.textGray400] ]
-                    [ HH.text "Group by date" ]
-                , toggle (Just ToggleGroupByDate) false $ groupBy == GroupDate
-                ]
-            ]
-        , HH.div
-            []
-            [ HH.div
-                [ HP.classes [ T.w40, T.flex, T.itemsCenter, T.justifyBetween, T.my4 ] ]
-                [ HH.span
-                    [ HP.classes [ T.textSm, T.fontMedium, T.textGray400] ]
-                    [ HH.text "Only Done" ]
-                , toggle (Just ToggleShowDone) (groupBy == GroupDate) $ filterByDone == ShowDone || groupBy == GroupDate
-                ]
-            , HH.div
-                [ HP.classes [ T.w40, T.flex, T.itemsCenter, T.justifyBetween, T.my4 ] ]
-                [ HH.span
-                    [ HP.classes [ T.textSm, T.fontMedium, T.textGray400] ]
-                    [ HH.text "Only Pending" ]
-                , toggle (Just ToggleShowPending) (groupBy == GroupDate) $ filterByDone == ShowPending && groupBy /= GroupDate
-                ]
-            ]
+        [ HP.classes [ T.flex, T.itemsStart, T.my6, T.spaceX4 ] ]
+        [ filterBtnGroup
+            false
+            -- TODO "By Month"
+            (filterBtn "By Day" (Just ToggleGroupByDate) $ groupBy == GroupDate)
+            (filterBtn "By List" (Just ToggleGroupByList) $ groupBy == GroupList)
+        , filterBtnGroup
+            (groupBy == GroupDate)
+            (filterBtn "Done" (Just ToggleShowDone) $ filterByDone == ShowDone || groupBy == GroupDate)
+            (filterBtn "Pending" (Just ToggleShowPending) $ filterByDone == ShowPending && groupBy /= GroupDate)
         ]
 
-    toggle action disabled on =
-      HH.button
-        [ HP.type_ HP.ButtonButton
-        , HE.onClick \_ -> action
-        , HP.disabled disabled
-        , HP.classes
-            [ cx T.bgGray200 $ not on
-            , cx T.bgKiwi on
-            , T.relative
-            , T.inlineFlex
-            , T.flexShrink0
-            , T.h6
-            , T.w11
-            , T.border2
-            , T.borderTransparent
-            , T.roundedFull
-            , T.cursorPointer
-            , T.transitionColors
-            , T.easeInOut
-            , T.duration200
-            , T.focusOutlineNone
-            , T.focusRing2
-            , T.focusRingOffset2
-            , T.focusRingKiwi
-            , T.disabledCursorNotAllowed
-            , T.disabledOpacity50
+    filterBtnGroup disabled l r =
+      HH.div
+        [ HP.classes
+            [ T.roundedMd
+            , T.bgGray100
+            , T.py1
+            , T.grid
+            , T.gridCols2
+            , T.mr4
+            , T.divideX2
+            , T.divideWhite
+            , T.textSm
+            , cx T.cursorNotAllowed disabled
             ]
         ]
-        [ HH.span [ HP.classes [ T.srOnly ] ] [ HH.text "Use setting" ]
-        , HH.span
-            [ HP.classes
-                [ cx T.translateX0 $ not on
-                , cx T.translateX5 on
-                , T.inlineBlock
-                , T.h5
-                , T.w5
-                , T.roundedFull
-                , T.bgWhite
-                , T.shadow
-                , T.transform
-                , T.ring0
-                , T.transition
-                , T.easeInOut
-                , T.duration200
+        [ l disabled, r disabled ]
+
+    filterBtn label action isSelected disabled =
+      HH.div
+        [ HP.classes [ T.px2 ] ]
+        [ HH.button
+            [ HP.type_ HP.ButtonButton
+            , HE.onClick \_ -> action
+            , HP.disabled disabled
+            , HP.classes
+                [ T.roundedMd
+                , T.px4
+                , T.py1
+                , T.wFull
+                , cx T.bgKiwi isSelected
+                , cx T.textWhite isSelected
+                , cx T.bgTransparent $ not isSelected
+                , cx T.textGray300 $ not isSelected
+                , T.focusOutlineNone
+                , T.focusRing2
+                , T.focusRingGray300
+                , T.focusRingInset
+                , T.disabledCursorNotAllowed
+                , cx T.disabledOpacity50 $ isSelected
                 ]
             ]
-            []
+            [ HH.text label ]
         ]
-
-    listFeed listId items =
-      maybeElem (find ((listId == _) <<< _.id) lists) \l ->
-        HH.div
-          []
-          [ HH.div [ HP.classes [ T.textXl, T.textGray400, T.mt6, T.mb4 ] ] [ HH.text l.title ]
-          , HH.div
-              [ HP.classes [ T.grid, T.gridCols3, T.gap4 ] ]
-              $ map item
-              $ filterByDoneFn
-              $ toArray items
-          ]
 
     filterByDoneFn =
       case filterByDone, groupBy of
@@ -301,7 +257,7 @@ component = Connect.component $ H.mkComponent
           case groupBy of
             GroupNone ->
               HH.div
-                [ HP.classes [ T.grid, T.gridCols3, T.gap4 ] ]
+                [ HP.classes [ T.grid, T.gridCols1, T.smGridCols2, T.mdGridCols3, T.lgGridCols4, T.gap4 ] ]
                 $ map item
                 $ filterByDoneFn grouped.all
 
@@ -315,7 +271,7 @@ component = Connect.component $ H.mkComponent
               HH.div []
                 $ map snd
                 $ toUnfoldable
-                $ mapWithIndex listFeed grouped.byDate
+                $ mapWithIndex dateFeed grouped.byDate
 
         Failure msg ->
           HH.div
@@ -324,53 +280,100 @@ component = Connect.component $ H.mkComponent
         _ ->
           HH.div [] [ HH.text "Loading ..." ]
 
+    listFeed listId items =
+      maybeElem (find ((listId == _) <<< _.id) lists) \l ->
+        HH.div
+          []
+          [ HH.div [ HP.classes [ T.textXl, T.textGray400, T.mt6, T.mb4 ] ] [ HH.text l.title ]
+          , HH.div
+              [ HP.classes [ T.grid, T.gridCols3, T.gap4 ] ]
+              $ map item
+              $ filterByDoneFn
+              $ toArray items
+          ]
+
+    dateFeed date items =
+      HH.div
+        []
+        [ HH.div [ HP.classes [ T.textXl, T.textGray400, T.mt6, T.mb4 ] ] [ HH.text date ]
+        , HH.div
+            [ HP.classes [ T.grid, T.gridCols3, T.gap4 ] ]
+            $ map item
+            $ filterByDoneFn
+            $ toArray items
+        ]
+
     lists = fromMaybe [] mbLists
+
+    shortUrl url =
+      maybeElem (takeDomain url) \short ->
+        HH.div
+          [ HP.classes [ T.textGray300, T.textXs, T.mt2, T.ml6 ] ]
+          [ HH.text short ]
+
+    tag t =
+      HH.span
+        [ HP.classes
+            [ T.textXs
+            , T.px1
+            , T.roundedSm
+            , T.bgDurazno
+            , T.textWhite
+            , T.mr1
+            , T.leadingNormal
+            ]
+        ]
+        [ HH.text t ]
 
     item { url, title, list, completed_at } =
       HH.div
-        [ HP.classes [ T.mb4 ] ]
+        [ HP.classes
+            [ T.roundedMd
+            , T.bgWhite
+            , T.border2
+            , T.borderKiwi
+            , T.p2
+            , T.flex
+            , T.flexCol
+            , T.justifyBetween
+            ]
+        ]
         [ HH.a
-            [ HP.classes
-                [ T.inlineBlock
-                , T.textGray300
-                , T.textSm, T.mb1
-                , T.mr2
-                , T.flex
-                , T.py1
-                , T.px2
-                , T.hoverTextWhite
-                , T.hoverBgDurazno
-                , T.roundedMd
-                ]
+            [ HP.classes [ T.flex, T.itemsCenter ]
             , HP.href url
             , HP.target "_blank"
             , HP.rel "noreferrer noopener nofollow"
             ]
-            [ HH.img [ HP.classes [ T.inlineBlock, T.mr1, T.w4, T.h4 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
-            , HH.text title
+            [ HH.img [ HP.classes [ T.w4, T.h4, T.mr2 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
+            , HH.div [ HP.classes [ T.textGray400, T.textSm, T.fontMedium, T.truncate ] ] [ HH.text title ]
             ]
+        , shortUrl url
         , HH.div
-            []
-            [ whenElem (groupBy /= GroupList) \_ ->
-                maybeElem (find ((list == _) <<< _.id) lists) \l ->
-                  HH.span
-                    [ HP.classes [ T.textXs, T.mr2 ] ]
-                    [ HH.span [ HP.classes [ T.textGray200 ] ] [ HH.text "From: " ]
-                    , HH.span [ HP.classes [ T.textGray300 ] ] [ HH.text l.title ]
+            [ HP.classes [ T.flex, T.justifyBetween, T.itemsCenter, T.mt2 ] ]
+            [ HH.div
+                [ HP.classes [ T.flex ] ]
+                [ HH.div
+                    [ HP.classes
+                        [ T.textSm
+                        , cx T.textKiwi $ isJust completed_at
+                        , cx T.textGray300 $ isNothing completed_at
+                        , T.fontBold
+                        , T.mr2
+                        , T.w4
+                        , T.textCenter
+                        ]
                     ]
-            , whenElem (filterByDone == ShowAll && groupBy /= GroupDate) \_ ->
-                HH.span
-                  [ HP.classes
-                      [ T.textXs
-                      , T.textWhite
-                      , cx T.bgKiwi $ isJust completed_at
-                      , cx T.bgManzana $ isNothing completed_at
-                      , T.bgOpacity75
-                      , T.roundedSm
-                      , T.px2
-                      , T.py1
-                      ]
+                    [ HH.text $ if isJust completed_at then "D" else "P" ]
+                , maybeElem (filter (not <<< null) $ map _.tags $ find ((list == _) <<< _.id) lists) \tags ->
+                    HH.div
+                      [ HP.classes [ T.flex ] ]
+                      $ map tag tags
+                ]
+            , maybeElem (find ((list == _) <<< _.id) lists) \l ->
+                HH.div
+                  [ HP.classes [ T.textXs, T.mr2 ] ]
+                  [ HH.span [ HP.classes [ T.textGray200 ] ] [ HH.text "List: " ]
+                  , HH.span [ HP.classes [ T.textGray300, T.fontMedium ] ] [ HH.text l.title ]
                   ]
-                  [ HH.text $ if isJust completed_at then "Done" else "Pending" ]
             ]
         ]
