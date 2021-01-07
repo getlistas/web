@@ -6,6 +6,7 @@ import Data.Array (cons, drop, head, null, snoc, tail)
 import Data.Either (note)
 import Data.Filterable (class Filterable, filter)
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
+import Data.String (take)
 import Data.Symbol (SProxy(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -246,7 +247,7 @@ component = H.mkComponent
                       ]
             ]
         , maybeElem (_.last_done =<< toMaybe resources) \last_done ->
-            HH.div [ HP.classes [ T.textSm, T.textGray200 ] ] [ HH.text $ "Last seen " <> last_done ]
+            HH.div [ HP.classes [ T.textSm, T.textGray200 ] ] [ HH.text $ "Last seen " <> take 10 last_done ]
         ]
 
     mbRest = filterNotEmpty $ tail =<< (filterNotEmpty $ _.items <$> toMaybe resources)
