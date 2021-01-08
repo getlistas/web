@@ -72,7 +72,7 @@ component = H.mkComponent
   render { lists } =
     HH.div
       []
-      [ HH.slot F._formless unit formComponent { lists } (Just <<< HandleFormMessage) ]
+      [ HH.slot F._formless unit formComponent { lists, showCancel: true } (Just <<< HandleFormMessage) ]
 
 newtype DDItem = DDItem { label :: String, value :: String }
 
@@ -111,9 +111,18 @@ data FormAction
   | HandleDropdown (DD.Message DDItem)
   | Reset
 
-type FormInput = { lists :: Array ListWithIdAndUser  }
+type FormInput
+  = { lists :: Array ListWithIdAndUser
+    , showCancel :: Boolean
+    }
 
 type FormChildSlots = ( dropdown :: DD.Slot DDItem Unit )
+
+type FormState =
+  ( createError :: Boolean
+  , showCancel :: Boolean
+  , lists :: Array ListWithIdAndUser
+  )
 
 formComponent ::
   forall m.
@@ -128,8 +137,8 @@ formComponent =
         , handleAction = handleAction
         }
   where
-  formInput :: FormInput -> F.Input CreateResourceForm ( createError :: Boolean, lists :: Array ListWithIdAndUser ) m
-  formInput { lists } =
+  formInput :: FormInput -> F.Input CreateResourceForm FormState m
+  formInput { lists, showCancel } =
     { validators:
         CreateResourceForm
           { title: V.required >>> V.minLength 3 >>> V.maxLength 150
@@ -139,6 +148,7 @@ formComponent =
           }
     , initialInputs: Nothing
     , createError: false
+    , showCancel
     , lists
     }
 
@@ -185,9 +195,9 @@ formComponent =
 
   -- TODO: submitting is only true while the form component is submitting
   --       but the async action actually happens in the parent component
-  renderCreateResource { form, createError, lists, submitting, dirty } =
+  renderCreateResource { form, createError, lists, submitting, dirty, showCancel } =
     HH.form
-      [ HP.classes [ T.p6, T.border4, T.borderKiwi, T.roundedMd ]
+      [ HP.classes [ T.relative, T.p6, T.border4, T.borderKiwi, T.roundedMd ]
       , HE.onSubmit \ev -> Just $ F.injAction $ Submit ev
       ]
       [ whenElem createError \_ ->
@@ -197,33 +207,50 @@ formComponent =
       , HH.fieldset
           []
           [ Field.input Nothing proxies.url form
-              [ HP.placeholder "https://medium.com/javascript-in-plain-english/life-of-a-programmer-in-simple-jokes-that-will-make-you-laugh-52ccfbf77438"
+              [ HP.placeholder "https://blog.com/some-article"
               , HP.type_ HP.InputText
-              ]
-          , HH.div
-              [ HP.classes [ T.mt4 ] ]
-              [ Field.input Nothing proxies.title form
-                  [ HP.placeholder "Life of a Programmer in Simple Jokes"
-                  , HP.type_ HP.InputText
-                  ]
-              ]
-          , HH.div
-              [ HP.classes [ T.mt4 ] ]
-              [ Field.input Nothing proxies.description form
-                  [ HP.placeholder "You don’t have to be a programmer to laugh at their humor."
-                  , HP.type_ HP.InputText
-                  ]
               ]
           , HH.div
               [ HP.classes [ T.mt4 ] ]
               [ HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput handler ]
           , HH.div
-              [ HP.classes [ T.mt4, T.flex, T.justifyEnd ] ]
-              [ HH.div
-                  [ HP.classes [ T.mr2 ] ]
-                  [ Field.cancel "Cancel" submitting $ F.injAction Reset ]
-              , Field.submit "Add resource" submitting
+              [ HP.classes [ T.mt4 ] ]
+              [ Field.input Nothing proxies.title form
+                  [ HP.placeholder "Title"
+                  , HP.type_ HP.InputText
+                  ]
               ]
+          , HH.div
+              [ HP.classes [ T.mt4 ] ]
+              [ Field.textarea Nothing proxies.description form
+                  [ HP.placeholder "Description"
+                  , HP.rows 2
+                  ]
+              ]
+          , HH.div
+              [ HP.classes [ T.mt4 ] ]
+              [ Field.submit "Add" submitting ]
+          , whenElem showCancel \_ ->
+              HH.button
+                [ HP.classes
+                    [ T.mr2
+                    , T.pt1
+                    , T.px1
+                    , T.absolute
+                    , T.top1
+                    , T.right0
+                    , T.fontMono
+                    , T.textKiwi
+                    , T.fontBold
+                    , T.focusOutlineNone
+                    , T.focusRing2
+                    , T.focusRingKiwi
+                    , T.leadingNone
+                    ]
+                , HP.type_ HP.ButtonReset
+                , HE.onClick \_ -> Just $ F.injAction Reset
+                ]
+                [ HH.text "X" ]
           ]
       ]
     where handler = Just <<< F.injAction <<< HandleDropdown

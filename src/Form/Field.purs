@@ -2,7 +2,7 @@ module Listasio.Form.Field where
 
 import Prelude
 
-import DOM.HTML.Indexed (HTMLinput)
+import DOM.HTML.Indexed (HTMLinput, HTMLtextarea)
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), isJust)
 import Data.Newtype (class Newtype)
@@ -118,6 +118,61 @@ input mbLabel sym form props =
           [ HP.classes [ T.textGray400, T.textLg ] ]
           [ HH.text label ]
     , HH.input
+        ( append
+            [ HP.value $ F.getInput sym form
+            , HE.onValueInput $ Just <<< F.setValidate sym
+            , HP.classes
+                [ T.flex1
+                , T.appearanceNone
+                , T.borderNone
+                , T.wFull
+                , cx T.mt2 $ isJust mbLabel
+                , T.py2
+                , T.px4
+                , T.bgGray100
+                , T.textGray400
+                , T.placeholderGray300
+                , T.roundedMd
+                , T.textBase
+                , T.focusBgWhite
+                , T.focusOutlineNone
+                , T.focusRing2
+                , T.focusRingOffset2
+                , T.focusRingOffsetGray10
+                , cx T.focusRingKiwi $ not hasError
+                , cx T.focusRingManzana hasError
+                ]
+            ]
+            props
+        )
+    , maybeElem mbError \err ->
+        HH.div
+          [ HP.classes [ T.textManzana, T.mt2 ] ]
+          [ HH.text $ errorToString err ]
+    ]
+  where mbError = filter (const $ F.getTouched sym form) $ F.getError sym form
+        hasError = isJust mbError
+
+textarea ::
+  forall form act slots m sym fields inputs out t0 t1.
+  IsSymbol sym =>
+  Newtype (form Record F.FormField) { | fields } =>
+  Newtype (form Variant F.InputFunction) (Variant inputs) =>
+  Row.Cons sym (F.FormField V.FormError String out) t0 fields =>
+  Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs =>
+  Maybe String ->
+  SProxy sym ->
+  form Record F.FormField ->
+  Array (HH.IProp HTMLtextarea (F.Action form act)) ->
+  F.ComponentHTML form act slots m
+textarea mbLabel sym form props =
+  HH.fieldset
+    []
+    [ maybeElem mbLabel \label ->
+        HH.label
+          [ HP.classes [ T.textGray400, T.textLg ] ]
+          [ HH.text label ]
+    , HH.textarea
         ( append
             [ HP.value $ F.getInput sym form
             , HE.onValueInput $ Just <<< F.setValidate sym
