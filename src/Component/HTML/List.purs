@@ -134,13 +134,13 @@ component = H.mkComponent
               , T.flexCol
               , T.itemsCenter
               , T.justifyCenter
-              , T.textGray400
+              , T.textGray200
               , T.fontSemibold
               , T.h40
               ]
           ]
           [ HH.div [] [ HH.text "This list is empty" ]
-          , HH.div [] [ HH.text "Add some resources!" ]
+          , HH.div [] [ HH.text "Add more items!" ]
           ]
 
       Success (Just next) ->
@@ -155,7 +155,9 @@ component = H.mkComponent
               [ HH.img [ HP.classes [ T.h20, T.w20, T.mr4 ], HP.src "https://via.placeholder.com/87" ]
               , HH.div
                   [ HP.classes [ T.overflowHidden ] ]
-                  [ HH.div [ HP.classes [ T.textBase, T.textGray400, T.leadingNone, T.truncate ] ] [ HH.text next.title ]
+                  [ HH.div
+                      [ HP.classes [ T.textBase, T.textGray400, T.leadingRelaxed, T.truncate ] ]
+                      [ HH.text next.title ]
                   , maybeElem next.description \des ->
                       HH.div [ HP.classes [ T.mt1, T.textSm, T.textGray400, T.truncate3Lines ] ] [ HH.text des ]
                   ]

@@ -3,6 +3,10 @@ module Tailwind where
 
 import Halogen.HTML.Core (ClassName(..))
 
+-- | absolute
+absolute :: ClassName
+absolute = ClassName "absolute"
+
 -- | appearanceNone
 appearanceNone :: ClassName
 appearanceNone = ClassName "appearance-none"
@@ -227,6 +231,10 @@ fontBold = ClassName "font-bold"
 fontMedium :: ClassName
 fontMedium = ClassName "font-medium"
 
+-- | fontMono
+fontMono :: ClassName
+fontMono = ClassName "font-mono"
+
 -- | fontNormal
 fontNormal :: ClassName
 fontNormal = ClassName "font-normal"
@@ -342,6 +350,10 @@ leadingNone = ClassName "leading-none"
 -- | leadingNormal
 leadingNormal :: ClassName
 leadingNormal = ClassName "leading-normal"
+
+-- | leadingRelaxed
+leadingRelaxed :: ClassName
+leadingRelaxed = ClassName "leading-relaxed"
 
 -- | lgGridCols3
 lgGridCols3 :: ClassName
@@ -523,6 +535,14 @@ py2 = ClassName "py-2"
 py3 :: ClassName
 py3 = ClassName "py-3"
 
+-- | relative
+relative :: ClassName
+relative = ClassName "relative"
+
+-- | right0
+right0 :: ClassName
+right0 = ClassName "right-0"
+
 -- | right4
 right4 :: ClassName
 right4 = ClassName "right-4"
@@ -638,6 +658,10 @@ textXl = ClassName "text-xl"
 -- | textXs
 textXs :: ClassName
 textXs = ClassName "text-xs"
+
+-- | top1
+top1 :: ClassName
+top1 = ClassName "top-1"
 
 -- | top4
 top4 :: ClassName
