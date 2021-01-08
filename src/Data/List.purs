@@ -4,7 +4,9 @@ import Data.Codec.Argonaut (JsonCodec)
 import Data.Codec.Argonaut as CA
 import Data.Codec.Argonaut.Compat as CAC
 import Data.Codec.Argonaut.Record as CAR
+import Data.DateTime (DateTime)
 import Data.Maybe (Maybe)
+import Listasio.Data.DateTime as DateTime
 
 type ListRep row
   = ( title :: String
@@ -17,10 +19,15 @@ type ListRep row
 type List
   = { | ListRep () }
 
--- created_at  :: DateTime<Utc>
--- updated_at  :: DateTime<Utc>
 type ListWithIdAndUser
-  = { | ListRep ( id :: String, user :: String ) }
+  = {
+    | ListRep
+      ( id :: String
+      , user :: String
+      , created_at :: DateTime
+      , updated_at :: DateTime
+      )
+    }
 
 listCodec :: JsonCodec List
 listCodec =
@@ -40,4 +47,6 @@ listWitIdAndUserCodec =
     , tags: CAC.array CA.string
     , user: CA.string
     , is_public: CA.boolean
+    , created_at: DateTime.codec
+    , updated_at: DateTime.codec
     }

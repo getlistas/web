@@ -23,10 +23,6 @@ bgGray100 = ClassName "bg-gray-100"
 bgGray10 :: ClassName
 bgGray10 = ClassName "bg-gray-10"
 
--- | bgGray200
-bgGray200 :: ClassName
-bgGray200 = ClassName "bg-gray-200"
-
 -- | bgGray300
 bgGray300 :: ClassName
 bgGray300 = ClassName "bg-gray-300"
@@ -38,10 +34,6 @@ bgGreen100 = ClassName "bg-green-100"
 -- | bgKiwi
 bgKiwi :: ClassName
 bgKiwi = ClassName "bg-kiwi"
-
--- | bgManzana
-bgManzana :: ClassName
-bgManzana = ClassName "bg-manzana"
 
 -- | bgOpacity75
 bgOpacity75 :: ClassName
@@ -155,14 +147,6 @@ divideWhite = ClassName "divide-white"
 divideX2 :: ClassName
 divideX2 = ClassName "divide-x-2"
 
--- | duration200
-duration200 :: ClassName
-duration200 = ClassName "duration-200"
-
--- | easeInOut
-easeInOut :: ClassName
-easeInOut = ClassName "ease-in-out"
-
 -- | fixed
 fixed :: ClassName
 fixed = ClassName "fixed"
@@ -186,10 +170,6 @@ flexInitial = ClassName "flex-initial"
 -- | flexNone
 flexNone :: ClassName
 flexNone = ClassName "flex-none"
-
--- | flexShrink0
-flexShrink0 :: ClassName
-flexShrink0 = ClassName "flex-shrink-0"
 
 -- | flexWrap
 flexWrap :: ClassName
@@ -271,10 +251,6 @@ gridCols1 = ClassName "grid-cols-1"
 gridCols2 :: ClassName
 gridCols2 = ClassName "grid-cols-2"
 
--- | gridCols3
-gridCols3 :: ClassName
-gridCols3 = ClassName "grid-cols-3"
-
 -- | h16
 h16 :: ClassName
 h16 = ClassName "h-16"
@@ -290,10 +266,6 @@ h40 = ClassName "h-40"
 -- | h4
 h4 :: ClassName
 h4 = ClassName "h-4"
-
--- | h5
-h5 :: ClassName
-h5 = ClassName "h-5"
 
 -- | h6
 h6 :: ClassName
@@ -342,10 +314,6 @@ hoverTextWhite = ClassName "hover:text-white"
 -- | inlineBlock
 inlineBlock :: ClassName
 inlineBlock = ClassName "inline-block"
-
--- | inlineFlex
-inlineFlex :: ClassName
-inlineFlex = ClassName "inline-flex"
 
 -- | itemsCenter
 itemsCenter :: ClassName
@@ -499,6 +467,10 @@ p6 = ClassName "p-6"
 p8 :: ClassName
 p8 = ClassName "p-8"
 
+-- | pb20
+pb20 :: ClassName
+pb20 = ClassName "pb-20"
+
 -- | pb2
 pb2 :: ClassName
 pb2 = ClassName "pb-2"
@@ -551,17 +523,9 @@ py2 = ClassName "py-2"
 py3 :: ClassName
 py3 = ClassName "py-3"
 
--- | relative
-relative :: ClassName
-relative = ClassName "relative"
-
 -- | right4
 right4 :: ClassName
 right4 = ClassName "right-4"
-
--- | ring0
-ring0 :: ClassName
-ring0 = ClassName "ring-0"
 
 -- | roundedBMd
 roundedBMd :: ClassName
@@ -587,10 +551,6 @@ roundedSm = ClassName "rounded-sm"
 roundedTMd :: ClassName
 roundedTMd = ClassName "rounded-t-md"
 
--- | shadow
-shadow :: ClassName
-shadow = ClassName "shadow"
-
 -- | shadowMd
 shadowMd :: ClassName
 shadowMd = ClassName "shadow-md"
@@ -599,13 +559,9 @@ shadowMd = ClassName "shadow-md"
 smGridCols2 :: ClassName
 smGridCols2 = ClassName "sm:grid-cols-2"
 
--- | spaceX4
-spaceX4 :: ClassName
-spaceX4 = ClassName "space-x-4"
-
--- | srOnly
-srOnly :: ClassName
-srOnly = ClassName "sr-only"
+-- | spaceX2
+spaceX2 :: ClassName
+spaceX2 = ClassName "space-x-2"
 
 -- | text2xl
 text2xl :: ClassName
@@ -687,26 +643,6 @@ textXs = ClassName "text-xs"
 top4 :: ClassName
 top4 = ClassName "top-4"
 
--- | transform
-transform :: ClassName
-transform = ClassName "transform"
-
--- | transition
-transition :: ClassName
-transition = ClassName "transition"
-
--- | transitionColors
-transitionColors :: ClassName
-transitionColors = ClassName "transition-colors"
-
--- | translateX0
-translateX0 :: ClassName
-translateX0 = ClassName "translate-x-0"
-
--- | translateX5
-translateX5 :: ClassName
-translateX5 = ClassName "translate-x-5"
-
 -- | truncate3Lines
 truncate3Lines :: ClassName
 truncate3Lines = ClassName "truncate-3-lines"
@@ -714,10 +650,6 @@ truncate3Lines = ClassName "truncate-3-lines"
 -- | truncate
 truncate :: ClassName
 truncate = ClassName "truncate"
-
--- | w11
-w11 :: ClassName
-w11 = ClassName "w-11"
 
 -- | w20
 w20 :: ClassName
@@ -727,17 +659,9 @@ w20 = ClassName "w-20"
 w32 :: ClassName
 w32 = ClassName "w-32"
 
--- | w40
-w40 :: ClassName
-w40 = ClassName "w-40"
-
 -- | w4
 w4 :: ClassName
 w4 = ClassName "w-4"
-
--- | w5
-w5 :: ClassName
-w5 = ClassName "w-5"
 
 -- | w6
 w6 :: ClassName

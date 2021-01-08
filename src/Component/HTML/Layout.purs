@@ -19,7 +19,7 @@ dashboard currentUser navigate route content =
   HH.div
     [ HP.classes [ T.minHScreen, T.wScreen, T.bgGray10 ] ]
     [ HH.div
-        [ HP.classes [ T.container, T.mxAuto, T.px2 ] ]
+        [ HP.classes [ T.container, T.mxAuto, T.px2, T.pb20 ] ]
         [ header currentUser navigate route
         , content
         ]

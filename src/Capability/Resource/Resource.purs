@@ -2,6 +2,7 @@ module Listasio.Capability.Resource.Resource where
 
 import Prelude
 
+import Data.DateTime (DateTime)
 import Data.Maybe (Maybe)
 import Halogen (HalogenM, lift)
 import Listasio.Data.Resource (ListResource, Resource)
@@ -11,7 +12,7 @@ type ListResources
   = { items :: Array ListResource
     , total :: Int
     , read :: Int
-    , last_done :: Maybe String
+    , last_done :: Maybe DateTime
     }
 
 class Monad m <= ManageResource m where
