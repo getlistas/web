@@ -5,9 +5,12 @@ module Listasio.Api.Endpoint where
 
 import Prelude hiding ((/))
 
+import Data.Either (note)
 import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe)
-import Routing.Duplex (RouteDuplex', int, optional, root, segment, string)
+import Listasio.Data.ID (ID)
+import Listasio.Data.ID as ID
+import Routing.Duplex (RouteDuplex', as, int, optional, root, segment)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/), (?))
 
@@ -23,12 +26,12 @@ data Endpoint
   = Login
   | User
   | Users
-  | List String
+  | List ID
   | Lists
   | Discover Pagination
   | Resources
-  | ResourcesByList { list :: String }
-  | CompleteResource String
+  | ResourcesByList { list :: ID }
+  | CompleteResource ID
 
 derive instance genericEndpoint :: Generic Endpoint _
 
@@ -39,13 +42,16 @@ endpointCodec =
         { "Login": "users" / "auth" / noArgs
         , "User": "user" / noArgs
         , "Users": "users" / noArgs
-        , "List": "lists" / string segment
+        , "List": "lists" / id segment
         , "Lists": "lists" / noArgs
         , "Discover": "discover" ?
             { skip: optional <<< int
             , limit: optional <<< int
             }
         , "Resources": "resources" / noArgs
-        , "ResourcesByList": "resources" ? { list: string }
-        , "CompleteResource": "resources" / string segment / "complete"
+        , "ResourcesByList": "resources" ? { list: id }
+        , "CompleteResource": "resources" / id segment / "complete"
         }
+
+id :: RouteDuplex' String -> RouteDuplex' ID
+id = as ID.toString (ID.parse >>> note "Bad ID")

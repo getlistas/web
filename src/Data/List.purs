@@ -7,6 +7,8 @@ import Data.Codec.Argonaut.Record as CAR
 import Data.DateTime (DateTime)
 import Data.Maybe (Maybe)
 import Listasio.Data.DateTime as DateTime
+import Listasio.Data.ID (ID)
+import Listasio.Data.ID as ID
 
 type ListRep row
   = ( title :: String
@@ -22,8 +24,8 @@ type List
 type ListWithIdAndUser
   = {
     | ListRep
-      ( id :: String
-      , user :: String
+      ( id :: ID
+      , user :: ID
       , created_at :: DateTime
       , updated_at :: DateTime
       )
@@ -41,11 +43,11 @@ listCodec =
 listWitIdAndUserCodec :: JsonCodec ListWithIdAndUser
 listWitIdAndUserCodec =
   CAR.object "List"
-    { id: CA.string
+    { id: ID.codec
     , title: CA.string
     , description: CAC.maybe CA.string
     , tags: CAC.array CA.string
-    , user: CA.string
+    , user: ID.codec
     , is_public: CA.boolean
     , created_at: DateTime.codec
     , updated_at: DateTime.codec

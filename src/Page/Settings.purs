@@ -23,6 +23,8 @@ import Listasio.Data.Username as Username
 import Listasio.Env (UserEnv)
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation as V
+import Slug (Slug)
+import Slug as Slug
 import Tailwind as T
 import Web.Event.Event (Event)
 
@@ -30,7 +32,7 @@ newtype SettingsForm r f
   = SettingsForm
   ( r
       ( name :: f V.FormError String Username
-      , slug :: f V.FormError String Username
+      , slug :: f V.FormError String Slug
       )
   )
 
@@ -76,7 +78,7 @@ component = Connect.component $ H.mkComponent
            newInputs =
              F.wrapInputFields
                { name: Username.toString profile.name
-               , slug: Username.toString profile.slug
+               , slug: Slug.toString profile.slug
                }
          void $ H.query F._formless unit $ F.asQuery $ F.loadForm newInputs
 
@@ -138,7 +140,7 @@ component = Connect.component $ H.mkComponent
         { validators:
             SettingsForm
               { name: V.required >>> V.minLength 3 >>> V.maxLength 20 >>> V.usernameFormat
-              , slug: V.required >>> V.minLength 3 >>> V.maxLength 20 >>> V.usernameFormat
+              , slug: V.required >>> V.minLength 3 >>> V.maxLength 20 >>> V.slugFormat
               }
         , initialInputs: Nothing
         }

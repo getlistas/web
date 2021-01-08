@@ -29,9 +29,7 @@ data Route
   | VerifyEmailFailure
 
 derive instance genericRoute :: Generic Route _
-
 derive instance eqRoute :: Eq Route
-
 derive instance ordRoute :: Ord Route
 
 -- | Bidirectional codec for our route parsing.

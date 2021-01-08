@@ -339,10 +339,6 @@ justifyBetween = ClassName "justify-between"
 justifyCenter :: ClassName
 justifyCenter = ClassName "justify-center"
 
--- | justifyEnd
-justifyEnd :: ClassName
-justifyEnd = ClassName "justify-end"
-
 -- | leadingNone
 leadingNone :: ClassName
 leadingNone = ClassName "leading-none"
@@ -394,6 +390,10 @@ minHScreen = ClassName "min-h-screen"
 -- | ml2
 ml2 :: ClassName
 ml2 = ClassName "ml-2"
+
+-- | ml4
+ml4 :: ClassName
+ml4 = ClassName "ml-4"
 
 -- | ml6
 ml6 :: ClassName
@@ -519,6 +519,10 @@ px2 = ClassName "px-2"
 px4 :: ClassName
 px4 = ClassName "px-4"
 
+-- | px6
+px6 :: ClassName
+px6 = ClassName "px-6"
+
 -- | py12
 py12 :: ClassName
 py12 = ClassName "py-12"
@@ -590,6 +594,10 @@ text2xl = ClassName "text-2xl"
 -- | text4xl
 text4xl :: ClassName
 text4xl = ClassName "text-4xl"
+
+-- | text5xl
+text5xl :: ClassName
+text5xl = ClassName "text-5xl"
 
 -- | text7xl
 text7xl :: ClassName

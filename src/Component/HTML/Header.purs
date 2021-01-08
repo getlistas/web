@@ -35,7 +35,7 @@ header currentUser navigate route =
         , navLink About "About"
         , whenElem (isNothing currentUser) \_ -> navLink Register "Try for free"
         , whenElem (isNothing currentUser) \_ -> navLink Login "Sign in"
-        , maybeElem currentUser \{ slug } ->
+        , maybeElem currentUser \{ name } ->
             HH.a
               [ safeHref Settings
               , HE.onClick (onNavigate Settings)
@@ -58,7 +58,7 @@ header currentUser navigate route =
                       , T.mr2
                       ]
                   ]
-                  [ HH.text $ Username.toString slug ]
+                  [ HH.text $ Username.toString name ]
               , HH.img [ HP.classes [ T.w8, T.h8, T.roundedFull ], HP.src "https://avatars2.githubusercontent.com/u/8309423?s=460&u=0f306a70fdcc2359d21b4918efaabf617a396c91&v=4" ]
               ]
         ]

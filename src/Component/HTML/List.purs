@@ -16,6 +16,7 @@ import Halogen.HTML.Properties as HP
 import Listasio.Capability.Resource.Resource (class ManageResource, completeResource, getListResources)
 import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
 import Listasio.Data.DateTime as DateTime
+import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Resource (ListResource)
 import Network.RemoteData (RemoteData(..), fromEither, toMaybe)
@@ -29,7 +30,7 @@ type ListResources
     , last_done :: Maybe DateTime
     }
 
-type Slot = H.Slot Query Void String
+type Slot = H.Slot Query Void ID
 
 _list = SProxy :: SProxy "list"
 
