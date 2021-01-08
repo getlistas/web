@@ -7,6 +7,7 @@
   , "argonaut-core"
   , "codec-argonaut"
   , "console"
+  , "datetime"
   , "debug"
   , "effect"
   , "filterable"

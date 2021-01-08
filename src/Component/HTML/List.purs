@@ -3,10 +3,10 @@ module Listasio.Component.HTML.List where
 import Prelude
 
 import Data.Array (cons, drop, head, null, snoc, tail)
+import Data.DateTime (DateTime)
 import Data.Either (note)
 import Data.Filterable (class Filterable, filter)
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
-import Data.String (take)
 import Data.Symbol (SProxy(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -15,6 +15,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Resource.Resource (class ManageResource, completeResource, getListResources)
 import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
+import Listasio.Data.DateTime as DateTime
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Resource (ListResource)
 import Network.RemoteData (RemoteData(..), fromEither, toMaybe)
@@ -25,7 +26,7 @@ type ListResources
   = { items :: Array ListResource
     , total :: Int
     , read :: Int
-    , last_done :: Maybe String
+    , last_done :: Maybe DateTime
     }
 
 type Slot = H.Slot Query Void String
@@ -79,8 +80,7 @@ component = H.mkComponent
       resources <- fromEither <$> note "Failed to load list resources" <$> getListResources list.id
       H.modify_ _ { resources = resources }
 
-    ToggleShowMore ->
-      H.modify_ \s -> s { showMore = not s.showMore }
+    ToggleShowMore -> H.modify_ \s -> s { showMore = not s.showMore }
 
     CompleteResource toComplete -> do
       -- TODO: uses lenses for F sake!
@@ -123,111 +123,110 @@ component = H.mkComponent
           , HH.text short
           ]
 
-    toRead =
-      case head <$> _.items <$> resources of
-        Success Nothing ->
-          HH.div
-            [ HP.classes
-                [ T.px4
-                , T.py2
-                , T.wFull
-                , T.flex
-                , T.flexCol
-                , T.itemsCenter
-                , T.justifyCenter
-                , T.textGray400
-                , T.fontSemibold
-                , T.h40
-                ]
-            ]
-            [ HH.div [] [ HH.text "This list is empty" ]
-            , HH.div [] [ HH.text "Add some resources!" ]
-            ]
+    toRead = case head <$> _.items <$> resources of
+      Success Nothing ->
+        HH.div
+          [ HP.classes
+              [ T.px4
+              , T.py2
+              , T.wFull
+              , T.flex
+              , T.flexCol
+              , T.itemsCenter
+              , T.justifyCenter
+              , T.textGray400
+              , T.fontSemibold
+              , T.h40
+              ]
+          ]
+          [ HH.div [] [ HH.text "This list is empty" ]
+          , HH.div [] [ HH.text "Add some resources!" ]
+          ]
 
-        Success (Just next) ->
-          HH.div
-            [ HP.classes [ T.px4, T.pb2, T.pt4, T.flex, T.flexCol, T.justifyBetween, T.h40 ] ]
-            [ HH.a
-                [ HP.href next.url
-                , HP.target "_blank"
-                , HP.rel "noreferrer noopener nofollow"
-                , HP.classes [ T.cursorPointer, T.flex ]
-                ]
-                [ HH.img [ HP.classes [ T.h20, T.w20, T.mr4 ], HP.src "https://via.placeholder.com/87" ]
-                , HH.div
-                    [ HP.classes [ T.overflowHidden ] ]
-                    [ HH.div [ HP.classes [ T.textBase, T.textGray400, T.leadingNone, T.truncate ] ] [ HH.text next.title ]
-                    , maybeElem next.description \des ->
-                        HH.div [ HP.classes [ T.mt1, T.textSm, T.textGray400, T.truncate3Lines ] ] [ HH.text des ]
-                    ]
-                ]
-            , HH.div
-                [ HP.classes [ T.mt4, T.flex, T.justifyBetween, T.itemsStart ] ]
-                [ HH.div
-                    [ HP.classes [ T.flex, T.flexWrap, T.itemsCenter ] ]
-                    [ shortUrl next.url
-                    -- TODO: resource tags
-                    , whenElem (not $ null list.tags) \_ ->
-                        HH.div [ HP.classes [ T.flex, T.flexWrap ] ] $ map tag list.tags
-                    ]
-                , HH.button
-                    [ HE.onClick \_ -> Just $ CompleteResource next
-                    , HP.classes
-                        [ T.flexNone
-                        , T.cursorPointer
-                        , T.leadingNormal
-                        , T.w32
-                        , T.bgKiwi
-                        , T.textWhite
-                        , T.textXs
-                        , T.roundedSm
-                        , T.bgOpacity75
-                        , T.hoverBgOpacity100
-                        , T.disabledCursorNotAllowed
-                        , T.disabledOpacity50
-                        , T.focusOutlineNone
-                        , T.focusRing2
-                        , T.focusRingOffset2
-                        , T.focusRingOffsetGray10
-                        , T.focusRingKiwi
-                        ]
-                    , HP.disabled markingAsDone
-                    ]
-                    [ HH.text "Mark as done" ]
-                ]
-            ]
+      Success (Just next) ->
+        HH.div
+          [ HP.classes [ T.px4, T.pb2, T.pt4, T.flex, T.flexCol, T.justifyBetween, T.h40 ] ]
+          [ HH.a
+              [ HP.href next.url
+              , HP.target "_blank"
+              , HP.rel "noreferrer noopener nofollow"
+              , HP.classes [ T.cursorPointer, T.flex ]
+              ]
+              [ HH.img [ HP.classes [ T.h20, T.w20, T.mr4 ], HP.src "https://via.placeholder.com/87" ]
+              , HH.div
+                  [ HP.classes [ T.overflowHidden ] ]
+                  [ HH.div [ HP.classes [ T.textBase, T.textGray400, T.leadingNone, T.truncate ] ] [ HH.text next.title ]
+                  , maybeElem next.description \des ->
+                      HH.div [ HP.classes [ T.mt1, T.textSm, T.textGray400, T.truncate3Lines ] ] [ HH.text des ]
+                  ]
+              ]
+          , HH.div
+              [ HP.classes [ T.mt4, T.flex, T.justifyBetween, T.itemsStart ] ]
+              [ HH.div
+                  [ HP.classes [ T.flex, T.flexWrap, T.itemsCenter ] ]
+                  [ shortUrl next.url
+                  -- TODO: resource tags
+                  , whenElem (not $ null list.tags) \_ ->
+                      HH.div [ HP.classes [ T.flex, T.flexWrap ] ] $ map tag list.tags
+                  ]
+              , HH.button
+                  [ HE.onClick \_ -> Just $ CompleteResource next
+                  , HP.classes
+                      [ T.flexNone
+                      , T.cursorPointer
+                      , T.leadingNormal
+                      , T.w32
+                      , T.bgKiwi
+                      , T.textWhite
+                      , T.textXs
+                      , T.roundedSm
+                      , T.bgOpacity75
+                      , T.hoverBgOpacity100
+                      , T.disabledCursorNotAllowed
+                      , T.disabledOpacity50
+                      , T.focusOutlineNone
+                      , T.focusRing2
+                      , T.focusRingOffset2
+                      , T.focusRingOffsetGray10
+                      , T.focusRingKiwi
+                      ]
+                  , HP.disabled markingAsDone
+                  ]
+                  [ HH.text "Mark as done" ]
+              ]
+          ]
 
-        Failure _ ->
-          HH.div
-            [ HP.classes
-                [ T.px4
-                , T.py2
-                , T.wFull
-                , T.flex
-                , T.flexCol
-                , T.itemsCenter
-                , T.justifyCenter
-                , T.textManzana
-                , T.h40
-                ]
-            ]
-            [ HH.text "Failed to load list resources :(" ]
+      Failure _ ->
+        HH.div
+          [ HP.classes
+              [ T.px4
+              , T.py2
+              , T.wFull
+              , T.flex
+              , T.flexCol
+              , T.itemsCenter
+              , T.justifyCenter
+              , T.textManzana
+              , T.h40
+              ]
+          ]
+          [ HH.text "Failed to load list resources :(" ]
 
-        _ ->
-          HH.div
-            [ HP.classes
-                [ T.px4
-                , T.py2
-                , T.wFull
-                , T.flex
-                , T.flexCol
-                , T.itemsCenter
-                , T.justifyCenter
-                , T.textGray400
-                , T.h40
-                ]
-            ]
-            [ HH.text "..." ]
+      _ ->
+        HH.div
+          [ HP.classes
+              [ T.px4
+              , T.py2
+              , T.wFull
+              , T.flex
+              , T.flexCol
+              , T.itemsCenter
+              , T.justifyCenter
+              , T.textGray400
+              , T.h40
+              ]
+          ]
+          [ HH.text "..." ]
 
     header =
       HH.div
@@ -237,17 +236,19 @@ component = H.mkComponent
             [ HH.div
                 [ HP.classes [ T.text2xl, T.textGray400, T.fontBold, T.truncate ] ]
                 [ HH.text list.title ]
-                , maybeElem (toMaybe resources) \{total, read} ->
-                    HH.div
-                      [ HP.classes [ T.ml6 ] ]
-                      [ HH.span [ HP.classes [ T.mr2 ] ] [ HH.text "🔗" ]
-                      , HH.span [ HP.classes [ T.textLg, T.textGray400 ] ] [ HH.text $ show read ]
-                      , HH.span [ HP.classes [ T.textLg, T.textGray400, T.mx1 ] ] [ HH.text "/" ]
-                      , HH.span [ HP.classes [ T.textLg, T.textGray300 ] ] [ HH.text $ show total ]
-                      ]
+            , maybeElem (toMaybe resources) \{ total, read } ->
+                HH.div
+                  [ HP.classes [ T.ml6 ] ]
+                  [ HH.span [ HP.classes [ T.mr2 ] ] [ HH.text "🔗" ]
+                  , HH.span [ HP.classes [ T.textLg, T.textGray400 ] ] [ HH.text $ show read ]
+                  , HH.span [ HP.classes [ T.textLg, T.textGray400, T.mx1 ] ] [ HH.text "/" ]
+                  , HH.span [ HP.classes [ T.textLg, T.textGray300 ] ] [ HH.text $ show total ]
+                  ]
             ]
         , maybeElem (_.last_done =<< toMaybe resources) \last_done ->
-            HH.div [ HP.classes [ T.textSm, T.textGray200 ] ] [ HH.text $ "Last seen " <> take 10 last_done ]
+            HH.div
+              [ HP.classes [ T.textSm, T.textGray200 ] ]
+              [ HH.text $ "Last seen " <> DateTime.toDisplayDayMonth last_done ]
         ]
 
     mbRest = filterNotEmpty $ tail =<< (filterNotEmpty $ _.items <$> toMaybe resources)

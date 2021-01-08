@@ -4,14 +4,15 @@ import Prelude
 
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
-import Data.Array (find, groupBy, mapMaybe, null, sortWith)
-import Data.Array.NonEmpty (NonEmptyArray, head, toArray)
+import Data.Array (find, groupBy, mapMaybe, null, sortBy, sortWith)
+import Data.Array.NonEmpty (NonEmptyArray)
+import Data.Array.NonEmpty as NEA
+import Data.DateTime (DateTime)
 import Data.Either (Either, note)
 import Data.Filterable (filter)
 import Data.FunctorWithIndex (mapWithIndex)
 import Data.Map (Map, fromFoldable, toUnfoldable)
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
-import Data.String (take)
 import Data.Tuple (Tuple(..), snd)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -27,8 +28,11 @@ import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Resource (ListResource)
 import Listasio.Data.Route (Route(..))
+import Listasio.Data.YearMonth (YearMonth)
+import Listasio.Data.YearMonth as YearMonth
 import Listasio.Env (UserEnv)
 import Network.RemoteData (RemoteData(..), fromEither)
+import Tailwind (bgGray100)
 import Tailwind as T
 import Util (takeDomain)
 import Web.Event.Event (Event)
@@ -76,27 +80,46 @@ toggleGroupByDate _ = GroupDate
 
 type GroupedResources
   = { byList :: Map String (NonEmptyArray ListResource)
-    , byDate :: Map String (NonEmptyArray ListResource) -- TODO: key :: { year :: Int, month :: Month }
+    , byDate :: Map YearMonth (NonEmptyArray ListResource)
     , all :: Array ListResource
     }
 
+byCompletedAt :: Maybe DateTime -> Maybe DateTime -> Ordering
+byCompletedAt Nothing (Just _) = LT
+byCompletedAt (Just _) Nothing = GT
+byCompletedAt Nothing Nothing = EQ
+byCompletedAt (Just a) (Just b) = compare a b
+
+comparingOn :: forall a b. Ord b => (a -> b) -> (b -> b -> Ordering) -> (a -> a -> Ordering)
+comparingOn aToB f x y = f (aToB x) (aToB y)
+
 groupResources :: Array ListResource -> GroupedResources
-groupResources all = { byList, byDate, all }
+groupResources items = { byList, byDate, all }
   where
+  all = sortBy (comparingOn _.completed_at byCompletedAt) items
   byList =
-    all
+    items
       # sortWith _.list
       # groupBy (\a b -> a.list == b.list)
-      # map (\is -> Tuple (_.list $ head is) is)
+      # map (Tuple <$> (_.list <<< NEA.head) <*> identity)
       # fromFoldable
+      # map (NEA.sortBy $ comparingOn _.completed_at byCompletedAt)
   byDate =
-    all
+    items
       # filter (isJust <<< _.completed_at)
       # sortWith _.completed_at
-      -- TODO take 7
-      # groupBy (\a b -> (take 10 <$> a.completed_at) == (take 10 <$> b.completed_at))
-      # mapMaybe (\is -> flip Tuple is <$> (map (take 10) $ _.completed_at $ head is))
+      # groupBy completedOnSameMonth
+      # mapMaybe monthItemsPair
       # fromFoldable
+      # map (NEA.sortWith _.completed_at)
+
+completedOnSameMonth :: ListResource -> ListResource -> Boolean
+completedOnSameMonth { completed_at: a } { completed_at: b } =
+  map YearMonth.fromDateTime a == map YearMonth.fromDateTime b
+
+monthItemsPair :: NonEmptyArray ListResource -> Maybe (Tuple YearMonth (NonEmptyArray ListResource))
+monthItemsPair is =
+  flip Tuple is <$> (map YearMonth.fromDateTime $ _.completed_at $ NEA.head is)
 
 type State
   = { currentUser :: Maybe Profile
@@ -185,11 +208,10 @@ component = Connect.component $ H.mkComponent
     where
     settings =
       HH.div
-        [ HP.classes [ T.flex, T.itemsStart, T.my6, T.spaceX4 ] ]
+        [ HP.classes [ T.flex, T.itemsStart, T.my6, T.spaceX2 ] ]
         [ filterBtnGroup
             false
-            -- TODO "By Month"
-            (filterBtn "By Day" (Just ToggleGroupByDate) $ groupBy == GroupDate)
+            (filterBtn "By Month" (Just ToggleGroupByDate) $ groupBy == GroupDate)
             (filterBtn "By List" (Just ToggleGroupByList) $ groupBy == GroupList)
         , filterBtnGroup
             (groupBy == GroupDate)
@@ -205,7 +227,6 @@ component = Connect.component $ H.mkComponent
             , T.py1
             , T.grid
             , T.gridCols2
-            , T.mr4
             , T.divideX2
             , T.divideWhite
             , T.textSm
@@ -289,18 +310,20 @@ component = Connect.component $ H.mkComponent
               [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.lgGridCols3, T.xlGridCols4, T.gap4 ] ]
               $ map item
               $ filterByDoneFn
-              $ toArray items
+              $ NEA.toArray items
           ]
 
-    dateFeed date items =
+    dateFeed yearMonth items =
       HH.div
         []
-        [ HH.div [ HP.classes [ T.textXl, T.textGray400, T.mt6, T.mb4 ] ] [ HH.text date ]
+        [ HH.div
+            [ HP.classes [ T.textXl, T.textGray400, T.mt6, T.mb4 ] ]
+            [ HH.text $ show yearMonth ]
         , HH.div
             [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.lgGridCols3, T.xlGridCols4, T.gap4 ] ]
             $ map item
             $ filterByDoneFn
-            $ toArray items
+            $ NEA.toArray items
         ]
 
     lists = fromMaybe [] mbLists
