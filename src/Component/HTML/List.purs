@@ -119,7 +119,7 @@ component = H.mkComponent
       maybeElem (takeDomain url) \short ->
         HH.div
           [ HP.classes [ T.textGray300, T.textSm, T.mb1, T.mr2, T.flex, T.itemsCenter ] ]
-          [ HH.img [ HP.classes [ T.inlineBlock, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
+          [ HH.img [ HP.classes [ T.inlineBlock, T.w4, T.h4, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
           , HH.text short
           ]
 
@@ -307,8 +307,8 @@ component = H.mkComponent
       where
       nextItem { url, title } =
         HH.div
-          [ HP.classes [ T.textGray300, T.textSm, T.mb1, T.mr2, T.flex, T.py1, T.px2, T.hoverTextWhite, T.hoverBgDurazno, T.roundedMd ] ]
-          [ HH.img [ HP.classes [ T.inlineBlock, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
+          [ HP.classes [ T.textGray300, T.textSm, T.mb1, T.mr2, T.flex, T.py1, T.px2, T.hoverTextWhite, T.hoverBgDurazno, T.roundedMd, T.flex, T.itemsCenter  ] ]
+          [ HH.img [ HP.classes [ T.inlineBlock, T.w4, T.h4, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
           , HH.text title
           ]
 
