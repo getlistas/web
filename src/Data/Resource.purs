@@ -7,11 +7,13 @@ import Data.Codec.Argonaut.Record as CAR
 import Data.DateTime (DateTime)
 import Data.Maybe (Maybe)
 import Listasio.Data.DateTime as DateTime
+import Listasio.Data.ID (ID)
+import Listasio.Data.ID as ID
 
 type ResourceRep row
   = ( url :: String
     , title :: String
-    , list :: String
+    , list :: ID
     , description :: Maybe String
     | row
     )
@@ -22,7 +24,7 @@ type Resource
 type ListResource
   = {
     | ResourceRep
-      ( id :: String
+      ( id :: ID
       , user :: String
       , created_at :: DateTime
       , updated_at :: DateTime
@@ -36,14 +38,14 @@ resourceCodec =
     { url: CA.string
     , title: CA.string
     , description: CAC.maybe CA.string
-    , list: CA.string
+    , list: ID.codec
     }
 
 listResourceCodec :: JsonCodec ListResource
 listResourceCodec =
   CAR.object "Resource"
-    { id: CA.string
-    , list: CA.string
+    { id: ID.codec
+    , list: ID.codec
     , user: CA.string
     , url: CA.string
     , title: CA.string

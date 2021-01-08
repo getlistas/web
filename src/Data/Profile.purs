@@ -1,6 +1,7 @@
 module Listasio.Data.Profile where
 
 import Prelude
+
 import Data.Codec.Argonaut (JsonCodec)
 import Data.Codec.Argonaut as CA
 import Data.Codec.Argonaut.Compat as CAC
@@ -10,6 +11,8 @@ import Listasio.Data.Email (Email)
 import Listasio.Data.Email as Email
 import Listasio.Data.Username (Username)
 import Listasio.Data.Username as Username
+import Slug (Slug)
+import Slug as Slug
 
 data Relation
   = Following
@@ -20,7 +23,7 @@ derive instance eqRelation :: Eq Relation
 
 type ProfileRep row
   = ( name :: Username
-    , slug :: Username
+    , slug :: Slug
     | row
     )
 
@@ -34,7 +37,7 @@ type ProfileWithEmailPassword
   = {
     | ProfileRep
       ( email :: Email
-      , password :: Maybe String
+      , password :: Maybe String -- TODO newtype with validation
       )
     }
 
@@ -42,7 +45,7 @@ profileCodec :: JsonCodec Profile
 profileCodec =
   CAR.object "Profile"
     { name: Username.codec
-    , slug: Username.codec
+    , slug
     }
 
 profileWithEmailCodec :: JsonCodec ProfileWithEmail
@@ -50,7 +53,7 @@ profileWithEmailCodec =
   CAR.object "Profile"
     { email: Email.codec
     , name: Username.codec
-    , slug: Username.codec
+    , slug
     }
 
 profileWithEmailPasswordCodec :: JsonCodec ProfileWithEmailPassword
@@ -59,5 +62,8 @@ profileWithEmailPasswordCodec =
     { email: Email.codec
     , password: CAC.maybe CA.string
     , name: Username.codec
-    , slug: Username.codec
+    , slug
     }
+
+slug :: JsonCodec Slug
+slug = CA.prismaticCodec Slug.parse Slug.toString CA.string

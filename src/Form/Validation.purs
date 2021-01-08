@@ -3,32 +3,40 @@ module Listasio.Form.Validation where
 
 import Prelude
 
-import Listasio.Data.Avatar (Avatar)
-import Listasio.Data.Avatar as Avatar
-import Listasio.Data.Email (Email(..))
-import Listasio.Data.Username (Username)
-import Listasio.Data.Username as Username
 import Data.Either (Either(..), note)
 import Data.Maybe (Maybe(..))
 import Data.String as String
 import Formless as F
+import Listasio.Data.Avatar (Avatar)
+import Listasio.Data.Avatar as Avatar
+import Listasio.Data.Email (Email(..))
+import Listasio.Data.ID (ID)
+import Listasio.Data.ID as ID
+import Listasio.Data.Username (Username)
+import Listasio.Data.Username as Username
+import Slug (Slug)
+import Slug as Slug
 
 data FormError
   = Required
-  | TooShort
-  | TooLong
+  | TooShort Int
+  | TooLong Int
   | InvalidEmail
   | InvalidUsername
+  | InvalidSlug
   | InvalidAvatar
+  | InvalidID
 
 errorToString :: FormError -> String
 errorToString = case _ of
   Required -> "This field is required."
-  TooShort -> "Not enough characters entered"
-  TooLong -> "Too many characters entered"
+  TooShort _ -> "Not enough characters entered"
+  TooLong _ -> "Too many characters entered"
   InvalidEmail -> "Invalid email address"
   InvalidUsername -> "Invalid username"
+  InvalidSlug -> "Invalid slug"
   InvalidAvatar -> "Invalid image URL"
+  InvalidID -> "This field is invalid"
 
 class ToText item where
   toText :: item -> String
@@ -74,10 +82,10 @@ required :: ∀ form m a. Eq a => Monoid a => Monad m => F.Validation form m For
 required = F.hoistFnE_ $ cond (_ /= mempty) Required
 
 minLength :: ∀ form m. Monad m => Int -> F.Validation form m FormError String String
-minLength n = F.hoistFnE_ $ cond (\str -> String.length str > n) TooShort
+minLength n = F.hoistFnE_ $ cond (\str -> String.length str > n) $ TooShort n
 
 maxLength :: ∀ form m. Monad m => Int -> F.Validation form m FormError String String
-maxLength n = F.hoistFnE_ $ cond (\str -> String.length str <= n) TooLong
+maxLength n = F.hoistFnE_ $ cond (\str -> String.length str <= n) $ TooLong n
 
 -- | A fairly naive requirement that it at least includes the `@` symbol.
 emailFormat :: ∀ form m. Monad m => F.Validation form m FormError String Email
@@ -85,6 +93,12 @@ emailFormat = F.hoistFnE_ $ map Email <<< cond (String.contains (String.Pattern 
 
 usernameFormat :: ∀ form m. Monad m => F.Validation form m FormError String Username
 usernameFormat = F.hoistFnE_ $ note InvalidUsername <<< Username.parse
+
+idFormat :: ∀ form m. Monad m => F.Validation form m FormError String ID
+idFormat = F.hoistFnE_ $ note InvalidUsername <<< ID.parse
+
+slugFormat :: ∀ form m. Monad m => F.Validation form m FormError String Slug
+slugFormat = F.hoistFnE_ $ note InvalidSlug <<< Slug.parse
 
 avatarFormat :: ∀ form m. Monad m => F.Validation form m FormError String Avatar
 avatarFormat = F.hoistFnE_ $ note InvalidAvatar <<< Avatar.parse
@@ -107,9 +121,8 @@ toOptional v = F.Validation \form val ->
     _ -> (map <<< map) Just (F.runValidation v form val)
 
 -- | Validate an input only if it isn't empty.
-requiredFromOptional :: forall form m a b
-   . Monoid a
-  => Eq a
+requiredFromOptional :: forall form m a b.
+     Eq a
   => Monad m
   => F.Validation form m FormError a b
   -> F.Validation form m FormError (Maybe a) b

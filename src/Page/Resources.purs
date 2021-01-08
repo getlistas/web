@@ -24,6 +24,7 @@ import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource, getResources)
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Utils (cx, maybeElem)
+import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Resource (ListResource)
@@ -32,7 +33,6 @@ import Listasio.Data.YearMonth (YearMonth)
 import Listasio.Data.YearMonth as YearMonth
 import Listasio.Env (UserEnv)
 import Network.RemoteData (RemoteData(..), fromEither)
-import Tailwind (bgGray100)
 import Tailwind as T
 import Util (takeDomain)
 import Web.Event.Event (Event)
@@ -79,7 +79,7 @@ toggleGroupByDate GroupDate = GroupNone
 toggleGroupByDate _ = GroupDate
 
 type GroupedResources
-  = { byList :: Map String (NonEmptyArray ListResource)
+  = { byList :: Map ID (NonEmptyArray ListResource)
     , byDate :: Map YearMonth (NonEmptyArray ListResource)
     , all :: Array ListResource
     }

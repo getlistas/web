@@ -14,6 +14,7 @@ import Halogen.HTML.Properties as HP
 import Listasio.Capability.Resource.Resource (class ManageResource, createResource)
 import Listasio.Component.HTML.Dropdown as DD
 import Listasio.Component.HTML.Utils (whenElem)
+import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Resource (ListResource, Resource)
 import Listasio.Form.Field as Field
@@ -74,7 +75,7 @@ component = H.mkComponent
       []
       [ HH.slot F._formless unit formComponent { lists, showCancel: true } (Just <<< HandleFormMessage) ]
 
-newtype DDItem = DDItem { label :: String, value :: String }
+newtype DDItem = DDItem { label :: String, value :: ID }
 
 derive instance eqDDItem :: Eq DDItem
 derive instance newtypeDDItem :: Newtype DDItem _
@@ -95,7 +96,7 @@ newtype CreateResourceForm r f
       ( title :: f V.FormError String String
       , url :: f V.FormError String String
       , description :: f V.FormError String (Maybe String)
-      , list :: f V.FormError (Maybe String) String
+      , list :: f V.FormError (Maybe ID) ID
       )
   )
 
@@ -144,7 +145,7 @@ formComponent =
           { title: V.required >>> V.minLength 3 >>> V.maxLength 150
           , url: V.required >>> V.minLength 5 >>> V.maxLength 500
           , description:  V.toOptional $ V.minLength 5 >>> V.maxLength 500
-          , list: V.requiredFromOptional $ F.noValidation
+          , list: V.requiredFromOptional F.noValidation
           }
     , initialInputs: Nothing
     , createError: false

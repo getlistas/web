@@ -5,6 +5,7 @@ import Prelude
 import Data.DateTime (DateTime)
 import Data.Maybe (Maybe)
 import Halogen (HalogenM, lift)
+import Listasio.Data.ID (ID)
 import Listasio.Data.Resource (ListResource, Resource)
 
 -- TODO: where should this type be defined ?
@@ -16,7 +17,7 @@ type ListResources
     }
 
 class Monad m <= ManageResource m where
-  getListResources :: String -> m (Maybe ListResources)
+  getListResources :: ID -> m (Maybe ListResources)
   getResources :: m (Maybe (Array ListResource))
   createResource :: Resource -> m (Maybe ListResource)
   completeResource :: ListResource -> m (Maybe Unit)

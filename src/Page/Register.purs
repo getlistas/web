@@ -1,26 +1,27 @@
 module Listasio.Page.Register where
 
 import Prelude
+
 import Control.Error.Util (note)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
-import Listasio.Api.Request (RegisterFields)
-import Listasio.Capability.Navigate (class Navigate, navigate_)
-import Listasio.Capability.Resource.User (class ManageUser, registerUser)
-import Listasio.Component.HTML.Layout as Layout
-import Listasio.Component.HTML.Utils (safeHref)
-import Listasio.Data.Email (Email)
-import Listasio.Data.Route (Route(..))
-import Listasio.Data.Username (Username)
-import Listasio.Form.Field as Field
-import Listasio.Form.Validation as V
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Network.RemoteData (RemoteData(..), fromEither)
+import Listasio.Api.Request (RegisterFields)
+import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Capability.Resource.User (class ManageUser, registerUser)
+import Listasio.Component.HTML.Layout as Layout
+import Listasio.Component.HTML.Utils (safeHref, whenElem)
+import Listasio.Data.Email (Email)
+import Listasio.Data.Route (Route(..))
+import Listasio.Data.Username (Username)
+import Listasio.Form.Field as Field
+import Listasio.Form.Validation as V
+import Network.RemoteData (RemoteData(..), fromEither, isSuccess)
 import Tailwind as T
 import Web.Event.Event as Event
 import Web.UIEvent.MouseEvent as Mouse
@@ -82,36 +83,39 @@ component =
                       , T.justifyCenter
                       , T.itemsCenter
                       , T.m1
-                      , T.fontMedium
-                      , T.py1
-                      , T.px2
-                      , T.bgWhite
+                      , T.py2
+                      , T.px6
                       , T.roundedMd
-                      , T.textGreen700
-                      , T.bgGreen100
-                      , T.border
-                      , T.borderGreen300
+                      , T.textWhite
+                      , T.bgKiwi
+                      , T.flex
+                      , T.itemsCenter
+                      , T.justifyBetween
                       ]
                   ]
                   [ HH.div
-                      [ HP.classes [ T.text2xl, T.fontNormal, T.maxWFull, T.flexInitial ] ]
-                      [ HH.text "Account created :)"
-                      , HH.div [ HP.classes [ T.textSm, T.textBase ] ] [ HH.text "Check your email" ]
+                      []
+                      [ HH.div [ HP.classes [ T.textXl, T.fontSemibold ] ] [ HH.text "Account created!" ]
+                      , HH.div [ HP.classes [ T.textLg, T.fontNormal ] ] [ HH.text "Check your email" ]
                       ]
+                  , HH.div
+                      [ HP.classes [ T.ml4, T.text5xl ] ]
+                      [ HH.text "🎉" ]
                   ]
 
               Failure _ -> HH.div [] [ HH.text "Failed" , form ]
 
               _ -> form
-          , HH.p
-              [ HP.classes [ T.mt4 ] ]
-              [ HH.span [ HP.classes [ T.textGray400 ] ] [HH.text "Already have an account? " ]
-              , HH.a
-                  [ HP.classes [ T.textDurazno ]
-                  , safeHref Register, HE.onClick (Just <<< Navigate Login <<< Mouse.toEvent)
-                  ]
-                  [ HH.text "Sign in" ]
-              ]
+          , whenElem (not $ isSuccess registration) \_ ->
+              HH.p
+                [ HP.classes [ T.mt4 ] ]
+                [ HH.span [ HP.classes [ T.textGray400 ] ] [HH.text "Already have an account? " ]
+                , HH.a
+                    [ HP.classes [ T.textDurazno ]
+                    , safeHref Register, HE.onClick (Just <<< Navigate Login <<< Mouse.toEvent)
+                    ]
+                    [ HH.text "Sign in" ]
+                ]
           ]
     where
     form = HH.slot F._formless unit formComponent unit (Just <<< HandleRegisterForm)
@@ -138,7 +142,7 @@ formComponent =
           { name: V.required >>> V.usernameFormat
           , slug: V.required >>> V.usernameFormat
           , email: V.required >>> V.minLength 3 >>> V.emailFormat
-          , password: V.required >>> V.minLength 8 >>> V.maxLength 20
+          , password: V.required >>> V.minLength 10 >>> V.maxLength 100
           }
     , initialInputs: Nothing
     }

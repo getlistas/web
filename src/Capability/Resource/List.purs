@@ -5,13 +5,14 @@ import Prelude
 import Data.Maybe (Maybe)
 import Halogen (HalogenM, lift)
 import Listasio.Api.Endpoint (Pagination)
+import Listasio.Data.ID (ID)
 import Listasio.Data.List (List, ListWithIdAndUser)
 
 class Monad m <= ManageList m where
   createList :: List -> m (Maybe ListWithIdAndUser)
-  getList :: String -> m (Maybe ListWithIdAndUser)
+  getList :: ID -> m (Maybe ListWithIdAndUser)
   getLists :: m (Maybe (Array ListWithIdAndUser))
-  deleteList :: String -> m Unit
+  deleteList :: ID -> m Unit
   discoverLists :: Pagination -> m (Maybe (Array ListWithIdAndUser))
 
 instance manageListHalogenM :: ManageList m => ManageList (HalogenM st act slots msg m) where
