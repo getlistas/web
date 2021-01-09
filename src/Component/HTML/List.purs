@@ -153,7 +153,7 @@ component = H.mkComponent
               , HP.rel "noreferrer noopener nofollow"
               , HP.classes [ T.cursorPointer, T.flex ]
               ]
-              [ HH.img [ HP.classes [ T.h20, T.w20, T.mr4 ], HP.src "https://via.placeholder.com/87" ]
+              [ HH.img [ HP.classes [ T.h20, T.w32, T.mr4, T.objectCover ], HP.src $ fromMaybe "https://via.placeholder.com/87" next.thumbnail ]
               , HH.div
                   [ HP.classes [ T.overflowHidden ] ]
                   [ HH.div
