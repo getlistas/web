@@ -71,9 +71,9 @@ component = H.mkComponent
 
     HandleFormMessage FormCancel -> H.raise Cancel
 
-    HandleFormMessage (FormSubmitted { description, title, url, list }) -> do
+    HandleFormMessage (FormSubmitted newResource) -> do
       { lists } <- H.get
-      mbNewResource <- createResource { description, title, url, list }
+      mbNewResource <- createResource newResource
       case mbNewResource of
         Just resource -> do
           H.raise $ Created resource
@@ -108,6 +108,7 @@ newtype CreateResourceForm r f
       ( title :: f V.FormError String String
       , url :: f V.FormError String String
       , description :: f V.FormError String (Maybe String)
+      , thumbnail :: f V.FormError (Maybe String) (Maybe String)
       , list :: f V.FormError (Maybe ID) ID
       )
   )
@@ -158,12 +159,14 @@ formComponent =
           { title: V.required >>> V.minLength 3 >>> V.maxLength 150
           , url: V.required >>> V.minLength 5 >>> V.maxLength 500
           , description:  V.toOptional $ V.minLength 5 >>> V.maxLength 500
+          , thumbnail: F.noValidation
           , list: V.requiredFromOptional F.noValidation
           }
     , initialInputs: Just $ F.wrapInputFields
         { url: fromMaybe "" url
         , title: ""
         , description: ""
+        , thumbnail: Nothing
         , list: Nothing
         }
     , createError: false

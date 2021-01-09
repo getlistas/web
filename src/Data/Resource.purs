@@ -15,6 +15,7 @@ type ResourceRep row
     , title :: String
     , list :: ID
     , description :: Maybe String
+    , thumbnail :: Maybe String
     | row
     )
 
@@ -38,6 +39,7 @@ resourceCodec =
     { url: CA.string
     , title: CA.string
     , description: CAC.maybe CA.string
+    , thumbnail: CAC.maybe CA.string
     , list: ID.codec
     }
 
@@ -50,6 +52,7 @@ listResourceCodec =
     , url: CA.string
     , title: CA.string
     , description: CAC.maybe CA.string
+    , thumbnail: CAC.maybe CA.string
     , created_at: DateTime.codec
     , updated_at: DateTime.codec
     , completed_at: CAC.maybe DateTime.codec

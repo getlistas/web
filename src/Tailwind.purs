@@ -459,6 +459,10 @@ my4 = ClassName "my-4"
 my6 :: ClassName
 my6 = ClassName "my-6"
 
+-- | objectCover
+objectCover :: ClassName
+objectCover = ClassName "object-cover"
+
 -- | overflowHidden
 overflowHidden :: ClassName
 overflowHidden = ClassName "overflow-hidden"
