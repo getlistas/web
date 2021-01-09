@@ -2,7 +2,7 @@ module Listasio.Component.HTML.CreateResource where
 
 import Prelude
 
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Newtype (class Newtype, unwrap)
 import Data.Symbol (SProxy(..))
 import Effect.Aff.Class (class MonadAff)
@@ -29,12 +29,18 @@ type Slot = forall query. H.Slot query Output Unit
 _createResource = SProxy :: SProxy "createResource"
 
 data Action
-  = HandleFormMessage FormMessage
+  = Initialize
+  | HandleFormMessage FormMessage
 
 type State
-  = { lists :: Array ListWithIdAndUser  }
+  = { lists :: Array ListWithIdAndUser
+    , url :: Maybe String
+    }
 
-type Input = { lists :: Array ListWithIdAndUser  }
+type Input
+  = { lists :: Array ListWithIdAndUser
+    , url :: Maybe String
+    }
 
 data Output
   = Created ListResource
@@ -43,20 +49,26 @@ data Output
 type ChildSlots
   = ( formless :: FormSlot )
 
-component :: forall q m.
+component :: forall query m.
      MonadAff m
   => ManageResource m
-  => H.Component HH.HTML q Input Output m
+  => H.Component HH.HTML query Input Output m
 component = H.mkComponent
   { initialState
   , render
-  , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
+  , eval: H.mkEval $ H.defaultEval
+      { handleAction = handleAction
+      , initialize = Just Initialize
+      }
   }
   where
   initialState = identity
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots Output m Unit
   handleAction = case _ of
+    Initialize ->
+      pure unit
+
     HandleFormMessage FormCancel -> H.raise Cancel
 
     HandleFormMessage (FormSubmitted { description, title, url, list }) -> do
@@ -70,10 +82,10 @@ component = H.mkComponent
         Nothing -> void $ H.query F._formless unit $ F.injQuery $ SetCreateError true unit
 
   render :: State -> HH.ComponentHTML Action ChildSlots m
-  render { lists } =
+  render { lists, url } =
     HH.div
       []
-      [ HH.slot F._formless unit formComponent { lists, showCancel: true } (Just <<< HandleFormMessage) ]
+      [ HH.slot F._formless unit formComponent { lists, showCancel: true, url } (Just <<< HandleFormMessage) ]
 
 newtype DDItem = DDItem { label :: String, value :: ID }
 
@@ -115,6 +127,7 @@ data FormAction
 type FormInput
   = { lists :: Array ListWithIdAndUser
     , showCancel :: Boolean
+    , url :: Maybe String
     }
 
 type FormChildSlots = ( dropdown :: DD.Slot DDItem Unit )
@@ -139,7 +152,7 @@ formComponent =
         }
   where
   formInput :: FormInput -> F.Input CreateResourceForm FormState m
-  formInput { lists, showCancel } =
+  formInput { lists, showCancel, url } =
     { validators:
         CreateResourceForm
           { title: V.required >>> V.minLength 3 >>> V.maxLength 150
@@ -147,7 +160,12 @@ formComponent =
           , description:  V.toOptional $ V.minLength 5 >>> V.maxLength 500
           , list: V.requiredFromOptional F.noValidation
           }
-    , initialInputs: Nothing
+    , initialInputs: Just $ F.wrapInputFields
+        { url: fromMaybe "" url
+        , title: ""
+        , description: ""
+        , list: Nothing
+        }
     , createError: false
     , showCancel
     , lists
@@ -187,7 +205,7 @@ formComponent =
       when (not createError) do
         eval F.resetAll
         void $ H.query DD._dropdown unit DD.clear
-      pure (Just a)
+      pure $ Just a
 
     where
     eval act = F.handleAction handleAction handleEvent act

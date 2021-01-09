@@ -4,10 +4,17 @@ import Prelude
 
 import Data.Array.NonEmpty as NEA
 import Data.Either (Either(..), hush)
-import Data.Maybe (Maybe)
+import Data.Maybe (Maybe, fromMaybe)
 import Data.String (Pattern(..), Replacement(..), contains, replace)
-import Data.String.Regex (regex, match) as Regex
+import Data.String.Regex (regex, match, test) as Regex
 import Data.String.Regex.Flags (noFlags) as Regex
+
+isUrl :: String -> Boolean
+isUrl str =
+  fromMaybe false
+    $ hush
+    $ (\rgx -> Regex.test <$> rgx <*> Right str)
+    $ Regex.regex "^https?://" Regex.noFlags
 
 takeDomain :: String -> Maybe String
 takeDomain url =
