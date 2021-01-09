@@ -19,13 +19,13 @@ header currentUser navigate route =
   HH.nav
     [ HP.classes [ T.py12, T.container, T.flex, T.justifyBetween, T.itemsCenter, T.flexWrap ] ]
     [ HH.a
-        [ HP.classes [ T.border2, T.py3, T.px2, T.borderGray400 ]
+        [ HP.classes [ T.border2, T.py3, T.px2, T.borderKiwi ]
         , safeHref Home
         , HE.onClick (onNavigate Home)
         ]
         [ HH.h1
             [ HP.classes [ T.text2xl, T.leadingNone, T.textGray400 ] ]
-            [ HH.text "listas.io" ]
+            [ HH.text "Listas" ]
         ]
     , HH.div
         [ HP.classes [ T.flex, T.flexWrap, T.justifyBetween, T.itemsCenter ] ]
