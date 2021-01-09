@@ -6,7 +6,10 @@ import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Array (snoc)
 import Data.Either (Either, note)
+import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), isJust)
+import Data.MediaType.Common as MediaType
+import Data.Traversable (traverse)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -26,7 +29,10 @@ import Listasio.Env (UserEnv)
 import Network.RemoteData (RemoteData(..), toMaybe)
 import Network.RemoteData as RemoteData
 import Tailwind as T
+import Util as Util
+import Web.Clipboard.ClipboardEvent as Clipboard
 import Web.Event.Event (Event)
+import Web.HTML.Event.DataTransfer as DataTransfer
 import Web.UIEvent.MouseEvent as Mouse
 
 data Action
@@ -34,6 +40,7 @@ data Action
   | Receive { currentUser :: Maybe Profile }
   | Navigate Route Event
   | LoadLists
+  | PasteUrl Clipboard.ClipboardEvent
   | ToggleCreateResource
   | HandleCreateResource CreateResource.Output
 
@@ -41,6 +48,7 @@ type State
   = { currentUser :: Maybe Profile
     , lists :: RemoteData String (Array ListWithIdAndUser)
     , showCreateResource :: Boolean
+    , pastedUrl :: Maybe String
     }
 
 type ChildSlots
@@ -73,6 +81,7 @@ component = Connect.component $ H.mkComponent
     { currentUser
     , lists: NotAsked
     , showCreateResource: false
+    , pastedUrl: Nothing
     }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
@@ -90,25 +99,36 @@ component = Connect.component $ H.mkComponent
 
     HandleCreateResource (CreateResource.Created resource) -> do
       void $ H.query List._list resource.list $ H.tell $ List.ResourceAdded resource
-      H.modify_ _ { showCreateResource = false }
+      H.modify_ _ { showCreateResource = false, pastedUrl = Nothing }
 
     HandleCreateResource (CreateResource.Cancel) ->
-      H.modify_ _ { showCreateResource = false }
+      H.modify_ _ { showCreateResource = false, pastedUrl = Nothing }
 
     ToggleCreateResource ->
       H.modify_ \s -> s { showCreateResource = not s.showCreateResource }
 
+    PasteUrl event -> do
+      { showCreateResource, lists } <- H.get
+      when (not showCreateResource && RemoteData.isSuccess lists) do
+        mbUrl <- H.liftEffect $ filter Util.isUrl <$> traverse (DataTransfer.getData MediaType.textPlain) (Clipboard.clipboardData event)
+        case mbUrl of
+          Just url -> H.modify_ _ { showCreateResource = true, pastedUrl = Just url }
+          Nothing -> pure unit
+
   render :: State -> H.ComponentHTML Action ChildSlots m
   render st =
-    Layout.dashboard
-      st.currentUser
-      Navigate
-      (Just Dashboard)
-      $ HH.div
-          []
-          [ header
-          , HH.div [ HP.classes [ T.container ] ] [ feed ]
-          ]
+    HH.div
+      [ HE.onPaste $ Just <<< PasteUrl ]
+      [ Layout.dashboard
+          st.currentUser
+          Navigate
+          (Just Dashboard)
+          $ HH.div
+              []
+              [ header
+              , HH.div [ HP.classes [ T.container ] ] [ feed ]
+              ]
+      ]
     where
     header =
       HH.div
@@ -152,7 +172,7 @@ component = Connect.component $ H.mkComponent
           , whenElem st.showCreateResource \_ ->
               HH.div
                 [ HP.classes [ T.fixed, T.top4, T.right4, T.bgWhite ] ]
-                [ HH.slot CreateResource._createResource unit CreateResource.component { lists } (Just <<< HandleCreateResource) ]
+                [ HH.slot CreateResource._createResource unit CreateResource.component { lists, url: st.pastedUrl } (Just <<< HandleCreateResource) ]
           ]
 
       Failure msg ->
