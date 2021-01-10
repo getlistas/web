@@ -31,6 +31,7 @@ import Listasio.Data.List as List
 import Listasio.Data.Log as Log
 import Listasio.Data.Profile as Profile
 import Listasio.Data.Resource as Resource
+import Listasio.Data.ResourceMetadata as ResourceMeta
 import Listasio.Data.Route as Route
 import Listasio.Env (Env, LogLevel(..))
 import Routing.Duplex (print)
@@ -131,6 +132,11 @@ instance manageListAppM :: ManageList AppM where
     where conf = { endpoint: Discover pagination, method: Get }
 
 instance manageResourceAppM :: ManageResource AppM where
+  getMeta url = do
+    decode ResourceMeta.metaCodec =<< mkRequest conf
+    where method = Post $ Just $ Codec.encode (CAR.object "Url" { url: Codec.string }) { url }
+          conf = { endpoint: ResourceMeta, method }
+
   getListResources list = do
     mbResources <- decode (CAC.array Resource.listResourceCodec) =<< mkAuthRequest conf
     let total = fromMaybe 0 $ length <$> mbResources
