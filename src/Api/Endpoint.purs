@@ -32,6 +32,7 @@ data Endpoint
   | Resources
   | ResourcesByList { list :: ID }
   | CompleteResource ID
+  | ResourceMeta
 
 derive instance genericEndpoint :: Generic Endpoint _
 
@@ -51,6 +52,7 @@ endpointCodec =
         , "Resources": "resources" / noArgs
         , "ResourcesByList": "resources" ? { list: id }
         , "CompleteResource": "resources" / id segment / "complete"
+        , "ResourceMeta": "resource-metadata" / noArgs
         }
 
 id :: RouteDuplex' String -> RouteDuplex' ID

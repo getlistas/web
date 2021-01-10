@@ -2,27 +2,35 @@ module Listasio.Component.HTML.CreateResource where
 
 import Prelude
 
+import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), fromMaybe)
+import Data.MediaType.Common as MediaType
 import Data.Newtype (class Newtype, unwrap)
 import Data.Symbol (SProxy(..))
+import Data.Traversable (traverse)
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Listasio.Capability.Resource.Resource (class ManageResource, createResource)
+import Listasio.Capability.Resource.Resource (class ManageResource, createResource, getMeta)
 import Listasio.Component.HTML.Dropdown as DD
 import Listasio.Component.HTML.Utils (whenElem)
 import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Resource (ListResource, Resource)
+import Listasio.Data.ResourceMetadata (ResourceMeta)
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation (class ToText)
 import Listasio.Form.Validation as V
+import Network.RemoteData (RemoteData(..))
 import Select as Select
 import Tailwind as T
+import Util as Util
+import Web.Clipboard.ClipboardEvent as Clipboard
 import Web.Event.Event as Event
+import Web.HTML.Event.DataTransfer as DataTransfer
 
 type Slot = forall query. H.Slot query Output Unit
 
@@ -121,9 +129,12 @@ data FormQuery a
 derive instance functorFormQuery :: Functor FormQuery
 
 data FormAction
-  = Submit Event.Event
+  = FormInitialize
+  | Submit Event.Event
   | HandleDropdown (DD.Message DDItem)
   | Reset
+  | FetchMeta String
+  | PasteUrl Clipboard.ClipboardEvent
 
 type FormInput
   = { lists :: Array ListWithIdAndUser
@@ -137,41 +148,47 @@ type FormState =
   ( createError :: Boolean
   , showCancel :: Boolean
   , lists :: Array ListWithIdAndUser
+  , meta :: RemoteData String ResourceMeta
+  , pastedUrl :: Maybe String
   )
 
 formComponent ::
   forall m.
   MonadAff m =>
+  ManageResource m =>
   F.Component CreateResourceForm FormQuery FormChildSlots FormInput FormMessage m
-formComponent =
-  F.component formInput
-    $ F.defaultSpec
-        { render = renderCreateResource
-        , handleEvent = handleEvent
-        , handleQuery = handleQuery
-        , handleAction = handleAction
-        }
+formComponent = F.component formInput $ F.defaultSpec
+  { render = renderCreateResource
+  , handleEvent = handleEvent
+  , handleQuery = handleQuery
+  , handleAction = handleAction
+  , initialize = Just FormInitialize
+  }
   where
   formInput :: FormInput -> F.Input CreateResourceForm FormState m
   formInput { lists, showCancel, url } =
     { validators:
         CreateResourceForm
-          { title: V.required >>> V.minLength 3 >>> V.maxLength 150
-          , url: V.required >>> V.minLength 5 >>> V.maxLength 500
-          , description:  V.toOptional $ V.minLength 5 >>> V.maxLength 500
+          { title: V.required >>> V.minLength 1 >>> V.maxLength 150
+          , url: V.required >>> V.minLength 1 >>> V.maxLength 500 -- TODO URL validation ???
+          , description:  V.toOptional $ V.minLength 1 >>> V.maxLength 500
           , thumbnail: F.noValidation
           , list: V.requiredFromOptional F.noValidation
           }
-    , initialInputs: Just $ F.wrapInputFields
-        { url: fromMaybe "" url
-        , title: ""
-        , description: ""
-        , thumbnail: Nothing
-        , list: Nothing
-        }
+    , initialInputs: Just $ initialInputs url
     , createError: false
     , showCancel
     , lists
+    , meta: NotAsked
+    , pastedUrl: url
+    }
+
+  initialInputs url = F.wrapInputFields
+    { url: fromMaybe "" url
+    , title: ""
+    , description: ""
+    , thumbnail: Nothing
+    , list: Nothing
     }
 
   handleEvent = case _ of
@@ -180,6 +197,34 @@ formComponent =
     _ -> pure unit
 
   handleAction = case _ of
+    FormInitialize -> do
+      { pastedUrl } <- H.get
+      case pastedUrl of
+        Just url -> handleAction $ FetchMeta url
+        Nothing -> pure unit
+
+    PasteUrl event -> do
+      mbUrl <- H.liftEffect $ filter Util.isUrl <$> traverse (DataTransfer.getData MediaType.textPlain) (Clipboard.clipboardData event)
+      case mbUrl of
+        Just url -> handleAction $ FetchMeta url
+        Nothing -> pure unit
+
+    FetchMeta url -> do
+      H.modify_ _ { meta = Loading }
+      mbMeta <- getMeta url
+      case mbMeta of
+        Just meta -> do
+          H.modify_ _ { meta = Success meta }
+          eval $ F.setValidate proxies.thumbnail meta.thumbnail
+          case meta.title of
+            Just title -> eval $ F.setValidate proxies.title title
+            Nothing -> pure unit
+          case meta.description of
+            Just description -> eval $ F.setValidate proxies.description description
+            Nothing -> pure unit
+        Nothing ->
+          H.modify_ _ { meta = Failure "Couldn't gett suggestions" }
+
     Submit event -> do
       H.liftEffect $ Event.preventDefault event
       eval F.submit
@@ -220,7 +265,7 @@ formComponent =
   renderCreateResource { form, createError, lists, submitting, dirty, showCancel } =
     HH.form
       [ HP.classes [ T.relative, T.p6, T.border4, T.borderKiwi, T.roundedMd ]
-      , HE.onSubmit \ev -> Just $ F.injAction $ Submit ev
+      , HE.onSubmit $ Just <<< F.injAction <<< Submit
       ]
       [ whenElem createError \_ ->
           HH.div
@@ -231,6 +276,7 @@ formComponent =
           [ Field.input Nothing proxies.url form
               [ HP.placeholder "https://blog.com/some-article"
               , HP.type_ HP.InputText
+              , HE.onPaste $ Just <<< F.injAction <<< PasteUrl
               ]
           , HH.div
               [ HP.classes [ T.mt4 ] ]
