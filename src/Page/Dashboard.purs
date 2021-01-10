@@ -172,7 +172,10 @@ component = Connect.component $ H.mkComponent
           , whenElem st.showCreateResource \_ ->
               HH.div
                 [ HP.classes [ T.fixed, T.top4, T.right4, T.bgWhite ] ]
-                [ HH.slot CreateResource._createResource unit CreateResource.component { lists, url: st.pastedUrl } (Just <<< HandleCreateResource) ]
+                [ let input = { lists, url: st.pastedUrl, showCancel: true }
+                      queryHandler = Just <<< HandleCreateResource
+                   in HH.slot CreateResource._createResource unit CreateResource.component input queryHandler
+                ]
           ]
 
       Failure msg ->

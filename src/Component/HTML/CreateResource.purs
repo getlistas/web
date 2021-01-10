@@ -43,11 +43,13 @@ data Action
 type State
   = { lists :: Array ListWithIdAndUser
     , url :: Maybe String
+    , showCancel :: Boolean
     }
 
 type Input
   = { lists :: Array ListWithIdAndUser
     , url :: Maybe String
+    , showCancel :: Boolean
     }
 
 data Output
@@ -90,10 +92,10 @@ component = H.mkComponent
         Nothing -> void $ H.query F._formless unit $ F.injQuery $ SetCreateError true unit
 
   render :: State -> HH.ComponentHTML Action ChildSlots m
-  render { lists, url } =
+  render { lists, url, showCancel } =
     HH.div
       []
-      [ HH.slot F._formless unit formComponent { lists, showCancel: true, url } (Just <<< HandleFormMessage) ]
+      [ HH.slot F._formless unit formComponent { lists, showCancel, url } (Just <<< HandleFormMessage) ]
 
 newtype DDItem = DDItem { label :: String, value :: ID }
 

@@ -9,12 +9,14 @@ import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Component.HTML.CreateResource as CreateResource
 import Listasio.Component.HTML.Layout as Layout
+import Listasio.Component.HTML.Utils (safeHref)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Route (Route(..))
@@ -23,6 +25,7 @@ import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
 import Tailwind as T
 import Web.Event.Event (Event)
+import Web.UIEvent.MouseEvent (toEvent)
 
 data Action
   = Initialize
@@ -99,22 +102,29 @@ component = Connect.component $ H.mkComponent
       $ HH.div
           []
           [ header
-          , HH.div [ HP.classes [ T.container, T.flex, T.justifyCenter ] ] [ form ]
+          , HH.div [ HP.classes [ T.container ] ] [ form ]
           ]
     where
     header =
       HH.div
-        [ HP.classes [ T.flex, T.justifyBetween, T.wFull ] ]
-        [ HH.h1
-            [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-            [ HH.text "CreateResource" ]
+        [ HP.classes [ T.flex, T.itemsCenter, T.textGray400, T.mb6, T.text4xl, T.fontBold  ] ]
+        [ HH.a
+            [ safeHref Dashboard
+            , HE.onClick \e -> Just $ Navigate Dashboard $ toEvent e
+            , HP.classes [ T.textGray200, T.mr8 ]
+            ]
+            [ HH.text "ᐸ" ]
+        , HH.text "Create Resource"
         ]
 
     form = case st.lists of
       Success lists ->
         HH.div
           [ HP.classes [ T.bgWhite, T.wFull, T.maxWLg ] ]
-          [ HH.slot CreateResource._createResource unit CreateResource.component { lists, url: st.url } (Just <<< HandleCreateResource) ]
+          [ let input = { lists, url: st.url, showCancel: false }
+                queryHandler = Just <<< HandleCreateResource
+             in HH.slot CreateResource._createResource unit CreateResource.component input queryHandler
+          ]
 
       Failure msg ->
         HH.div
