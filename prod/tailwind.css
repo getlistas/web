@@ -670,11 +670,6 @@ select {
   border-color: rgba(123, 130, 154, var(--tw-border-opacity));
 }
 
-.border-gray-400 {
-  --tw-border-opacity: 1;
-  border-color: rgba(86, 91, 108, var(--tw-border-opacity));
-}
-
 .border-red-600 {
   --tw-border-opacity: 1;
   border-color: rgba(220, 38, 38, var(--tw-border-opacity));
@@ -1023,6 +1018,11 @@ select {
   min-height: 100vh;
 }
 
+.object-cover {
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
 .disabled\:opacity-50:disabled {
   opacity: 0.5;
 }
@@ -1306,10 +1306,6 @@ select {
 
 .w-8 {
   width: 2rem;
-}
-
-.w-20 {
-  width: 5rem;
 }
 
 .w-32 {
