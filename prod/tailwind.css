@@ -1010,6 +1010,10 @@ select {
   margin-top: 3rem;
 }
 
+.max-w-lg {
+  max-width: 32rem;
+}
+
 .max-w-full {
   max-width: 100%;
 }
