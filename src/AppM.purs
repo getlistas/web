@@ -3,7 +3,7 @@ module Listasio.AppM where
 import Prelude
 
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, ask, asks, runReaderT)
-import Data.Array (filter, head, length, sortWith)
+import Data.Array (filter, last, length, sortWith)
 import Data.Codec.Argonaut as Codec
 import Data.Codec.Argonaut.Compat as CAC
 import Data.Codec.Argonaut.Record as CAR
@@ -140,10 +140,10 @@ instance manageResourceAppM :: ManageResource AppM where
   getListResources list = do
     mbResources <- decode (CAC.array Resource.listResourceCodec) =<< mkAuthRequest conf
     let total = fromMaybe 0 $ length <$> mbResources
-        items = filter (isNothing <<< _.completed_at) <$> mbResources
+        items = sortWith _.position <$> filter (isNothing <<< _.completed_at) <$> mbResources
 
         last_done :: Maybe DateTime
-        last_done = _.completed_at =<< head =<< sortWith _.completed_at <$> filter (isJust <<< _.completed_at) <$> mbResources
+        last_done = _.completed_at =<< last =<< sortWith _.completed_at <$> filter (isJust <<< _.completed_at) <$> mbResources
 
         notRead = fromMaybe 0 $ length <$> items
         read = total - notRead
