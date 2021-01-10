@@ -4,11 +4,12 @@ import Prelude hiding ((/))
 
 import Data.Either (note)
 import Data.Generic.Rep (class Generic)
+import Data.Maybe (Maybe)
 import Listasio.Data.Username (Username)
 import Listasio.Data.Username as Username
-import Routing.Duplex (RouteDuplex', as, root, segment)
+import Routing.Duplex (RouteDuplex', as, optional, root, segment, string)
 import Routing.Duplex.Generic (noArgs, sum)
-import Routing.Duplex.Generic.Syntax ((/))
+import Routing.Duplex.Generic.Syntax ((/), (?))
 import Slug (Slug)
 import Slug as Slug
 
@@ -20,6 +21,7 @@ data Route
   | Settings
   | Profile Username
   | CreateList
+  | CreateResource { url :: Maybe String }
   | ViewList Slug
   | EditList Slug
   | Dashboard
@@ -44,6 +46,7 @@ routeCodec =
         , "Settings": "settings" / noArgs
         , "Profile": "profile" / uname segment
         , "CreateList": "list" / "create" / noArgs
+        , "CreateResource": "resources" / "create" ? { url: optional <<< string }
         , "ViewList": "list" / slug segment
         , "EditList": "list" / slug segment / "edit"
         , "Dashboard": "dashboard" / noArgs

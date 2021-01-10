@@ -363,6 +363,10 @@ m4 = ClassName "m-4"
 maxWFull :: ClassName
 maxWFull = ClassName "max-w-full"
 
+-- | maxWLg
+maxWLg :: ClassName
+maxWLg = ClassName "max-w-lg"
+
 -- | mb1
 mb1 :: ClassName
 mb1 = ClassName "mb-1"
