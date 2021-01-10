@@ -30,12 +30,12 @@ import Listasio.Page.CreateList as CreateList
 import Listasio.Page.CreateResource as CreateResource
 import Listasio.Page.Dashboard as Dashboard
 import Listasio.Page.Discover as Discover
-import Listasio.Page.Resources as Resources
 import Listasio.Page.EditList as EditList
 import Listasio.Page.Home as Home
 import Listasio.Page.Login as Login
 import Listasio.Page.Profile as Profile
 import Listasio.Page.Register as Register
+import Listasio.Page.Resources as Resources
 import Listasio.Page.Settings as Settings
 import Listasio.Page.VerifyFailure as VerifyFailure
 import Listasio.Page.ViewList as ViewList
@@ -97,7 +97,7 @@ component = Connect.component $ H.mkComponent
   handleAction = case _ of
     Initialize -> do
       -- first we'll get the route the user landed on
-      initialRoute <- hush <<< (RD.parse routeCodec) <$> _.pathname <$> locationState
+      initialRoute <- hush <<< (RD.parse routeCodec) <$> _.path <$> locationState
       -- then we'll navigate to the new route (also setting the hash)
       navigate $ fromMaybe Home initialRoute
 
