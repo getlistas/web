@@ -83,10 +83,6 @@ borderGray200 = ClassName "border-gray-200"
 borderGray300 :: ClassName
 borderGray300 = ClassName "border-gray-300"
 
--- | borderGray400
-borderGray400 :: ClassName
-borderGray400 = ClassName "border-gray-400"
-
 -- | borderGreen300
 borderGreen300 :: ClassName
 borderGreen300 = ClassName "border-green-300"
@@ -686,10 +682,6 @@ truncate3Lines = ClassName "truncate-3-lines"
 -- | truncate
 truncate :: ClassName
 truncate = ClassName "truncate"
-
--- | w20
-w20 :: ClassName
-w20 = ClassName "w-20"
 
 -- | w32
 w32 :: ClassName

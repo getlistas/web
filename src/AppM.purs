@@ -133,7 +133,7 @@ instance manageListAppM :: ManageList AppM where
 
 instance manageResourceAppM :: ManageResource AppM where
   getMeta url = do
-    decode ResourceMeta.metaCodec =<< mkRequest conf
+    decode ResourceMeta.metaCodec =<< mkAuthRequest conf
     where method = Post $ Just $ Codec.encode (CAR.object "Url" { url: Codec.string }) { url }
           conf = { endpoint: ResourceMeta, method }
 
