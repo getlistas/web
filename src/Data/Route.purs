@@ -46,7 +46,7 @@ routeCodec =
         , "Settings": "settings" / noArgs
         , "Profile": "profile" / uname segment
         , "CreateList": "list" / "create" / noArgs
-        , "CreateResource": "resources-create" ? { url: optional <<< string }
+        , "CreateResource": "resources" / "create" ? { url: optional <<< string }
         , "ViewList": "list" / slug segment
         , "EditList": "list" / slug segment / "edit"
         , "Dashboard": "dashboard" / noArgs
