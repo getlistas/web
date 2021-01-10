@@ -26,6 +26,7 @@ import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Utils (cx, maybeElem)
 import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdAndUser)
+import Listasio.Data.Ordering (comparingOn)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Resource (ListResource)
 import Listasio.Data.Route (Route(..))
@@ -84,14 +85,12 @@ type GroupedResources
     , all :: Array ListResource
     }
 
+-- TODO: on both Nothing default to _.created_at
 byCompletedAt :: Maybe DateTime -> Maybe DateTime -> Ordering
 byCompletedAt Nothing (Just _) = LT
 byCompletedAt (Just _) Nothing = GT
 byCompletedAt Nothing Nothing = EQ
 byCompletedAt (Just a) (Just b) = compare a b
-
-comparingOn :: forall a b. Ord b => (a -> b) -> (b -> b -> Ordering) -> (a -> a -> Ordering)
-comparingOn aToB f x y = f (aToB x) (aToB y)
 
 groupResources :: Array ListResource -> GroupedResources
 groupResources items = { byList, byDate, all }

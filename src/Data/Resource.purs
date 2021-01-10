@@ -30,6 +30,7 @@ type ListResource
       , created_at :: DateTime
       , updated_at :: DateTime
       , completed_at :: Maybe DateTime
+      , position :: Int
       )
     }
 
@@ -53,6 +54,7 @@ listResourceCodec =
     , title: CA.string
     , description: CAC.maybe CA.string
     , thumbnail: CAC.maybe CA.string
+    , position: CA.int
     , created_at: DateTime.codec
     , updated_at: DateTime.codec
     , completed_at: CAC.maybe DateTime.codec
