@@ -2,6 +2,7 @@ module Listasio.Component.HTML.CreateResource where
 
 import Prelude
 
+import Data.Array (find)
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.MediaType.Common as MediaType
@@ -16,7 +17,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Resource.Resource (class ManageResource, createResource, getMeta)
 import Listasio.Component.HTML.Dropdown as DD
-import Listasio.Component.HTML.Utils (whenElem)
+import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Resource (ListResource, Resource)
@@ -264,42 +265,100 @@ formComponent = F.component formInput $ F.defaultSpec
 
   -- TODO: submitting is only true while the form component is submitting
   --       but the async action actually happens in the parent component
-  renderCreateResource { form, createError, lists, submitting, dirty, showCancel } =
+  renderCreateResource { form, createError, lists, submitting, dirty, showCancel, meta } =
     HH.form
-      [ HP.classes [ T.relative, T.p6, T.border4, T.borderKiwi, T.roundedMd ]
-      , HE.onSubmit $ Just <<< F.injAction <<< Submit
-      ]
+      [ HE.onSubmit $ Just <<< F.injAction <<< Submit ]
       [ whenElem createError \_ ->
           HH.div
             []
             [ HH.text "Failed to add resource" ]
       , HH.fieldset
           []
-          [ Field.input Nothing proxies.url form
-              [ HP.placeholder "https://blog.com/some-article"
+          [ Field.input (Just "Link") proxies.url form
+              [ HP.placeholder "https://blog.com/some-blogpost"
               , HP.type_ HP.InputText
               , HE.onPaste $ Just <<< F.injAction <<< PasteUrl
               ]
           , HH.div
               [ HP.classes [ T.mt4 ] ]
-              [ HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput handler ]
+              [ HH.div
+                  [ HP.classes [ T.mb2 ] ]
+                  [ HH.label
+                    [ HP.classes [ T.textGray400, T.textLg ] ]
+                    [ HH.text "List" ]
+                  ]
+              , HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput handler
+              ]
+
+          , case meta of
+              Loading ->
+                HH.div
+                  [ HP.classes [ T.textSm, T.pt2, T.textGray300 ] ]
+                  [ HH.text "Fetching title and description ..." ]
+
+              Success {can_resolve} | not can_resolve ->
+                HH.div
+                  [ HP.classes [ T.textSm, T.pt2, T.textManzana ] ]
+                  [ HH.p [] [ HH.text "Looks like the link does not exist." ]
+                  , HH.p [] [ HH.text "Are you sure is the right one?" ]
+                  ]
+
+              Success {resource: Just resource} ->
+                let mbList = find ((resource.list == _) <<< _.id) lists
+                 in HH.div
+                      [ HP.classes [ T.textSm, T.pt2, T.textGray300 ] ]
+                      [ HH.p [ HP.classes [ T.textManzana ] ] [ HH.text "This resource already exists." ]
+                      , maybeElem mbList \list ->
+                          HH.p
+                            []
+                            [ HH.text "List: "
+                            , HH.span [ HP.classes [ T.textDurazno ] ] [ HH.text list.title ]
+                            ]
+                      , HH.p [] [ HH.text resource.title ]
+                      ]
+              _ ->
+                HH.text ""
+
           , HH.div
-              [ HP.classes [ T.mt4 ] ]
-              [ Field.input Nothing proxies.title form
-                  [ HP.placeholder "Title"
-                  , HP.type_ HP.InputText
+              [ HP.classes [ T.flex, T.spaceX4 ] ]
+              [ HH.div
+                  [ HP.classes [ T.w40, T.h40, T.mt14 ] ]
+                  [ case meta of
+                      Success {thumbnail: Just thumbnail} ->
+                        HH.img
+                          [ HP.src thumbnail
+                          , HP.classes [ T.w40, T.h40, T.objectCover, T.roundedLg ]
+                          ]
+                      Loading ->
+                        HH.div
+                          [ HP.classes [ T.textCenter, T.textGray400 ] ]
+                          [ HH.text "..." ]
+                      _ ->
+                        HH.div
+                          [ HP.classes [ T.textCenter, T.textGray400 ] ]
+                          [ HH.text "TODO: placeholder image" ]
+                  ]
+              , HH.div
+                  []
+                  [ HH.div
+                      [ HP.classes [ T.mt4 ] ]
+                      [ Field.input (Just "Title") proxies.title form
+                          [ HP.placeholder "Some blogpost"
+                          , HP.type_ HP.InputText
+                          ]
+                      ]
+                  , HH.div
+                      [ HP.classes [ T.mt4 ] ]
+                      [ Field.textarea (Just "Description") proxies.description form
+                          [ HP.placeholder "Such description. Much wow."
+                          , HP.rows 2
+                          ]
+                      ]
                   ]
               ]
           , HH.div
               [ HP.classes [ T.mt4 ] ]
-              [ Field.textarea Nothing proxies.description form
-                  [ HP.placeholder "Description"
-                  , HP.rows 2
-                  ]
-              ]
-          , HH.div
-              [ HP.classes [ T.mt4 ] ]
-              [ Field.submit "Add" submitting ]
+              [ Field.submit "Add resource" submitting ]
           , whenElem showCancel \_ ->
               HH.button
                 [ HP.classes

@@ -7,6 +7,10 @@ import Halogen.HTML.Core (ClassName(..))
 absolute :: ClassName
 absolute = ClassName "absolute"
 
+-- | alignBottom
+alignBottom :: ClassName
+alignBottom = ClassName "align-bottom"
+
 -- | appearanceNone
 appearanceNone :: ClassName
 appearanceNone = ClassName "appearance-none"
@@ -27,9 +31,17 @@ bgGray100 = ClassName "bg-gray-100"
 bgGray10 :: ClassName
 bgGray10 = ClassName "bg-gray-10"
 
+-- | bgGray200
+bgGray200 :: ClassName
+bgGray200 = ClassName "bg-gray-200"
+
 -- | bgGray300
 bgGray300 :: ClassName
 bgGray300 = ClassName "bg-gray-300"
+
+-- | bgGray50
+bgGray50 :: ClassName
+bgGray50 = ClassName "bg-gray-50"
 
 -- | bgGreen100
 bgGreen100 :: ClassName
@@ -283,6 +295,10 @@ h72 = ClassName "h-72"
 h8 :: ClassName
 h8 = ClassName "h-8"
 
+-- | hidden
+hidden :: ClassName
+hidden = ClassName "hidden"
+
 -- | hoverBgDurazno
 hoverBgDurazno :: ClassName
 hoverBgDurazno = ClassName "hover:bg-durazno"
@@ -319,9 +335,17 @@ hoverTextWhite = ClassName "hover:text-white"
 inlineBlock :: ClassName
 inlineBlock = ClassName "inline-block"
 
+-- | inset0
+inset0 :: ClassName
+inset0 = ClassName "inset-0"
+
 -- | itemsCenter
 itemsCenter :: ClassName
 itemsCenter = ClassName "items-center"
+
+-- | itemsEnd
+itemsEnd :: ClassName
+itemsEnd = ClassName "items-end"
 
 -- | itemsStart
 itemsStart :: ClassName
@@ -370,6 +394,10 @@ maxWLg = ClassName "max-w-lg"
 -- | mb1
 mb1 :: ClassName
 mb1 = ClassName "mb-1"
+
+-- | mb2
+mb2 :: ClassName
+mb2 = ClassName "mb-2"
 
 -- | mb4
 mb4 :: ClassName
@@ -423,6 +451,10 @@ mt10 = ClassName "mt-10"
 mt12 :: ClassName
 mt12 = ClassName "mt-12"
 
+-- | mt14
+mt14 :: ClassName
+mt14 = ClassName "mt-14"
+
 -- | mt1
 mt1 :: ClassName
 mt1 = ClassName "mt-1"
@@ -463,9 +495,21 @@ my6 = ClassName "my-6"
 objectCover :: ClassName
 objectCover = ClassName "object-cover"
 
+-- | opacity50
+opacity50 :: ClassName
+opacity50 = ClassName "opacity-50"
+
+-- | opacity75
+opacity75 :: ClassName
+opacity75 = ClassName "opacity-75"
+
 -- | overflowHidden
 overflowHidden :: ClassName
 overflowHidden = ClassName "overflow-hidden"
+
+-- | overflowYAuto
+overflowYAuto :: ClassName
+overflowYAuto = ClassName "overflow-y-auto"
 
 -- | p2
 p2 :: ClassName
@@ -491,6 +535,10 @@ pb20 = ClassName "pb-20"
 pb2 :: ClassName
 pb2 = ClassName "pb-2"
 
+-- | pb4
+pb4 :: ClassName
+pb4 = ClassName "pb-4"
+
 -- | placeholderGray300
 placeholderGray300 :: ClassName
 placeholderGray300 = ClassName "placeholder-gray-300"
@@ -510,6 +558,10 @@ pt2 = ClassName "pt-2"
 -- | pt4
 pt4 :: ClassName
 pt4 = ClassName "pt-4"
+
+-- | pt5
+pt5 :: ClassName
+pt5 = ClassName "pt-5"
 
 -- | px1
 px1 :: ClassName
@@ -583,13 +635,57 @@ roundedTMd = ClassName "rounded-t-md"
 shadowMd :: ClassName
 shadowMd = ClassName "shadow-md"
 
+-- | shadowXl
+shadowXl :: ClassName
+shadowXl = ClassName "shadow-xl"
+
+-- | smAlignMiddle
+smAlignMiddle :: ClassName
+smAlignMiddle = ClassName "sm:align-middle"
+
+-- | smBlock
+smBlock :: ClassName
+smBlock = ClassName "sm:block"
+
 -- | smGridCols2
 smGridCols2 :: ClassName
 smGridCols2 = ClassName "sm:grid-cols-2"
 
+-- | smHScreen
+smHScreen :: ClassName
+smHScreen = ClassName "sm:h-screen"
+
+-- | smInlineBlock
+smInlineBlock :: ClassName
+smInlineBlock = ClassName "sm:inline-block"
+
+-- | smMaxWLg
+smMaxWLg :: ClassName
+smMaxWLg = ClassName "sm:max-w-lg"
+
+-- | smMy8
+smMy8 :: ClassName
+smMy8 = ClassName "sm:my-8"
+
+-- | smP0
+smP0 :: ClassName
+smP0 = ClassName "sm:p-0"
+
+-- | smP6
+smP6 :: ClassName
+smP6 = ClassName "sm:p-6"
+
+-- | smWFull
+smWFull :: ClassName
+smWFull = ClassName "sm:w-full"
+
 -- | spaceX2
 spaceX2 :: ClassName
 spaceX2 = ClassName "space-x-2"
+
+-- | spaceX4
+spaceX4 :: ClassName
+spaceX4 = ClassName "space-x-4"
 
 -- | text2xl
 text2xl :: ClassName
@@ -639,6 +735,10 @@ textGreen700 = ClassName "text-green-700"
 textKiwi :: ClassName
 textKiwi = ClassName "text-kiwi"
 
+-- | textLeft
+textLeft :: ClassName
+textLeft = ClassName "text-left"
+
 -- | textLg
 textLg :: ClassName
 textLg = ClassName "text-lg"
@@ -679,6 +779,18 @@ top1 = ClassName "top-1"
 top4 :: ClassName
 top4 = ClassName "top-4"
 
+-- | transform
+transform :: ClassName
+transform = ClassName "transform"
+
+-- | transitionAll
+transitionAll :: ClassName
+transitionAll = ClassName "transition-all"
+
+-- | transitionOpacity
+transitionOpacity :: ClassName
+transitionOpacity = ClassName "transition-opacity"
+
 -- | truncate3Lines
 truncate3Lines :: ClassName
 truncate3Lines = ClassName "truncate-3-lines"
@@ -690,6 +802,10 @@ truncate = ClassName "truncate"
 -- | w32
 w32 :: ClassName
 w32 = ClassName "w-32"
+
+-- | w40
+w40 :: ClassName
+w40 = ClassName "w-40"
 
 -- | w4
 w4 :: ClassName
@@ -718,4 +834,8 @@ wScreen = ClassName "w-screen"
 -- | xlGridCols4
 xlGridCols4 :: ClassName
 xlGridCols4 = ClassName "xl:grid-cols-4"
+
+-- | z10
+z10 :: ClassName
+z10 = ClassName "z-10"
 
