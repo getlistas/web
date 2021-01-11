@@ -29,7 +29,6 @@ import Listasio.Data.Route (Route(..))
 import Listasio.Env (UserEnv)
 import Network.RemoteData (RemoteData(..), isSuccess)
 import Network.RemoteData as RemoteData
-import Tailwind (text2xl)
 import Tailwind as T
 import Util as Util
 import Web.Clipboard.ClipboardEvent as Clipboard
