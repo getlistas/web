@@ -7,7 +7,7 @@ import Control.Monad.Reader (class MonadAsk)
 import Data.Array (snoc)
 import Data.Either (Either, note)
 import Data.Filterable (filter)
-import Data.Maybe (Maybe(..), isJust)
+import Data.Maybe (Maybe(..))
 import Data.MediaType.Common as MediaType
 import Data.Traversable (traverse)
 import Effect.Aff.Class (class MonadAff)
@@ -21,13 +21,15 @@ import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Component.HTML.CreateResource as CreateResource
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.List as List
+import Listasio.Component.HTML.Modal as Modal
 import Listasio.Component.HTML.Utils (safeHref, whenElem)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Route (Route(..))
 import Listasio.Env (UserEnv)
-import Network.RemoteData (RemoteData(..), toMaybe)
+import Network.RemoteData (RemoteData(..), isSuccess)
 import Network.RemoteData as RemoteData
+import Tailwind (text2xl)
 import Tailwind as T
 import Util as Util
 import Web.Clipboard.ClipboardEvent as Clipboard
@@ -101,11 +103,14 @@ component = Connect.component $ H.mkComponent
       void $ H.query List._list resource.list $ H.tell $ List.ResourceAdded resource
       H.modify_ _ { showCreateResource = false, pastedUrl = Nothing }
 
-    HandleCreateResource (CreateResource.Cancel) ->
+    HandleCreateResource CreateResource.Cancel ->
       H.modify_ _ { showCreateResource = false, pastedUrl = Nothing }
 
     ToggleCreateResource ->
-      H.modify_ \s -> s { showCreateResource = not s.showCreateResource }
+      H.modify_ \s -> s
+        { showCreateResource = not s.showCreateResource
+        , pastedUrl = filter (const s.showCreateResource) s.pastedUrl
+        }
 
     PasteUrl event -> do
       { showCreateResource, lists } <- H.get
@@ -136,28 +141,31 @@ component = Connect.component $ H.mkComponent
         [ HH.h1
             [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
             [ HH.text "Read Next" ]
-        , whenElem (not st.showCreateResource && isJust (toMaybe st.lists)) \_ ->
+        , whenElem (isSuccess st.lists) \_ ->
             HH.div
               []
-              [  HH.button
-                [ HE.onClick \_ -> Just $ ToggleCreateResource
-                , HP.classes
-                    [ T.flexNone
-                    , T.cursorPointer
-                    , T.leadingNormal
-                    , T.py2
-                    , T.px4
-                    , T.textWhite
-                    , T.roundedMd
-                    , T.shadowMd
-                    , T.bgDurazno
-                    , T.hoverBgDuraznoLight
-                    , T.focusOutlineNone
-                    , T.focusRing2
-                    , T.focusRingDurazno
-                    ]
-                ]
-                [ HH.text "Create Resource" ]
+              [ HH.button
+                  [ HE.onClick \_ ->
+                      if st.showCreateResource
+                        then Nothing
+                        else Just ToggleCreateResource
+                  , HP.classes
+                      [ T.flexNone
+                      , T.cursorPointer
+                      , T.leadingNormal
+                      , T.py2
+                      , T.px4
+                      , T.textWhite
+                      , T.roundedMd
+                      , T.shadowMd
+                      , T.bgDurazno
+                      , T.hoverBgDuraznoLight
+                      , T.focusOutlineNone
+                      , T.focusRing2
+                      , T.focusRingDurazno
+                      ]
+                  ]
+                  [ HH.text "Create Resource" ]
               ]
         ]
     feed = case st.lists of
@@ -169,12 +177,16 @@ component = Connect.component $ H.mkComponent
               $ snoc
                 (map (\list -> HH.slot List._list list.id List.component { list } absurd) lists)
                 listCreate
-          , whenElem st.showCreateResource \_ ->
+          , Modal.modal st.showCreateResource (Just ToggleCreateResource) $
               HH.div
-                [ HP.classes [ T.fixed, T.top4, T.right4, T.bgWhite ] ]
-                [ let input = { lists, url: st.pastedUrl, showCancel: true }
-                      queryHandler = Just <<< HandleCreateResource
-                   in HH.slot CreateResource._createResource unit CreateResource.component input queryHandler
+                []
+                [ HH.div
+                    [ HP.classes [ T.textCenter, T.textGray400, T.text2xl, T.fontBold, T.mb4 ] ]
+                    [ HH.text "Add new resource" ]
+                , whenElem st.showCreateResource \_ ->
+                    let input = { lists, url: st.pastedUrl, showCancel: true }
+                        queryHandler = Just <<< HandleCreateResource
+                      in HH.slot CreateResource._createResource unit CreateResource.component input queryHandler
                 ]
           ]
 

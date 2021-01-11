@@ -114,13 +114,13 @@ component = Connect.component $ H.mkComponent
             , HP.classes [ T.textGray200, T.mr8 ]
             ]
             [ HH.text "ᐸ" ]
-        , HH.text "Create Resource"
+        , HH.text "Add new resource"
         ]
 
     form = case st.lists of
       Success lists ->
         HH.div
-          [ HP.classes [ T.bgWhite, T.wFull, T.maxWLg ] ]
+          [ HP.classes [ T.wFull, T.maxWLg ] ]
           [ let input = { lists, url: st.url, showCancel: false }
                 queryHandler = Just <<< HandleCreateResource
              in HH.slot CreateResource._createResource unit CreateResource.component input queryHandler
