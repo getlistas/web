@@ -1490,6 +1490,14 @@ select {
   -webkit-box-orient: vertical;
 }
 
+.list-resource-settings {
+  display: none;
+}
+
+.list-resource:hover .list-resource-settings {
+  display: block;
+}
+
 @media (min-width: 640px) {
   .sm\:block {
     display: block;
