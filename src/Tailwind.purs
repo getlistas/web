@@ -47,10 +47,6 @@ bgGreen100 = ClassName "bg-green-100"
 bgKiwi :: ClassName
 bgKiwi = ClassName "bg-kiwi"
 
--- | bgOpacity75
-bgOpacity75 :: ClassName
-bgOpacity75 = ClassName "bg-opacity-75"
-
 -- | bgPink300
 bgPink300 :: ClassName
 bgPink300 = ClassName "bg-pink-300"
@@ -318,10 +314,6 @@ hoverBgDuraznoLight = ClassName "hover:bg-durazno-light"
 -- | hoverBgGray100
 hoverBgGray100 :: ClassName
 hoverBgGray100 = ClassName "hover:bg-gray-100"
-
--- | hoverBgOpacity100
-hoverBgOpacity100 :: ClassName
-hoverBgOpacity100 = ClassName "hover:bg-opacity-100"
 
 -- | hoverBgOpacity75
 hoverBgOpacity75 :: ClassName
@@ -815,9 +807,9 @@ truncate3Lines = ClassName "truncate-3-lines"
 truncate :: ClassName
 truncate = ClassName "truncate"
 
--- | w28
-w28 :: ClassName
-w28 = ClassName "w-28"
+-- | w16
+w16 :: ClassName
+w16 = ClassName "w-16"
 
 -- | w32
 w32 :: ClassName
