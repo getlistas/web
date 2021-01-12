@@ -630,6 +630,11 @@ select {
   background-color: rgba(137, 176, 174, var(--tw-bg-opacity));
 }
 
+.hover\:bg-gray-100:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgba(236, 237, 241, var(--tw-bg-opacity));
+}
+
 .hover\:bg-pink-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgba(190, 24, 93, var(--tw-bg-opacity));
@@ -650,16 +655,8 @@ select {
   background-color: rgba(255, 255, 255, var(--tw-bg-opacity));
 }
 
-.bg-opacity-75 {
-  --tw-bg-opacity: 0.75;
-}
-
 .hover\:bg-opacity-75:hover {
   --tw-bg-opacity: 0.75;
-}
-
-.hover\:bg-opacity-100:hover {
-  --tw-bg-opacity: 1;
 }
 
 .border-transparent {
@@ -706,6 +703,11 @@ select {
   border-color: rgba(137, 176, 174, var(--tw-border-opacity));
 }
 
+.focus\:border-kiwi:focus {
+  --tw-border-opacity: 1;
+  border-color: rgba(137, 176, 174, var(--tw-border-opacity));
+}
+
 .rounded-sm {
   border-radius: 0.125rem;
 }
@@ -727,8 +729,18 @@ select {
   border-top-right-radius: 0.375rem;
 }
 
+.rounded-r-md {
+  border-top-right-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
 .rounded-b-md {
   border-bottom-right-radius: 0.375rem;
+  border-bottom-left-radius: 0.375rem;
+}
+
+.rounded-l-md {
+  border-top-left-radius: 0.375rem;
   border-bottom-left-radius: 0.375rem;
 }
 
@@ -778,6 +790,10 @@ select {
 
 .flex {
   display: flex;
+}
+
+.inline-flex {
+  display: inline-flex;
 }
 
 .grid {
@@ -1037,6 +1053,10 @@ select {
   margin-top: 3.5rem;
 }
 
+.-ml-px {
+  margin-left: -1px;
+}
+
 .max-w-lg {
   max-width: 32rem;
 }
@@ -1193,6 +1213,10 @@ select {
   position: absolute;
 }
 
+.relative {
+  position: relative;
+}
+
 .inset-0 {
   top: 0px;
   right: 0px;
@@ -1224,6 +1248,12 @@ select {
   --tw-ring-color: rgba(59, 130, 246, 0.5);
   --tw-ring-offset-shadow: 0 0 #0000;
   --tw-ring-shadow: 0 0 #0000;
+}
+
+.focus\:ring-1:focus {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
 .focus\:ring-2:focus {
@@ -1354,6 +1384,10 @@ select {
   width: 2rem;
 }
 
+.w-16 {
+  width: 4rem;
+}
+
 .w-32 {
   width: 8rem;
 }
@@ -1374,7 +1408,15 @@ select {
   width: 100vw;
 }
 
+.z-0 {
+  z-index: 0;
+}
+
 .z-10 {
+  z-index: 10;
+}
+
+.focus\:z-10:focus {
   z-index: 10;
 }
 
