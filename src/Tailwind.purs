@@ -187,9 +187,17 @@ flexWrap = ClassName "flex-wrap"
 focusBgWhite :: ClassName
 focusBgWhite = ClassName "focus:bg-white"
 
+-- | focusBorderKiwi
+focusBorderKiwi :: ClassName
+focusBorderKiwi = ClassName "focus:border-kiwi"
+
 -- | focusOutlineNone
 focusOutlineNone :: ClassName
 focusOutlineNone = ClassName "focus:outline-none"
+
+-- | focusRing1
+focusRing1 :: ClassName
+focusRing1 = ClassName "focus:ring-1"
 
 -- | focusRing2
 focusRing2 :: ClassName
@@ -226,6 +234,10 @@ focusRingOffsetGray10 = ClassName "focus:ring-offset-gray-10"
 -- | focusRingPurple600
 focusRingPurple600 :: ClassName
 focusRingPurple600 = ClassName "focus:ring-purple-600"
+
+-- | focusZ10
+focusZ10 :: ClassName
+focusZ10 = ClassName "focus:z-10"
 
 -- | fontBold
 fontBold :: ClassName
@@ -303,6 +315,10 @@ hoverBgDurazno = ClassName "hover:bg-durazno"
 hoverBgDuraznoLight :: ClassName
 hoverBgDuraznoLight = ClassName "hover:bg-durazno-light"
 
+-- | hoverBgGray100
+hoverBgGray100 :: ClassName
+hoverBgGray100 = ClassName "hover:bg-gray-100"
+
 -- | hoverBgOpacity100
 hoverBgOpacity100 :: ClassName
 hoverBgOpacity100 = ClassName "hover:bg-opacity-100"
@@ -330,6 +346,10 @@ hoverTextWhite = ClassName "hover:text-white"
 -- | inlineBlock
 inlineBlock :: ClassName
 inlineBlock = ClassName "inline-block"
+
+-- | inlineFlex
+inlineFlex :: ClassName
+inlineFlex = ClassName "inline-flex"
 
 -- | inset0
 inset0 :: ClassName
@@ -495,6 +515,10 @@ my4 = ClassName "my-4"
 my6 :: ClassName
 my6 = ClassName "my-6"
 
+-- | negMlPx
+negMlPx :: ClassName
+negMlPx = ClassName "-ml-px"
+
 -- | objectCover
 objectCover :: ClassName
 objectCover = ClassName "object-cover"
@@ -591,6 +615,10 @@ py2 = ClassName "py-2"
 py3 :: ClassName
 py3 = ClassName "py-3"
 
+-- | relative
+relative :: ClassName
+relative = ClassName "relative"
+
 -- | right0
 right0 :: ClassName
 right0 = ClassName "right-0"
@@ -603,6 +631,10 @@ roundedBMd = ClassName "rounded-b-md"
 roundedFull :: ClassName
 roundedFull = ClassName "rounded-full"
 
+-- | roundedLMd
+roundedLMd :: ClassName
+roundedLMd = ClassName "rounded-l-md"
+
 -- | roundedLg
 roundedLg :: ClassName
 roundedLg = ClassName "rounded-lg"
@@ -610,6 +642,10 @@ roundedLg = ClassName "rounded-lg"
 -- | roundedMd
 roundedMd :: ClassName
 roundedMd = ClassName "rounded-md"
+
+-- | roundedRMd
+roundedRMd :: ClassName
+roundedRMd = ClassName "rounded-r-md"
 
 -- | roundedSm
 roundedSm :: ClassName
@@ -818,6 +854,10 @@ wScreen = ClassName "w-screen"
 -- | xlGridCols4
 xlGridCols4 :: ClassName
 xlGridCols4 = ClassName "xl:grid-cols-4"
+
+-- | z0
+z0 :: ClassName
+z0 = ClassName "z-0"
 
 -- | z10
 z10 :: ClassName
