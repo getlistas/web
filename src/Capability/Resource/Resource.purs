@@ -23,6 +23,7 @@ class Monad m <= ManageResource m where
   getResources :: m (Maybe (Array ListResource))
   createResource :: Resource -> m (Maybe ListResource)
   completeResource :: ListResource -> m (Maybe Unit)
+  deleteResource :: ListResource -> m (Maybe Unit)
 
 instance manageResourceHalogenM :: ManageResource m => ManageResource (HalogenM st act slots msg m) where
   getMeta = lift <<< getMeta
@@ -30,3 +31,4 @@ instance manageResourceHalogenM :: ManageResource m => ManageResource (HalogenM 
   getResources = lift getResources
   createResource = lift <<< createResource
   completeResource = lift <<< completeResource
+  deleteResource = lift <<< deleteResource

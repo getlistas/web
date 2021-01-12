@@ -31,6 +31,7 @@ data Endpoint
   | Discover Pagination
   | Resources
   | ResourcesByList { list :: ID }
+  | Resource ID
   | CompleteResource ID
   | ResourceMeta
 
@@ -51,6 +52,7 @@ endpointCodec =
             }
         , "Resources": "resources" / noArgs
         , "ResourcesByList": "resources" ? { list: id }
+        , "Resource": "resources" / id segment
         , "CompleteResource": "resources" / id segment / "complete"
         , "ResourceMeta": "resource-metadata" / noArgs
         }

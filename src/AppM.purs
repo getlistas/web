@@ -163,3 +163,6 @@ instance manageResourceAppM :: ManageResource AppM where
     map (const unit) <$> mkAuthRequest conf
     where conf = { endpoint: CompleteResource id, method: Post Nothing }
 
+  deleteResource { id } =
+    map (const unit) <$> mkAuthRequest conf
+    where conf = { endpoint: Resource id, method: Delete }
