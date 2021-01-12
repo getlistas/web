@@ -779,6 +779,10 @@ truncate3Lines = ClassName "truncate-3-lines"
 truncate :: ClassName
 truncate = ClassName "truncate"
 
+-- | w28
+w28 :: ClassName
+w28 = ClassName "w-28"
+
 -- | w32
 w32 :: ClassName
 w32 = ClassName "w-32"
