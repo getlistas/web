@@ -14,7 +14,7 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Listasio.Capability.Resource.Resource (class ManageResource, completeResource, getListResources)
+import Listasio.Capability.Resource.Resource (class ManageResource, completeResource, deleteResource, getListResources)
 import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
@@ -39,6 +39,7 @@ data Action
   = Initialize
   | ToggleShowMore
   | CompleteResource ListResource
+  | DeleteResource ListResource
 
 type Input
   = { list :: ListWithIdAndUser }
@@ -98,6 +99,22 @@ component = H.mkComponent
           when (isNothing result)
             $ H.modify_ \s ->
               s { resources = (\r -> r { items = fromMaybe r.items $ insertAt i toComplete r.items, read = r.read - 1 }) <$> s.resources }
+          H.modify_ _ { markingAsDone = false }
+        _ -> pure unit
+
+    DeleteResource toDelete@{ id } -> do
+      -- TODO: uses lenses for F sake!
+      mbItems <- map _.items <$> toMaybe <$>_.resources <$> H.get
+      case findIndex ((id == _) <<< _.id) =<< mbItems of
+        Just i -> do
+          H.modify_ \s ->
+            s { resources = (\r -> r { items = fromMaybe r.items $ deleteAt i r.items, total = r.total - 1 }) <$> s.resources
+              , markingAsDone = true
+              }
+          result <- deleteResource toDelete
+          when (isNothing result)
+            $ H.modify_ \s ->
+              s { resources = (\r -> r { items = fromMaybe r.items $ insertAt i toDelete r.items, total = r.total + 1 }) <$> s.resources }
           H.modify_ _ { markingAsDone = false }
         _ -> pure unit
 
@@ -339,15 +356,19 @@ component = H.mkComponent
               [ HH.img [ HP.classes [ T.inlineBlock, T.w4, T.h4, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
               , HH.div [ HP.classes [ T.truncate ] ] [ HH.text title ]
               ]
-          , HH.button
-              [ HE.onClick \_ -> Just $ CompleteResource resource
-              , HP.classes
-                  [ T.cursorPointer
-                  , T.hidden
-                  , T.listResourceSettings
+          , HH.div
+              [ HP.classes [ T.flex, T.listResourceSettings ] ]
+              [ HH.button
+                  [ HE.onClick \_ -> Just $ CompleteResource resource
+                  , HP.classes [ T.cursorPointer, T.mr4 ]
                   ]
+                  [ HH.text "✔️" ]
+              , HH.button
+                  [ HE.onClick \_ -> Just $ DeleteResource resource
+                  , HP.classes [ T.cursorPointer ]
+                  ]
+                  [ HH.text "❌" ]
               ]
-              [ HH.text "✔️" ]
           ]
 
 filterNotEmpty :: forall t a. Filterable t => t (Array a) -> t (Array a)
