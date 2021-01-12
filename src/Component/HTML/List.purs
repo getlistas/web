@@ -351,13 +351,16 @@ component = H.mkComponent
               , T.listResource
               ]
           ]
-          [ HH.div
-              [ HP.classes [ T.flex, T.itemsCenter ] ]
+          [ HH.a
+              [ HP.classes [ T.flex, T.itemsCenter, T.truncate, T.mr4 ]
+              , HP.target "_blank"
+              , HP.href url
+              ]
               [ HH.img [ HP.classes [ T.inlineBlock, T.w4, T.h4, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
               , HH.div [ HP.classes [ T.truncate ] ] [ HH.text title ]
               ]
           , HH.div
-              [ HP.classes [ T.flex, T.listResourceSettings ] ]
+              [ HP.classes [ T.flex, T.listResourceSettings, T.w28 ] ]
               [ HH.button
                   [ HE.onClick \_ -> Just $ CompleteResource resource
                   , HP.classes [ T.cursorPointer, T.mr4 ]
