@@ -5,8 +5,7 @@
   "scripts": {
     "assets:dev": "cp -R dev/assets public/",
     "assets:prod": "cp -R prod/assets dist/",
-    "pscid:build": "spago build",
-    "build": "npm run prep-prod && npm run bundle && npm run assets:prod",
+    "build": "npm run prep-prod && npm run bundle && npm run assets:prod && npm run fixdist",
     "build:dev": "spago build",
     "bundle": "npm run bundle:build && npm run bundle:dce && npm run css:purge && npm run bundle:parcel",
     "bundle:build": "PRODUCTION=True spago build --purs-args '--codegen corefn'",
@@ -19,7 +18,9 @@
     "css:lock": "twpurs gen-purs --classes css/tailwind-classes.txt",
     "css:lock:watch": "twpurs gen-purs --classes css/tailwind-classes.txt --watch",
     "css:purge": "twpurs gen-css --classes css/tailwind-classes.txt --css dev/tailwind.css -o prod/tailwind.css",
+    "fixdist": "scripts/fix-dist.sh",
     "prep-prod": "rm -rf dist && git checkout dist/vercel.json",
+    "pscid:build": "spago build",
     "serve-dev": "parcel dev/index.html --open",
     "test": "spago test",
     "watch": "spago build --watch"
