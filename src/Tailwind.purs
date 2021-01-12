@@ -39,10 +39,6 @@ bgGray200 = ClassName "bg-gray-200"
 bgGray300 :: ClassName
 bgGray300 = ClassName "bg-gray-300"
 
--- | bgGray50
-bgGray50 :: ClassName
-bgGray50 = ClassName "bg-gray-50"
-
 -- | bgGreen100
 bgGreen100 :: ClassName
 bgGreen100 = ClassName "bg-green-100"
@@ -375,6 +371,14 @@ leadingRelaxed = ClassName "leading-relaxed"
 lgGridCols3 :: ClassName
 lgGridCols3 = ClassName "lg:grid-cols-3"
 
+-- | listResource
+listResource :: ClassName
+listResource = ClassName "list-resource"
+
+-- | listResourceSettings
+listResourceSettings :: ClassName
+listResourceSettings = ClassName "list-resource-settings"
+
 -- | m1
 m1 :: ClassName
 m1 = ClassName "m-1"
@@ -499,10 +503,6 @@ objectCover = ClassName "object-cover"
 opacity50 :: ClassName
 opacity50 = ClassName "opacity-50"
 
--- | opacity75
-opacity75 :: ClassName
-opacity75 = ClassName "opacity-75"
-
 -- | overflowHidden
 overflowHidden :: ClassName
 overflowHidden = ClassName "overflow-hidden"
@@ -518,10 +518,6 @@ p2 = ClassName "p-2"
 -- | p4
 p4 :: ClassName
 p4 = ClassName "p-4"
-
--- | p6
-p6 :: ClassName
-p6 = ClassName "p-6"
 
 -- | p8
 p8 :: ClassName
@@ -595,17 +591,9 @@ py2 = ClassName "py-2"
 py3 :: ClassName
 py3 = ClassName "py-3"
 
--- | relative
-relative :: ClassName
-relative = ClassName "relative"
-
 -- | right0
 right0 :: ClassName
 right0 = ClassName "right-0"
-
--- | right4
-right4 :: ClassName
-right4 = ClassName "right-4"
 
 -- | roundedBMd
 roundedBMd :: ClassName
@@ -634,10 +622,6 @@ roundedTMd = ClassName "rounded-t-md"
 -- | shadowMd
 shadowMd :: ClassName
 shadowMd = ClassName "shadow-md"
-
--- | shadowXl
-shadowXl :: ClassName
-shadowXl = ClassName "shadow-xl"
 
 -- | smAlignMiddle
 smAlignMiddle :: ClassName
@@ -774,10 +758,6 @@ textXs = ClassName "text-xs"
 -- | top1
 top1 :: ClassName
 top1 = ClassName "top-1"
-
--- | top4
-top4 :: ClassName
-top4 = ClassName "top-4"
 
 -- | transform
 transform :: ClassName

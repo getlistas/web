@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.list-resource-settings {
+  display: none;
+}
+
+.list-resource:hover .list-resource-settings {
+  display: block;
+}

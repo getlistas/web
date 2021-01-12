@@ -2,10 +2,11 @@ module Listasio.Component.HTML.List where
 
 import Prelude
 
-import Data.Array (cons, drop, head, null, snoc, tail)
+import Data.Array (deleteAt, findIndex, head, insertAt, null, snoc, tail)
 import Data.DateTime (DateTime)
 import Data.Either (note)
 import Data.Filterable (class Filterable, filter)
+import Data.Foldable (length)
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
 import Data.Symbol (SProxy(..))
 import Effect.Aff.Class (class MonadAff)
@@ -83,13 +84,22 @@ component = H.mkComponent
 
     ToggleShowMore -> H.modify_ \s -> s { showMore = not s.showMore }
 
-    CompleteResource toComplete -> do
+    CompleteResource toComplete@{ id } -> do
       -- TODO: uses lenses for F sake!
       -- TODO: update last_done
-      H.modify_ \s -> s { resources = (\r -> r { items = drop 1 r.items, read = r.read + 1 }) <$> s.resources, markingAsDone = true }
-      result <- completeResource toComplete
-      when (isNothing result) $ H.modify_ \s -> s { resources = (\r -> r { items = cons toComplete r.items, read = r.read - 1 }) <$> s.resources }
-      H.modify_ _ { markingAsDone = false }
+      mbItems <- map _.items <$> toMaybe <$>_.resources <$> H.get
+      case findIndex ((id == _) <<< _.id) =<< mbItems of
+        Just i -> do
+          H.modify_ \s ->
+            s { resources = (\r -> r { items = fromMaybe r.items $ deleteAt i r.items, read = r.read + 1 }) <$> s.resources
+              , markingAsDone = true
+              }
+          result <- completeResource toComplete
+          when (isNothing result)
+            $ H.modify_ \s ->
+              s { resources = (\r -> r { items = fromMaybe r.items $ insertAt i toComplete r.items, read = r.read - 1 }) <$> s.resources }
+          H.modify_ _ { markingAsDone = false }
+        _ -> pure unit
 
   handleQuery :: forall slots a. Query a -> H.HalogenM State Action slots o m (Maybe a)
   handleQuery = case _ of
@@ -254,10 +264,6 @@ component = H.mkComponent
               [ HH.text $ "Last seen " <> DateTime.toDisplayDayMonth last_done ]
         ]
 
-    mbRest = filterNotEmpty $ tail =<< (filterNotEmpty $ _.items <$> toMaybe resources)
-    hasMore = isJust mbRest
-    rest = fromMaybe [] mbRest
-
     footer =
       HH.div
         [ HP.classes
@@ -286,13 +292,13 @@ component = H.mkComponent
                 ]
                 [ HH.span
                     [ HP.classes [ T.textSm, T.textGray200 ] ]
-                    [ HH.text $ if showMore then "Show less" else "Show more" ]
+                    [ HH.text $ if showMore && hasMore then "Show less" else "Show more" ]
                 , HH.span
                     [ HP.classes [ T.textGray400 ] ]
-                    [ HH.text $ if showMore then "▲" else "▼" ]
+                    [ HH.text $ if showMore && hasMore then "▲" else "▼" ]
                 ]
             ]
-        , whenElem showMore \_ ->
+        , whenElem (showMore && hasMore) \_ ->
             HH.div
               [ HP.classes
                   [ T.wFull
@@ -306,11 +312,42 @@ component = H.mkComponent
               $ map nextItem rest
         ]
       where
-      nextItem { url, title } =
+
+      mbRest = filterNotEmpty $ tail =<< (filterNotEmpty $ _.items <$> toMaybe resources)
+      hasMore = isJust $ (_ > 1) <$> length <$> mbRest
+      rest = fromMaybe [] mbRest
+
+      nextItem resource@{ url, title } =
         HH.div
-          [ HP.classes [ T.textGray300, T.textSm, T.mb1, T.mr2, T.flex, T.py1, T.px2, T.hoverTextWhite, T.hoverBgDurazno, T.roundedMd, T.flex, T.itemsCenter  ] ]
-          [ HH.img [ HP.classes [ T.inlineBlock, T.w4, T.h4, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
-          , HH.text title
+          [ HP.classes
+              [ T.mb1
+              , T.mr2
+              , T.py1
+              , T.px2
+              , T.hoverTextWhite
+              , T.textGray300
+              , T.hoverBgDurazno
+              , T.roundedMd
+              , T.flex
+              , T.itemsCenter
+              , T.justifyBetween
+              , T.listResource
+              ]
+          ]
+          [ HH.div
+              [ HP.classes [ T.flex, T.itemsCenter ] ]
+              [ HH.img [ HP.classes [ T.inlineBlock, T.w4, T.h4, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
+              , HH.div [ HP.classes [ T.truncate ] ] [ HH.text title ]
+              ]
+          , HH.button
+              [ HE.onClick \_ -> Just $ CompleteResource resource
+              , HP.classes
+                  [ T.cursorPointer
+                  , T.hidden
+                  , T.listResourceSettings
+                  ]
+              ]
+              [ HH.text "✔️" ]
           ]
 
 filterNotEmpty :: forall t a. Filterable t => t (Array a) -> t (Array a)

@@ -16729,6 +16729,8 @@ listDisc;list-disc
 listInside;list-inside
 listNone;list-none
 listOutside;list-outside
+listResource;list-resource
+listResourceSettings;list-resource-settings
 lowercase;lowercase
 m0;m-0
 m0p5;m-0.5
