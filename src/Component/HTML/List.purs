@@ -199,30 +199,61 @@ component = H.mkComponent
                   , whenElem (not $ null list.tags) \_ ->
                       HH.div [ HP.classes [ T.flex, T.flexWrap ] ] $ map tag list.tags
                   ]
-              , HH.button
-                  [ HE.onClick \_ -> Just $ CompleteResource next
-                  , HP.classes
-                      [ T.flexNone
-                      , T.cursorPointer
-                      , T.leadingNormal
-                      , T.w32
-                      , T.bgKiwi
-                      , T.textWhite
-                      , T.textXs
-                      , T.roundedSm
-                      , T.bgOpacity75
-                      , T.hoverBgOpacity100
-                      , T.disabledCursorNotAllowed
-                      , T.disabledOpacity50
-                      , T.focusOutlineNone
-                      , T.focusRing2
-                      , T.focusRingOffset2
-                      , T.focusRingOffsetGray10
-                      , T.focusRingKiwi
+              , HH.span
+                  [ HP.classes [ T.relative, T.z0, T.inlineFlex, T.roundedMd ] ]
+                  [ HH.button
+                      [ HE.onClick \_ -> Just $ CompleteResource next
+                      , HP.type_ HP.ButtonButton
+                      , HP.classes
+                          [ T.relative
+                          , T.inlineFlex
+                          , T.itemsCenter
+                          , T.px4
+                          , T.py1
+                          , T.roundedLMd
+                          , T.border
+                          , T.borderGray300
+                          , T.bgWhite
+                          , T.textGray400
+                          , T.textXs
+                          , T.fontMedium
+                          , T.textWhite
+                          , T.hoverBgGray100
+                          , T.focusZ10
+                          , T.focusOutlineNone
+                          , T.focusRing1
+                          , T.focusRingKiwi
+                          , T.focusBorderKiwi
+                          ]
                       ]
-                  , HP.disabled markingAsDone
+                      [ HH.text "✔️" ]
+                  , HH.button
+                      [ HE.onClick \_ -> Just $ DeleteResource next
+                      , HP.type_ HP.ButtonButton
+                      , HP.classes
+                          [ T.negMlPx
+                          , T.inlineFlex
+                          , T.itemsCenter
+                          , T.px4
+                          , T.py1
+                          , T.roundedRMd
+                          , T.border
+                          , T.borderGray300
+                          , T.bgWhite
+                          , T.textGray400
+                          , T.textXs
+                          , T.fontMedium
+                          , T.textWhite
+                          , T.hoverBgGray100
+                          , T.focusZ10
+                          , T.focusOutlineNone
+                          , T.focusRing1
+                          , T.focusRingKiwi
+                          , T.focusBorderKiwi
+                          ]
+                      ]
+                      [ HH.text "❌" ]
                   ]
-                  [ HH.text "Mark as done" ]
               ]
           ]
 
