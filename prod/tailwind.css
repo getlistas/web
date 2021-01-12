@@ -1533,7 +1533,7 @@ select {
 }
 
 .list-resource:hover .list-resource-settings {
-  display: block;
+  display: flex;
 }
 
 @media (min-width: 640px) {
