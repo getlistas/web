@@ -391,7 +391,7 @@ component = H.mkComponent
               , HH.div [ HP.classes [ T.truncate ] ] [ HH.text title ]
               ]
           , HH.div
-              [ HP.classes [ T.flex, T.listResourceSettings, T.w16 ] ]
+              [ HP.classes [ T.listResourceSettings ] ]
               [ HH.button
                   [ HE.onClick \_ -> Just $ CompleteResource resource
                   , HP.classes [ T.cursorPointer, T.mr4 ]

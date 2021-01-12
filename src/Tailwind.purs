@@ -807,10 +807,6 @@ truncate3Lines = ClassName "truncate-3-lines"
 truncate :: ClassName
 truncate = ClassName "truncate"
 
--- | w16
-w16 :: ClassName
-w16 = ClassName "w-16"
-
 -- | w32
 w32 :: ClassName
 w32 = ClassName "w-32"

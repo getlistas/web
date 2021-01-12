@@ -7,5 +7,5 @@
 }
 
 .list-resource:hover .list-resource-settings {
-  display: block;
+  display: flex;
 }
