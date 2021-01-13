@@ -560,6 +560,18 @@ select {
   border-color: rgba(255, 255, 255, var(--tw-divide-opacity));
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 .appearance-none {
   -webkit-appearance: none;
      -moz-appearance: none;
@@ -842,10 +854,6 @@ select {
 
 .flex-none {
   flex: none;
-}
-
-.font-mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .font-normal {
@@ -1163,6 +1171,10 @@ select {
   padding-top: 1rem;
 }
 
+.pr-4 {
+  padding-right: 1rem;
+}
+
 .pb-4 {
   padding-bottom: 1rem;
 }
@@ -1224,12 +1236,12 @@ select {
   left: 0px;
 }
 
-.right-0 {
-  right: 0px;
+.top-0 {
+  top: 0px;
 }
 
-.top-1 {
-  top: 0.25rem;
+.right-0 {
+  right: 0px;
 }
 
 * {
@@ -1360,6 +1372,11 @@ select {
 .hover\:text-white:hover {
   --tw-text-opacity: 1;
   color: rgba(255, 255, 255, var(--tw-text-opacity));
+}
+
+.hover\:text-gray-300:hover {
+  --tw-text-opacity: 1;
+  color: rgba(123, 130, 154, var(--tw-text-opacity));
 }
 
 .truncate {
