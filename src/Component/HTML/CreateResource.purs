@@ -44,18 +44,15 @@ data Action
 type State
   = { lists :: Array ListWithIdAndUser
     , url :: Maybe String
-    , showCancel :: Boolean
     }
 
 type Input
   = { lists :: Array ListWithIdAndUser
     , url :: Maybe String
-    , showCancel :: Boolean
     }
 
 data Output
   = Created ListResource
-  | Cancel
 
 type ChildSlots
   = ( formless :: FormSlot )
@@ -80,8 +77,6 @@ component = H.mkComponent
     Initialize ->
       pure unit
 
-    HandleFormMessage FormCancel -> H.raise Cancel
-
     HandleFormMessage (FormSubmitted newResource) -> do
       { lists } <- H.get
       mbNewResource <- createResource newResource
@@ -93,10 +88,10 @@ component = H.mkComponent
         Nothing -> void $ H.query F._formless unit $ F.injQuery $ SetCreateError true unit
 
   render :: State -> HH.ComponentHTML Action ChildSlots m
-  render { lists, url, showCancel } =
+  render { lists, url } =
     HH.div
       []
-      [ HH.slot F._formless unit formComponent { lists, showCancel, url } (Just <<< HandleFormMessage) ]
+      [ HH.slot F._formless unit formComponent { lists, url } (Just <<< HandleFormMessage) ]
 
 newtype DDItem = DDItem { label :: String, value :: ID }
 
@@ -107,8 +102,7 @@ instance toTextDDItem :: ToText DDItem where
   toText = _.label <<< unwrap
 
 data FormMessage
-  = FormCancel
-  | FormSubmitted Resource
+  = FormSubmitted Resource
 
 type FormSlot
   = F.Slot CreateResourceForm FormQuery FormChildSlots FormMessage Unit
@@ -135,13 +129,11 @@ data FormAction
   = FormInitialize
   | Submit Event.Event
   | HandleDropdown (DD.Message DDItem)
-  | Reset
   | FetchMeta String
   | PasteUrl Clipboard.ClipboardEvent
 
 type FormInput
   = { lists :: Array ListWithIdAndUser
-    , showCancel :: Boolean
     , url :: Maybe String
     }
 
@@ -149,7 +141,6 @@ type FormChildSlots = ( dropdown :: DD.Slot DDItem Unit )
 
 type FormState =
   ( createError :: Boolean
-  , showCancel :: Boolean
   , lists :: Array ListWithIdAndUser
   , meta :: RemoteData String ResourceMeta
   , pastedUrl :: Maybe String
@@ -169,7 +160,7 @@ formComponent = F.component formInput $ F.defaultSpec
   }
   where
   formInput :: FormInput -> F.Input CreateResourceForm FormState m
-  formInput { lists, showCancel, url } =
+  formInput { lists, url } =
     { validators:
         CreateResourceForm
           { title: V.required >>> V.minLength 1 >>> V.maxLength 150
@@ -180,7 +171,6 @@ formComponent = F.component formInput $ F.defaultSpec
           }
     , initialInputs: Just $ initialInputs url
     , createError: false
-    , showCancel
     , lists
     , meta: NotAsked
     , pastedUrl: url
@@ -240,12 +230,6 @@ formComponent = F.component formInput $ F.defaultSpec
         DD.Cleared ->
           eval $ F.setValidate proxies.list Nothing
 
-    -- TODO: do handle this action while submitting
-    Reset -> do
-      void $ H.query DD._dropdown unit DD.clear
-      eval F.resetAll
-      H.raise FormCancel
-
     where
     eval act = F.handleAction handleAction handleEvent act
 
@@ -265,7 +249,7 @@ formComponent = F.component formInput $ F.defaultSpec
 
   -- TODO: submitting is only true while the form component is submitting
   --       but the async action actually happens in the parent component
-  renderCreateResource { form, createError, lists, submitting, dirty, showCancel, meta } =
+  renderCreateResource { form, createError, lists, submitting, dirty, meta } =
     HH.form
       [ HE.onSubmit $ Just <<< F.injAction <<< Submit ]
       [ whenElem createError \_ ->
@@ -382,27 +366,6 @@ formComponent = F.component formInput $ F.defaultSpec
           , HH.div
               [ HP.classes [ T.mt4 ] ]
               [ Field.submit "Add resource" submitting ]
-          , whenElem showCancel \_ ->
-              HH.button
-                [ HP.classes
-                    [ T.mr2
-                    , T.pt1
-                    , T.px1
-                    , T.absolute
-                    , T.top1
-                    , T.right0
-                    , T.fontMono
-                    , T.textKiwi
-                    , T.fontBold
-                    , T.focusOutlineNone
-                    , T.focusRing2
-                    , T.focusRingKiwi
-                    , T.leadingNone
-                    ]
-                , HP.type_ HP.ButtonReset
-                , HE.onClick \_ -> Just $ F.injAction Reset
-                ]
-                [ HH.text "X" ]
           ]
       ]
     where handler = Just <<< F.injAction <<< HandleDropdown

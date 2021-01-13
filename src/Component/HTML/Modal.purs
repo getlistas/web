@@ -6,7 +6,7 @@ import Data.Maybe (Maybe(..))
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Listasio.Component.HTML.Utils (whenElem)
+import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Tailwind as T
 import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
@@ -15,7 +15,6 @@ modal show mbOnClose content =
   whenElem show \_ ->
     HH.div
       [ HP.classes [ T.fixed, T.z10, T.inset0, T.overflowYAuto ]
-        -- TODO: fix only works when focused on input
       , HE.onKeyDown \e ->
           if KeyboardEvent.code e == "Escape" then mbOnClose else Nothing
       ]
@@ -81,6 +80,36 @@ modal show mbOnClose content =
                     , T.smP6
                     ]
                 ]
-                [ content ]
+                [ maybeElem mbOnClose \_ ->
+                    HH.div
+                      [ HP.classes
+                          [ T.absolute
+                          , T.top0
+                          , T.right0
+                          , T.pt4
+                          , T.pr4
+                          ]
+                      ]
+                      [ HH.button
+                          [ HE.onClick \_ -> mbOnClose
+                          , HP.type_ HP.ButtonButton
+                          , HP.classes
+                              [ T.bgWhite
+                              , T.roundedMd
+                              , T.textGray200
+                              , T.hoverTextGray300
+                              , T.focusOutlineNone
+                              , T.focusRing2
+                              , T.focusRingOffset2
+                              , T.focusRingGray300
+                              ]
+                          ]
+                          [ HH.span [ HP.classes [ T.srOnly ] ] [ HH.text "Close" ]
+                          -- TODO: use icon instead
+                          , HH.span [ HP.classes [ T.textXl ] ] [ HH.text "X" ]
+                          ]
+                      ]
+                , content
+                ]
           ]
       ]

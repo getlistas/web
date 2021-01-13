@@ -90,9 +90,6 @@ component = Connect.component $ H.mkComponent
     HandleCreateResource (CreateResource.Created resource) ->
       navigate Dashboard
 
-    HandleCreateResource (CreateResource.Cancel) ->
-      navigate Dashboard
-
   render :: State -> H.ComponentHTML Action ChildSlots m
   render st =
     Layout.dashboard
@@ -121,7 +118,7 @@ component = Connect.component $ H.mkComponent
       Success lists ->
         HH.div
           [ HP.classes [ T.wFull, T.maxWLg ] ]
-          [ let input = { lists, url: st.url, showCancel: false }
+          [ let input = { lists, url: st.url }
                 queryHandler = Just <<< HandleCreateResource
              in HH.slot CreateResource._createResource unit CreateResource.component input queryHandler
           ]
