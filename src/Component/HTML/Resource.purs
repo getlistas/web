@@ -13,7 +13,7 @@ import Listasio.Data.Resource (ListResource)
 import Tailwind as T
 import Util (takeDomain)
 
-resource :: forall i p. (Array ListWithIdAndUser) -> ListResource -> HH.HTML i p
+resource :: forall i p. Array ListWithIdAndUser -> ListResource -> HH.HTML i p
 resource lists { url, title, list, completed_at } =
   HH.div
     [ HP.classes

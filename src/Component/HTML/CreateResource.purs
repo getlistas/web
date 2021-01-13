@@ -2,7 +2,6 @@ module Listasio.Component.HTML.CreateResource where
 
 import Prelude
 
-import Data.Array (find)
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.MediaType.Common as MediaType
@@ -17,7 +16,8 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Resource.Resource (class ManageResource, createResource, getMeta)
 import Listasio.Component.HTML.Dropdown as DD
-import Listasio.Component.HTML.Utils (maybeElem, whenElem)
+import Listasio.Component.HTML.Resource as ResourceComponent
+import Listasio.Component.HTML.Utils (whenElem)
 import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Resource (ListResource, Resource)
@@ -279,6 +279,29 @@ formComponent = F.component formInput $ F.defaultSpec
               , HP.type_ HP.InputText
               , HE.onPaste $ Just <<< F.injAction <<< PasteUrl
               ]
+          , case meta of
+              Loading ->
+                HH.div
+                  [ HP.classes [ T.textSm, T.pt2, T.textGray300 ] ]
+                  [ HH.text "Fetching title and description ..." ]
+
+              Success {can_resolve} | not can_resolve ->
+                HH.div
+                  [ HP.classes [ T.textSm, T.pt2, T.textManzana ] ]
+                  [ HH.text "Looks like the link does not exist. Are you sure you got the right one?" ]
+
+              Success {resource: Just resource} ->
+                HH.div
+                  [ HP.classes [ T.mt2, T.mb4 ] ]
+                  [ HH.div
+                      [ HP.classes [ T.textManzana, T.textSm, T.mb2 ] ]
+                      [ HH.text "This resource already exists. Are you sure you want to add it again?" ]
+                  , ResourceComponent.resource lists resource
+                  ]
+
+              _ ->
+                HH.text ""
+
           , HH.div
               [ HP.classes [ T.mt4 ] ]
               [ HH.div
@@ -289,35 +312,6 @@ formComponent = F.component formInput $ F.defaultSpec
                   ]
               , HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput handler
               ]
-
-          , case meta of
-              Loading ->
-                HH.div
-                  [ HP.classes [ T.textSm, T.pt2, T.textGray300 ] ]
-                  [ HH.text "Fetching title and description ..." ]
-
-              Success {can_resolve} | not can_resolve ->
-                HH.div
-                  [ HP.classes [ T.textSm, T.pt2, T.textManzana ] ]
-                  [ HH.p [] [ HH.text "Looks like the link does not exist." ]
-                  , HH.p [] [ HH.text "Are you sure is the right one?" ]
-                  ]
-
-              Success {resource: Just resource} ->
-                let mbList = find ((resource.list == _) <<< _.id) lists
-                 in HH.div
-                      [ HP.classes [ T.textSm, T.pt2, T.textGray300 ] ]
-                      [ HH.p [ HP.classes [ T.textManzana ] ] [ HH.text "This resource already exists." ]
-                      , maybeElem mbList \list ->
-                          HH.p
-                            []
-                            [ HH.text "List: "
-                            , HH.span [ HP.classes [ T.textDurazno ] ] [ HH.text list.title ]
-                            ]
-                      , HH.p [] [ HH.text resource.title ]
-                      ]
-              _ ->
-                HH.text ""
 
           , HH.div
               [ HP.classes [ T.flex, T.spaceX4 ] ]
@@ -356,6 +350,7 @@ formComponent = F.component formInput $ F.defaultSpec
                       ]
                   ]
               ]
+
           , HH.div
               [ HP.classes [ T.mt4 ] ]
               [ Field.submit "Add resource" submitting ]
