@@ -279,6 +279,7 @@ formComponent = F.component formInput $ F.defaultSpec
               , HP.type_ HP.InputText
               , HE.onPaste $ Just <<< F.injAction <<< PasteUrl
               ]
+
           , case meta of
               Loading ->
                 HH.div
@@ -316,21 +317,48 @@ formComponent = F.component formInput $ F.defaultSpec
           , HH.div
               [ HP.classes [ T.flex, T.spaceX4 ] ]
               [ HH.div
-                  [ HP.classes [ T.w40, T.h40, T.mt14 ] ]
+                  [ HP.classes[ T.w40, T.h40, T.mt14 ]
+                  ]
                   [ case meta of
                       Success {thumbnail: Just thumbnail} ->
                         HH.img
                           [ HP.src thumbnail
                           , HP.classes [ T.w40, T.h40, T.objectCover, T.roundedLg ]
                           ]
+
                       Loading ->
                         HH.div
-                          [ HP.classes [ T.textCenter, T.textGray400 ] ]
-                          [ HH.text "..." ]
+                          [ HP.classes
+                              [ T.w40
+                              , T.h40
+                              , T.flex
+                              , T.flexCol
+                              , T.justifyCenter
+                              , T.itemsCenter
+                              , T.textGray400
+                              , T.bgGray100
+                              , T.roundedLg
+                              , T.text4xl
+                              ]
+                          ]
+                          [ HH.text "⌛" ]
+
                       _ ->
                         HH.div
-                          [ HP.classes [ T.textCenter, T.textGray400 ] ]
-                          [ HH.text "TODO: placeholder image" ]
+                          [ HP.classes
+                              [ T.w40
+                              , T.h40
+                              , T.flex
+                              , T.flexCol
+                              , T.justifyCenter
+                              , T.itemsCenter
+                              , T.textGray400
+                              , T.bgGray100
+                              , T.roundedLg
+                              , T.text4xl
+                              ]
+                          ]
+                          [ HH.text "404" ]
                   ]
               , HH.div
                   []
