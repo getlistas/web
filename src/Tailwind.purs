@@ -331,6 +331,10 @@ hoverBorderB2 = ClassName "hover:border-b-2"
 hoverBorderKiwi :: ClassName
 hoverBorderKiwi = ClassName "hover:border-kiwi"
 
+-- | hoverTextGray300
+hoverTextGray300 :: ClassName
+hoverTextGray300 = ClassName "hover:text-gray-300"
+
 -- | hoverTextWhite
 hoverTextWhite :: ClassName
 hoverTextWhite = ClassName "hover:text-white"
@@ -559,6 +563,10 @@ placeholderGray300 = ClassName "placeholder-gray-300"
 placeholderGray400 :: ClassName
 placeholderGray400 = ClassName "placeholder-gray-400"
 
+-- | pr4
+pr4 :: ClassName
+pr4 = ClassName "pr-4"
+
 -- | pt1
 pt1 :: ClassName
 pt1 = ClassName "pt-1"
@@ -699,6 +707,10 @@ spaceX2 = ClassName "space-x-2"
 spaceX4 :: ClassName
 spaceX4 = ClassName "space-x-4"
 
+-- | srOnly
+srOnly :: ClassName
+srOnly = ClassName "sr-only"
+
 -- | text2xl
 text2xl :: ClassName
 text2xl = ClassName "text-2xl"
@@ -782,6 +794,10 @@ textXl = ClassName "text-xl"
 -- | textXs
 textXs :: ClassName
 textXs = ClassName "text-xs"
+
+-- | top0
+top0 :: ClassName
+top0 = ClassName "top-0"
 
 -- | top1
 top1 :: ClassName

@@ -102,9 +102,6 @@ component = Connect.component $ H.mkComponent
       void $ H.query List._list resource.list $ H.tell $ List.ResourceAdded resource
       H.modify_ _ { showCreateResource = false, pastedUrl = Nothing }
 
-    HandleCreateResource CreateResource.Cancel ->
-      H.modify_ _ { showCreateResource = false, pastedUrl = Nothing }
-
     ToggleCreateResource ->
       H.modify_ \s -> s
         { showCreateResource = not s.showCreateResource
@@ -183,7 +180,7 @@ component = Connect.component $ H.mkComponent
                     [ HP.classes [ T.textCenter, T.textGray400, T.text2xl, T.fontBold, T.mb4 ] ]
                     [ HH.text "Add new resource" ]
                 , whenElem st.showCreateResource \_ ->
-                    let input = { lists, url: st.pastedUrl, showCancel: true }
+                    let input = { lists, url: st.pastedUrl }
                         queryHandler = Just <<< HandleCreateResource
                       in HH.slot CreateResource._createResource unit CreateResource.component input queryHandler
                 ]
