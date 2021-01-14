@@ -24,6 +24,7 @@ import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource, getResources)
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Resource (resource)
+import Listasio.Component.HTML.ToggleGroup as ToggleGroup
 import Listasio.Component.HTML.Utils (cx, maybeElem)
 import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdAndUser)
@@ -44,10 +45,8 @@ data Action
   | LoadResources
   | LoadLists
   | Navigate Route Event
-  | ToggleGroupByList
-  | ToggleGroupByDate
-  | ToggleShowDone
-  | ToggleShowPending
+  | ToggleGroupBy GroupBy
+  | ToggleFilterByDone FilterByDone
 
 data FilterByDone
   = ShowAll
@@ -70,14 +69,6 @@ data GroupBy
   | GroupDate
 
 derive instance eqGroupBy :: Eq GroupBy
-
-toggleGroupByList :: GroupBy -> GroupBy
-toggleGroupByList GroupList = GroupNone
-toggleGroupByList _ = GroupList
-
-toggleGroupByDate :: GroupBy -> GroupBy
-toggleGroupByDate GroupDate = GroupNone
-toggleGroupByDate _ = GroupDate
 
 type GroupedResources
   = { byList :: Map ID (NonEmptyArray ListResource)
@@ -178,17 +169,11 @@ component = Connect.component $ H.mkComponent
 
     Navigate route e -> navigate_ e route
 
-    ToggleGroupByList ->
-      H.modify_ \s -> s { groupBy = toggleGroupByList s.groupBy }
+    ToggleGroupBy groupBy ->
+      H.modify_ _ { groupBy = groupBy }
 
-    ToggleGroupByDate ->
-      H.modify_ \s -> s { groupBy = toggleGroupByDate s.groupBy }
-
-    ToggleShowDone ->
-      H.modify_ \s -> s { filterByDone = toggleFilterByDone s.filterByDone }
-
-    ToggleShowPending ->
-      H.modify_ \s -> s { filterByDone = toggleFilterByPending s.filterByDone }
+    ToggleFilterByDone filterByDone ->
+      H.modify_ _ { filterByDone = filterByDone }
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render { currentUser, resources, lists: mbLists, groupBy, filterByDone } =
@@ -210,14 +195,18 @@ component = Connect.component $ H.mkComponent
     settings =
       HH.div
         [ HP.classes [ T.flex, T.itemsStart, T.my6, T.spaceX2 ] ]
-        [ filterBtnGroup
+        [ ToggleGroup.toggleGroup
             false
-            (filterBtn "By Month" (Just ToggleGroupByDate) $ groupBy == GroupDate)
-            (filterBtn "By List" (Just ToggleGroupByList) $ groupBy == GroupList)
-        , filterBtnGroup
+            [ { label: "All", action: Just (ToggleGroupBy GroupNone), active: groupBy == GroupNone }
+            , { label: "By Month", action: Just (ToggleGroupBy GroupDate), active: groupBy == GroupDate }
+            , { label: "By List", action: Just (ToggleGroupBy GroupList), active: groupBy == GroupList }
+            ]
+        , ToggleGroup.toggleGroup
             (groupBy == GroupDate)
-            (filterBtn "Done" (Just ToggleShowDone) $ filterByDone == ShowDone || groupBy == GroupDate)
-            (filterBtn "Pending" (Just ToggleShowPending) $ filterByDone == ShowPending && groupBy /= GroupDate)
+            [ { label: "All", action: Just (ToggleFilterByDone ShowAll), active: filterByDone == ShowAll && groupBy /= GroupDate }
+            , { label: "Done", action: Just (ToggleFilterByDone ShowDone), active: filterByDone == ShowDone || groupBy == GroupDate }
+            , { label: "Pending", action: Just (ToggleFilterByDone ShowPending), active: filterByDone == ShowPending && groupBy /= GroupDate }
+            ]
         ]
 
     filterBtnGroup disabled l r =

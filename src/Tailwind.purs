@@ -243,10 +243,6 @@ fontBold = ClassName "font-bold"
 fontMedium :: ClassName
 fontMedium = ClassName "font-medium"
 
--- | fontMono
-fontMono :: ClassName
-fontMono = ClassName "font-mono"
-
 -- | fontNormal
 fontNormal :: ClassName
 fontNormal = ClassName "font-normal"
@@ -798,10 +794,6 @@ textXs = ClassName "text-xs"
 -- | top0
 top0 :: ClassName
 top0 = ClassName "top-0"
-
--- | top1
-top1 :: ClassName
-top1 = ClassName "top-1"
 
 -- | transform
 transform :: ClassName
