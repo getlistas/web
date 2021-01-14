@@ -197,7 +197,7 @@ component = Connect.component $ H.mkComponent
         [ HP.classes [ T.flex, T.itemsStart, T.my6, T.spaceX2 ] ]
         [ ToggleGroup.toggleGroup
             false
-            [ { label: "All", action: Just (ToggleGroupBy GroupNone), active: groupBy == GroupNone }
+            [ { label: "None", action: Just (ToggleGroupBy GroupNone), active: groupBy == GroupNone }
             , { label: "By Month", action: Just (ToggleGroupBy GroupDate), active: groupBy == GroupDate }
             , { label: "By List", action: Just (ToggleGroupBy GroupList), active: groupBy == GroupList }
             ]
