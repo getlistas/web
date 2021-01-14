@@ -20,3 +20,5 @@ output
 dce-output
 *.lock
 *.map
+
+.vercel
