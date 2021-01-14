@@ -1,4 +1,4 @@
-module Listasio.Component.HTML.ToggleGroup where
+module Listasio.Component.HTML.ToggleGroup (toggleGroup) where
 
 import Prelude
 
