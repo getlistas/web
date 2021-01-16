@@ -340,7 +340,7 @@ component = H.mkComponent
                 ]
                 [ HH.span
                     [ HP.classes [ T.textSm, T.textGray200 ] ]
-                    [ HH.text $ if showMore && hasMore then "Show less" else "Show more" ]
+                    [ HH.text "Next in queue" ]
                 , HH.span
                     [ HP.classes [ T.textGray400 ] ]
                     [ HH.text $ if showMore && hasMore then "▲" else "▼" ]
