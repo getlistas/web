@@ -24,6 +24,7 @@ type Pagination
 
 data Endpoint
   = Login
+  | GoogleLogin
   | User
   | Users
   | List ID
@@ -42,6 +43,7 @@ endpointCodec =
   root
     $ sum
         { "Login": "users" / "auth" / noArgs
+        , "GoogleLogin": "users" / "google-auth" / noArgs
         , "User": "user" / noArgs
         , "Users": "users" / noArgs
         , "List": "lists" / id segment

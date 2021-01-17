@@ -11,9 +11,9 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Listasio.Api.Request (RegisterFields)
-import Listasio.Capability.Navigate (class Navigate, navigate_)
-import Listasio.Capability.Resource.User (class ManageUser, registerUser)
+import Listasio.Api.Request (RegisterFields, initGoogleAuth)
+import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
+import Listasio.Capability.Resource.User (class ManageUser, googleLoginUser, registerUser)
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Utils (safeHref, whenElem)
 import Listasio.Data.Email (Email)
@@ -43,7 +43,9 @@ type State
   = { registration :: RemoteData String Unit }
 
 data Action
-  = HandleRegisterForm RegisterFields
+  = Initialize
+  | HandleRegisterForm RegisterFields
+  | HandleGoogleLogin
   | Navigate Route Event.Event
 
 component ::
@@ -56,13 +58,27 @@ component =
   H.mkComponent
     { initialState: const { registration: NotAsked }
     , render
-    , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
+    , eval: H.mkEval $ H.defaultEval
+        { handleAction = handleAction
+        , initialize = Just Initialize
+        }
     }
   where
   handleAction = case _ of
+    Initialize ->
+      void $ H.liftAff $ initGoogleAuth
+
     HandleRegisterForm fields -> do
       result <- fromEither <$> note "Failed to register" <$> registerUser fields
       H.modify_ _ { registration = result }
+
+    HandleGoogleLogin -> do
+      mbProfile <- googleLoginUser
+      case mbProfile of
+        Nothing -> -- TODO
+          pure unit
+
+        Just _ -> navigate Dashboard
 
     Navigate route e -> navigate_ e route
 
@@ -107,6 +123,40 @@ component =
               Failure _ -> HH.div [] [ HH.text "Failed" , form ]
 
               _ -> form
+          , whenElem (not $ isSuccess registration) \_ ->
+              HH.div
+                [ HP.classes [ T.w96, T.maxWFull ] ]
+                [ HH.div
+                    [ HP.classes [ T.flex, T.itemsCenter, T.justifyBetween, T.my4 ] ]
+                    [ HH.div [ HP.classes [ T.h0, T.wFull, T.border, T.borderGray200 ] ] []
+                    , HH.div [ HP.classes [ T.textGray300, T.mx4, T.leadingNone ] ] [ HH.text "or" ]
+                    , HH.div [ HP.classes [ T.h0, T.wFull, T.border, T.borderGray200 ] ] []
+                    ]
+                , HH.button
+                    [ HP.type_ HP.ButtonButton
+                    , HE.onClick \_ -> Just HandleGoogleLogin
+                    , HP.classes
+                        [ T.flex1
+                        , T.wFull
+                        , T.cursorPointer
+                        , T.disabledCursorNotAllowed
+                        , T.disabledOpacity50
+                        , T.py2
+                        , T.px4
+                        , T.bgKiwi
+                        , T.textWhite
+                        , T.roundedMd
+                        , T.shadowMd
+                        , T.hoverBgOpacity75
+                        , T.focusOutlineNone
+                        , T.focusRing2
+                        , T.focusRingOffset2
+                        , T.focusRingOffsetGray10
+                        , T.focusRingKiwi
+                        ]
+                    ]
+                    [ HH.text "🇬 Register with Google" ]
+                ]
           , whenElem (not $ isSuccess registration) \_ ->
               HH.p
                 [ HP.classes [ T.mt4 ] ]

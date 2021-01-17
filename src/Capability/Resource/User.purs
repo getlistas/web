@@ -9,12 +9,14 @@ import Halogen (HalogenM, lift)
 
 class Monad m <= ManageUser m where
   loginUser :: LoginFields -> m (Maybe Profile)
+  googleLoginUser :: m (Maybe Profile)
   registerUser :: RegisterFields -> m (Maybe Profile)
   getCurrentUser :: m (Maybe Profile)
   updateUser :: Profile -> m Unit
 
 instance manageUserHalogenM :: ManageUser m => ManageUser (HalogenM st act slots msg m) where
   loginUser = lift <<< loginUser
+  googleLoginUser = lift googleLoginUser
   registerUser = lift <<< registerUser
   getCurrentUser = lift getCurrentUser
   updateUser = lift <<< updateUser

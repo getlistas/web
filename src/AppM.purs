@@ -92,6 +92,8 @@ instance navigateAppM :: Navigate AppM where
 instance manageUserAppM :: ManageUser AppM where
   loginUser = authenticate Request.login
 
+  googleLoginUser = authenticate Request.googleLogin unit
+
   registerUser fields = do
     { baseUrl } <- ask
     res <- Request.register baseUrl fields
