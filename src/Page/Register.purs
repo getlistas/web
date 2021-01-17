@@ -22,6 +22,7 @@ import Listasio.Data.Username (Username)
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation as V
 import Network.RemoteData (RemoteData(..), fromEither, isSuccess)
+import Slug (Slug)
 import Tailwind as T
 import Web.Event.Event as Event
 import Web.UIEvent.MouseEvent as Mouse
@@ -30,7 +31,7 @@ newtype RegisterForm r f
   = RegisterForm
   ( r
       ( name :: f V.FormError String Username
-      , slug :: f V.FormError String Username
+      , slug :: f V.FormError String Slug
       , email :: f V.FormError String Email
       , password :: f V.FormError String String
       )
@@ -140,7 +141,7 @@ formComponent =
     { validators:
         RegisterForm
           { name: V.required >>> V.usernameFormat
-          , slug: V.required >>> V.usernameFormat
+          , slug: V.required >>> V.slugFormat
           , email: V.required >>> V.minLength 3 >>> V.emailFormat
           , password: V.required >>> V.minLength 10 >>> V.maxLength 100
           }
@@ -175,11 +176,11 @@ formComponent =
     proxies = F.mkSProxies (F.FormProxy :: _ RegisterForm)
 
     name =
-      Field.input (Just "Username") proxies.name form
+      Field.input (Just "Name") proxies.name form
         [ HP.placeholder "John Doe", HP.type_ HP.InputText ]
 
     slug =
-      Field.input (Just "Slug") proxies.slug form
+      Field.input (Just "Username") proxies.slug form
         [ HP.placeholder "john-doe", HP.type_ HP.InputText ]
 
     email =
