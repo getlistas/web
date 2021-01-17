@@ -21,7 +21,7 @@
     "fixdist": "scripts/fix-dist.sh",
     "prep-prod": "rm -rf dist && git checkout dist/vercel.json",
     "pscid:build": "spago build",
-    "serve-dev": "parcel dev/index.html --open",
+    "serve-dev": "parcel dev/index.html --open -p 8080",
     "test": "spago test",
     "watch": "spago build --watch"
   },

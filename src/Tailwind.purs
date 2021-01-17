@@ -267,6 +267,10 @@ gridCols1 = ClassName "grid-cols-1"
 gridCols2 :: ClassName
 gridCols2 = ClassName "grid-cols-2"
 
+-- | h0
+h0 :: ClassName
+h0 = ClassName "h-0"
+
 -- | h16
 h16 :: ClassName
 h16 = ClassName "h-16"
@@ -494,6 +498,10 @@ mt8 = ClassName "mt-8"
 -- | mx1
 mx1 :: ClassName
 mx1 = ClassName "mx-1"
+
+-- | mx4
+mx4 :: ClassName
+mx4 = ClassName "mx-4"
 
 -- | mxAuto
 mxAuto :: ClassName

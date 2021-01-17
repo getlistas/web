@@ -7,18 +7,23 @@ module Listasio.Api.Request
   , RegisterFields(..)
   , LoginFields(..)
   , login
+  , googleLogin
   , register
   , decodeToken
   , readToken
   , writeToken
   , removeToken
+  , initGoogleAuth
   ) where
 
 import Prelude
+
 import Affjax (Request, printError, request)
 import Affjax.RequestBody as RB
 import Affjax.RequestHeader (RequestHeader(..))
 import Affjax.ResponseFormat as RF
+import Control.Promise (Promise)
+import Control.Promise as Promise
 import Data.Argonaut.Core (Json)
 import Data.Bifunctor (lmap)
 import Data.Codec as Codec
@@ -28,7 +33,13 @@ import Data.Codec.Argonaut.Record as CAR
 import Data.Either (Either(..))
 import Data.HTTP.Method (Method(..))
 import Data.Maybe (Maybe(..))
+import Data.Nullable (Nullable)
+import Data.Nullable as Nullable
 import Data.Tuple (Tuple(..))
+import Effect (Effect)
+import Effect.Aff (Aff)
+import Effect.Aff.Class (class MonadAff, liftAff)
+import Jwt as Jwt
 import Listasio.Api.Endpoint (Endpoint(..), endpointCodec)
 import Listasio.Data.Email (Email)
 import Listasio.Data.Email as Email
@@ -36,13 +47,27 @@ import Listasio.Data.Profile (Profile)
 import Listasio.Data.Profile as Profile
 import Listasio.Data.Username (Username)
 import Listasio.Data.Username as Username
-import Effect (Effect)
-import Effect.Aff.Class (class MonadAff, liftAff)
-import Jwt as Jwt
 import Routing.Duplex (print)
+import Slug (Slug)
 import Web.HTML (window)
 import Web.HTML.Window (localStorage)
 import Web.Storage.Storage (getItem, removeItem, setItem)
+
+type GoogleAuthResult
+  = { success :: Boolean
+    , token :: Nullable String
+    , image_url :: Nullable String
+    }
+
+foreign import googleAuth_ :: Effect (Promise GoogleAuthResult)
+
+foreign import initAuth_ :: String -> Effect (Promise Unit)
+
+doGoogleAuth :: Aff GoogleAuthResult
+doGoogleAuth = Promise.toAffE googleAuth_
+
+initGoogleAuth :: Aff Unit
+initGoogleAuth = Promise.toAffE $ initAuth_ "580260201094-fqnilnjt95lpl4clqe465cjhh0plde4v"
 
 newtype Token
   = Token String
@@ -94,7 +119,7 @@ type RegisterFields
   = { email :: Email
     , password :: String
     , name :: Username
-    , slug :: Username
+    , slug :: Slug
     }
 
 registerCodec :: JsonCodec RegisterFields
@@ -103,7 +128,7 @@ registerCodec =
     { email: Email.codec
     , password: CA.string
     , name: Username.codec
-    , slug: Username.codec
+    , slug: Profile.slug
     }
 
 -- | The following data types and functions aren't a natural fit for this module,
@@ -136,6 +161,29 @@ login baseUrl fields = do
     Right v -> pure $ lmap printJwtError $ decodeAuthProfileFromToken =<< decode v.body
   where conf = { endpoint: Login, method: Post $ Just $ Codec.encode loginCodec fields }
         decode = lmap Jwt.JsonDecodeError <<< Codec.decode CA.json
+
+type GoogleLoginFields = { token :: String }
+
+googleLoginCodec :: JsonCodec GoogleLoginFields
+googleLoginCodec = CAR.object "GoogleLoginFields" { token: CA.string }
+
+googleLogin :: forall m. MonadAff m => BaseURL -> Unit -> m (Either String (Tuple Token Profile))
+googleLogin baseUrl _ = do
+  mbGoogleToken <- (\r -> r { token = Nullable.toMaybe r.token }) <$> liftAff doGoogleAuth
+  case mbGoogleToken of
+    { success } | not success ->
+      pure $ Left "Failed to login with Google"
+    { token: Nothing } ->
+      pure $ Left "Failed to login with Google"
+    { token: Just googleToken } -> do
+      let conf = { endpoint: GoogleLogin, method: Post $ Just $ body }
+          body = Codec.encode googleLoginCodec { token: googleToken }
+          decode = lmap Jwt.JsonDecodeError <<< Codec.decode CA.json
+      res <- liftAff $ request $ defaultRequest baseUrl Nothing conf
+      case res of
+        Left e -> pure $ Left $ printError e
+        Right v -> pure $ lmap printJwtError $ decodeAuthProfileFromToken =<< decode v.body
+
 
 printJwtError :: Jwt.JwtError JsonDecodeError -> String
 printJwtError = case _ of

@@ -10,9 +10,9 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Listasio.Api.Request (LoginFields)
+import Listasio.Api.Request (LoginFields, initGoogleAuth)
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
-import Listasio.Capability.Resource.User (class ManageUser, loginUser)
+import Listasio.Capability.Resource.User (class ManageUser, googleLoginUser, loginUser)
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Utils (safeHref, whenElem)
 import Listasio.Data.Email (Email)
@@ -24,7 +24,9 @@ import Web.Event.Event as Event
 import Web.UIEvent.MouseEvent as Mouse
 
 data Action
-  = HandleLoginForm LoginFields
+  = Initialize
+  | HandleLoginForm LoginFields
+  | HandleGoogleLogin
   | Navigate Route Event.Event
 
 type State
@@ -50,19 +52,34 @@ component =
   H.mkComponent
     { initialState: identity
     , render
-    , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
+    , eval: H.mkEval $ H.defaultEval
+        { handleAction = handleAction
+        , initialize = Just Initialize
+        }
     }
   where
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
+    Initialize ->
+      void $ H.liftAff $ initGoogleAuth
+
     HandleLoginForm fields -> do
-      -- broadcast the user changes to subscribed components so they receive the up-to-date value
       mbProfile <- loginUser fields
       case mbProfile of
         Nothing -> void $ H.query F._formless unit $ F.injQuery $ SetLoginError true unit
 
         Just profile -> do
           void $ H.query F._formless unit $ F.injQuery $ SetLoginError false unit
+          st <- H.get
+          when st.redirect (navigate Dashboard)
+
+    HandleGoogleLogin -> do
+      mbProfile <- googleLoginUser
+      case mbProfile of
+        Nothing -> -- TODO
+          pure unit
+
+        Just profile -> do
           st <- H.get
           when st.redirect (navigate Dashboard)
 
@@ -104,6 +121,39 @@ component =
                     ]
                 ]
           , HH.slot F._formless unit formComponent unit (Just <<< HandleLoginForm)
+          , HH.div
+              [ HP.classes [ T.w96, T.maxWFull ] ]
+              [ HH.div
+                  [ HP.classes [ T.flex, T.itemsCenter, T.justifyBetween, T.my4 ] ]
+                  [ HH.div [ HP.classes [ T.h0, T.wFull, T.border, T.borderGray200 ] ] []
+                  , HH.div [ HP.classes [ T.textGray300, T.mx4, T.leadingNone ] ] [ HH.text "or" ]
+                  , HH.div [ HP.classes [ T.h0, T.wFull, T.border, T.borderGray200 ] ] []
+                  ]
+              , HH.button
+                  [ HP.type_ HP.ButtonButton
+                  , HE.onClick \_ -> Just HandleGoogleLogin
+                  , HP.classes
+                      [ T.flex1
+                      , T.wFull
+                      , T.cursorPointer
+                      , T.disabledCursorNotAllowed
+                      , T.disabledOpacity50
+                      , T.py2
+                      , T.px4
+                      , T.bgKiwi
+                      , T.textWhite
+                      , T.roundedMd
+                      , T.shadowMd
+                      , T.hoverBgOpacity75
+                      , T.focusOutlineNone
+                      , T.focusRing2
+                      , T.focusRingOffset2
+                      , T.focusRingOffsetGray10
+                      , T.focusRingKiwi
+                      ]
+                  ]
+                  [ HH.text "🇬 Login with Google" ]
+              ]
           , HH.p
               [ HP.classes [ T.mt4 ] ]
               [ HH.span [ HP.classes [ T.textGray400 ] ] [HH.text "Don't have an account? " ]
