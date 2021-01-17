@@ -3,6 +3,7 @@
 , dependencies =
   [ "aff"
   , "aff-bus"
+  , "aff-promise"
   , "affjax"
   , "argonaut-core"
   , "codec-argonaut"
@@ -18,6 +19,7 @@
   , "jwt"
   , "nonempty"
   , "now"
+  , "nullable"
   , "precise-datetime"
   , "prelude"
   , "remotedata"
