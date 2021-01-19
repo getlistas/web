@@ -39,10 +39,6 @@ bgGray200 = ClassName "bg-gray-200"
 bgGray300 :: ClassName
 bgGray300 = ClassName "bg-gray-300"
 
--- | bgGreen100
-bgGreen100 :: ClassName
-bgGreen100 = ClassName "bg-green-100"
-
 -- | bgKiwi
 bgKiwi :: ClassName
 bgKiwi = ClassName "bg-kiwi"
@@ -90,10 +86,6 @@ borderGray200 = ClassName "border-gray-200"
 -- | borderGray300
 borderGray300 :: ClassName
 borderGray300 = ClassName "border-gray-300"
-
--- | borderGreen300
-borderGreen300 :: ClassName
-borderGreen300 = ClassName "border-green-300"
 
 -- | borderIndigo400
 borderIndigo400 :: ClassName
@@ -170,10 +162,6 @@ flex = ClassName "flex"
 -- | flexCol
 flexCol :: ClassName
 flexCol = ClassName "flex-col"
-
--- | flexInitial
-flexInitial :: ClassName
-flexInitial = ClassName "flex-initial"
 
 -- | flexNone
 flexNone :: ClassName
@@ -434,6 +422,10 @@ mb4 = ClassName "mb-4"
 -- | mb6
 mb6 :: ClassName
 mb6 = ClassName "mb-6"
+
+-- | mb8
+mb8 :: ClassName
+mb8 = ClassName "mb-8"
 
 -- | mdGridCols2
 mdGridCols2 :: ClassName
@@ -762,10 +754,6 @@ textGray300 = ClassName "text-gray-300"
 -- | textGray400
 textGray400 :: ClassName
 textGray400 = ClassName "text-gray-400"
-
--- | textGreen700
-textGreen700 :: ClassName
-textGreen700 = ClassName "text-green-700"
 
 -- | textKiwi
 textKiwi :: ClassName
