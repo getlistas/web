@@ -9,16 +9,19 @@ import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
+import Halogen.HTML.Properties (classes)
 import Halogen.HTML.Properties as HP
 import Listasio.Api.Request (LoginFields, initGoogleAuth)
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, googleLoginUser, loginUser)
 import Listasio.Component.HTML.Layout as Layout
+import Listasio.Component.HTML.Message as Message
 import Listasio.Component.HTML.Utils (safeHref, whenElem)
 import Listasio.Data.Email (Email)
 import Listasio.Data.Route (Route(..))
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation as V
+import Network.RemoteData (RemoteData(..), isFailure, isLoading)
 import Tailwind as T
 import Web.Event.Event as Event
 import Web.UIEvent.MouseEvent as Mouse
@@ -31,12 +34,13 @@ data Action
 
 type State
   = { redirect :: Boolean
-    , success :: Boolean
+    , registerSuccess :: Boolean
+    , status :: RemoteData String Unit
     }
 
 type Input
   = { redirect :: Boolean
-    , success :: Boolean
+    , registerSuccess :: Boolean
     }
 
 type ChildSlots
@@ -50,7 +54,7 @@ component ::
   H.Component HH.HTML q Input o m
 component =
   H.mkComponent
-    { initialState: identity
+    { initialState
     , render
     , eval: H.mkEval $ H.defaultEval
         { handleAction = handleAction
@@ -58,35 +62,55 @@ component =
         }
     }
   where
+  initialState { redirect, registerSuccess } =
+    { redirect, registerSuccess, status: NotAsked }
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
     Initialize ->
       void $ H.liftAff $ initGoogleAuth
 
     HandleLoginForm fields -> do
-      mbProfile <- loginUser fields
-      case mbProfile of
-        Nothing -> void $ H.query F._formless unit $ F.injQuery $ SetLoginError true unit
+      { status } <- H.get
+      when (not $ isLoading status) $ do
+        void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus Loading unit
+        H.modify_ _ { status = Loading }
 
-        Just profile -> do
-          void $ H.query F._formless unit $ F.injQuery $ SetLoginError false unit
-          st <- H.get
-          when st.redirect (navigate Dashboard)
+        mbProfile <- loginUser fields
+
+        case mbProfile of
+          Nothing -> do
+             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Failure "Could not login") unit
+             H.modify_ _ { status = Failure "Could not login" }
+
+          Just profile -> do
+            void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Success unit) unit
+            H.modify_ _ { status = Success unit }
+            st <- H.get
+            when st.redirect (navigate Dashboard)
 
     HandleGoogleLogin -> do
-      mbProfile <- googleLoginUser
-      case mbProfile of
-        Nothing -> -- TODO
-          pure unit
+      { status } <- H.get
+      when (not $ isLoading status) do
+        void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus Loading unit
+        H.modify_ _ { status = Loading }
 
-        Just profile -> do
-          st <- H.get
-          when st.redirect (navigate Dashboard)
+        mbProfile <- googleLoginUser
+
+        case mbProfile of
+          Nothing -> do
+            void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus NotAsked unit
+            H.modify_ _ { status = NotAsked }
+
+          Just profile -> do
+            void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Success unit) unit
+            H.modify_ _ { status = Success unit }
+            st <- H.get
+            when st.redirect (navigate Dashboard)
 
     Navigate route e -> navigate_ e route
 
   render :: State -> H.ComponentHTML Action ChildSlots m
-  render { success } =
+  render { registerSuccess, status } =
     Layout.noheader
       Nothing
       Navigate
@@ -94,32 +118,15 @@ component =
       $ HH.div
           [ HP.classes [ T.mt12, T.flex, T.flexCol, T.itemsCenter ] ]
           [ HH.h1
-              [ HP.classes [ T.textGray400, T.text2xl, T.fontBold, T.mb6 ] ]
+              [ HP.classes [ T.textGray400, T.text2xl, T.fontBold, T.mb8 ] ]
               [ HH.text "Welcome to Listas" ]
-          , whenElem success \_ ->
-              HH.div
-                [ HP.classes
-                    [ T.flex
-                    , T.justifyCenter
-                    , T.itemsCenter
-                    , T.m1
-                    , T.fontMedium
-                    , T.py1
-                    , T.px2
-                    , T.bgWhite
-                    , T.roundedMd
-                    , T.textGreen700
-                    , T.bgGreen100
-                    , T.border
-                    , T.borderGreen300
-                    ]
-                ]
-                [ HH.div
-                    [ HP.classes [ T.text2xl, T.fontNormal, T.maxWFull, T.flexInitial ] ]
-                    [ HH.text "Registration succesful :)"
-                    , HH.div [ HP.classes [ T.textSm, T.textBase ] ] [ HH.text "Login to start using the app" ]
-                    ]
-                ]
+          , whenElem registerSuccess \_ ->
+              Message.message $ Message.props
+                { classes = [ T.mb6 ]
+                , title = Just "Registration succesful!"
+                , text = Just "Login to start using the app"
+                , icon = Just "🎉"
+                }
           , HH.slot F._formless unit formComponent unit (Just <<< HandleLoginForm)
           , HH.div
               [ HP.classes [ T.w96, T.maxWFull ] ]
@@ -151,6 +158,7 @@ component =
                       , T.focusRingOffsetGray10
                       , T.focusRingKiwi
                       ]
+                  , HP.disabled $ isLoading status
                   ]
                   [ HH.text "🇬 Login with Google" ]
               ]
@@ -176,7 +184,7 @@ newtype LoginForm r f
 derive instance newtypeLoginForm :: Newtype (LoginForm r f) _
 
 data FormQuery a
-  = SetLoginError Boolean a
+  = SetLoginStatus (RemoteData String Unit) a
 
 derive instance functorFormQuery :: Functor FormQuery
 
@@ -196,7 +204,7 @@ formComponent =
         , handleAction = handleAction
         }
   where
-  formInput :: i -> F.Input LoginForm ( loginError :: Boolean ) m
+  formInput :: i -> F.Input LoginForm ( status :: RemoteData String Unit ) m
   formInput _ =
     { validators:
         LoginForm
@@ -204,34 +212,32 @@ formComponent =
           , password: V.required >>> V.minLength 1
           }
     , initialInputs: Nothing
-    , loginError: false
+    , status: NotAsked
     }
 
   handleEvent = F.raiseResult
 
   handleAction = case _ of
     Submit event -> do
-      H.liftEffect $ Event.preventDefault event
-      eval F.submit
+      { status } <- H.get
+      when (not $ isLoading status) do
+        H.liftEffect $ Event.preventDefault event
+        eval F.submit
     where
     eval act = F.handleAction handleAction handleEvent act
 
   handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
-    SetLoginError bool a -> do
-      H.modify_ _ { loginError = bool }
+    SetLoginStatus status a -> do
+      H.modify_ _ { status = status }
       pure (Just a)
 
   proxies = F.mkSProxies (F.FormProxy :: _ LoginForm)
 
-  renderLogin { form, loginError, submitting } =
+  renderLogin { form, status, submitting } =
     HH.form
       [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev ]
-      [ whenElem loginError \_ ->
-          HH.div
-            [ HP.classes [ T.textRed500 ] ]
-            [ HH.text "Email or password is invalid" ]
-      , HH.fieldset
+      [ HH.fieldset
           [ HP.classes [ T.w96, T.maxWFull ] ]
           [ Field.input (Just "Email address") proxies.email form
               [ HP.placeholder "jonh.doe@email.com"
@@ -244,8 +250,12 @@ formComponent =
                   , HP.type_ HP.InputPassword
                   ]
                 ]
+      , whenElem (isFailure status) \_ ->
+          HH.div
+            [ HP.classes [ T.textRed500, T.my4 ] ]
+            [ HH.text "Email or password is invalid" ]
           , HH.div
               [ HP.classes [ T.mt4 ] ]
-              [ Field.submit "Sign in" submitting ]
+              [ Field.submit "Sign in" (submitting || isLoading status) ]
           ]
       ]

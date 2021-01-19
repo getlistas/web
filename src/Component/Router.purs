@@ -118,7 +118,7 @@ component = Connect.component $ H.mkComponent
   authorize :: Maybe Profile -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
   authorize mbProfile html = case mbProfile of
     Nothing ->
-      HH.slot (SProxy :: _ "login") unit Login.component { redirect: false, success: false } absurd
+      HH.slot (SProxy :: _ "login") unit Login.component { redirect: false, registerSuccess: false } absurd
     Just _ ->
       html
 
@@ -133,7 +133,7 @@ component = Connect.component $ H.mkComponent
         HH.slot (SProxy :: _ "about") unit About.component {} absurd
 
       Login ->
-        HH.slot (SProxy :: _ "login") unit Login.component { redirect: true, success: false } absurd
+        HH.slot (SProxy :: _ "login") unit Login.component { redirect: true, registerSuccess: false } absurd
 
       Register ->
         HH.slot (SProxy :: _ "register") unit Register.component unit absurd
@@ -148,7 +148,7 @@ component = Connect.component $ H.mkComponent
         HH.slot (SProxy :: _ "discover") unit Discover.component {} absurd
 
       VerifyEmailSuccess ->
-        HH.slot (SProxy :: _ "verifySuccess") unit Login.component { redirect: true, success: true } absurd
+        HH.slot (SProxy :: _ "verifySuccess") unit Login.component { redirect: true, registerSuccess: true } absurd
 
       VerifyEmailFailure ->
         HH.slot (SProxy :: _ "verifyFailure") unit VerifyFailure.component {} absurd
