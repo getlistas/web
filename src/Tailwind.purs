@@ -47,6 +47,10 @@ bgGreen100 = ClassName "bg-green-100"
 bgKiwi :: ClassName
 bgKiwi = ClassName "bg-kiwi"
 
+-- | bgManzana
+bgManzana :: ClassName
+bgManzana = ClassName "bg-manzana"
+
 -- | bgPink300
 bgPink300 :: ClassName
 bgPink300 = ClassName "bg-pink-300"
@@ -386,6 +390,10 @@ leadingRelaxed = ClassName "leading-relaxed"
 -- | lgGridCols3
 lgGridCols3 :: ClassName
 lgGridCols3 = ClassName "lg:grid-cols-3"
+
+-- | lineClamp3
+lineClamp3 :: ClassName
+lineClamp3 = ClassName "line-clamp-3"
 
 -- | listResource
 listResource :: ClassName
@@ -814,10 +822,6 @@ transitionAll = ClassName "transition-all"
 -- | transitionOpacity
 transitionOpacity :: ClassName
 transitionOpacity = ClassName "transition-opacity"
-
--- | truncate3Lines
-truncate3Lines :: ClassName
-truncate3Lines = ClassName "truncate-3-lines"
 
 -- | truncate
 truncate :: ClassName
