@@ -187,7 +187,7 @@ component = H.mkComponent
                       [ HP.classes [ T.textBase, T.textGray400, T.leadingRelaxed, T.truncate ] ]
                       [ HH.text next.title ]
                   , maybeElem next.description \des ->
-                      HH.div [ HP.classes [ T.mt1, T.textSm, T.textGray400, T.truncate3Lines ] ] [ HH.text des ]
+                      HH.div [ HP.classes [ T.mt1, T.textSm, T.textGray400, T.lineClamp3 ] ] [ HH.text des ]
                   ]
               ]
           , HH.div
