@@ -11,7 +11,8 @@ import Data.DateTime (DateTime)
 import Data.Either (Either, note)
 import Data.Filterable (filter)
 import Data.FunctorWithIndex (mapWithIndex)
-import Data.Map (Map, fromFoldable, toUnfoldable)
+import Data.Map (Map)
+import Data.Map as Map
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
 import Data.Tuple (Tuple(..), snd)
 import Effect.Aff.Class (class MonadAff)
@@ -23,9 +24,10 @@ import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource, getResources)
 import Listasio.Component.HTML.Layout as Layout
+import Listasio.Component.HTML.Message as Message
 import Listasio.Component.HTML.Resource (resource)
 import Listasio.Component.HTML.ToggleGroup as ToggleGroup
-import Listasio.Component.HTML.Utils (cx, maybeElem)
+import Listasio.Component.HTML.Utils (cx)
 import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Ordering (comparingOn)
@@ -63,6 +65,13 @@ toggleFilterByPending :: FilterByDone -> FilterByDone
 toggleFilterByPending ShowPending = ShowAll
 toggleFilterByPending _ = ShowPending
 
+
+filterByDoneMsg :: FilterByDone -> String
+filterByDoneMsg = case _ of
+  ShowAll -> "You haven't added any resource yet 😅"
+  ShowDone -> "No completed resources yet 😅"
+  ShowPending -> "No pending resources 👏"
+
 data GroupBy
   = GroupNone
   | GroupList
@@ -92,7 +101,7 @@ groupResources items = { byList, byDate, all }
       # sortWith _.list
       # groupBy (\a b -> a.list == b.list)
       # map (Tuple <$> (_.list <<< NEA.head) <*> identity)
-      # fromFoldable
+      # Map.fromFoldable
       # map (NEA.sortBy $ comparingOn _.completed_at byCompletedAt)
   byDate =
     items
@@ -100,7 +109,7 @@ groupResources items = { byList, byDate, all }
       # sortWith _.completed_at
       # groupBy completedOnSameMonth
       # mapMaybe monthItemsPair
-      # fromFoldable
+      # Map.fromFoldable
       # map (NEA.sortWith _.completed_at)
 
 completedOnSameMonth :: ListResource -> ListResource -> Boolean
@@ -120,7 +129,7 @@ type State
     }
 
 noteError :: forall a. Maybe a -> Either String a
-noteError = note "Could not fetch your lists"
+noteError = note "Failed to load resources"
 
 component
   :: forall q o m r
@@ -262,46 +271,72 @@ component = Connect.component $ H.mkComponent
     feed =
       case resources of
         Success grouped | null grouped.all ->
-          HH.div [] [ HH.text "No resources added yet :)" ]
+          HH.div
+            [ HP.classes [ T.textGray300, T.text2xl, T.mt10 ] ]
+            [ HH.text "You haven't added any resource yet 😅" ]
 
         Success grouped ->
           case groupBy of
             GroupNone ->
-              HH.div
-                [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.lgGridCols3, T.xlGridCols4, T.gap4 ] ]
-                $ map (resource lists)
-                $ filterByDoneFn grouped.all
+              case filterByDoneFn grouped.all, filterByDone of
+                [], fbd ->
+                  HH.div
+                    [ HP.classes [ T.textGray300, T.text2xl, T.mt10 ] ]
+                    [ HH.text $ filterByDoneMsg fbd ]
+                rs, _ ->
+                  HH.div
+                    [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.lgGridCols3, T.xlGridCols4, T.gap4 ] ]
+                    $ map (resource lists) rs
 
             GroupList ->
-              HH.div []
-                $ map snd
-                $ toUnfoldable
-                $ mapWithIndex listFeed grouped.byList
+              case map snd $ Map.toUnfoldable $ Map.mapMaybeWithKey listFeed grouped.byList of
+                [] ->
+                  HH.div
+                    [ HP.classes [ T.textGray300, T.text2xl, T.mt10 ] ]
+                    [ HH.text $ filterByDoneMsg filterByDone ]
+
+                items -> HH.div [] items
 
             GroupDate ->
-              HH.div []
-                $ map snd
-                $ toUnfoldable
-                $ mapWithIndex dateFeed grouped.byDate
+              case Map.isEmpty grouped.byDate of
+                true ->
+                  HH.div
+                    [ HP.classes [ T.textGray300, T.text2xl, T.mt10 ] ]
+                    [ HH.text "No completed resources yet 😅" ]
+                false ->
+                  HH.div []
+                    $ map snd
+                    $ Map.toUnfoldable
+                    $ mapWithIndex dateFeed grouped.byDate
 
         Failure msg ->
-          HH.div
-            []
-            [ HH.text msg ]
+          Message.message $ Message.props
+            { classes = [ T.mt10, T.py2, T.w96 ]
+            , style = Message.Alert
+            , title = Just msg
+            , icon = Just "😓"
+            }
+
         _ ->
-          HH.div [] [ HH.text "Loading ..." ]
+          HH.div
+            [ HP.classes [ T.textGray300, T.textLg, T.mt10 ] ]
+            [ HH.text "Loading ..." ]
 
     listFeed listId items =
-      maybeElem (find ((listId == _) <<< _.id) lists) \l ->
-        HH.div
-          []
-          [ HH.div [ HP.classes [ T.textXl, T.textGray400, T.mt6, T.mb4 ] ] [ HH.text l.title ]
-          , HH.div
-              [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.lgGridCols3, T.xlGridCols4, T.gap4 ] ]
-              $ map (resource lists)
-              $ filterByDoneFn
-              $ NEA.toArray items
-          ]
+      lists
+        # find ((listId == _) <<< _.id)
+        # filter (const $ not $ null filteredItems)
+        # map (\l ->
+                HH.div
+                  []
+                  [ HH.div [ HP.classes [ T.textXl, T.textGray400, T.mt6, T.mb4 ] ] [ HH.text l.title ]
+                    , HH.div
+                    [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.lgGridCols3, T.xlGridCols4, T.gap4 ] ]
+                      $ map (resource lists)
+                      $ filteredItems
+                  ]
+              )
+      where filteredItems = filterByDoneFn $ NEA.toArray items
 
     dateFeed yearMonth items =
       HH.div
