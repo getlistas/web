@@ -4,8 +4,10 @@ import Prelude
 
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
+import Data.Filterable (filter)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
+import Data.String as String
 import Data.String.Common (split, trim)
 import Data.String.Pattern (Pattern(..))
 import Effect.Aff.Class (class MonadAff)
@@ -23,6 +25,7 @@ import Listasio.Data.Profile (Profile)
 import Listasio.Data.Route (Route(..))
 import Listasio.Env (UserEnv)
 import Listasio.Form.Field as Field
+import Listasio.Form.Validation ((<?>))
 import Listasio.Form.Validation as V
 import Network.RemoteData (RemoteData(..), isFailure, isLoading)
 import Tailwind as T
@@ -141,9 +144,11 @@ formComponent =
   formInput _ =
     { validators:
         CreateListForm
-          { title: V.required >>> V.minLength 3 >>> V.maxLength 50
-          , description: V.toOptional $ V.minLength 5 >>> V.maxLength 500
-          , tags: F.hoistFn_ (map trim <<< split (Pattern ","))
+          { title: V.required >>> V.maxLength 100
+          , description: V.toOptional $ V.maxLength 500
+          , tags: V.maxLengthArr 4
+                    <<< F.hoistFn_ (filter (not <<< String.null) <<< map trim <<< split (Pattern ","))
+                    <?> V.WithMsg "Cannot have more than 4 tags"
           , is_public: F.noValidation
           }
     , initialInputs: Nothing
@@ -208,7 +213,7 @@ formComponent =
                       ]
                   ]
               , HH.span
-                  [ HP.classes [ T.fontMedium, T.ml2 ] ]
+                  [ HP.classes [ T.fontMedium, T.ml2, T.textGray400 ] ]
                   [ HH.text "This is a public list" ]
               ]
 

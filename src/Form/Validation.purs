@@ -3,7 +3,10 @@ module Listasio.Form.Validation where
 
 import Prelude
 
-import Data.Either (Either(..), note)
+import Data.Array as Array
+import Data.Bifunctor (lmap)
+import Data.Either (Either(..))
+import Data.Either as Either
 import Data.Maybe (Maybe(..))
 import Data.String as String
 import Formless as F
@@ -21,22 +24,26 @@ data FormError
   = Required
   | TooShort Int
   | TooLong Int
+  | TooMany Int
   | InvalidEmail
   | InvalidUsername
   | InvalidSlug
   | InvalidAvatar
   | InvalidID
+  | WithMsg String
 
 errorToString :: FormError -> String
 errorToString = case _ of
   Required -> "This field is required."
   TooShort _ -> "Not enough characters entered"
   TooLong _ -> "Too many characters entered"
+  TooMany n -> "Cannot have more than " <> show n
   InvalidEmail -> "Invalid email address"
   InvalidUsername -> "Invalid username"
   InvalidSlug -> "Invalid slug"
   InvalidAvatar -> "Invalid image URL"
   InvalidID -> "This field is invalid"
+  WithMsg msg -> msg
 
 class ToText item where
   toText :: item -> String
@@ -78,47 +85,56 @@ instance toTextString :: ToText String where
 -- | then make them compatible with Formless.
 
 -- | Just check whether the input is the empty value using Monoid's `mempty`.
-required :: ∀ form m a. Eq a => Monoid a => Monad m => F.Validation form m FormError a a
+required :: forall form m a. Eq a => Monoid a => Monad m => F.Validation form m FormError a a
 required = F.hoistFnE_ $ cond (_ /= mempty) Required
 
-minLength :: ∀ form m. Monad m => Int -> F.Validation form m FormError String String
+minLength :: forall form m. Monad m => Int -> F.Validation form m FormError String String
 minLength n = F.hoistFnE_ $ cond (\str -> String.length str > n) $ TooShort n
 
-maxLength :: ∀ form m. Monad m => Int -> F.Validation form m FormError String String
+maxLength :: forall form m. Monad m => Int -> F.Validation form m FormError String String
 maxLength n = F.hoistFnE_ $ cond (\str -> String.length str <= n) $ TooLong n
 
+maxLengthArr :: forall form m a. Monad m => Int -> F.Validation form m FormError (Array a) (Array a)
+maxLengthArr n = F.hoistFnE_ $ cond (\as -> Array.length as <= n) $ TooMany n
+
 -- | A fairly naive requirement that it at least includes the `@` symbol.
-emailFormat :: ∀ form m. Monad m => F.Validation form m FormError String Email
+emailFormat :: forall form m. Monad m => F.Validation form m FormError String Email
 emailFormat = F.hoistFnE_ $ map Email <<< cond (String.contains (String.Pattern "@")) InvalidEmail
 
-usernameFormat :: ∀ form m. Monad m => F.Validation form m FormError String Username
-usernameFormat = F.hoistFnE_ $ note InvalidUsername <<< Username.parse
+usernameFormat :: forall form m. Monad m => F.Validation form m FormError String Username
+usernameFormat = F.hoistFnE_ $ Either.note InvalidUsername <<< Username.parse
 
-idFormat :: ∀ form m. Monad m => F.Validation form m FormError String ID
-idFormat = F.hoistFnE_ $ note InvalidUsername <<< ID.parse
+idFormat :: forall form m. Monad m => F.Validation form m FormError String ID
+idFormat = F.hoistFnE_ $ Either.note InvalidUsername <<< ID.parse
 
-slugFormat :: ∀ form m. Monad m => F.Validation form m FormError String Slug
-slugFormat = F.hoistFnE_ $ note InvalidSlug <<< Slug.parse
+slugFormat :: forall form m. Monad m => F.Validation form m FormError String Slug
+slugFormat = F.hoistFnE_ $ Either.note InvalidSlug <<< Slug.parse
 
-avatarFormat :: ∀ form m. Monad m => F.Validation form m FormError String Avatar
-avatarFormat = F.hoistFnE_ $ note InvalidAvatar <<< Avatar.parse
+avatarFormat :: forall form m. Monad m => F.Validation form m FormError String Avatar
+avatarFormat = F.hoistFnE_ $ Either.note InvalidAvatar <<< Avatar.parse
 
 -- Utilities
+
+note :: forall form m a b. Monad m => F.Validation form m FormError a b -> FormError -> F.Validation form m FormError a b
+note v err = F.Validation \form value ->
+ lmap (const err) <$> F.runValidation v form value
+
+infixl 4 note as <?>
 
 cond :: forall a. (a -> Boolean) -> FormError -> a -> Either FormError a
 cond f err a = if f a then pure a else Left err
 
 -- | Validate an input only if it isn't empty.
-toOptional :: ∀ form m a b
+toOptional :: forall form m a b
    . Monoid a
   => Eq a
   => Monad m
   => F.Validation form m FormError a b
   -> F.Validation form m FormError a (Maybe b)
-toOptional v = F.Validation \form val ->
-  case val == mempty of
+toOptional v = F.Validation \form value ->
+  case value == mempty of
     true -> pure (pure Nothing)
-    _ -> (map <<< map) Just (F.runValidation v form val)
+    _ -> (map <<< map) Just (F.runValidation v form value)
 
 -- | Validate an input only if it isn't empty.
 requiredFromOptional :: forall form m a b.
