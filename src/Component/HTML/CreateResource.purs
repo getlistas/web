@@ -17,13 +17,13 @@ import Halogen.HTML.Properties as HP
 import Listasio.Capability.Resource.Resource (class ManageResource, createResource, getMeta)
 import Listasio.Component.HTML.Dropdown as DD
 import Listasio.Component.HTML.Resource as ResourceComponent
-import Listasio.Component.HTML.Utils (whenElem)
+import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Resource (ListResource, Resource)
 import Listasio.Data.ResourceMetadata (ResourceMeta)
 import Listasio.Form.Field as Field
-import Listasio.Form.Validation (class ToText)
+import Listasio.Form.Validation (class ToText, (<?>))
 import Listasio.Form.Validation as V
 import Network.RemoteData (RemoteData(..), isFailure, isLoading, isSuccess)
 import Select as Select
@@ -168,6 +168,7 @@ formComponent = F.component formInput $ F.defaultSpec
           , description:  V.toOptional $ V.maxLength 500
           , thumbnail: F.noValidation
           , list: V.requiredFromOptional F.noValidation
+                   <?> V.WithMsg "Please select a list"
           }
     , initialInputs: Just $ initialInputs url
     , status: NotAsked
@@ -291,6 +292,11 @@ formComponent = F.component formInput $ F.defaultSpec
                     [ HH.text "List" ]
                   ]
               , HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput handler
+              , let mbError = filter (const $ F.getTouched proxies.list form) $ F.getError proxies.list form
+                 in maybeElem mbError \err ->
+                      HH.div
+                        [ HP.classes [ T.textManzana, T.mt2 ] ]
+                        [ HH.text $ V.errorToString err ]
               ]
 
           , HH.div
