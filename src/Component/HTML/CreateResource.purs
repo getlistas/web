@@ -163,9 +163,9 @@ formComponent = F.component formInput $ F.defaultSpec
   formInput { lists, url } =
     { validators:
         CreateResourceForm
-          { title: V.required >>> V.minLength 1 >>> V.maxLength 150
-          , url: V.required >>> V.minLength 1 >>> V.maxLength 500 -- TODO URL validation ???
-          , description:  V.toOptional $ V.minLength 1 >>> V.maxLength 500
+          { title: V.required >>> V.maxLength 150
+          , url: V.required >>> V.maxLength 500 -- TODO URL validation ???
+          , description:  V.toOptional $ V.maxLength 500
           , thumbnail: F.noValidation
           , list: V.requiredFromOptional F.noValidation
           }
