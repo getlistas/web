@@ -25,7 +25,7 @@ import Listasio.Data.ResourceMetadata (ResourceMeta)
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation (class ToText)
 import Listasio.Form.Validation as V
-import Network.RemoteData (RemoteData(..))
+import Network.RemoteData (RemoteData(..), isFailure, isLoading, isSuccess)
 import Select as Select
 import Tailwind as T
 import Util as Util
@@ -39,7 +39,7 @@ _createResource = SProxy :: SProxy "createResource"
 
 data Action
   = Initialize
-  | HandleFormMessage FormMessage
+  | HandleFormMessage Resource
 
 type State
   = { lists :: Array ListWithIdAndUser
@@ -77,15 +77,18 @@ component = H.mkComponent
     Initialize ->
       pure unit
 
-    HandleFormMessage (FormSubmitted newResource) -> do
-      { lists } <- H.get
+    HandleFormMessage newResource -> do
+      void $ H.query F._formless unit $ F.injQuery $ SetCreateStatus Loading unit
+
       mbNewResource <- createResource newResource
+
       case mbNewResource of
         Just resource -> do
           H.raise $ Created resource
-          void $ H.query F._formless unit $ F.injQuery $ SetCreateError false unit
+          void $ H.query F._formless unit $ F.injQuery $ SetCreateStatus (Success unit) unit
 
-        Nothing -> void $ H.query F._formless unit $ F.injQuery $ SetCreateError true unit
+        Nothing ->
+          void $ H.query F._formless unit $ F.injQuery $ SetCreateStatus (Failure "Could not create resource") unit
 
   render :: State -> HH.ComponentHTML Action ChildSlots m
   render { lists, url } =
@@ -101,11 +104,8 @@ derive instance newtypeDDItem :: Newtype DDItem _
 instance toTextDDItem :: ToText DDItem where
   toText = _.label <<< unwrap
 
-data FormMessage
-  = FormSubmitted Resource
-
 type FormSlot
-  = F.Slot CreateResourceForm FormQuery FormChildSlots FormMessage Unit
+  = F.Slot CreateResourceForm FormQuery FormChildSlots Resource Unit
 
 newtype CreateResourceForm r f
   = CreateResourceForm
@@ -121,7 +121,7 @@ newtype CreateResourceForm r f
 derive instance newtypeCreateResourceForm :: Newtype (CreateResourceForm r f) _
 
 data FormQuery a
-  = SetCreateError Boolean a
+  = SetCreateStatus (RemoteData String Unit) a
 
 derive instance functorFormQuery :: Functor FormQuery
 
@@ -140,17 +140,17 @@ type FormInput
 type FormChildSlots = ( dropdown :: DD.Slot DDItem Unit )
 
 type FormState =
-  ( createError :: Boolean
-  , lists :: Array ListWithIdAndUser
+  ( status :: RemoteData String Unit
   , meta :: RemoteData String ResourceMeta
   , pastedUrl :: Maybe String
+  , lists :: Array ListWithIdAndUser
   )
 
 formComponent ::
   forall m.
   MonadAff m =>
   ManageResource m =>
-  F.Component CreateResourceForm FormQuery FormChildSlots FormInput FormMessage m
+  F.Component CreateResourceForm FormQuery FormChildSlots FormInput Resource m
 formComponent = F.component formInput $ F.defaultSpec
   { render = renderCreateResource
   , handleEvent = handleEvent
@@ -170,9 +170,9 @@ formComponent = F.component formInput $ F.defaultSpec
           , list: V.requiredFromOptional F.noValidation
           }
     , initialInputs: Just $ initialInputs url
-    , createError: false
-    , lists
+    , status: NotAsked
     , meta: NotAsked
+    , lists
     , pastedUrl: url
     }
 
@@ -184,10 +184,7 @@ formComponent = F.component formInput $ F.defaultSpec
     , list: Nothing
     }
 
-  handleEvent = case _ of
-    F.Submitted outputs ->
-      H.raise $ FormSubmitted $ F.unwrapOutputFields outputs
-    _ -> pure unit
+  handleEvent = F.raiseResult
 
   handleAction = case _ of
     FormInitialize -> do
@@ -219,25 +216,25 @@ formComponent = F.component formInput $ F.defaultSpec
           H.modify_ _ { meta = Failure "Couldn't gett suggestions" }
 
     Submit event -> do
-      H.liftEffect $ Event.preventDefault event
-      eval F.submit
+      { status } <- H.get
+      when (not $ isLoading status) do
+        H.liftEffect $ Event.preventDefault event
+        eval F.submit
 
-    HandleDropdown msg ->
-      case msg of
-        DD.Selected (DDItem { value }) ->
-          eval $ F.setValidate proxies.list (Just value)
+    HandleDropdown (DD.Selected (DDItem { value })) ->
+      eval $ F.setValidate proxies.list (Just value)
 
-        DD.Cleared ->
-          eval $ F.setValidate proxies.list Nothing
+    HandleDropdown DD.Cleared ->
+      eval $ F.setValidate proxies.list Nothing
 
     where
     eval act = F.handleAction handleAction handleEvent act
 
   handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
-    SetCreateError createError a -> do
-      H.modify_ _ { createError = createError }
-      when (not createError) do
+    SetCreateStatus status a -> do
+      H.modify_ _ { status = status }
+      when (isSuccess status) do
         eval F.resetAll
         void $ H.query DD._dropdown unit DD.clear
       pure $ Just a
@@ -247,12 +244,10 @@ formComponent = F.component formInput $ F.defaultSpec
 
   proxies = F.mkSProxies (F.FormProxy :: _ CreateResourceForm)
 
-  -- TODO: submitting is only true while the form component is submitting
-  --       but the async action actually happens in the parent component
-  renderCreateResource { form, createError, lists, submitting, dirty, meta } =
+  renderCreateResource { form, status, lists, submitting, dirty, meta } =
     HH.form
       [ HE.onSubmit $ Just <<< F.injAction <<< Submit ]
-      [ whenElem createError \_ ->
+      [ whenElem (isFailure status) \_ ->
           HH.div
             []
             [ HH.text "Failed to add resource" ]
@@ -363,9 +358,14 @@ formComponent = F.component formInput $ F.defaultSpec
                   ]
               ]
 
+          , whenElem (isFailure status) \_ ->
+              HH.div
+                [ HP.classes [ T.textRed500, T.my4 ] ]
+                [ HH.text "Could not create resource :(" ]
+
           , HH.div
               [ HP.classes [ T.mt4 ] ]
-              [ Field.submit "Add resource" submitting ]
+              [ Field.submit "Add resource" (submitting || isLoading status) ]
           ]
       ]
     where handler = Just <<< F.injAction <<< HandleDropdown
