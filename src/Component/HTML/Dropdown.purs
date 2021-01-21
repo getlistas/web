@@ -10,7 +10,6 @@ import Data.Traversable (for_)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
-import Halogen.HTML.Core as HC
 import Halogen.HTML.Properties as HP
 import Listasio.Component.HTML.Utils (cx)
 import Listasio.Form.Validation (class ToText, toText)
@@ -72,9 +71,7 @@ spec = Select.defaultSpec
   render st =
     HH.div
       [ HP.classes
-          [ cx (HC.ClassName "dropdown is-active") $ st.visibility == Select.On -- TODO ???
-          , cx (HC.ClassName "dropdown") $ st.visibility /= Select.On           -- TODO ???
-          , cx T.bgGray100 $ st.visibility == Select.On
+          [ cx T.bgGray100 $ st.visibility == Select.On
           , cx T.roundedMd $ st.visibility /= Select.On
           , cx T.roundedTMd $ st.visibility == Select.On
           ]
@@ -113,7 +110,8 @@ toggle props st =
     []
     [ HH.button
       ( Setters.setToggleProps props
-      <> [ HP.classes
+      <> [ HP.type_ HP.ButtonButton
+         , HP.classes
              [ T.appearanceNone
              , T.borderNone
              , T.wFull
@@ -140,8 +138,7 @@ menu
 menu st =
   HH.div
   [ HP.classes
-      [ HC.ClassName "dropdown-menu" -- TODO ???
-      , cx T.pt1 $ st.visibility == Select.On
+      [ cx T.pt1 $ st.visibility == Select.On
       , cx T.pb2 $ st.visibility == Select.On
       , cx T.px4 $ st.visibility == Select.On
       , cx T.borderT2 $ st.visibility == Select.On
