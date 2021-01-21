@@ -9,7 +9,6 @@ import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
-import Halogen.HTML.Properties (classes)
 import Halogen.HTML.Properties as HP
 import Listasio.Api.Request (LoginFields, initGoogleAuth)
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
@@ -250,10 +249,10 @@ formComponent =
                   , HP.type_ HP.InputPassword
                   ]
                 ]
-      , whenElem (isFailure status) \_ ->
-          HH.div
-            [ HP.classes [ T.textRed500, T.my4 ] ]
-            [ HH.text "Email or password is invalid" ]
+          , whenElem (isFailure status) \_ ->
+              HH.div
+                [ HP.classes [ T.textRed500, T.my4 ] ]
+                [ HH.text "Email or password is invalid" ]
           , HH.div
               [ HP.classes [ T.mt4 ] ]
               [ Field.submit "Sign in" (submitting || isLoading status) ]

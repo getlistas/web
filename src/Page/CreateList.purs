@@ -24,6 +24,7 @@ import Listasio.Data.Route (Route(..))
 import Listasio.Env (UserEnv)
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation as V
+import Network.RemoteData (RemoteData(..), isFailure, isLoading)
 import Tailwind as T
 import Web.Event.Event as Event
 import Web.UIEvent.MouseEvent (toEvent)
@@ -68,10 +69,16 @@ component = Connect.component $ H.mkComponent
     Navigate route e -> navigate_ e route
 
     HandleCreateForm newList -> do
-       mbCreatedList <- createList newList
-       case mbCreatedList of
-         Just _ -> navigate Dashboard
-         Nothing -> void $ H.query F._formless unit $ F.injQuery $ SetCreateError true unit
+      void $ H.query F._formless unit $ F.injQuery $ SetCreateStatus Loading unit
+
+      mbCreatedList <- createList newList
+
+      case mbCreatedList of
+        Just _ -> do
+           void $ H.query F._formless unit $ F.injQuery $ SetCreateStatus (Success unit) unit
+           navigate Dashboard
+        Nothing ->
+          void $ H.query F._formless unit $ F.injQuery $ SetCreateStatus (Failure "Could not create list") unit
 
   render :: State -> H.ComponentHTML Action ChildSlots m
   render { currentUser } =
@@ -110,7 +117,7 @@ newtype CreateListForm r f
 derive instance newtypeCreateListForm :: Newtype (CreateListForm r f) _
 
 data FormQuery a
-  = SetCreateError Boolean a
+  = SetCreateStatus (RemoteData String Unit) a
 
 derive instance functorFormQuery :: Functor FormQuery
 
@@ -130,7 +137,7 @@ formComponent =
         , handleAction = handleAction
         }
   where
-  formInput :: i -> F.Input CreateListForm ( createError :: Boolean ) m
+  formInput :: i -> F.Input CreateListForm ( status :: RemoteData String Unit ) m
   formInput _ =
     { validators:
         CreateListForm
@@ -140,34 +147,32 @@ formComponent =
           , is_public: F.noValidation
           }
     , initialInputs: Nothing
-    , createError: false
+    , status: NotAsked
     }
 
   handleEvent = F.raiseResult
 
   handleAction = case _ of
     Submit event -> do
-      H.liftEffect $ Event.preventDefault event
-      eval F.submit
+      { status } <- H.get
+      when (not $ isLoading status) do
+        H.liftEffect $ Event.preventDefault event
+        eval F.submit
     where
     eval act = F.handleAction handleAction handleEvent act
 
   handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
-    SetCreateError bool a -> do
-      H.modify_ _ { createError = bool }
+    SetCreateStatus status a -> do
+      H.modify_ _ { status = status }
       pure (Just a)
 
   proxies = F.mkSProxies (F.FormProxy :: _ CreateListForm)
 
-  renderLogin { form, createError, submitting } =
+  renderLogin { form, status, submitting } =
     HH.form
       [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev ]
-      [ whenElem createError \_ ->
-          HH.div
-            []
-            [ HH.text "Failed to create form" ]
-      , HH.fieldset_
+      [ HH.fieldset_
           [ Field.input (Just "Title") proxies.title form
               [ HP.placeholder "YouTube Videos"
               , HP.type_ HP.InputText
@@ -206,6 +211,12 @@ formComponent =
                   [ HP.classes [ T.fontMedium, T.ml2 ] ]
                   [ HH.text "This is a public list" ]
               ]
-          , Field.submit "Create list" submitting
+
+          , whenElem (isFailure status) \_ ->
+              HH.div
+                [ HP.classes [ T.textRed500, T.my4 ] ]
+                [ HH.text "Could not create list :(" ]
+
+          , Field.submit "Create list" (submitting || isLoading status)
           ]
       ]
