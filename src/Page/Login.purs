@@ -208,7 +208,7 @@ formComponent =
     { validators:
         LoginForm
           { email: V.required >>> V.minLength 3 >>> V.emailFormat
-          , password: V.required >>> V.minLength 1
+          , password: V.required >>> V.maxLength 100
           }
     , initialInputs: Nothing
     , status: NotAsked

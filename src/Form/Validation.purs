@@ -40,7 +40,7 @@ errorToString = case _ of
   TooMany n -> "Cannot have more than " <> show n
   InvalidEmail -> "Invalid email address"
   InvalidUsername -> "Invalid username"
-  InvalidSlug -> "Invalid slug"
+  InvalidSlug -> "Invalid username"
   InvalidAvatar -> "Invalid image URL"
   InvalidID -> "This field is invalid"
   WithMsg msg -> msg

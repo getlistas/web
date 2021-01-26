@@ -7,6 +7,7 @@ import Data.Filterable (filter)
 import Data.Maybe (isJust, isNothing)
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
+import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (cx, maybeElem)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Resource (ListResource)
@@ -56,7 +57,7 @@ resource lists { url, title, list, completed_at } =
             , maybeElem (filter (not <<< null) $ map _.tags $ find ((list == _) <<< _.id) lists) \tags ->
                 HH.div
                   [ HP.classes [ T.flex ] ]
-                  $ map tag tags
+                  $ map Tag.tag tags
             ]
         , maybeElem (find ((list == _) <<< _.id) lists) \l ->
             HH.div
@@ -72,17 +73,3 @@ resource lists { url, title, list, completed_at } =
       HH.div
         [ HP.classes [ T.textGray300, T.textXs, T.mt2, T.ml6 ] ]
         [ HH.text short ]
-
-  tag t =
-    HH.span
-      [ HP.classes
-          [ T.textXs
-          , T.px1
-          , T.roundedSm
-          , T.bgDurazno
-          , T.textWhite
-          , T.mr1
-          , T.leadingNormal
-          ]
-      ]
-      [ HH.text t ]
