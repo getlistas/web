@@ -63,6 +63,10 @@ bgTransparent = ClassName "bg-transparent"
 bgWhite :: ClassName
 bgWhite = ClassName "bg-white"
 
+-- | block
+block :: ClassName
+block = ClassName "block"
+
 -- | border2
 border2 :: ClassName
 border2 = ClassName "border-2"
@@ -86,6 +90,10 @@ borderGray200 = ClassName "border-gray-200"
 -- | borderGray300
 borderGray300 :: ClassName
 borderGray300 = ClassName "border-gray-300"
+
+-- | borderGray400
+borderGray400 :: ClassName
+borderGray400 = ClassName "border-gray-400"
 
 -- | borderIndigo400
 borderIndigo400 :: ClassName
@@ -327,6 +335,10 @@ hoverBorderKiwi = ClassName "hover:border-kiwi"
 hoverTextGray300 :: ClassName
 hoverTextGray300 = ClassName "hover:text-gray-300"
 
+-- | hoverTextGray900
+hoverTextGray900 :: ClassName
+hoverTextGray900 = ClassName "hover:text-gray-900"
+
 -- | hoverTextWhite
 hoverTextWhite :: ClassName
 hoverTextWhite = ClassName "hover:text-white"
@@ -519,6 +531,10 @@ my6 = ClassName "my-6"
 negMlPx :: ClassName
 negMlPx = ClassName "-ml-px"
 
+-- | negMr1
+negMr1 :: ClassName
+negMr1 = ClassName "-mr-1"
+
 -- | objectCover
 objectCover :: ClassName
 objectCover = ClassName "object-cover"
@@ -526,6 +542,10 @@ objectCover = ClassName "object-cover"
 -- | opacity50
 opacity50 :: ClassName
 opacity50 = ClassName "opacity-50"
+
+-- | originTopRight
+originTopRight :: ClassName
+originTopRight = ClassName "origin-top-right"
 
 -- | overflowHidden
 overflowHidden :: ClassName
@@ -587,10 +607,6 @@ pt4 = ClassName "pt-4"
 pt5 :: ClassName
 pt5 = ClassName "pt-5"
 
--- | px1
-px1 :: ClassName
-px1 = ClassName "px-1"
-
 -- | px2
 px2 :: ClassName
 px2 = ClassName "px-2"
@@ -627,6 +643,18 @@ relative = ClassName "relative"
 right0 :: ClassName
 right0 = ClassName "right-0"
 
+-- | ring1
+ring1 :: ClassName
+ring1 = ClassName "ring-1"
+
+-- | ringBlack
+ringBlack :: ClassName
+ringBlack = ClassName "ring-black"
+
+-- | ringOpacity5
+ringOpacity5 :: ClassName
+ringOpacity5 = ClassName "ring-opacity-5"
+
 -- | roundedBMd
 roundedBMd :: ClassName
 roundedBMd = ClassName "rounded-b-md"
@@ -659,9 +687,17 @@ roundedSm = ClassName "rounded-sm"
 roundedTMd :: ClassName
 roundedTMd = ClassName "rounded-t-md"
 
+-- | shadowLg
+shadowLg :: ClassName
+shadowLg = ClassName "shadow-lg"
+
 -- | shadowMd
 shadowMd :: ClassName
 shadowMd = ClassName "shadow-md"
+
+-- | shadowSm
+shadowSm :: ClassName
+shadowSm = ClassName "shadow-sm"
 
 -- | smAlignMiddle
 smAlignMiddle :: ClassName
@@ -754,6 +790,10 @@ textGray300 = ClassName "text-gray-300"
 -- | textGray400
 textGray400 :: ClassName
 textGray400 = ClassName "text-gray-400"
+
+-- | textGray700
+textGray700 :: ClassName
+textGray700 = ClassName "text-gray-700"
 
 -- | textKiwi
 textKiwi :: ClassName

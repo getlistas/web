@@ -136,7 +136,7 @@ component = Connect.component $ H.mkComponent
         [ HP.classes [ T.flex, T.justifyBetween, T.wFull ] ]
         [ HH.h1
             [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-            [ HH.text "Read Next" ]
+            [ HH.text "Up next" ]
         , whenElem (isSuccess st.lists) \_ ->
             HH.div
               []

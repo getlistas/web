@@ -29,7 +29,7 @@ header currentUser navigate route =
         ]
     , HH.div
         [ HP.classes [ T.flex, T.flexWrap, T.justifyBetween, T.itemsCenter ] ]
-        [ whenElem (isJust currentUser) \_ -> navLink Dashboard "Dashboard"
+        [ whenElem (isJust currentUser) \_ -> navLink Dashboard "Up next"
         , whenElem (isJust currentUser) \_ -> navLink Resources "Resources"
         , navLink Discover "Discover"
         , navLink About "About"
