@@ -3,6 +3,7 @@ module Listasio.Component.HTML.List where
 import Prelude
 
 import Data.Array (deleteAt, findIndex, head, insertAt, null, snoc, tail)
+import Data.Array.NonEmpty (cons')
 import Data.DateTime (DateTime)
 import Data.Either (note)
 import Data.Filterable (class Filterable, filter)
@@ -15,6 +16,8 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Resource.Resource (class ManageResource, completeResource, deleteResource, getListResources)
+import Listasio.Component.HTML.ButtonGroupMenu as ButtonGroupMenu
+import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
@@ -38,6 +41,8 @@ _list = SProxy :: SProxy "list"
 data Action
   = Initialize
   | ToggleShowMore
+  | ToggleShowNextMenu
+  | AndCloseNextMenu Action
   | CompleteResource ListResource
   | DeleteResource ListResource
 
@@ -52,6 +57,7 @@ type State
     , resources :: RemoteData String ListResources
     , showMore :: Boolean
     , markingAsDone :: Boolean
+    , showNextMenu :: Boolean
     }
 
 component :: forall o m.
@@ -73,6 +79,7 @@ component = H.mkComponent
     , resources: NotAsked
     , showMore: false
     , markingAsDone: false
+    , showNextMenu: false
     }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
@@ -84,6 +91,12 @@ component = H.mkComponent
       H.modify_ _ { resources = resources }
 
     ToggleShowMore -> H.modify_ \s -> s { showMore = not s.showMore }
+
+    ToggleShowNextMenu -> H.modify_ \s -> s { showNextMenu = not s.showNextMenu }
+
+    AndCloseNextMenu action -> do
+      void $ H.fork $ handleAction action
+      H.modify_ _ { showNextMenu = false }
 
     CompleteResource toComplete@{ id } -> do
       -- TODO: uses lenses for F sake!
@@ -125,7 +138,7 @@ component = H.mkComponent
       pure $ Just a
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render { list, resources, showMore, markingAsDone } =
+  render { list, resources, showMore, showNextMenu, markingAsDone } =
     HH.div
       [ HP.classes
           [ T.border2
@@ -138,11 +151,6 @@ component = H.mkComponent
       ]
       [ header, toRead, footer ]
     where
-    tag text =
-      HH.span
-        [ HP.classes [ T.leadingNormal, T.mr1, T.mb1, T.px2, T.bgDuraznoLight, T.textWhite, T.textXs, T.roundedSm ] ]
-        [ HH.text text ]
-
     shortUrl url =
       maybeElem (takeDomain url) \short ->
         HH.div
@@ -197,63 +205,15 @@ component = H.mkComponent
                   [ shortUrl next.url
                   -- TODO: resource tags
                   , whenElem (not $ null list.tags) \_ ->
-                      HH.div [ HP.classes [ T.flex, T.flexWrap ] ] $ map tag list.tags
+                      HH.div [ HP.classes [ T.flex, T.flexWrap ] ] $ map Tag.tag list.tags
                   ]
-              , HH.span
-                  [ HP.classes [ T.relative, T.z0, T.inlineFlex, T.roundedMd ] ]
-                  [ HH.button
-                      [ HE.onClick \_ -> Just $ CompleteResource next
-                      , HP.type_ HP.ButtonButton
-                      , HP.classes
-                          [ T.relative
-                          , T.inlineFlex
-                          , T.itemsCenter
-                          , T.px4
-                          , T.py1
-                          , T.roundedLMd
-                          , T.border
-                          , T.borderGray300
-                          , T.bgWhite
-                          , T.textGray400
-                          , T.textXs
-                          , T.fontMedium
-                          , T.textWhite
-                          , T.hoverBgGray100
-                          , T.focusZ10
-                          , T.focusOutlineNone
-                          , T.focusRing1
-                          , T.focusRingKiwi
-                          , T.focusBorderKiwi
-                          ]
-                      ]
-                      [ HH.text "✔️" ]
-                  , HH.button
-                      [ HE.onClick \_ -> Just $ DeleteResource next
-                      , HP.type_ HP.ButtonButton
-                      , HP.classes
-                          [ T.negMlPx
-                          , T.inlineFlex
-                          , T.itemsCenter
-                          , T.px4
-                          , T.py1
-                          , T.roundedRMd
-                          , T.border
-                          , T.borderGray300
-                          , T.bgWhite
-                          , T.textGray400
-                          , T.textXs
-                          , T.fontMedium
-                          , T.textWhite
-                          , T.hoverBgGray100
-                          , T.focusZ10
-                          , T.focusOutlineNone
-                          , T.focusRing1
-                          , T.focusRingKiwi
-                          , T.focusBorderKiwi
-                          ]
-                      ]
-                      [ HH.text "❌" ]
-                  ]
+              , ButtonGroupMenu.buttonGroupMenu
+                  { mainAction: Just $ CompleteResource next
+                  , label: "Done"
+                  , toggleMenu: Just ToggleShowNextMenu
+                  , isOpen: showNextMenu
+                  }
+                  $ cons' { action: Just $ AndCloseNextMenu $ DeleteResource next , text: "Remove" } []
               ]
           ]
 
@@ -407,3 +367,4 @@ component = H.mkComponent
 
 filterNotEmpty :: forall t a. Filterable t => t (Array a) -> t (Array a)
 filterNotEmpty = filter (not <<< null)
+
