@@ -21,6 +21,7 @@ import Listasio.Api.Endpoint (Endpoint(..))
 import Listasio.Api.Request (RequestMethod(..))
 import Listasio.Api.Request as Request
 import Listasio.Api.Utils (authenticate, decode, mkAuthRequest, mkRequest)
+import Listasio.Capability.Clipboard (class Clipboard)
 import Listasio.Capability.LogMessages (class LogMessages, logError)
 import Listasio.Capability.Navigate (class Navigate, locationState, navigate)
 import Listasio.Capability.Now (class Now)
@@ -34,6 +35,7 @@ import Listasio.Data.Resource as Resource
 import Listasio.Data.ResourceMetadata as ResourceMeta
 import Listasio.Data.Route as Route
 import Listasio.Env (Env, LogLevel(..))
+import Listasio.Foreign.Clipboard as ForeignClipboard
 import Routing.Duplex (print)
 import Type.Equality (class TypeEquals, from)
 import Web.Event.Event (preventDefault)
@@ -54,6 +56,9 @@ derive newtype instance monadAffAppM :: MonadAff AppM
 
 instance monadAskAppM :: TypeEquals e Env => MonadAsk e AppM where
   ask = AppM $ asks from
+
+instance cliboardAppM :: Clipboard AppM where
+  writeText = liftAff <<< ForeignClipboard.writeText
 
 instance nowAppM :: Now AppM where
   now = liftEffect Now.now

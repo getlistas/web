@@ -15,6 +15,7 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Listasio.Capability.Clipboard (class Clipboard, writeText)
 import Listasio.Capability.Resource.Resource (class ManageResource, completeResource, deleteResource, getListResources)
 import Listasio.Component.HTML.ButtonGroupMenu as ButtonGroupMenu
 import Listasio.Component.HTML.Tag as Tag
@@ -23,9 +24,14 @@ import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Resource (ListResource)
+import Listasio.Data.Route (Route(..), routeCodec)
 import Network.RemoteData (RemoteData(..), fromEither, toMaybe)
+import Routing.Duplex (print)
 import Tailwind as T
 import Util (takeDomain)
+import Web.HTML (window) as Window
+import Web.HTML.Location as Location
+import Web.HTML.Window (location) as Window
 
 type ListResources
   = { items :: Array ListResource
@@ -43,6 +49,8 @@ data Action
   | ToggleShowMore
   | ToggleShowNextMenu
   | AndCloseNextMenu Action
+  | CopyToShare ListResource
+  | CopyResourceURL ListResource
   | CompleteResource ListResource
   | DeleteResource ListResource
 
@@ -63,6 +71,7 @@ type State
 component :: forall o m.
      MonadAff m
   => ManageResource m
+  => Clipboard m
   => H.Component HH.HTML Query Input o m
 component = H.mkComponent
   { initialState
@@ -93,6 +102,12 @@ component = H.mkComponent
     ToggleShowMore -> H.modify_ \s -> s { showMore = not s.showMore }
 
     ToggleShowNextMenu -> H.modify_ \s -> s { showNextMenu = not s.showNextMenu }
+
+    CopyToShare { url } -> do
+      host <- H.liftEffect $ Location.host =<< Window.location =<< Window.window
+      void $ writeText $ host <> print routeCodec (CreateResource { url: Just url })
+
+    CopyResourceURL { url } -> void $ writeText url
 
     AndCloseNextMenu action -> do
       void $ H.fork $ handleAction action
@@ -213,7 +228,11 @@ component = H.mkComponent
                   , toggleMenu: Just ToggleShowNextMenu
                   , isOpen: showNextMenu
                   }
-                  $ cons' { action: Just $ AndCloseNextMenu $ DeleteResource next , text: "Remove" } []
+                  $ cons'
+                      { action: Just $ AndCloseNextMenu $ CopyResourceURL next , text: "Copy link" }
+                      [ { action: Just $ AndCloseNextMenu $ CopyToShare next , text: "Copy share link" }
+                      , { action: Just $ AndCloseNextMenu $ DeleteResource next , text: "Remove" }
+                      ]
               ]
           ]
 

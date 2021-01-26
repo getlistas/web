@@ -15,6 +15,7 @@ import Data.Symbol (SProxy(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
+import Listasio.Capability.Clipboard (class Clipboard)
 import Listasio.Capability.LogMessages (class LogMessages)
 import Listasio.Capability.Navigate (class Navigate, navigate, locationState)
 import Listasio.Capability.Now (class Now)
@@ -81,6 +82,7 @@ component
   => ManageUser m
   => ManageResource m
   => ManageList m
+  => Clipboard m
   => H.Component HH.HTML Query {} Void m
 component = Connect.component $ H.mkComponent
   { initialState: \{ currentUser } -> { route: Nothing, currentUser }
