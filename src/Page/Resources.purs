@@ -7,13 +7,13 @@ import Control.Monad.Reader (class MonadAsk)
 import Data.Array (find, groupBy, mapMaybe, null, sortBy, sortWith)
 import Data.Array.NonEmpty (NonEmptyArray)
 import Data.Array.NonEmpty as NEA
-import Data.DateTime (DateTime)
 import Data.Either (Either, note)
 import Data.Filterable (filter)
 import Data.FunctorWithIndex (mapWithIndex)
 import Data.Map (Map)
 import Data.Map as Map
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
+import Data.Ord.Down (Down(..))
 import Data.Tuple (Tuple(..), snd)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -30,7 +30,6 @@ import Listasio.Component.HTML.ToggleGroup as ToggleGroup
 import Listasio.Component.HTML.Utils (cx)
 import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdAndUser)
-import Listasio.Data.Ordering (comparingOn)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Resource (ListResource)
 import Listasio.Data.Route (Route(..))
@@ -81,28 +80,27 @@ derive instance eqGroupBy :: Eq GroupBy
 
 type GroupedResources
   = { byList :: Map ID (NonEmptyArray ListResource)
-    , byDate :: Map YearMonth (NonEmptyArray ListResource)
+    , byDate :: Map (Down YearMonth) (NonEmptyArray ListResource)
     , all :: Array ListResource
     }
 
--- TODO: on both Nothing default to _.created_at
-byCompletedAt :: Maybe DateTime -> Maybe DateTime -> Ordering
-byCompletedAt Nothing (Just _) = LT
-byCompletedAt (Just _) Nothing = GT
-byCompletedAt Nothing Nothing = EQ
-byCompletedAt (Just a) (Just b) = compare a b
+byCompletedAt :: ListResource -> ListResource -> Ordering
+byCompletedAt { completed_at: Nothing } { completed_at: Just _ } = LT
+byCompletedAt { completed_at: Just _ } { completed_at: Nothing } = GT
+byCompletedAt { completed_at: Just a } { completed_at: Just b } = compare a b
+byCompletedAt { created_at: a } { created_at: b } = compare a b
 
 groupResources :: Array ListResource -> GroupedResources
 groupResources items = { byList, byDate, all }
   where
-  all = sortBy (comparingOn _.completed_at byCompletedAt) items
+  all = sortBy byCompletedAt items
   byList =
     items
       # sortWith _.list
       # groupBy (\a b -> a.list == b.list)
       # map (Tuple <$> (_.list <<< NEA.head) <*> identity)
       # Map.fromFoldable
-      # map (NEA.sortBy $ comparingOn _.completed_at byCompletedAt)
+      # map (NEA.sortBy byCompletedAt)
   byDate =
     items
       # filter (isJust <<< _.completed_at)
@@ -110,15 +108,15 @@ groupResources items = { byList, byDate, all }
       # groupBy completedOnSameMonth
       # mapMaybe monthItemsPair
       # Map.fromFoldable
-      # map (NEA.sortWith _.completed_at)
+      # map (NEA.sortBy byCompletedAt)
 
 completedOnSameMonth :: ListResource -> ListResource -> Boolean
 completedOnSameMonth { completed_at: a } { completed_at: b } =
   map YearMonth.fromDateTime a == map YearMonth.fromDateTime b
 
-monthItemsPair :: NonEmptyArray ListResource -> Maybe (Tuple YearMonth (NonEmptyArray ListResource))
+monthItemsPair :: NonEmptyArray ListResource -> Maybe (Tuple (Down YearMonth) (NonEmptyArray ListResource))
 monthItemsPair is =
-  flip Tuple is <$> (map YearMonth.fromDateTime $ _.completed_at $ NEA.head is)
+  flip Tuple is <$> (map Down $ map YearMonth.fromDateTime $ _.completed_at $ NEA.head is)
 
 type State
   = { currentUser :: Maybe Profile
@@ -338,7 +336,7 @@ component = Connect.component $ H.mkComponent
               )
       where filteredItems = filterByDoneFn $ NEA.toArray items
 
-    dateFeed yearMonth items =
+    dateFeed (Down yearMonth) items =
       HH.div
         []
         [ HH.div
