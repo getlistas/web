@@ -4,7 +4,7 @@ import Prelude
 
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
-import Data.Array (snoc)
+import Data.Array (null, snoc)
 import Data.Either (Either, note)
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..))
@@ -23,12 +23,12 @@ import Listasio.Component.HTML.CreateResource as CreateResource
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.List as List
 import Listasio.Component.HTML.Modal as Modal
-import Listasio.Component.HTML.Utils (safeHref, whenElem)
+import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Route (Route(..))
 import Listasio.Env (UserEnv)
-import Network.RemoteData (RemoteData(..), isSuccess)
+import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
 import Tailwind as T
 import Util as Util
@@ -139,7 +139,7 @@ component = Connect.component $ H.mkComponent
         [ HH.h1
             [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
             [ HH.text "Up next" ]
-        , whenElem (isSuccess st.lists) \_ ->
+        , maybeElem (filter (not <<< null) $ RemoteData.toMaybe st.lists) \_ ->
             HH.div
               []
               [ HH.button
@@ -166,6 +166,7 @@ component = Connect.component $ H.mkComponent
                   [ HH.text "Create Resource" ]
               ]
         ]
+
     feed = case st.lists of
       Success lists ->
         HH.div

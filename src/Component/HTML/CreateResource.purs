@@ -2,11 +2,14 @@ module Listasio.Component.HTML.CreateResource where
 
 import Prelude
 
+import Data.Array (sortWith)
+import Data.Char.Unicode as Char
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.MediaType.Common as MediaType
 import Data.Newtype (class Newtype, unwrap)
 import Data.Symbol (SProxy(..))
+import Data.String.CodeUnits as String
 import Data.Traversable (traverse)
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
@@ -38,8 +41,7 @@ type Slot = forall query. H.Slot query Output Unit
 _createResource = SProxy :: SProxy "createResource"
 
 data Action
-  = Initialize
-  | HandleFormMessage Resource
+  = HandleFormMessage Resource
 
 type State
   = { lists :: Array ListWithIdAndUser
@@ -57,6 +59,10 @@ data Output
 type ChildSlots
   = ( formless :: FormSlot )
 
+filterNonAlphanum :: String -> String
+filterNonAlphanum =
+  String.fromCharArray <<< filter Char.isAlphaNum <<< String.toCharArray
+
 component :: forall query m.
      MonadAff m
   => ManageResource m
@@ -66,17 +72,16 @@ component = H.mkComponent
   , render
   , eval: H.mkEval $ H.defaultEval
       { handleAction = handleAction
-      , initialize = Just Initialize
       }
   }
   where
-  initialState = identity
+  initialState { lists, url } =
+    { lists: sortWith (filterNonAlphanum <<< _.title) lists
+    , url
+    }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots Output m Unit
   handleAction = case _ of
-    Initialize ->
-      pure unit
-
     HandleFormMessage newResource -> do
       void $ H.query F._formless unit $ F.injQuery $ SetCreateStatus Loading unit
 
