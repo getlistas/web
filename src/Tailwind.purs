@@ -663,10 +663,6 @@ ringBlack = ClassName "ring-black"
 ringOpacity5 :: ClassName
 ringOpacity5 = ClassName "ring-opacity-5"
 
--- | roundedBMd
-roundedBMd :: ClassName
-roundedBMd = ClassName "rounded-b-md"
-
 -- | roundedFull
 roundedFull :: ClassName
 roundedFull = ClassName "rounded-full"
