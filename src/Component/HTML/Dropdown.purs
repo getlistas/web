@@ -74,6 +74,7 @@ spec = Select.defaultSpec
           [ cx T.bgGray100 $ st.visibility == Select.On
           , cx T.roundedMd $ st.visibility /= Select.On
           , cx T.roundedTMd $ st.visibility == Select.On
+          , T.relative
           ]
       ]
       [ toggle [] st
@@ -138,19 +139,27 @@ menu
 menu st =
   HH.div
   [ HP.classes
-      [ cx T.pt1 $ st.visibility == Select.On
-      , cx T.pb2 $ st.visibility == Select.On
-      , cx T.px4 $ st.visibility == Select.On
-      , cx T.borderT2 $ st.visibility == Select.On
-      , cx T.borderWhite $ st.visibility == Select.On
-      , cx T.wFull $ st.visibility == Select.On
-      , cx T.bgGray100 $ st.visibility == Select.On
-      , cx T.roundedBMd $ st.visibility == Select.On
+      [ cx T.pt1 isOn
+      , cx T.pb2 isOn
+      , cx T.px4 isOn
+      , cx T.borderT2 isOn
+      , cx T.borderWhite isOn
+      , cx T.bgWhite isOn
+      , cx T.shadowLg isOn
+      , T.absolute
+      , T.maxH44
+      , T.w11d12
+      , T.mxAuto
+      , T.right0
+      , T.left0
+      , T.overflowYAuto
+      , T.scrollbarThin
+      , T.scrollbarThumbGray200
+      , T.scrollbarTrackWhite
       ]
   ]
-  [ if st.visibility == Select.Off
-      then HH.text ""
-      else
+  [ if isOn
+      then
         HH.div
           (Setters.setContainerProps [ HP.classes [ T.flex, T.flexCol ] ])
           (mapWithIndex
@@ -175,5 +184,7 @@ menu st =
             )
             st.available
           )
+      else HH.text ""
   ]
-
+  where
+  isOn = st.visibility == Select.On

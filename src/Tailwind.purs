@@ -387,6 +387,10 @@ leadingNormal = ClassName "leading-normal"
 leadingRelaxed :: ClassName
 leadingRelaxed = ClassName "leading-relaxed"
 
+-- | left0
+left0 :: ClassName
+left0 = ClassName "left-0"
+
 -- | lgGridCols3
 lgGridCols3 :: ClassName
 lgGridCols3 = ClassName "lg:grid-cols-3"
@@ -410,6 +414,10 @@ m1 = ClassName "m-1"
 -- | m4
 m4 :: ClassName
 m4 = ClassName "m-4"
+
+-- | maxH44
+maxH44 :: ClassName
+maxH44 = ClassName "max-h-44"
 
 -- | maxWFull
 maxWFull :: ClassName
@@ -687,6 +695,18 @@ roundedSm = ClassName "rounded-sm"
 roundedTMd :: ClassName
 roundedTMd = ClassName "rounded-t-md"
 
+-- | scrollbarThin
+scrollbarThin :: ClassName
+scrollbarThin = ClassName "scrollbar-thin"
+
+-- | scrollbarThumbGray200
+scrollbarThumbGray200 :: ClassName
+scrollbarThumbGray200 = ClassName "scrollbar-thumb-gray-200"
+
+-- | scrollbarTrackWhite
+scrollbarTrackWhite :: ClassName
+scrollbarTrackWhite = ClassName "scrollbar-track-white"
+
 -- | shadowLg
 shadowLg :: ClassName
 shadowLg = ClassName "shadow-lg"
@@ -854,6 +874,10 @@ transitionOpacity = ClassName "transition-opacity"
 -- | truncate
 truncate :: ClassName
 truncate = ClassName "truncate"
+
+-- | w11d12
+w11d12 :: ClassName
+w11d12 = ClassName "w-11/12"
 
 -- | w32
 w32 :: ClassName
