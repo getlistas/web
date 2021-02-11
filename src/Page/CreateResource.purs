@@ -17,7 +17,7 @@ import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Component.HTML.CreateResource as CreateResource
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Utils (safeHref)
-import Listasio.Data.List (ListWithIdAndUser)
+import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Route (Route(..))
 import Listasio.Env (UserEnv)
@@ -39,7 +39,7 @@ type Input
 
 type State
   = { currentUser :: Maybe Profile
-    , lists :: RemoteData String (Array ListWithIdAndUser)
+    , lists :: RemoteData String (Array ListWithIdUserAndMeta)
     , url :: Maybe String
     }
 

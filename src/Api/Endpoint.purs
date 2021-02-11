@@ -5,12 +5,12 @@ module Listasio.Api.Endpoint where
 
 import Prelude hiding ((/))
 
-import Data.Either (note)
+import Data.Either (Either(..), note)
 import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe)
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
-import Routing.Duplex (RouteDuplex', as, int, optional, root, segment)
+import Routing.Duplex (RouteDuplex', as, boolean, int, optional, root, segment)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/), (?))
 
@@ -22,6 +22,12 @@ type PaginationRep
 type Pagination
   = { | PaginationRep }
 
+data SortingResources
+  = PositionAsc
+  | PositionDes
+  | DateAsc
+  | DateDes
+
 data Endpoint
   = Login
   | GoogleLogin
@@ -31,7 +37,7 @@ data Endpoint
   | Lists
   | Discover Pagination
   | Resources
-  | ResourcesByList { list :: ID }
+  | ResourcesByList { list :: ID, sort :: SortingResources, completed :: Boolean }
   | Resource ID
   | CompleteResource ID
   | ResourceMeta
@@ -53,7 +59,8 @@ endpointCodec =
             , limit: optional <<< int
             }
         , "Resources": "resources" / noArgs
-        , "ResourcesByList": "resources" ? { list: id }
+        , "ResourcesByList": "resources"
+            ? { list: id, sort: sortingResources, completed: boolean }
         , "Resource": "resources" / id segment
         , "CompleteResource": "resources" / id segment / "complete"
         , "ResourceMeta": "resource-metadata" / noArgs
@@ -61,3 +68,20 @@ endpointCodec =
 
 id :: RouteDuplex' String -> RouteDuplex' ID
 id = as ID.toString (ID.parse >>> note "Bad ID")
+
+
+sortingResources :: RouteDuplex' String -> RouteDuplex' SortingResources
+sortingResources = as toString parse
+  where
+  toString PositionAsc = "position_asc"
+  toString PositionDes = "position_des"
+  toString DateAsc = "date_asc"
+  toString DateDes = "date_des"
+
+  parse = case _ of
+    "position_asc" -> Right PositionAsc
+    "position_des" -> Right PositionDes
+    "date_asc" -> Right DateAsc
+    "date_des" -> Right DateDes
+    s -> Left $ "Bad SortingResources '" <> s <> "'"
+

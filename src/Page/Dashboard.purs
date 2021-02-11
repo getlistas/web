@@ -24,7 +24,7 @@ import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.List as List
 import Listasio.Component.HTML.Modal as Modal
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
-import Listasio.Data.List (ListWithIdAndUser)
+import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Route (Route(..))
 import Listasio.Env (UserEnv)
@@ -48,7 +48,7 @@ data Action
 
 type State
   = { currentUser :: Maybe Profile
-    , lists :: RemoteData String (Array ListWithIdAndUser)
+    , lists :: RemoteData String (Array ListWithIdUserAndMeta)
     , showCreateResource :: Boolean
     , pastedUrl :: Maybe String
     }
@@ -101,7 +101,7 @@ component = Connect.component $ H.mkComponent
       H.modify_ _ { lists = lists }
 
     HandleCreateResource (CreateResource.Created resource) -> do
-      void $ H.query List._list resource.list $ H.tell $ List.ResourceAdded resource
+      void $ H.query List._listSlot resource.list $ H.tell $ List.ResourceAdded resource
       H.modify_ _ { showCreateResource = false, pastedUrl = Nothing }
 
     ToggleCreateResource ->
@@ -174,7 +174,7 @@ component = Connect.component $ H.mkComponent
           [ HH.div
               [ HP.classes [ T.grid, T.gridCols1, T.smGridCols2, T.lgGridCols3, T.gap4, T.itemsStart ] ]
               $ snoc
-                (map (\list -> HH.slot List._list list.id List.component { list } absurd) lists)
+                (map (\list -> HH.slot List._listSlot list.id List.component { list } absurd) lists)
                 listCreate
           , Modal.modal st.showCreateResource (Just ToggleCreateResource) $
               HH.div

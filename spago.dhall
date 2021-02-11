@@ -23,6 +23,7 @@
   , "orders"
   , "precise-datetime"
   , "prelude"
+  , "profunctor-lenses"
   , "remotedata"
   , "routing"
   , "routing-duplex"

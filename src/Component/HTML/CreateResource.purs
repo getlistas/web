@@ -22,7 +22,7 @@ import Listasio.Component.HTML.Dropdown as DD
 import Listasio.Component.HTML.Resource as ResourceComponent
 import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Data.ID (ID)
-import Listasio.Data.List (ListWithIdAndUser)
+import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Resource (ListResource, Resource)
 import Listasio.Data.ResourceMetadata (ResourceMeta)
 import Listasio.Form.Field as Field
@@ -44,12 +44,12 @@ data Action
   = HandleFormMessage Resource
 
 type State
-  = { lists :: Array ListWithIdAndUser
+  = { lists :: Array ListWithIdUserAndMeta
     , url :: Maybe String
     }
 
 type Input
-  = { lists :: Array ListWithIdAndUser
+  = { lists :: Array ListWithIdUserAndMeta
     , url :: Maybe String
     }
 
@@ -138,7 +138,7 @@ data FormAction
   | PasteUrl Clipboard.ClipboardEvent
 
 type FormInput
-  = { lists :: Array ListWithIdAndUser
+  = { lists :: Array ListWithIdUserAndMeta
     , url :: Maybe String
     }
 
@@ -148,7 +148,7 @@ type FormState =
   ( status :: RemoteData String Unit
   , meta :: RemoteData String ResourceMeta
   , pastedUrl :: Maybe String
-  , lists :: Array ListWithIdAndUser
+  , lists :: Array ListWithIdUserAndMeta
   )
 
 formComponent ::

@@ -29,7 +29,7 @@ import Listasio.Component.HTML.Resource (resource)
 import Listasio.Component.HTML.ToggleGroup as ToggleGroup
 import Listasio.Component.HTML.Utils (cx)
 import Listasio.Data.ID (ID)
-import Listasio.Data.List (ListWithIdAndUser)
+import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (Profile)
 import Listasio.Data.Resource (ListResource)
 import Listasio.Data.Route (Route(..))
@@ -121,7 +121,7 @@ monthItemsPair is =
 type State
   = { currentUser :: Maybe Profile
     , resources :: RemoteData String GroupedResources
-    , lists :: Maybe (Array ListWithIdAndUser)
+    , lists :: Maybe (Array ListWithIdUserAndMeta)
     , groupBy :: GroupBy
     , filterByDone :: FilterByDone
     }

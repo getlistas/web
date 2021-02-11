@@ -3,13 +3,11 @@ module Listasio.AppM where
 import Prelude
 
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, ask, asks, runReaderT)
-import Data.Array (filter, last, length, sortWith)
 import Data.Codec.Argonaut as Codec
 import Data.Codec.Argonaut.Compat as CAC
 import Data.Codec.Argonaut.Record as CAR
-import Data.DateTime (DateTime)
 import Data.Either (Either(..))
-import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
+import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
 import Effect.Aff.Bus as Bus
 import Effect.Aff.Class (class MonadAff, liftAff)
@@ -17,7 +15,7 @@ import Effect.Class (class MonadEffect, liftEffect)
 import Effect.Console as Console
 import Effect.Now as Now
 import Effect.Ref as Ref
-import Listasio.Api.Endpoint (Endpoint(..))
+import Listasio.Api.Endpoint (Endpoint(..), SortingResources(..))
 import Listasio.Api.Request (RequestMethod(..))
 import Listasio.Api.Request as Request
 import Listasio.Api.Utils (authenticate, decode, mkAuthRequest, mkRequest)
@@ -129,7 +127,7 @@ instance manageListAppM :: ManageList AppM where
     where conf = { endpoint: List id, method: Get }
 
   getLists =
-    decode (CAC.array List.listWitIdAndUserCodec) =<< mkAuthRequest conf
+    decode (CAC.array List.listWitIdUserAndMetaCodec) =<< mkAuthRequest conf
     where conf = { endpoint: Lists, method: Get }
 
   deleteList id = void $ mkAuthRequest { endpoint: List id, method: Delete }
@@ -145,17 +143,9 @@ instance manageResourceAppM :: ManageResource AppM where
           conf = { endpoint: ResourceMeta, method }
 
   getListResources list = do
-    mbResources <- decode (CAC.array Resource.listResourceCodec) =<< mkAuthRequest conf
-    let total = fromMaybe 0 $ length <$> mbResources
-        items = sortWith _.position <$> filter (isNothing <<< _.completed_at) <$> mbResources
-
-        last_done :: Maybe DateTime
-        last_done = _.completed_at =<< last =<< sortWith _.completed_at <$> filter (isJust <<< _.completed_at) <$> mbResources
-
-        notRead = fromMaybe 0 $ length <$> items
-        read = total - notRead
-    pure $ (\is -> { items: is, total, read, last_done }) <$> items
-    where conf = { endpoint: ResourcesByList { list }, method: Get }
+    decode (CAC.array Resource.listResourceCodec) =<< mkAuthRequest conf
+    where conf = { endpoint, method: Get }
+          endpoint = ResourcesByList { list, sort: PositionAsc, completed: false }
 
   getResources = do
     decode (CAC.array Resource.listResourceCodec) =<< mkAuthRequest conf
