@@ -9,12 +9,12 @@ import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (cx, maybeElem)
-import Listasio.Data.List (ListWithIdAndUser)
+import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Resource (ListResource)
 import Tailwind as T
 import Util (takeDomain)
 
-resource :: forall i p. Array ListWithIdAndUser -> ListResource -> HH.HTML i p
+resource :: forall i p. Array ListWithIdUserAndMeta -> ListResource -> HH.HTML i p
 resource lists { url, title, list, completed_at } =
   HH.div
     [ HP.classes

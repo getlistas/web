@@ -2,12 +2,12 @@ module Listasio.Component.HTML.List where
 
 import Prelude
 
-import Data.Array (deleteAt, findIndex, head, insertAt, null, snoc, tail)
+import Data.Array (findIndex, insertAt, null, singleton, snoc, tail)
 import Data.Array.NonEmpty (cons')
-import Data.DateTime (DateTime)
 import Data.Either (note)
 import Data.Filterable (class Filterable, filter)
 import Data.Foldable (length)
+import Data.Lens (firstOf, over, preview, set, traversed)
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
 import Data.Symbol (SProxy(..))
 import Effect.Aff.Class (class MonadAff)
@@ -22,10 +22,12 @@ import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
-import Listasio.Data.List (ListWithIdAndUser)
+import Listasio.Data.Lens (_completed_count, _count, _list, _markingAsDone, _resource_metadata, _resources)
+import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Resource (ListResource)
 import Listasio.Data.Route (Route(..), routeCodec)
-import Network.RemoteData (RemoteData(..), fromEither, toMaybe)
+import Network.RemoteData (RemoteData(..), _Success)
+import Network.RemoteData as RemoteData
 import Routing.Duplex (print)
 import Tailwind as T
 import Util (takeDomain)
@@ -33,16 +35,9 @@ import Web.HTML (window) as Window
 import Web.HTML.Location as Location
 import Web.HTML.Window (location) as Window
 
-type ListResources
-  = { items :: Array ListResource
-    , total :: Int
-    , read :: Int
-    , last_done :: Maybe DateTime
-    }
-
 type Slot = H.Slot Query Void ID
 
-_list = SProxy :: SProxy "list"
+_listSlot = SProxy :: SProxy "list"
 
 data Action
   = Initialize
@@ -55,14 +50,24 @@ data Action
   | DeleteResource ListResource
 
 type Input
-  = { list :: ListWithIdAndUser }
+  = { list :: ListWithIdUserAndMeta }
 
 data Query a
   = ResourceAdded ListResource a
 
+insertResourceAt :: Int -> ListResource -> State -> State
+insertResourceAt i resource =
+  over
+    (_resources <<< _Success)
+    (\is -> fromMaybe is $ insertAt i resource is)
+
+removeResourceById :: ID -> State -> State
+removeResourceById id =
+  over (_resources <<< _Success) (filter ((id /= _) <<< _.id))
+
 type State
-  = { list :: ListWithIdAndUser
-    , resources :: RemoteData String ListResources
+  = { list :: ListWithIdUserAndMeta
+    , resources :: RemoteData String (Array ListResource)
     , showMore :: Boolean
     , markingAsDone :: Boolean
     , showNextMenu :: Boolean
@@ -85,7 +90,7 @@ component = H.mkComponent
   where
   initialState { list } =
     { list
-    , resources: NotAsked
+    , resources: singleton <$> RemoteData.fromMaybe list.resource_metadata.next
     , showMore: false
     , markingAsDone: false
     , showNextMenu: false
@@ -94,9 +99,9 @@ component = H.mkComponent
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
     Initialize -> do
-      H.modify_ _ { resources = Loading }
+      H.modify_ $ over _resources $ \rs -> if RemoteData.isSuccess rs then rs else Loading
       { list } <- H.get
-      resources <- fromEither <$> note "Failed to load list resources" <$> getListResources list.id
+      resources <- RemoteData.fromEither <$> note "Failed to load list resources" <$> getListResources list.id
       H.modify_ _ { resources = resources }
 
     ToggleShowMore -> H.modify_ \s -> s { showMore = not s.showMore }
@@ -114,46 +119,55 @@ component = H.mkComponent
       H.modify_ _ { showNextMenu = false }
 
     CompleteResource toComplete@{ id } -> do
-      -- TODO: uses lenses for F sake!
       -- TODO: update last_done
-      mbItems <- map _.items <$> toMaybe <$>_.resources <$> H.get
+      mbItems <- H.gets $ preview (_resources <<< _Success)
+
       case findIndex ((id == _) <<< _.id) =<< mbItems of
         Just i -> do
-          H.modify_ \s ->
-            s { resources = (\r -> r { items = fromMaybe r.items $ deleteAt i r.items, read = r.read + 1 }) <$> s.resources
-              , markingAsDone = true
-              }
+          H.modify_
+            $ removeResourceById id
+                <<< set _markingAsDone true
+                <<< over (_list <<< _resource_metadata <<< _completed_count) (_ + 1)
+
           result <- completeResource toComplete
-          when (isNothing result)
-            $ H.modify_ \s ->
-              s { resources = (\r -> r { items = fromMaybe r.items $ insertAt i toComplete r.items, read = r.read - 1 }) <$> s.resources }
-          H.modify_ _ { markingAsDone = false }
-        _ -> pure unit
+
+          when (isNothing result) $ H.modify_
+            $ over (_list <<< _resource_metadata <<< _completed_count) (_ - 1)
+                <<< insertResourceAt i toComplete
+
+          H.modify_ $ set _markingAsDone true
+        Nothing -> pure unit
 
     DeleteResource toDelete@{ id } -> do
-      -- TODO: uses lenses for F sake!
-      mbItems <- map _.items <$> toMaybe <$>_.resources <$> H.get
+      mbItems <- H.gets $ preview (_resources <<< _Success)
+
       case findIndex ((id == _) <<< _.id) =<< mbItems of
         Just i -> do
-          H.modify_ \s ->
-            s { resources = (\r -> r { items = fromMaybe r.items $ deleteAt i r.items, total = r.total - 1 }) <$> s.resources
-              , markingAsDone = true
-              }
+          H.modify_
+            $ removeResourceById id
+                <<< set _markingAsDone true
+                <<< over (_list <<< _resource_metadata <<< _count) (_ - 1)
+
           result <- deleteResource toDelete
-          when (isNothing result)
-            $ H.modify_ \s ->
-              s { resources = (\r -> r { items = fromMaybe r.items $ insertAt i toDelete r.items, total = r.total + 1 }) <$> s.resources }
-          H.modify_ _ { markingAsDone = false }
-        _ -> pure unit
+
+          when (isNothing result) $ H.modify_
+            $ over (_list <<< _resource_metadata <<< _count) (_ + 1)
+                <<< insertResourceAt i toDelete
+
+          H.modify_ $ set _markingAsDone true
+        Nothing -> pure unit
 
   handleQuery :: forall slots a. Query a -> H.HalogenM State Action slots o m (Maybe a)
   handleQuery = case _ of
     ResourceAdded resource a -> do
-      H.modify_ \s -> s { resources = (\r -> r { items = snoc r.items resource, total = r.total + 1 }) <$> s.resources }
+      H.modify_
+        $ over (_resources <<< _Success) (flip snoc resource)
+            <<< over (_list <<< _resource_metadata <<< _count) (_ + 1)
+
       pure $ Just a
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render { list, resources, showMore, showNextMenu, markingAsDone } =
+  render state@{ list, resources, showMore, showNextMenu, markingAsDone } =
     HH.div
       [ HP.classes
           [ T.border2
@@ -174,8 +188,10 @@ component = H.mkComponent
           , HH.text short
           ]
 
-    toRead = case head <$> _.items <$> resources of
-      Success Nothing ->
+    toRead = case list.resource_metadata, firstOf (_resources <<< _Success <<< traversed) state of
+      _, Just next -> nextEl next
+
+      { count: 0 }, _ ->
         HH.div
           [ HP.classes
               [ T.px4
@@ -191,52 +207,29 @@ component = H.mkComponent
               ]
           ]
           [ HH.div [] [ HH.text "This list is empty" ]
+          , HH.div [] [ HH.text "Add items!" ]
+          ]
+
+      { count, completed_count }, _ | count == completed_count ->
+        HH.div
+          [ HP.classes
+              [ T.px4
+              , T.py2
+              , T.wFull
+              , T.flex
+              , T.flexCol
+              , T.itemsCenter
+              , T.justifyCenter
+              , T.textGray200
+              , T.fontSemibold
+              , T.h40
+              ]
+          ]
+          [ HH.div [] [ HH.text "All items completed" ]
           , HH.div [] [ HH.text "Add more items!" ]
           ]
 
-      Success (Just next) ->
-        HH.div
-          [ HP.classes [ T.px4, T.pb2, T.pt4, T.flex, T.flexCol, T.justifyBetween, T.h40 ] ]
-          [ HH.a
-              [ HP.href next.url
-              , HP.target "_blank"
-              , HP.rel "noreferrer noopener nofollow"
-              , HP.classes [ T.cursorPointer, T.flex ]
-              ]
-              [ HH.img [ HP.classes [ T.h20, T.w32, T.mr4, T.objectCover ], HP.src $ fromMaybe "https://via.placeholder.com/87" next.thumbnail ]
-              , HH.div
-                  [ HP.classes [ T.overflowHidden ] ]
-                  [ HH.div
-                      [ HP.classes [ T.textBase, T.textGray400, T.leadingRelaxed, T.truncate ] ]
-                      [ HH.text next.title ]
-                  , maybeElem next.description \des ->
-                      HH.div [ HP.classes [ T.mt1, T.textSm, T.textGray400, T.lineClamp3 ] ] [ HH.text des ]
-                  ]
-              ]
-          , HH.div
-              [ HP.classes [ T.mt4, T.flex, T.justifyBetween, T.itemsStart ] ]
-              [ HH.div
-                  [ HP.classes [ T.flex, T.flexWrap, T.itemsCenter ] ]
-                  [ shortUrl next.url
-                  -- TODO: resource tags
-                  , whenElem (not $ null list.tags) \_ ->
-                      HH.div [ HP.classes [ T.flex, T.flexWrap ] ] $ map Tag.tag list.tags
-                  ]
-              , ButtonGroupMenu.buttonGroupMenu
-                  { mainAction: Just $ CompleteResource next
-                  , label: "Done"
-                  , toggleMenu: Just ToggleShowNextMenu
-                  , isOpen: showNextMenu
-                  }
-                  $ cons'
-                      { action: Just $ AndCloseNextMenu $ CopyResourceURL next , text: "Copy link" }
-                      [ { action: Just $ AndCloseNextMenu $ CopyToShare next , text: "Copy share link" }
-                      , { action: Just $ AndCloseNextMenu $ DeleteResource next , text: "Remove" }
-                      ]
-              ]
-          ]
-
-      Failure _ ->
+      _, _ ->
         HH.div
           [ HP.classes
               [ T.px4
@@ -250,23 +243,50 @@ component = H.mkComponent
               , T.h40
               ]
           ]
-          [ HH.text "Failed to load list resources :(" ]
+          [ HH.text "Something went wrong" ]
 
-      _ ->
-        HH.div
-          [ HP.classes
-              [ T.px4
-              , T.py2
-              , T.wFull
-              , T.flex
-              , T.flexCol
-              , T.itemsCenter
-              , T.justifyCenter
-              , T.textGray400
-              , T.h40
-              ]
-          ]
-          [ HH.text "..." ]
+    nextEl :: ListResource -> _
+    nextEl next =
+      HH.div
+        [ HP.classes [ T.px4, T.pb2, T.pt4, T.flex, T.flexCol, T.justifyBetween, T.h40 ] ]
+        [ HH.a
+            [ HP.href next.url
+            , HP.target "_blank"
+            , HP.rel "noreferrer noopener nofollow"
+            , HP.classes [ T.cursorPointer, T.flex ]
+            ]
+            [ HH.img [ HP.classes [ T.h20, T.w32, T.mr4, T.objectCover ], HP.src $ fromMaybe "https://via.placeholder.com/87" next.thumbnail ]
+            , HH.div
+                [ HP.classes [ T.overflowHidden ] ]
+                [ HH.div
+                    [ HP.classes [ T.textBase, T.textGray400, T.leadingRelaxed, T.truncate ] ]
+                    [ HH.text next.title ]
+                , maybeElem next.description \des ->
+                    HH.div [ HP.classes [ T.mt1, T.textSm, T.textGray400, T.lineClamp3 ] ] [ HH.text des ]
+                ]
+            ]
+        , HH.div
+            [ HP.classes [ T.mt4, T.flex, T.justifyBetween, T.itemsStart ] ]
+            [ HH.div
+                [ HP.classes [ T.flex, T.flexWrap, T.itemsCenter ] ]
+                [ shortUrl next.url
+                -- TODO: resource tags
+                , whenElem (not $ null list.tags) \_ ->
+                    HH.div [ HP.classes [ T.flex, T.flexWrap ] ] $ map Tag.tag list.tags
+                ]
+            , ButtonGroupMenu.buttonGroupMenu
+                { mainAction: Just $ CompleteResource next
+                , label: "Done"
+                , toggleMenu: Just ToggleShowNextMenu
+                , isOpen: showNextMenu
+                }
+                $ cons'
+                    { action: Just $ AndCloseNextMenu $ CopyResourceURL next , text: "Copy link" }
+                    [ { action: Just $ AndCloseNextMenu $ CopyToShare next , text: "Copy share link" }
+                    , { action: Just $ AndCloseNextMenu $ DeleteResource next , text: "Remove" }
+                    ]
+            ]
+        ]
 
     header =
       HH.div
@@ -276,16 +296,16 @@ component = H.mkComponent
             [ HH.div
                 [ HP.classes [ T.text2xl, T.textGray400, T.fontBold, T.truncate ] ]
                 [ HH.text list.title ]
-            , maybeElem (toMaybe resources) \{ total, read } ->
-                HH.div
-                  [ HP.classes [ T.ml6 ] ]
-                  [ HH.span [ HP.classes [ T.mr2 ] ] [ HH.text "🔗" ]
-                  , HH.span [ HP.classes [ T.textLg, T.textGray400 ] ] [ HH.text $ show read ]
-                  , HH.span [ HP.classes [ T.textLg, T.textGray400, T.mx1 ] ] [ HH.text "/" ]
-                  , HH.span [ HP.classes [ T.textLg, T.textGray300 ] ] [ HH.text $ show total ]
-                  ]
+            , HH.div
+                [ HP.classes [ T.ml6 ] ]
+                [ HH.span [ HP.classes [ T.mr2 ] ] [ HH.text "🔗" ]
+                , HH.span [ HP.classes [ T.textLg, T.textGray400 ] ] [ HH.text $ show list.resource_metadata.completed_count ]
+                , HH.span [ HP.classes [ T.textLg, T.textGray400, T.mx1 ] ] [ HH.text "/" ]
+                , HH.span [ HP.classes [ T.textLg, T.textGray300 ] ] [ HH.text $ show list.resource_metadata.count ]
+                ]
             ]
-        , maybeElem (_.last_done =<< toMaybe resources) \last_done ->
+          -- TODO
+        , maybeElem Nothing \last_done ->
             HH.div
               [ HP.classes [ T.textSm, T.textGray200 ] ]
               [ HH.text $ "Last seen " <> DateTime.toDisplayDayMonth last_done ]
@@ -340,7 +360,7 @@ component = H.mkComponent
         ]
       where
 
-      mbRest = filterNotEmpty $ tail =<< (filterNotEmpty $ _.items <$> toMaybe resources)
+      mbRest = filterNotEmpty $ tail =<< (filterNotEmpty $ RemoteData.toMaybe resources)
       hasMore = isJust $ (_ > 1) <$> length <$> mbRest
       rest = fromMaybe [] mbRest
 
