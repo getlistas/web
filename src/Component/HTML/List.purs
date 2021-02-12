@@ -312,7 +312,7 @@ component = H.mkComponent
         , maybeElem list.resource_metadata.last_completed_at \last_done ->
             HH.div
               [ HP.classes [ T.textSm, T.textGray200 ] ]
-              [ HH.text $ "Last seen " <> DateTime.toDisplayDayMonth last_done ]
+              [ HH.text $ "Last done " <> DateTime.toDisplayDayMonth last_done ]
         ]
 
     footer =
