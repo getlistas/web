@@ -17,6 +17,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Clipboard (class Clipboard)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Capability.Now (class Now)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Component.HTML.CreateResource as CreateResource
@@ -69,6 +70,7 @@ component
   => ManageResource m
   => Navigate m
   => Clipboard m
+  => Now m
   => H.Component HH.HTML q {} o m
 component = Connect.component $ H.mkComponent
   { initialState

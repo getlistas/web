@@ -16,13 +16,14 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Clipboard (class Clipboard, writeText)
+import Listasio.Capability.Now (class Now, nowDateTime)
 import Listasio.Capability.Resource.Resource (class ManageResource, completeResource, deleteResource, getListResources)
 import Listasio.Component.HTML.ButtonGroupMenu as ButtonGroupMenu
 import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
-import Listasio.Data.Lens (_completed_count, _count, _list, _markingAsDone, _resource_metadata, _resources)
+import Listasio.Data.Lens (_completed_count, _count, _last_completed_at, _list, _markingAsDone, _resource_metadata, _resources)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Resource (ListResource)
 import Listasio.Data.Route (Route(..), routeCodec)
@@ -77,6 +78,7 @@ component :: forall o m.
      MonadAff m
   => ManageResource m
   => Clipboard m
+  => Now m
   => H.Component HH.HTML Query Input o m
 component = H.mkComponent
   { initialState
@@ -119,21 +121,24 @@ component = H.mkComponent
       H.modify_ _ { showNextMenu = false }
 
     CompleteResource toComplete@{ id } -> do
-      -- TODO: update last_done
-      mbItems <- H.gets $ preview (_resources <<< _Success)
+      state <- H.get
 
-      case findIndex ((id == _) <<< _.id) =<< mbItems of
+      case findIndex ((id == _) <<< _.id) =<< preview (_resources <<< _Success) state of
         Just i -> do
+          now <- nowDateTime
+
           H.modify_
             $ removeResourceById id
                 <<< set _markingAsDone true
                 <<< over (_list <<< _resource_metadata <<< _completed_count) (_ + 1)
+                <<< set (_list <<< _resource_metadata <<< _last_completed_at) (Just now)
 
           result <- completeResource toComplete
 
           when (isNothing result) $ H.modify_
             $ over (_list <<< _resource_metadata <<< _completed_count) (_ - 1)
                 <<< insertResourceAt i toComplete
+                <<< set (_list <<< _resource_metadata <<< _last_completed_at) state.list.resource_metadata.last_completed_at
 
           H.modify_ $ set _markingAsDone true
         Nothing -> pure unit
@@ -304,8 +309,7 @@ component = H.mkComponent
                 , HH.span [ HP.classes [ T.textLg, T.textGray300 ] ] [ HH.text $ show list.resource_metadata.count ]
                 ]
             ]
-          -- TODO
-        , maybeElem Nothing \last_done ->
+        , maybeElem list.resource_metadata.last_completed_at \last_done ->
             HH.div
               [ HP.classes [ T.textSm, T.textGray200 ] ]
               [ HH.text $ "Last seen " <> DateTime.toDisplayDayMonth last_done ]

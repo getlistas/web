@@ -14,6 +14,7 @@ import Listasio.Data.Resource (ListResource, listResourceCodec)
 type ResourceMeta
   = { count :: Int
     , completed_count :: Int
+    , last_completed_at :: Maybe DateTime
     , next :: Maybe ListResource
     }
 
@@ -54,6 +55,7 @@ resourceMetaCodec =
   CAR.object "ResourceMeta"
     { count: CA.int
     , completed_count: CA.int
+    , last_completed_at: CAC.maybe DateTime.codec
     , next: CAC.maybe listResourceCodec
     }
 

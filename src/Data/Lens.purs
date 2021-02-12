@@ -16,6 +16,9 @@ _id = prop (SProxy :: SProxy "id")
 _items :: forall a r. Lens' { items :: a | r } a
 _items = prop (SProxy :: SProxy "items")
 
+_last_completed_at :: forall a r. Lens' { last_completed_at :: a | r } a
+_last_completed_at = prop (SProxy :: SProxy "last_completed_at")
+
 _list :: forall a r. Lens' { list :: a | r } a
 _list = prop (SProxy :: SProxy "list")
 
