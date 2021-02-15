@@ -2,6 +2,7 @@ module Listasio.Component.HTML.Header where
 
 import Prelude
 
+import Bible.Component.HTML.Icons as Icons
 import Data.Maybe (Maybe(..), isJust, isNothing)
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -29,12 +30,17 @@ header currentUser navigate route =
         ]
     , HH.div
         [ HP.classes [ T.flex, T.flexWrap, T.justifyBetween, T.itemsCenter ] ]
-        [ whenElem (isJust currentUser) \_ -> navLink Dashboard "Up next"
-        , whenElem (isJust currentUser) \_ -> navLink Resources "Resources"
-        , navLink Discover "Discover"
-        , navLink About "About"
-        , whenElem (isNothing currentUser) \_ -> navLink Register "Try for free"
-        , whenElem (isNothing currentUser) \_ -> navLink Login "Sign in"
+        [ whenElem (isJust currentUser) \_ -> navLink Dashboard $ HH.text "Up next"
+        , whenElem (isJust currentUser) \_ -> navLink Resources $ HH.text "Resources"
+        , navLink Discover $ HH.text "Discover"
+        , navLink About $ HH.text "About"
+        , whenElem (isNothing currentUser) \_ -> navLink Register $ HH.text "Try for free"
+        , whenElem (isNothing currentUser) \_ -> navLink Login $
+            HH.div
+              [ HP.classes [ T.flex, T.itemsCenter ] ]
+              [ HH.span [] [ HH.text "Sign in" ]
+              , Icons.login [ Icons.classes [ T.h5, T.w5, T.ml2 ] ]
+              ]
         , maybeElem currentUser \{ name } ->
             HH.a
               [ safeHref Settings
@@ -66,7 +72,7 @@ header currentUser navigate route =
   where
   onNavigate r = Just <<< navigate r <<< toEvent
   isRoute expected = Just expected == route
-  navLink route' text =
+  navLink route' contents =
     HH.a
       [ safeHref route'
       , HE.onClick (onNavigate route')
@@ -83,5 +89,5 @@ header currentUser navigate route =
           , T.mr8
           ]
       ]
-      [ HH.text text ]
+      [ contents ]
     where isCurrent = isRoute route'

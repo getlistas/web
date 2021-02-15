@@ -2,6 +2,7 @@ module Listasio.Component.HTML.Modal where
 
 import Prelude
 
+import Bible.Component.HTML.Icons as Icons
 import Data.Maybe (Maybe(..))
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -105,8 +106,7 @@ modal show mbOnClose content =
                               ]
                           ]
                           [ HH.span [ HP.classes [ T.srOnly ] ] [ HH.text "Close" ]
-                          -- TODO: use icon instead
-                          , HH.span [ HP.classes [ T.textXl ] ] [ HH.text "X" ]
+                          , Icons.x [ Icons.classes [ T.h5, T.w5 ] ]
                           ]
                       ]
                 , content

@@ -201,18 +201,24 @@ component = Connect.component $ H.mkComponent
 
     settings =
       HH.div
-        [ HP.classes [ T.flex, T.itemsStart, T.my6, T.spaceX2 ] ]
-        [ ToggleGroup.toggleGroup
-            false
-            [ { label: "None", action: Just (ToggleGroupBy GroupNone), active: groupBy == GroupNone }
-            , { label: "By Month", action: Just (ToggleGroupBy GroupDate), active: groupBy == GroupDate }
-            , { label: "By List", action: Just (ToggleGroupBy GroupList), active: groupBy == GroupList }
+        [ HP.classes [ T.flex, T.itemsStart, T.flexWrap, T.my6 ] ]
+        [ HH.div
+            [ HP.classes [ T.mb4, T.mr4 ] ]
+            [ ToggleGroup.toggleGroup
+                false
+                [ { label: "None", action: Just (ToggleGroupBy GroupNone), active: groupBy == GroupNone }
+                , { label: "By Month", action: Just (ToggleGroupBy GroupDate), active: groupBy == GroupDate }
+                , { label: "By List", action: Just (ToggleGroupBy GroupList), active: groupBy == GroupList }
+                ]
             ]
-        , ToggleGroup.toggleGroup
-            (groupBy == GroupDate)
-            [ { label: "All", action: Just (ToggleFilterByDone ShowAll), active: filterByDone == ShowAll && groupBy /= GroupDate }
-            , { label: "Done", action: Just (ToggleFilterByDone ShowDone), active: filterByDone == ShowDone || groupBy == GroupDate }
-            , { label: "Pending", action: Just (ToggleFilterByDone ShowPending), active: filterByDone == ShowPending && groupBy /= GroupDate }
+        , HH.div
+            []
+            [ ToggleGroup.toggleGroup
+                (groupBy == GroupDate)
+                [ { label: "All", action: Just (ToggleFilterByDone ShowAll), active: filterByDone == ShowAll && groupBy /= GroupDate }
+                , { label: "Done", action: Just (ToggleFilterByDone ShowDone), active: filterByDone == ShowDone || groupBy == GroupDate }
+                , { label: "Pending", action: Just (ToggleFilterByDone ShowPending), active: filterByDone == ShowPending && groupBy /= GroupDate }
+                ]
             ]
         ]
 

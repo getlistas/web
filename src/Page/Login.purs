@@ -2,6 +2,7 @@ module Listasio.Page.Login where
 
 import Prelude
 
+import Bible.Component.HTML.Icons as Icons
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
 import Effect.Aff.Class (class MonadAff)
@@ -156,10 +157,15 @@ component =
                       , T.focusRingOffset2
                       , T.focusRingOffsetGray10
                       , T.focusRingKiwi
+                      , T.flex
+                      , T.justifyCenter
+                      , T.itemsCenter
                       ]
                   , HP.disabled $ isLoading status
                   ]
-                  [ HH.text "🇬 Login with Google" ]
+                  [ Icons.google [ Icons.classes [ T.h5, T.w5, T.mr2, T.flexShrink0 ] ]
+                  , HH.span [] [ HH.text "Login with Google" ]
+                  ]
               ]
           , HH.p
               [ HP.classes [ T.mt4 ] ]

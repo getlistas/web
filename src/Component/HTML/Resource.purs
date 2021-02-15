@@ -2,13 +2,14 @@ module Listasio.Component.HTML.Resource where
 
 import Prelude
 
+import Bible.Component.HTML.Icons as Icons
 import Data.Array (find, null)
 import Data.Filterable (filter)
-import Data.Maybe (isJust, isNothing)
+import Data.Maybe (isJust)
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Listasio.Component.HTML.Tag as Tag
-import Listasio.Component.HTML.Utils (cx, maybeElem)
+import Listasio.Component.HTML.Utils (maybeElem)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Resource (ListResource)
 import Tailwind as T
@@ -45,15 +46,16 @@ resource lists { url, title, list, completed_at } =
             [ HH.div
                 [ HP.classes
                     [ T.textSm
-                    , cx T.textKiwi $ isJust completed_at
-                    , cx T.textGray300 $ isNothing completed_at
                     , T.fontBold
                     , T.mr2
                     , T.w4
                     , T.textCenter
                     ]
                 ]
-                [ HH.text $ if isJust completed_at then "D" else "P" ]
+                [ if isJust completed_at
+                    then Icons.check [ Icons.classes [ T.textKiwi, T.h5, T.w5 ] ]
+                    else HH.text ""
+                ]
             , maybeElem (filter (not <<< null) $ map _.tags $ find ((list == _) <<< _.id) lists) \tags ->
                 HH.div
                   [ HP.classes [ T.flex ] ]

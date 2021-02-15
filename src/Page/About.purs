@@ -2,6 +2,7 @@ module Listasio.Page.About where
 
 import Prelude
 
+import Bible.Component.HTML.Icons as Icons
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Maybe (Maybe(..))
@@ -66,11 +67,18 @@ component = Connect.component $ H.mkComponent
               [ HP.classes [ T.textGray400 ] ]
               [ HH.div [] [ HH.text "listas.io your favorite digital consumption manager" ]
               , HH.div
-                  [ HP.classes [ T.mt4 ] ]
-                  [ HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://github.com/ndelvalle" ] [ HH.text "@ndelvalle" ]
-                  , HH.text " <> "
+                  [ HP.classes [ T.mt4, T.flex, T.itemsCenter ] ]
+                  [ Icons.photo [ Icons.classes [ T.h5, T.w5, T.mr2 ] ]
                   , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://twitter.com/DvNahuel" ] [ HH.text "@DvNahuel" ]
-                  , HH.text " <> "
+                  ]
+              , HH.div
+                  [ HP.classes [ T.mt4, T.flex, T.itemsCenter ] ]
+                  [ Icons.terminal [ Icons.classes [ T.h5, T.w5, T.mr2 ] ]
+                  , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://github.com/ndelvalle" ] [ HH.text "@ndelvalle" ]
+                  ]
+              , HH.div
+                  [ HP.classes [ T.mt4, T.flex, T.itemsCenter ] ]
+                  [ Icons.code [ Icons.classes [ T.h5, T.w5, T.mr2 ] ]
                   , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://gillchristian.xyz" ] [ HH.text "@gillchristian" ]
                   ]
               ]
