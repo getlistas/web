@@ -11,6 +11,14 @@ absolute = ClassName "absolute"
 alignBottom :: ClassName
 alignBottom = ClassName "align-bottom"
 
+-- | animateSpin
+animateSpin :: ClassName
+animateSpin = ClassName "animate-spin"
+
+-- | animateSpinSlow
+animateSpinSlow :: ClassName
+animateSpinSlow = ClassName "animate-spin-slow"
+
 -- | appearanceNone
 appearanceNone :: ClassName
 appearanceNone = ClassName "appearance-none"
@@ -175,6 +183,10 @@ flexCol = ClassName "flex-col"
 flexNone :: ClassName
 flexNone = ClassName "flex-none"
 
+-- | flexShrink0
+flexShrink0 :: ClassName
+flexShrink0 = ClassName "flex-shrink-0"
+
 -- | flexWrap
 flexWrap :: ClassName
 flexWrap = ClassName "flex-wrap"
@@ -271,6 +283,10 @@ gridCols2 = ClassName "grid-cols-2"
 h0 :: ClassName
 h0 = ClassName "h-0"
 
+-- | h10
+h10 :: ClassName
+h10 = ClassName "h-10"
+
 -- | h16
 h16 :: ClassName
 h16 = ClassName "h-16"
@@ -286,6 +302,10 @@ h40 = ClassName "h-40"
 -- | h4
 h4 :: ClassName
 h4 = ClassName "h-4"
+
+-- | h5
+h5 :: ClassName
+h5 = ClassName "h-5"
 
 -- | h6
 h6 :: ClassName
@@ -314,6 +334,10 @@ hoverBgDuraznoLight = ClassName "hover:bg-durazno-light"
 -- | hoverBgGray100
 hoverBgGray100 :: ClassName
 hoverBgGray100 = ClassName "hover:bg-gray-100"
+
+-- | hoverBgKiwi
+hoverBgKiwi :: ClassName
+hoverBgKiwi = ClassName "hover:bg-kiwi"
 
 -- | hoverBgOpacity75
 hoverBgOpacity75 :: ClassName
@@ -871,9 +895,17 @@ transitionOpacity = ClassName "transition-opacity"
 truncate :: ClassName
 truncate = ClassName "truncate"
 
+-- | w10
+w10 :: ClassName
+w10 = ClassName "w-10"
+
 -- | w11d12
 w11d12 :: ClassName
 w11d12 = ClassName "w-11/12"
+
+-- | w20
+w20 :: ClassName
+w20 = ClassName "w-20"
 
 -- | w32
 w32 :: ClassName
@@ -886,6 +918,10 @@ w40 = ClassName "w-40"
 -- | w4
 w4 :: ClassName
 w4 = ClassName "w-4"
+
+-- | w5
+w5 :: ClassName
+w5 = ClassName "w-5"
 
 -- | w6
 w6 :: ClassName

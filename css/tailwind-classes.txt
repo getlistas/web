@@ -10,6 +10,7 @@ _32xlAnimateNone;32xl:animate-none
 _32xlAnimatePing;32xl:animate-ping
 _32xlAnimatePulse;32xl:animate-pulse
 _32xlAnimateSpin;32xl:animate-spin
+_32xlAnimateSpinSlow;32xl:animate-spin-slow
 _32xlAntialiased;32xl:antialiased
 _32xlAppearanceNone;32xl:appearance-none
 _32xlAutoColsAuto;32xl:auto-cols-auto
@@ -6407,6 +6408,7 @@ animateNone;animate-none
 animatePing;animate-ping
 animatePulse;animate-pulse
 animateSpin;animate-spin
+animateSpinSlow;animate-spin-slow
 antialiased;antialiased
 appearanceNone;appearance-none
 autoColsAuto;auto-cols-auto
@@ -10351,6 +10353,7 @@ lgAnimateNone;lg:animate-none
 lgAnimatePing;lg:animate-ping
 lgAnimatePulse;lg:animate-pulse
 lgAnimateSpin;lg:animate-spin
+lgAnimateSpinSlow;lg:animate-spin-slow
 lgAntialiased;lg:antialiased
 lgAppearanceNone;lg:appearance-none
 lgAutoColsAuto;lg:auto-cols-auto
@@ -16896,6 +16899,7 @@ mdAnimateNone;md:animate-none
 mdAnimatePing;md:animate-ping
 mdAnimatePulse;md:animate-pulse
 mdAnimateSpin;md:animate-spin
+mdAnimateSpinSlow;md:animate-spin-slow
 mdAntialiased;md:antialiased
 mdAppearanceNone;md:appearance-none
 mdAutoColsAuto;md:auto-cols-auto
@@ -25253,6 +25257,7 @@ smAnimateNone;sm:animate-none
 smAnimatePing;sm:animate-ping
 smAnimatePulse;sm:animate-pulse
 smAnimateSpin;sm:animate-spin
+smAnimateSpinSlow;sm:animate-spin-slow
 smAntialiased;sm:antialiased
 smAppearanceNone;sm:appearance-none
 smAutoColsAuto;sm:auto-cols-auto
@@ -32260,6 +32265,7 @@ xlAnimateNone;xl:animate-none
 xlAnimatePing;xl:animate-ping
 xlAnimatePulse;xl:animate-pulse
 xlAnimateSpin;xl:animate-spin
+xlAnimateSpinSlow;xl:animate-spin-slow
 xlAntialiased;xl:antialiased
 xlAppearanceNone;xl:appearance-none
 xlAutoColsAuto;xl:auto-cols-auto

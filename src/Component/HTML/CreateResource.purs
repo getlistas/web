@@ -2,6 +2,7 @@ module Listasio.Component.HTML.CreateResource where
 
 import Prelude
 
+import Bible.Component.HTML.Icons as Icons
 import Data.Array (sortWith)
 import Data.Char.Unicode as Char
 import Data.Filterable (filter)
@@ -325,13 +326,12 @@ formComponent = F.component formInput $ F.defaultSpec
                               , T.flexCol
                               , T.justifyCenter
                               , T.itemsCenter
-                              , T.textGray400
+                              , T.textGray200
                               , T.bgGray100
                               , T.roundedLg
-                              , T.text4xl
                               ]
                           ]
-                          [ HH.text "⌛" ]
+                          [ Icons.loader [ Icons.classes [ T.animateSpinSlow, T.h10, T.w10 ] ] ]
 
                       _ ->
                         HH.div
@@ -342,13 +342,12 @@ formComponent = F.component formInput $ F.defaultSpec
                               , T.flexCol
                               , T.justifyCenter
                               , T.itemsCenter
-                              , T.textGray400
+                              , T.textGray200
                               , T.bgGray100
                               , T.roundedLg
-                              , T.text4xl
                               ]
                           ]
-                          [ HH.text "404" ]
+                          [ Icons.photo [ Icons.classes [ T.h20, T.w20 ] ] ]
                   ]
               , HH.div
                   []

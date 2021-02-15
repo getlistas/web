@@ -29,6 +29,7 @@
   , "routing-duplex"
   , "slug"
   , "strings"
+  , "svg-parser-halogen"
   , "variant"
   ]
 , sources =

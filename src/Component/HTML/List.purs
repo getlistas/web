@@ -2,6 +2,7 @@ module Listasio.Component.HTML.List where
 
 import Prelude
 
+import Bible.Component.HTML.Icons as Icons
 import Data.Array (findIndex, insertAt, null, singleton, snoc, tail)
 import Data.Array.NonEmpty (cons')
 import Data.Either (note)
@@ -281,14 +282,36 @@ component = H.mkComponent
                 ]
             , ButtonGroupMenu.buttonGroupMenu
                 { mainAction: Just $ CompleteResource next
-                , label: "Done"
+                , label: HH.div
+                           [ HP.classes [ T.flex, T.itemsCenter ] ]
+                           [ Icons.check [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textKiwi ] ]
+                           , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Done" ]
+                           ]
                 , toggleMenu: Just ToggleShowNextMenu
                 , isOpen: showNextMenu
                 }
                 $ cons'
-                    { action: Just $ AndCloseNextMenu $ CopyResourceURL next , text: "Copy link" }
-                    [ { action: Just $ AndCloseNextMenu $ CopyToShare next , text: "Copy share link" }
-                    , { action: Just $ AndCloseNextMenu $ DeleteResource next , text: "Remove" }
+                    { action: Just $ AndCloseNextMenu $ CopyResourceURL next
+                    , label: HH.div
+                               [ HP.classes [ T.flex, T.itemsCenter ] ]
+                               [ Icons.clipboardCopy [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
+                               , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy link" ]
+                               ]
+                    }
+                    [ { action: Just $ AndCloseNextMenu $ CopyToShare next
+                      , label: HH.div
+                                [ HP.classes [ T.flex, T.itemsCenter ] ]
+                                [ Icons.share [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
+                                , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy share link" ]
+                                ]
+                      }
+                    , { action: Just $ AndCloseNextMenu $ DeleteResource next
+                      , label: HH.div
+                                [ HP.classes [ T.flex, T.itemsCenter ] ]
+                                [ Icons.trash [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
+                                , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Remove" ]
+                                ]
+                      }
                     ]
             ]
         ]
@@ -303,9 +326,8 @@ component = H.mkComponent
                 [ HH.text list.title ]
             , HH.div
                 [ HP.classes [ T.ml6 ] ]
-                [ HH.span [ HP.classes [ T.mr2 ] ] [ HH.text "🔗" ]
-                , HH.span [ HP.classes [ T.textLg, T.textGray400 ] ] [ HH.text $ show list.resource_metadata.completed_count ]
-                , HH.span [ HP.classes [ T.textLg, T.textGray400, T.mx1 ] ] [ HH.text "/" ]
+                [ HH.span [ HP.classes [ T.textLg, T.textGray400 ] ] [ HH.text $ show list.resource_metadata.completed_count ]
+                , HH.span [ HP.classes [ T.textLg, T.textGray300, T.mx1 ] ] [ HH.text "/" ]
                 , HH.span [ HP.classes [ T.textLg, T.textGray300 ] ] [ HH.text $ show list.resource_metadata.count ]
                 ]
             ]
@@ -344,9 +366,9 @@ component = H.mkComponent
                 [ HH.span
                     [ HP.classes [ T.textSm, T.textGray200 ] ]
                     [ HH.text "Next in queue" ]
-                , HH.span
-                    [ HP.classes [ T.textGray400 ] ]
-                    [ HH.text $ if showMore && hasMore then "▲" else "▼" ]
+                , if showMore && hasMore
+                    then Icons.chevronUp [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ]
+                    else Icons.chevronDown [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ]
                 ]
             ]
         , whenElem (showMore && hasMore) \_ ->
@@ -386,25 +408,25 @@ component = H.mkComponent
               ]
           ]
           [ HH.a
-              [ HP.classes [ T.flex, T.itemsCenter, T.truncate, T.mr4 ]
+              [ HP.classes [ T.flex, T.itemsCenter, T.truncate ]
               , HP.target "_blank"
               , HP.href url
               ]
               [ HH.img [ HP.classes [ T.inlineBlock, T.w4, T.h4, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
-              , HH.div [ HP.classes [ T.truncate ] ] [ HH.text title ]
+              , HH.div [ HP.classes [ T.truncate, T.textSm ] ] [ HH.text title ]
               ]
           , HH.div
-              [ HP.classes [ T.listResourceSettings ] ]
+              [ HP.classes [ T.listResourceSettings, T.ml4 ] ]
               [ HH.button
                   [ HE.onClick \_ -> Just $ CompleteResource resource
                   , HP.classes [ T.cursorPointer, T.mr4 ]
                   ]
-                  [ HH.text "✔️" ]
+                  [ Icons.check [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
               , HH.button
                   [ HE.onClick \_ -> Just $ DeleteResource resource
                   , HP.classes [ T.cursorPointer ]
                   ]
-                  [ HH.text "❌" ]
+                  [ Icons.trash [ Icons.classes [ T.h5, T.w5, T.textGray400 ] ] ]
               ]
           ]
 

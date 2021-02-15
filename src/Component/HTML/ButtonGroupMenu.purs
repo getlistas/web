@@ -2,6 +2,7 @@ module Listasio.Component.HTML.ButtonGroupMenu where
 
 import Prelude
 
+import Bible.Component.HTML.Icons as Icons
 import Data.Array.NonEmpty (NonEmptyArray, toArray)
 import Data.Maybe (Maybe(..))
 import Halogen.HTML as HH
@@ -10,22 +11,22 @@ import Halogen.HTML.Properties as HP
 import Listasio.Component.HTML.Utils (whenElem)
 import Tailwind as T
 
-type Props p
+type Props i p
   = { mainAction :: Maybe p
-    , label :: String
+    , label :: HH.HTML i p
     , toggleMenu :: Maybe p
     , isOpen :: Boolean
     }
 
-props :: forall p. Props p
+props :: forall i p. Props i p
 props =
   { mainAction: Nothing
-  , label: ""
+  , label: HH.text ""
   , toggleMenu: Nothing
   , isOpen: false
   }
 
-buttonGroupMenu :: forall i p. Props p -> NonEmptyArray { action :: Maybe p, text :: String } -> HH.HTML i p
+buttonGroupMenu :: forall i p. Props i p -> NonEmptyArray { action :: Maybe p, label :: HH.HTML i p } -> HH.HTML i p
 buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
   HH.span
     [ HP.classes
@@ -43,8 +44,7 @@ buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
             [ T.relative
             , T.inlineFlex
             , T.itemsCenter
-            , T.px4
-            , T.py2
+            , T.p2
             , T.roundedLMd
             , T.border
             , T.borderGray400
@@ -61,7 +61,7 @@ buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
             , T.focusBorderKiwi
             ]
         ]
-        [ HH.text label ]
+        [ label ]
     , HH.span
         [ HP.classes [ T.negMlPx, T.relative, T.block ] ]
         [ HH.button
@@ -77,10 +77,7 @@ buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
                 , T.border
                 , T.borderGray400
                 , T.bgWhite
-                , T.textXs
-                , T.fontMedium
                 , T.textGray400
-                , T.leadingNone
                 , T.hoverBgGray100
                 , T.focusZ10
                 , T.focusOutlineNone
@@ -92,7 +89,7 @@ buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
             [ HH.span [ HP.classes [ T.srOnly] ] [ HH.text "Open options" ]
             -- Heroicon name: chevron-down
             -- TODO: icon
-            , HH.span [] [ HH.text "..." ]
+            , Icons.dotsHorizontal [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
             ]
         -- TODO: transitions
         --
@@ -124,7 +121,7 @@ buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
               [ HH.div
                   [ HP.classes [ T.py1 ] ]
                   $ map
-                      (\{text, action} ->
+                      (\i ->
                         HH.a
                           [ HP.classes
                               [ T.block
@@ -136,9 +133,9 @@ buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
                               , T.hoverTextGray900
                               , T.cursorPointer
                               ]
-                          , HE.onClick \_ -> action
+                          , HE.onClick \_ -> i.action
                           ]
-                          [ HH.text text ]
+                          [ i.label ]
                       )
                   $ toArray menuItems
               ]

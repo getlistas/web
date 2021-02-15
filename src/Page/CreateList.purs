@@ -2,6 +2,7 @@ module Listasio.Page.CreateList where
 
 import Prelude
 
+import Bible.Component.HTML.Icons as Icons
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Filterable (filter)
@@ -101,9 +102,9 @@ component = Connect.component $ H.mkComponent
         [ HH.a
             [ safeHref Dashboard
             , HE.onClick \e -> Just $ Navigate Dashboard $ toEvent e
-            , HP.classes [ T.textGray200, T.mr8 ]
+            , HP.classes [ T.textGray200, T.mr8, T.flexShrink0 ]
             ]
-            [ HH.text "ᐸ" ]
+            [ Icons.chevronLeft [ Icons.classes [ T.h10, T.w10 ] ] ]
         , HH.text "Create List"
         ]
 

@@ -2,6 +2,7 @@ module Listasio.Page.Register where
 
 import Prelude
 
+import Bible.Component.HTML.Icons as Icons
 import Data.Either (note)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
@@ -140,10 +141,15 @@ component =
                         , T.focusRingOffset2
                         , T.focusRingOffsetGray10
                         , T.focusRingKiwi
+                        , T.flex
+                        , T.justifyCenter
+                        , T.itemsCenter
                         ]
                     , HP.disabled $ isLoading status
                     ]
-                    [ HH.text "🇬 Register with Google" ]
+                    [ Icons.google [ Icons.classes [ T.h5, T.w5, T.mr2, T.flexShrink0 ] ]
+                    , HH.span [] [ HH.text "Register with Google" ]
+                    ]
                 ]
           , whenElem (not $ isSuccess status) \_ ->
               HH.p

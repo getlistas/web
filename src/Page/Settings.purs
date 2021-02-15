@@ -2,6 +2,7 @@ module Listasio.Page.Settings where
 
 import Prelude
 
+import Bible.Component.HTML.Icons as Icons
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Maybe (Maybe(..))
@@ -116,13 +117,17 @@ component = Connect.component $ H.mkComponent
                           , T.fontSemibold
                           , T.roundedLg
                           , T.shadowMd
-                          , T.hoverBgPink700
+                          , T.hoverBgKiwi
                           , T.focusOutlineNone
                           , T.focusRing2
                           , T.focusRingPurple600
+                          , T.flex
+                          , T.itemsCenter
                           ]
                       ]
-                      [ HH.text "Log out" ]
+                      [ HH.span [] [ HH.text "Log out" ]
+                      , Icons.logout [ Icons.classes [ T.h5, T.w5, T.ml2 ] ]
+                      ]
                   ]
               ]
           ]
