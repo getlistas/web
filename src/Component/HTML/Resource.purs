@@ -2,7 +2,7 @@ module Listasio.Component.HTML.Resource where
 
 import Prelude
 
-import Bible.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Icons as Icons
 import Data.Array (find, null)
 import Data.Filterable (filter)
 import Data.Maybe (isJust)

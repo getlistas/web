@@ -2,7 +2,7 @@ module Listasio.Component.HTML.List where
 
 import Prelude
 
-import Bible.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Icons as Icons
 import Data.Array (findIndex, insertAt, null, singleton, snoc, tail)
 import Data.Array.NonEmpty (cons')
 import Data.Either (note)

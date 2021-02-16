@@ -2,7 +2,7 @@ module Listasio.Component.HTML.ButtonGroupMenu where
 
 import Prelude
 
-import Bible.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Icons as Icons
 import Data.Array.NonEmpty (NonEmptyArray, toArray)
 import Data.Maybe (Maybe(..))
 import Halogen.HTML as HH
@@ -87,8 +87,6 @@ buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
                 ]
             ]
             [ HH.span [ HP.classes [ T.srOnly] ] [ HH.text "Open options" ]
-            -- Heroicon name: chevron-down
-            -- TODO: icon
             , Icons.dotsHorizontal [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
             ]
         -- TODO: transitions

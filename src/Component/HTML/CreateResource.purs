@@ -2,7 +2,7 @@ module Listasio.Component.HTML.CreateResource where
 
 import Prelude
 
-import Bible.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Icons as Icons
 import Data.Array (sortWith)
 import Data.Char.Unicode as Char
 import Data.Filterable (filter)

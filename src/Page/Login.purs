@@ -2,7 +2,7 @@ module Listasio.Page.Login where
 
 import Prelude
 
-import Bible.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Icons as Icons
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
 import Effect.Aff.Class (class MonadAff)

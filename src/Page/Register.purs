@@ -2,7 +2,7 @@ module Listasio.Page.Register where
 
 import Prelude
 
-import Bible.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Icons as Icons
 import Data.Either (note)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)

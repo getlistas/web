@@ -2,7 +2,7 @@ module Listasio.Component.HTML.Header where
 
 import Prelude
 
-import Bible.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Icons as Icons
 import Data.Maybe (Maybe(..), isJust, isNothing)
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE

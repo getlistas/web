@@ -1,4 +1,4 @@
-module Bible.Component.HTML.Icons where
+module Listasio.Component.HTML.Icons where
 
 import Prelude
 
