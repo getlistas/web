@@ -2,7 +2,6 @@ module Listasio.Page.CreateList where
 
 import Prelude
 
-import Listasio.Component.HTML.Icons as Icons
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Filterable (filter)
@@ -19,10 +18,11 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, createList)
+import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Utils (safeHref, whenElem)
-import Listasio.Data.List (List)
-import Listasio.Data.Profile (Profile)
+import Listasio.Data.List (CreateListFields)
+import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
 import Listasio.Env (UserEnv)
 import Listasio.Form.Field as Field
@@ -35,14 +35,14 @@ import Web.UIEvent.MouseEvent (toEvent)
 
 data Action
   = Initialize
-  | Receive { currentUser :: Maybe Profile }
-  | HandleCreateForm List
+  | Receive { currentUser :: Maybe ProfileWithIdAndEmail }
+  | HandleCreateForm CreateListFields
   | Navigate Route Event.Event
 
-type State = {currentUser :: Maybe Profile}
+type State = {currentUser :: Maybe ProfileWithIdAndEmail}
 
 type ChildSlots
-  = ( formless :: F.Slot CreateListForm FormQuery () List Unit )
+  = ( formless :: F.Slot CreateListForm FormQuery () CreateListFields Unit )
 
 component
   :: forall q o m r
@@ -131,7 +131,7 @@ data FormAction
 formComponent ::
   forall i slots m.
   MonadAff m =>
-  F.Component CreateListForm FormQuery slots i List m
+  F.Component CreateListForm FormQuery slots i CreateListFields m
 formComponent =
   F.component formInput
     $ F.defaultSpec

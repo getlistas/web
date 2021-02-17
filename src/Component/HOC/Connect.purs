@@ -6,7 +6,7 @@ module Component.HOC.Connect where
 import Prelude
 
 import Listasio.Component.Utils (busEventSource)
-import Listasio.Data.Profile (Profile)
+import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Env (UserEnv)
 import Control.Monad.Reader (class MonadAsk, asks)
 import Data.Maybe (Maybe(..))
@@ -21,12 +21,12 @@ import Record as Record
 
 data Action input output
   = Initialize
-  | HandleUserBus (Maybe Profile)
+  | HandleUserBus (Maybe ProfileWithIdAndEmail)
   | Receive input
   | Emit output
 
 type WithCurrentUser r =
-  ( currentUser :: Maybe Profile | r )
+  ( currentUser :: Maybe ProfileWithIdAndEmail | r )
 
 type ChildSlots query output =
   ( inner :: H.Slot query output Unit )

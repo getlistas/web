@@ -11,7 +11,7 @@ import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Component.HTML.Header (header)
-import Listasio.Data.Profile (Profile)
+import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route)
 import Listasio.Env (UserEnv)
 import Tailwind as T
@@ -19,10 +19,10 @@ import Web.Event.Event (Event)
 
 data Action
   = Initialize
-  | Receive { currentUser :: Maybe Profile }
+  | Receive { currentUser :: Maybe ProfileWithIdAndEmail }
   | Navigate Route Event
 
-type State = {currentUser :: Maybe Profile}
+type State = {currentUser :: Maybe ProfileWithIdAndEmail}
 
 component
   :: forall q o m r

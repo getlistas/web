@@ -30,7 +30,7 @@ import Listasio.Component.HTML.ToggleGroup as ToggleGroup
 import Listasio.Component.HTML.Utils (cx)
 import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdUserAndMeta)
-import Listasio.Data.Profile (Profile)
+import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Resource (ListResource)
 import Listasio.Data.Route (Route(..))
 import Listasio.Data.YearMonth (YearMonth)
@@ -42,7 +42,7 @@ import Web.Event.Event (Event)
 
 data Action
   = Initialize
-  | Receive { currentUser :: Maybe Profile }
+  | Receive { currentUser :: Maybe ProfileWithIdAndEmail }
   | LoadResources
   | LoadLists
   | Navigate Route Event
@@ -119,7 +119,7 @@ monthItemsPair is =
   flip Tuple is <$> (map Down $ map YearMonth.fromDateTime $ _.completed_at $ NEA.head is)
 
 type State
-  = { currentUser :: Maybe Profile
+  = { currentUser :: Maybe ProfileWithIdAndEmail
     , resources :: RemoteData String GroupedResources
     , lists :: Maybe (Array ListWithIdUserAndMeta)
     , groupBy :: GroupBy

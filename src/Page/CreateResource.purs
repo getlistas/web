@@ -19,7 +19,7 @@ import Listasio.Component.HTML.CreateResource as CreateResource
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Utils (safeHref)
 import Listasio.Data.List (ListWithIdUserAndMeta)
-import Listasio.Data.Profile (Profile)
+import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
 import Listasio.Env (UserEnv)
 import Network.RemoteData (RemoteData(..))
@@ -30,7 +30,7 @@ import Web.UIEvent.MouseEvent (toEvent)
 
 data Action
   = Initialize
-  | Receive { currentUser :: Maybe Profile, url :: Maybe String }
+  | Receive { currentUser :: Maybe ProfileWithIdAndEmail, url :: Maybe String }
   | Navigate Route Event
   | LoadLists
   | HandleCreateResource CreateResource.Output
@@ -39,7 +39,7 @@ type Input
   = { url :: Maybe String }
 
 type State
-  = { currentUser :: Maybe Profile
+  = { currentUser :: Maybe ProfileWithIdAndEmail
     , lists :: RemoteData String (Array ListWithIdUserAndMeta)
     , url :: Maybe String
     }

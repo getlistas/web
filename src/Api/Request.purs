@@ -43,7 +43,7 @@ import Jwt as Jwt
 import Listasio.Api.Endpoint (Endpoint(..), endpointCodec)
 import Listasio.Data.Email (Email)
 import Listasio.Data.Email as Email
-import Listasio.Data.Profile (Profile)
+import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Profile as Profile
 import Listasio.Data.Username (Username)
 import Listasio.Data.Username as Username
@@ -148,12 +148,12 @@ loginCodec =
     , password: CA.string
     }
 
-type User = { user :: Profile }
+type User = { user :: ProfileWithIdAndEmail }
 
 userCodec ::  JsonCodec User
-userCodec = CAR.object "user" { user: Profile.profileCodec }
+userCodec = CAR.object "user" { user: Profile.profileWithIdAndEmailCodec }
 
-login :: forall m. MonadAff m => BaseURL -> LoginFields -> m (Either String (Tuple Token Profile))
+login :: forall m. MonadAff m => BaseURL -> LoginFields -> m (Either String (Tuple Token ProfileWithIdAndEmail))
 login baseUrl fields = do
   res <- liftAff $ request $ defaultRequest baseUrl Nothing conf
   case res of
@@ -167,7 +167,7 @@ type GoogleLoginFields = { token :: String }
 googleLoginCodec :: JsonCodec GoogleLoginFields
 googleLoginCodec = CAR.object "GoogleLoginFields" { token: CA.string }
 
-googleLogin :: forall m. MonadAff m => BaseURL -> Unit -> m (Either String (Tuple Token Profile))
+googleLogin :: forall m. MonadAff m => BaseURL -> Unit -> m (Either String (Tuple Token ProfileWithIdAndEmail))
 googleLogin baseUrl _ = do
   mbGoogleToken <- (\r -> r { token = Nullable.toMaybe r.token }) <$> liftAff doGoogleAuth
   case mbGoogleToken of
@@ -195,24 +195,24 @@ printJwtError = case _ of
 -- | This JSON decoder is defined in this module because it manipulates a token.
 -- | First, we'll decode the token field from the payload, and then we'll decode
 -- | the user's profile from the token itself.
-decodeAuthProfileFromToken :: Json -> Either (Jwt.JwtError JsonDecodeError) (Tuple Token Profile)
+decodeAuthProfileFromToken :: Json -> Either (Jwt.JwtError JsonDecodeError) (Tuple Token ProfileWithIdAndEmail)
 decodeAuthProfileFromToken payload = do
   { access_token } <- lmap Jwt.JsonDecodeError $ Codec.decode tokenCodec payload
   { user } <- Jwt.decodeWith (Codec.decode userCodec) access_token
   pure $ Tuple (Token access_token) user
   where tokenCodec = CAR.object "access_token" { access_token: CA.string }
 
-register :: forall m. MonadAff m => BaseURL -> RegisterFields -> m (Either String Profile)
+register :: forall m. MonadAff m => BaseURL -> RegisterFields -> m (Either String ProfileWithIdAndEmail)
 register baseUrl fields = do
   res <- liftAff $ request $ defaultRequest baseUrl Nothing conf
   pure $ decode <$> _.body =<< lmap printError res
   where method = Post $ Just $ Codec.encode registerCodec fields
         conf = { endpoint: Users, method }
-        decode = lmap printJsonDecodeError <<< Codec.decode Profile.profileCodec
+        decode = lmap printJsonDecodeError <<< Codec.decode Profile.profileWithIdAndEmailCodec
 
 tokenKey = "token" :: String
 
-decodeToken :: Token -> Either String Profile
+decodeToken :: Token -> Either String ProfileWithIdAndEmail
 decodeToken (Token token) =
    lmap printJwtError $ _.user <$> Jwt.decodeWith (Codec.decode userCodec) token
 

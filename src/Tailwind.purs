@@ -11,10 +11,6 @@ absolute = ClassName "absolute"
 alignBottom :: ClassName
 alignBottom = ClassName "align-bottom"
 
--- | animateSpin
-animateSpin :: ClassName
-animateSpin = ClassName "animate-spin"
-
 -- | animateSpinSlow
 animateSpinSlow :: ClassName
 animateSpinSlow = ClassName "animate-spin-slow"
@@ -102,10 +98,6 @@ borderGray300 = ClassName "border-gray-300"
 -- | borderGray400
 borderGray400 :: ClassName
 borderGray400 = ClassName "border-gray-400"
-
--- | borderIndigo400
-borderIndigo400 :: ClassName
-borderIndigo400 = ClassName "border-indigo-400"
 
 -- | borderKiwi
 borderKiwi :: ClassName
@@ -778,10 +770,6 @@ smP6 = ClassName "sm:p-6"
 -- | smWFull
 smWFull :: ClassName
 smWFull = ClassName "sm:w-full"
-
--- | spaceX2
-spaceX2 :: ClassName
-spaceX2 = ClassName "space-x-2"
 
 -- | spaceX4
 spaceX4 :: ClassName

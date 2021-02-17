@@ -34,6 +34,7 @@ data Endpoint
   | User
   | Users
   | List ID
+  | ListFork ID
   | Lists
   | Discover Pagination
   | Resources
@@ -53,6 +54,7 @@ endpointCodec =
         , "User": "user" / noArgs
         , "Users": "users" / noArgs
         , "List": "lists" / id segment
+        , "ListFork": "lists" / id segment / "fork"
         , "Lists": "lists" / noArgs
         , "Discover": "discover" ?
             { skip: optional <<< int

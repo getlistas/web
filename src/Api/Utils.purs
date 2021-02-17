@@ -9,7 +9,7 @@ import Affjax (request)
 import Listasio.Api.Request (BaseURL, RequestOptions, Token, defaultRequest, readToken, writeToken)
 import Listasio.Capability.LogMessages (class LogMessages, logError)
 import Listasio.Capability.Now (class Now)
-import Listasio.Data.Profile (Profile)
+import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Username (Username)
 import Listasio.Env (UserEnv)
 import Control.Monad.Reader (class MonadAsk, ask, asks)
@@ -64,9 +64,9 @@ authenticate
   => MonadAsk { baseUrl :: BaseURL, userEnv :: UserEnv | r } m
   => LogMessages m
   => Now m
-  => (BaseURL -> a -> m (Either String (Tuple Token Profile)))
+  => (BaseURL -> a -> m (Either String (Tuple Token ProfileWithIdAndEmail)))
   -> a
-  -> m (Maybe Profile)
+  -> m (Maybe ProfileWithIdAndEmail)
 authenticate req fields = do
   { baseUrl, userEnv } <- ask
   req baseUrl fields >>= case _ of

@@ -28,6 +28,7 @@ import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Capability.Resource.User (class ManageUser)
 import Listasio.Data.List as List
 import Listasio.Data.Log as Log
+import Listasio.Data.Profile (profileWithIdAndEmailCodec)
 import Listasio.Data.Profile as Profile
 import Listasio.Data.Resource as Resource
 import Listasio.Data.ResourceMetadata as ResourceMeta
@@ -107,7 +108,7 @@ instance manageUserAppM :: ManageUser AppM where
   getCurrentUser = do
     mbJson <- mkAuthRequest { endpoint: User, method: Get }
     map (map _.user)
-      $ decode (CAR.object "User" { user: Profile.profileCodec }) mbJson
+      $ decode (CAR.object "User" { user: Profile.profileWithIdAndEmailCodec }) mbJson
 
   updateUser fields =
     void
@@ -119,7 +120,7 @@ instance manageUserAppM :: ManageUser AppM where
 instance manageListAppM :: ManageList AppM where
   createList list =
     decode List.listWitIdAndUserCodec =<< mkAuthRequest conf
-    where method = Post $ Just $ Codec.encode List.listCodec list
+    where method = Post $ Just $ Codec.encode List.createListFieldsCodec list
           conf = { endpoint: Lists, method }
 
   getList id =
@@ -131,6 +132,10 @@ instance manageListAppM :: ManageList AppM where
     where conf = { endpoint: Lists, method: Get }
 
   deleteList id = void $ mkAuthRequest { endpoint: List id, method: Delete }
+
+  forkList id =
+    decode List.listWitIdAndUserCodec =<< mkAuthRequest conf
+    where conf = { endpoint: ListFork id, method: Post Nothing }
 
   discoverLists pagination =
     decode (CAC.array List.listWitIdAndUserCodec) =<< mkRequest conf

@@ -26,7 +26,7 @@ import Listasio.Component.HTML.List as List
 import Listasio.Component.HTML.Modal as Modal
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
 import Listasio.Data.List (ListWithIdUserAndMeta)
-import Listasio.Data.Profile (Profile)
+import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
 import Listasio.Env (UserEnv)
 import Network.RemoteData (RemoteData(..))
@@ -40,7 +40,7 @@ import Web.UIEvent.MouseEvent as Mouse
 
 data Action
   = Initialize
-  | Receive { currentUser :: Maybe Profile }
+  | Receive { currentUser :: Maybe ProfileWithIdAndEmail }
   | Navigate Route Event
   | LoadLists
   | PasteUrl Clipboard.ClipboardEvent
@@ -48,7 +48,7 @@ data Action
   | HandleCreateResource CreateResource.Output
 
 type State
-  = { currentUser :: Maybe Profile
+  = { currentUser :: Maybe ProfileWithIdAndEmail
     , lists :: RemoteData String (Array ListWithIdUserAndMeta)
     , showCreateResource :: Boolean
     , pastedUrl :: Maybe String
