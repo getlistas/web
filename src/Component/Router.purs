@@ -23,7 +23,7 @@ import Listasio.Capability.Resource.List (class ManageList)
 import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Capability.Resource.User (class ManageUser)
 import Listasio.Component.Utils (OpaqueSlot)
-import Listasio.Data.Profile (Profile)
+import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..), routeCodec)
 import Listasio.Env (UserEnv)
 import Listasio.Page.About as About
@@ -44,7 +44,7 @@ import Routing.Duplex as RD
 
 type State =
   { route :: Maybe Route
-  , currentUser :: Maybe Profile
+  , currentUser :: Maybe ProfileWithIdAndEmail
   }
 
 data Query a
@@ -117,7 +117,7 @@ component = Connect.component $ H.mkComponent
       pure $ Just a
 
   -- Display the login page instead of the expected page if there is no current user
-  authorize :: Maybe Profile -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
+  authorize :: Maybe ProfileWithIdAndEmail -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
   authorize mbProfile html = case mbProfile of
     Nothing ->
       HH.slot (SProxy :: _ "login") unit Login.component { redirect: false, registerSuccess: false } absurd

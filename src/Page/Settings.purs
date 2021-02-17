@@ -2,9 +2,9 @@ module Listasio.Page.Settings where
 
 import Prelude
 
-import Listasio.Component.HTML.Icons as Icons
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
+import Data.Lens (_Just, set)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
 import Effect.Aff.Class (class MonadAff)
@@ -15,9 +15,11 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, logout, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, updateUser)
+import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Utils (whenElem)
-import Listasio.Data.Profile (Profile)
+import Listasio.Data.Lens (_currentUser, _name, _slug)
+import Listasio.Data.Profile (Profile, ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
 import Listasio.Data.Username (Username)
 import Listasio.Data.Username as Username
@@ -40,13 +42,13 @@ newtype SettingsForm r f
 derive instance newtypeSettingsForm :: Newtype (SettingsForm r f) _
 
 data Action
-  = Receive { currentUser :: Maybe Profile }
+  = Receive { currentUser :: Maybe ProfileWithIdAndEmail }
   | HandleForm Profile
   | LogUserOut
   | Navigate Route Event
 
 type State
-  = { currentUser :: Maybe Profile }
+  = { currentUser :: Maybe ProfileWithIdAndEmail }
 
 component ::
   forall q o r m.
@@ -83,9 +85,11 @@ component = Connect.component $ H.mkComponent
                }
          void $ H.query F._formless unit $ F.asQuery $ F.loadForm newInputs
 
-    HandleForm fields -> do
-      updateUser fields
-      H.modify_ _ { currentUser = Just fields }
+    HandleForm {name, slug} -> do
+      -- TODO: check response !!!
+      updateUser {name, slug}
+      H.modify_ $ set (_currentUser <<< _Just <<< _slug) slug
+                    <<< set (_currentUser <<< _Just <<< _name) name
 
     LogUserOut -> logout
 
