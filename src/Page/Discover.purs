@@ -4,12 +4,12 @@ import Prelude
 
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
-import Data.Array (cons, length, null)
+import Data.Array (cons, find, length, null)
 import Data.Either (Either, note)
 import Data.Filterable (filter)
 import Data.Foldable (elem)
 import Data.Lens (over, view)
-import Data.Maybe (Maybe(..), fromMaybe, maybe)
+import Data.Maybe (Maybe(..), fromMaybe, isJust, maybe)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -22,7 +22,7 @@ import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Data.ID (ID)
 import Listasio.Data.Lens (_forkInProgress)
-import Listasio.Data.List (ListWithIdAndUser, ListWithIdUserAndMeta)
+import Listasio.Data.List (Author(..), ListWithIdAndUser, ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
 import Listasio.Env (UserEnv)
@@ -62,6 +62,10 @@ perPage = 10
 
 limit :: Maybe Int
 limit = Just perPage
+
+isForkingThisList :: ListWithIdAndUser -> State -> Boolean
+isForkingThisList { id } =
+  isJust <<< find (_ == id) <<< view _forkInProgress
 
 component
   :: forall q o m r
@@ -145,7 +149,7 @@ component = Connect.component $ H.mkComponent
             Just _forked -> pure unit
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render { currentUser, lists, isLast } =
+  render state@{ currentUser, lists, isLast } =
     Layout.dashboard
       currentUser
       Navigate
@@ -180,7 +184,7 @@ component = Connect.component $ H.mkComponent
       _ -> HH.div [ HP.classes [ T.textCenter ] ] [ HH.text "Loading ..." ]
 
     listInfo :: ListWithIdAndUser -> H.ComponentHTML Action slots m
-    listInfo list@{ title, description, tags } =
+    listInfo list@{ title, description, tags, author } =
       HH.div
         [ HP.classes [ T.m4, T.p2, T.border2, T.borderKiwi, T.roundedMd ] ]
         [ HH.div [ HP.classes [ T.textLg, T.borderB2, T.borderGray200, T.mb4 ] ] [ HH.text title ]
@@ -189,7 +193,8 @@ component = Connect.component $ H.mkComponent
             HH.div
               [ HP.classes [ T.flex, T.textSm ] ]
               $ map Tag.tag tags
-        , button "Copy this list" (Just $ ForkList list) false
+        , whenElem (author /= You) \_ ->
+            button "Copy this list" (Just $ ForkList list) $ isForkingThisList list state
         ]
 
 button :: forall i p. String -> Maybe p -> Boolean -> HH.HTML i p

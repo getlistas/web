@@ -28,7 +28,6 @@ import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Capability.Resource.User (class ManageUser)
 import Listasio.Data.List as List
 import Listasio.Data.Log as Log
-import Listasio.Data.Profile (profileWithIdAndEmailCodec)
 import Listasio.Data.Profile as Profile
 import Listasio.Data.Resource as Resource
 import Listasio.Data.ResourceMetadata as ResourceMeta
@@ -76,8 +75,8 @@ instance navigateAppM :: Navigate AppM where
   locationState = liftEffect =<< _.nav.locationState <$> ask
 
   navigate route = do
-    { pushState } <- asks _.nav
-    { state } <- locationState
+    {pushState} <- asks _.nav
+    {state} <- locationState
     liftEffect $ pushState state $ print Route.routeCodec $ route
 
   navigate_ event route = do
@@ -85,7 +84,7 @@ instance navigateAppM :: Navigate AppM where
     navigate route
 
   logout = do
-    { currentUser, userBus } <- asks _.userEnv
+    {currentUser, userBus} <- asks _.userEnv
     liftEffect do
       Ref.write Nothing currentUser
       Request.removeToken
@@ -99,7 +98,7 @@ instance manageUserAppM :: ManageUser AppM where
   googleLoginUser = authenticate Request.googleLogin unit
 
   registerUser fields = do
-    { baseUrl } <- ask
+    {baseUrl} <- ask
     res <- Request.register baseUrl fields
     case res of
       Left err -> logError err *> pure Nothing
@@ -118,27 +117,37 @@ instance manageUserAppM :: ManageUser AppM where
           }
 
 instance manageListAppM :: ManageList AppM where
-  createList list =
-    decode List.listWitIdAndUserCodec =<< mkAuthRequest conf
+  createList list = do
+    {currentUser} <- asks _.userEnv
+    mbId <- map _.id <$> (liftEffect $ Ref.read currentUser)
+    decode (List.listWitIdAndUserCodec mbId) =<< mkAuthRequest conf
     where method = Post $ Just $ Codec.encode List.createListFieldsCodec list
           conf = { endpoint: Lists, method }
 
-  getList id =
-    decode List.listWitIdAndUserCodec =<< mkAuthRequest conf
+  getList id = do
+    {userEnv} <- ask
+    mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
+    decode (List.listWitIdAndUserCodec mbId) =<< mkAuthRequest conf
     where conf = { endpoint: List id, method: Get }
 
-  getLists =
-    decode (CAC.array List.listWitIdUserAndMetaCodec) =<< mkAuthRequest conf
+  getLists = do
+    {userEnv} <- ask
+    mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
+    decode (CAC.array $ List.listWitIdUserAndMetaCodec mbId) =<< mkAuthRequest conf
     where conf = { endpoint: Lists, method: Get }
 
   deleteList id = void $ mkAuthRequest { endpoint: List id, method: Delete }
 
-  forkList id =
-    decode List.listWitIdAndUserCodec =<< mkAuthRequest conf
+  forkList id = do
+    {userEnv} <- ask
+    mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
+    decode (List.listWitIdAndUserCodec mbId) =<< mkAuthRequest conf
     where conf = { endpoint: ListFork id, method: Post Nothing }
 
-  discoverLists pagination =
-    decode (CAC.array List.listWitIdAndUserCodec) =<< mkRequest conf
+  discoverLists pagination = do
+    {userEnv} <- ask
+    mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
+    decode (CAC.array $ List.listWitIdAndUserCodec mbId) =<< mkRequest conf
     where conf = { endpoint: Discover pagination, method: Get }
 
 instance manageResourceAppM :: ManageResource AppM where

@@ -19,6 +19,11 @@ data Author
   = You
   | Other ID
 
+derive instance authorEq :: Eq Author
+instance authorShow :: Show Author where
+  show You = "You"
+  show (Other id) = "Other " <> ID.toString id
+
 type ForkMeta
   = { from :: String
     , at :: DateTime
@@ -61,7 +66,7 @@ type ListWithIdAndUser
   = {
     | ListWithIdAndUserRep
       ( fork :: Maybe ForkMeta
-      -- , author :: Author
+      , author :: Author
       )
     }
 
@@ -109,13 +114,37 @@ listCodec =
     , fork: CAC.maybe forkMetaCodec
     }
 
+listWitIdAndUserCodec :: Maybe ID -> JsonCodec ListWithIdAndUser
+listWitIdAndUserCodec mbUserId = mapCodec to from codec
+  where
+  codec =
+    CAR.object "List"
+      { id: ID.codec
+      , title: CA.string
+      , description: CAC.maybe CA.string
+      , tags: CAC.array CA.string
+      , user: ID.codec
+      , is_public: CA.boolean
+      , created_at: DateTime.codec
+      , updated_at: DateTime.codec
+      , fork: CAC.maybe forkMetaCodec
+      }
+
+  to :: { | ListWithIdAndUserRep ( fork :: Maybe ForkMeta ) } -> Either JsonDecodeError ListWithIdAndUser
+  to {id, title, description, tags, user, is_public, created_at, updated_at, fork} = pure do
+    let mkList = {id, title, description, tags, user, is_public, created_at, updated_at, fork, author: _ }
+
+    mkList case mbUserId of
+      Just userId | user == userId -> You
+      _ -> Other id
+
+  from :: ListWithIdAndUser -> { | ListWithIdAndUserRep ( fork :: Maybe ForkMeta ) }
+  from {id, title, description, tags, user, is_public, created_at, updated_at, fork} = do
+    {id, title, description, tags, user, is_public, created_at, updated_at, fork}
+
 listWitIdUserAndMetaCodec :: Maybe ID -> JsonCodec ListWithIdUserAndMeta
 listWitIdUserAndMetaCodec mbUserId = mapCodec to from codec
   where
-  -- We'll stay faithful to our input JSON in the first codec. Then, we'll adjust the result of our
-  -- codec using mapCodec so that we can use our Relation type instead of a simple following boolean.
-  -- The reason we do that in a separate step is because it depends on having already successfully
-  -- parsed the username field.
   codec =
     CAR.object "List"
       { id: ID.codec
@@ -135,7 +164,7 @@ listWitIdUserAndMetaCodec mbUserId = mapCodec to from codec
     let mkList = {id, title, description, tags, user, is_public, created_at, updated_at, fork, resource_metadata, author: _ }
 
     mkList case mbUserId of
-      Just userId | id == userId -> You
+      Just userId | user == userId -> You
       _ -> Other id
 
   from :: ListWithIdUserAndMeta -> { | ListWithIdAndUserRep ( fork :: Maybe ForkMeta, resource_metadata :: ResourceMeta ) }
