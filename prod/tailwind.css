@@ -699,11 +699,6 @@ select {
   border-color: rgba(220, 38, 38, var(--tw-border-opacity));
 }
 
-.border-indigo-400 {
-  --tw-border-opacity: 1;
-  border-color: rgba(129, 140, 248, var(--tw-border-opacity));
-}
-
 .border-kiwi {
   --tw-border-opacity: 1;
   border-color: rgba(137, 176, 174, var(--tw-border-opacity));
