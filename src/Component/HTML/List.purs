@@ -271,7 +271,7 @@ component = H.mkComponent
             [ HH.img [ HP.classes [ T.h20, T.w32, T.mr4, T.objectCover ], HP.src $ fromMaybe "https://via.placeholder.com/87" next.thumbnail ]
             , HH.div
                 [ HP.classes [ T.overflowHidden ] ]
-                [ HH.a
+                [ HH.div
                     [ HP.classes [ T.textBase, T.textGray400, T.leadingRelaxed, T.truncate ] ]
                     [ HH.text next.title ]
                 , maybeElem next.description \des ->
@@ -442,4 +442,3 @@ component = H.mkComponent
 
 filterNotEmpty :: forall t a. Filterable t => t (Array a) -> t (Array a)
 filterNotEmpty = filter (not <<< null)
-
