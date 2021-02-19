@@ -127,7 +127,7 @@ instance manageListAppM :: ManageList AppM where
   getList id = do
     {userEnv} <- ask
     mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
-    decode (List.listWitIdAndUserCodec mbId) =<< mkAuthRequest conf
+    decode (List.listWitIdUserAndMetaCodec mbId) =<< mkAuthRequest conf
     where conf = { endpoint: List id, method: Get }
 
   getLists = do

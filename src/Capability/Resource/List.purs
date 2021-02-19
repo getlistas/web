@@ -10,7 +10,7 @@ import Listasio.Data.List (CreateListFields, ListWithIdAndUser, ListWithIdUserAn
 
 class Monad m <= ManageList m where
   createList :: CreateListFields -> m (Maybe ListWithIdAndUser)
-  getList :: ID -> m (Maybe ListWithIdAndUser)
+  getList :: ID -> m (Maybe ListWithIdUserAndMeta)
   getLists :: m (Maybe (Array ListWithIdUserAndMeta))
   deleteList :: ID -> m Unit
   discoverLists :: Pagination -> m (Maybe (Array ListWithIdAndUser))
