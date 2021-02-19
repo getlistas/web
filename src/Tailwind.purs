@@ -103,6 +103,10 @@ borderGray400 = ClassName "border-gray-400"
 borderKiwi :: ClassName
 borderKiwi = ClassName "border-kiwi"
 
+-- | borderManzana
+borderManzana :: ClassName
+borderManzana = ClassName "border-manzana"
+
 -- | borderNone
 borderNone :: ClassName
 borderNone = ClassName "border-none"
@@ -391,6 +395,10 @@ justifyBetween = ClassName "justify-between"
 justifyCenter :: ClassName
 justifyCenter = ClassName "justify-center"
 
+-- | leading6
+leading6 :: ClassName
+leading6 = ClassName "leading-6"
+
 -- | leadingNone
 leadingNone :: ClassName
 leadingNone = ClassName "leading-none"
@@ -442,6 +450,10 @@ maxWFull = ClassName "max-w-full"
 -- | maxWLg
 maxWLg :: ClassName
 maxWLg = ClassName "max-w-lg"
+
+-- | maxWXl
+maxWXl :: ClassName
+maxWXl = ClassName "max-w-xl"
 
 -- | mb1
 mb1 :: ClassName
@@ -522,6 +534,10 @@ mt2 = ClassName "mt-2"
 -- | mt4
 mt4 :: ClassName
 mt4 = ClassName "mt-4"
+
+-- | mt5
+mt5 :: ClassName
+mt5 = ClassName "mt-5"
 
 -- | mt6
 mt6 :: ClassName
@@ -659,6 +675,10 @@ py2 = ClassName "py-2"
 py3 :: ClassName
 py3 = ClassName "py-3"
 
+-- | py5
+py5 :: ClassName
+py5 = ClassName "py-5"
+
 -- | relative
 relative :: ClassName
 relative = ClassName "relative"
@@ -739,6 +759,14 @@ smAlignMiddle = ClassName "sm:align-middle"
 smBlock :: ClassName
 smBlock = ClassName "sm:block"
 
+-- | smFlex
+smFlex :: ClassName
+smFlex = ClassName "sm:flex"
+
+-- | smFlexShrink0
+smFlexShrink0 :: ClassName
+smFlexShrink0 = ClassName "sm:flex-shrink-0"
+
 -- | smGridCols2
 smGridCols2 :: ClassName
 smGridCols2 = ClassName "sm:grid-cols-2"
@@ -751,9 +779,29 @@ smHScreen = ClassName "sm:h-screen"
 smInlineBlock :: ClassName
 smInlineBlock = ClassName "sm:inline-block"
 
+-- | smItemsCenter
+smItemsCenter :: ClassName
+smItemsCenter = ClassName "sm:items-center"
+
+-- | smItemsStart
+smItemsStart :: ClassName
+smItemsStart = ClassName "sm:items-start"
+
+-- | smJustifyBetween
+smJustifyBetween :: ClassName
+smJustifyBetween = ClassName "sm:justify-between"
+
 -- | smMaxWLg
 smMaxWLg :: ClassName
 smMaxWLg = ClassName "sm:max-w-lg"
+
+-- | smMl6
+smMl6 :: ClassName
+smMl6 = ClassName "sm:ml-6"
+
+-- | smMt0
+smMt0 :: ClassName
+smMt0 = ClassName "sm:mt-0"
 
 -- | smMy8
 smMy8 :: ClassName
@@ -766,6 +814,10 @@ smP0 = ClassName "sm:p-0"
 -- | smP6
 smP6 :: ClassName
 smP6 = ClassName "sm:p-6"
+
+-- | smTextSm
+smTextSm :: ClassName
+smTextSm = ClassName "sm:text-sm"
 
 -- | smWFull
 smWFull :: ClassName
