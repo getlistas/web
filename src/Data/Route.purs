@@ -56,6 +56,7 @@ routeCodec =
         , "VerifyEmailFailure": "verify-email" / "failure" / noArgs
         }
 
+-- TODO: Data.Slug with codecs
 -- | This combinator transforms a codec over `String` into one that operates on the `Slug` type.
 slug :: RouteDuplex' String -> RouteDuplex' Slug
 slug = as Slug.toString (Slug.parse >>> note "Bad slug")

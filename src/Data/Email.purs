@@ -11,6 +11,7 @@ import Data.Profunctor (wrapIso)
 
 newtype Email = Email String
 
+derive newtype instance showEmail :: Show Email
 derive instance newtypeEmail :: Newtype Email _
 derive instance eqEmail :: Eq Email
 derive instance ordEmail :: Ord Email

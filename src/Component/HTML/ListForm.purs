@@ -3,7 +3,7 @@ module Listasio.Component.HTML.ListForm where
 import Prelude
 
 import Data.Filterable (filter)
-import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Maybe (Maybe(..), fromMaybe, isNothing)
 import Data.Newtype (class Newtype)
 import Data.String (joinWith)
 import Data.String as String
@@ -16,7 +16,7 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Component.HTML.Utils (whenElem)
-import Listasio.Data.List (CreateListFields, ListWithIdUserAndMeta)
+import Listasio.Data.List (CreateListFields, ListWithIdAndUser)
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation ((<?>))
 import Listasio.Form.Validation as V
@@ -48,7 +48,13 @@ data FormAction
   = Submit Event.Event
 
 type FormInput
-  = { list :: Maybe ListWithIdUserAndMeta }
+  -- TODO: accept the Row Type version with as less fields as possible
+  = { list :: Maybe ListWithIdAndUser }
+
+type ListState
+  = ( status :: RemoteData String Unit
+    , isNew :: Boolean
+    )
 
 formComponent ::
   forall slots m.
@@ -57,13 +63,13 @@ formComponent ::
 formComponent =
   F.component formInput
     $ F.defaultSpec
-        { render = renderLogin
+        { render = render
         , handleEvent = handleEvent
         , handleQuery = handleQuery
         , handleAction = handleAction
         }
   where
-  formInput :: FormInput -> F.Input ListForm ( status :: RemoteData String Unit ) m
+  formInput :: FormInput -> F.Input ListForm ListState m
   formInput { list } =
     { validators:
         ListForm
@@ -76,6 +82,7 @@ formComponent =
           }
     , initialInputs: map initialInputs list
     , status: NotAsked
+    , isNew: isNothing list
     }
 
   initialInputs { title, description, tags, is_public } = F.wrapInputFields
@@ -104,7 +111,7 @@ formComponent =
 
   proxies = F.mkSProxies (F.FormProxy :: _ ListForm)
 
-  renderLogin { form, status, submitting } =
+  render { form, status, submitting, isNew } =
     HH.form
       [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev ]
       [ HH.fieldset_
@@ -152,6 +159,6 @@ formComponent =
                 [ HP.classes [ T.textRed500, T.my6 ] ]
                 [ HH.text "Could not create list :(" ]
 
-          , Field.submit "Create" (submitting || isLoading status)
+          , Field.submit (if isNew then "Create" else "Save") (submitting || isLoading status)
           ]
       ]
