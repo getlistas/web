@@ -2,7 +2,6 @@ module Listasio.Component.HTML.List where
 
 import Prelude
 
-import Listasio.Component.HTML.Icons as Icons
 import Data.Array (findIndex, insertAt, null, singleton, snoc, tail)
 import Data.Array.NonEmpty (cons')
 import Data.Either (note)
@@ -20,8 +19,9 @@ import Listasio.Capability.Clipboard (class Clipboard, writeText)
 import Listasio.Capability.Now (class Now, nowDateTime)
 import Listasio.Capability.Resource.Resource (class ManageResource, completeResource, deleteResource, getListResources)
 import Listasio.Component.HTML.ButtonGroupMenu as ButtonGroupMenu
+import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Tag as Tag
-import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
+import Listasio.Component.HTML.Utils (cx, maybeElem, safeHref, whenElem)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.Lens (_completed_count, _count, _last_completed_at, _list, _markingAsDone, _resource_metadata, _resources)
@@ -264,7 +264,7 @@ component = H.mkComponent
             [ HH.img [ HP.classes [ T.h20, T.w32, T.mr4, T.objectCover ], HP.src $ fromMaybe "https://via.placeholder.com/87" next.thumbnail ]
             , HH.div
                 [ HP.classes [ T.overflowHidden ] ]
-                [ HH.div
+                [ HH.a
                     [ HP.classes [ T.textBase, T.textGray400, T.leadingRelaxed, T.truncate ] ]
                     [ HH.text next.title ]
                 , maybeElem next.description \des ->
@@ -321,8 +321,10 @@ component = H.mkComponent
         [ HP.classes [ T.px4, T.py2, T.borderB2, T.borderGray200, T.h16 ] ]
         [ HH.div
             [ HP.classes [ T.flex, T.justifyBetween, T.itemsCenter ] ]
-            [ HH.div
-                [ HP.classes [ T.text2xl, T.textGray400, T.fontBold, T.truncate ] ]
+            [ HH.a
+                [ HP.classes [ T.text2xl, T.textGray400, T.fontBold, T.truncate ]
+                , safeHref $ EditList list.slug
+                ]
                 [ HH.text list.title ]
             , HH.div
                 [ HP.classes [ T.ml6 ] ]

@@ -11,9 +11,11 @@ import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Component.HTML.Header (header)
+import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route)
 import Listasio.Env (UserEnv)
+import Network.RemoteData (RemoteData(..))
 import Tailwind as T
 import Web.Event.Event (Event)
 
@@ -22,7 +24,10 @@ data Action
   | Receive { currentUser :: Maybe ProfileWithIdAndEmail }
   | Navigate Route Event
 
-type State = {currentUser :: Maybe ProfileWithIdAndEmail}
+type State
+  = { currentUser :: Maybe ProfileWithIdAndEmail
+    , list :: RemoteData String ListWithIdUserAndMeta
+    }
 
 component
   :: forall q o m r
@@ -40,7 +45,10 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState { currentUser } = { currentUser }
+  initialState { currentUser } =
+    { currentUser
+    , list: NotAsked
+    }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of

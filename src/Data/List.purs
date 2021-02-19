@@ -14,6 +14,8 @@ import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 import Listasio.Data.Resource (ListResource, listResourceCodec)
+import Slug (Slug)
+import Slug as Slug
 
 data Author
   = You
@@ -56,6 +58,7 @@ type ListWithIdAndUserRep row
     , tags :: Array String
     , is_public :: Boolean
     , id :: ID
+    , slug :: Slug
     , user :: ID
     , created_at :: DateTime
     , updated_at :: DateTime
@@ -120,6 +123,7 @@ listWitIdAndUserCodec mbUserId = mapCodec to from codec
   codec =
     CAR.object "List"
       { id: ID.codec
+      , slug: slugCodec
       , title: CA.string
       , description: CAC.maybe CA.string
       , tags: CAC.array CA.string
@@ -131,16 +135,16 @@ listWitIdAndUserCodec mbUserId = mapCodec to from codec
       }
 
   to :: { | ListWithIdAndUserRep ( fork :: Maybe ForkMeta ) } -> Either JsonDecodeError ListWithIdAndUser
-  to {id, title, description, tags, user, is_public, created_at, updated_at, fork} = pure do
-    let mkList = {id, title, description, tags, user, is_public, created_at, updated_at, fork, author: _ }
+  to {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork} = pure do
+    let mkList = {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork, author: _ }
 
     mkList case mbUserId of
       Just userId | user == userId -> You
       _ -> Other id
 
   from :: ListWithIdAndUser -> { | ListWithIdAndUserRep ( fork :: Maybe ForkMeta ) }
-  from {id, title, description, tags, user, is_public, created_at, updated_at, fork} = do
-    {id, title, description, tags, user, is_public, created_at, updated_at, fork}
+  from {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork} = do
+    {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork}
 
 listWitIdUserAndMetaCodec :: Maybe ID -> JsonCodec ListWithIdUserAndMeta
 listWitIdUserAndMetaCodec mbUserId = mapCodec to from codec
@@ -148,6 +152,7 @@ listWitIdUserAndMetaCodec mbUserId = mapCodec to from codec
   codec =
     CAR.object "List"
       { id: ID.codec
+      , slug: slugCodec
       , title: CA.string
       , description: CAC.maybe CA.string
       , tags: CAC.array CA.string
@@ -160,13 +165,16 @@ listWitIdUserAndMetaCodec mbUserId = mapCodec to from codec
       }
 
   to :: { | ListWithIdAndUserRep ( fork :: Maybe ForkMeta, resource_metadata :: ResourceMeta ) } -> Either JsonDecodeError ListWithIdUserAndMeta
-  to {id, title, description, tags, user, is_public, created_at, updated_at, fork, resource_metadata} = pure do
-    let mkList = {id, title, description, tags, user, is_public, created_at, updated_at, fork, resource_metadata, author: _ }
+  to {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork, resource_metadata} = pure do
+    let mkList = {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork, resource_metadata, author: _ }
 
     mkList case mbUserId of
       Just userId | user == userId -> You
       _ -> Other id
 
   from :: ListWithIdUserAndMeta -> { | ListWithIdAndUserRep ( fork :: Maybe ForkMeta, resource_metadata :: ResourceMeta ) }
-  from {id, title, description, tags, user, is_public, created_at, updated_at, fork, resource_metadata} = do
-    {id, title, description, tags, user, is_public, created_at, updated_at, fork, resource_metadata}
+  from {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork, resource_metadata} = do
+    {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork, resource_metadata}
+
+slugCodec :: JsonCodec Slug
+slugCodec = CA.prismaticCodec Slug.parse Slug.toString CA.string
