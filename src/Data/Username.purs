@@ -16,6 +16,7 @@ import Data.Profunctor (wrapIso)
 newtype Username
   = Username String
 
+derive newtype instance eqShow :: Show Username
 derive instance eqUsername :: Eq Username
 derive instance ordUsername :: Ord Username
 derive instance newtypeUsername :: Newtype Username _

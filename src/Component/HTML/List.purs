@@ -16,6 +16,7 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Clipboard (class Clipboard, writeText)
+import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Now (class Now, nowDateTime)
 import Listasio.Capability.Resource.Resource (class ManageResource, completeResource, deleteResource, getListResources)
 import Listasio.Component.HTML.ButtonGroupMenu as ButtonGroupMenu
@@ -33,9 +34,11 @@ import Network.RemoteData as RemoteData
 import Routing.Duplex (print)
 import Tailwind as T
 import Util (takeDomain)
+import Web.Event.Event (Event)
 import Web.HTML (window) as Window
 import Web.HTML.Location as Location
 import Web.HTML.Window (location) as Window
+import Web.UIEvent.MouseEvent as Mouse
 
 type Slot = H.Slot Query Void ID
 
@@ -50,6 +53,7 @@ data Action
   | CopyResourceURL ListResource
   | CompleteResource ListResource
   | DeleteResource ListResource
+  | Navigate Route Event
 
 type Input
   = { list :: ListWithIdUserAndMeta }
@@ -80,6 +84,7 @@ component :: forall o m.
   => ManageResource m
   => Clipboard m
   => Now m
+  => Navigate m
   => H.Component HH.HTML Query Input o m
 component = H.mkComponent
   { initialState
@@ -162,6 +167,8 @@ component = H.mkComponent
 
           H.modify_ $ set _markingAsDone true
         Nothing -> pure unit
+
+    Navigate route e -> navigate_ e route
 
   handleQuery :: forall slots a. Query a -> H.HalogenM State Action slots o m (Maybe a)
   handleQuery = case _ of
@@ -324,6 +331,7 @@ component = H.mkComponent
             [ HH.a
                 [ HP.classes [ T.text2xl, T.textGray400, T.fontBold, T.truncate ]
                 , safeHref $ EditList list.slug
+                , HE.onClick (Just <<< Navigate (EditList list.slug) <<< Mouse.toEvent)
                 ]
                 [ HH.text list.title ]
             , HH.div

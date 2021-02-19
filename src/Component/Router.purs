@@ -168,8 +168,8 @@ component = Connect.component $ H.mkComponent
         HH.slot (SProxy :: _ "createResource") unit CreateResource.component { url } absurd
           # authorize currentUser
 
-      EditList _ ->
-        HH.slot (SProxy :: _ "editList") unit EditList.component {} absurd
+      EditList listSlug ->
+        HH.slot (SProxy :: _ "editList") unit EditList.component { listSlug } absurd
           # authorize currentUser
 
       Dashboard ->

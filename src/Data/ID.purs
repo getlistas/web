@@ -15,6 +15,7 @@ import Data.Profunctor (wrapIso)
 
 newtype ID = ID String
 
+derive newtype instance showID :: Show ID
 derive instance eqID :: Eq ID
 derive instance ordID :: Ord ID
 derive instance newtypeID :: Newtype ID _

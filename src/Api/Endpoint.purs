@@ -10,9 +10,11 @@ import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe)
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
+import Listasio.Data.Route (slug)
 import Routing.Duplex (RouteDuplex', as, boolean, int, optional, root, segment)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/), (?))
+import Slug (Slug)
 
 type PaginationRep
   = ( limit :: Maybe Int
@@ -34,6 +36,7 @@ data Endpoint
   | User
   | Users
   | List ID
+  | ListBySlug Slug Slug
   | ListFork ID
   | Lists
   | Discover Pagination
@@ -54,6 +57,7 @@ endpointCodec =
         , "User": "user" / noArgs
         , "Users": "users" / noArgs
         , "List": "lists" / id segment
+        , "ListBySlug": "users" / slug segment / "lists" / slug segment
         , "ListFork": "lists" / id segment / "fork"
         , "Lists": "lists" / noArgs
         , "Discover": "discover" ?

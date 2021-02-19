@@ -130,11 +130,24 @@ instance manageListAppM :: ManageList AppM where
     decode (List.listWitIdUserAndMetaCodec mbId) =<< mkAuthRequest conf
     where conf = { endpoint: List id, method: Get }
 
+  getListBySlug { list, user } = do
+    {userEnv} <- ask
+    mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
+    decode (List.listWitIdAndUserCodec mbId) =<< mkAuthRequest conf
+    where conf = { endpoint: ListBySlug user list, method: Get }
+
   getLists = do
     {userEnv} <- ask
     mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
     decode (CAC.array $ List.listWitIdUserAndMetaCodec mbId) =<< mkAuthRequest conf
     where conf = { endpoint: Lists, method: Get }
+
+  updateList id list = do
+    {currentUser} <- asks _.userEnv
+    mbId <- map _.id <$> (liftEffect $ Ref.read currentUser)
+    decode (List.listWitIdAndUserCodec mbId) =<< mkAuthRequest conf
+    where method = Put $ Just $ Codec.encode List.createListFieldsCodec list
+          conf = { endpoint: List id, method }
 
   deleteList id = void $ mkAuthRequest { endpoint: List id, method: Delete }
 

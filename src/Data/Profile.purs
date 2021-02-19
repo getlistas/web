@@ -75,5 +75,6 @@ profileWithEmailPasswordCodec =
     , slug
     }
 
+-- TODO: stop repeating this implementation
 slug :: JsonCodec Slug
 slug = CA.prismaticCodec Slug.parse Slug.toString CA.string
