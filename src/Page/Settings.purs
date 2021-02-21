@@ -168,9 +168,15 @@ component = Connect.component $ H.mkComponent
         proxies = F.mkSProxies (F.FormProxy :: _ SettingsForm)
 
         name =
-          Field.input (Just "Your name") proxies.name form
-            [ HP.placeholder "John Dow", HP.type_ HP.InputText ]
+          Field.input proxies.name form $ Field.defaultProps
+            { label = Just "Your name"
+            , id = Just "name"
+            , placeholder = Just "John Doe"
+            }
 
         slug =
-          Field.input (Just "Your slug") proxies.slug form
-            [ HP.placeholder "john-doe", HP.type_ HP.InputText ]
+          Field.input proxies.slug form $ Field.defaultProps
+            { label = Just "Your slug"
+            , id = Just "slug"
+            , placeholder = Just "john-doe"
+            }

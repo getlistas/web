@@ -156,6 +156,7 @@ menu st =
       , T.scrollbarThin
       , T.scrollbarThumbGray200
       , T.scrollbarTrackWhite
+      , T.z10
       ]
   ]
   [ if isOn

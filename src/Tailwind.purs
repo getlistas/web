@@ -55,6 +55,10 @@ bgManzana = ClassName "bg-manzana"
 bgPink300 :: ClassName
 bgPink300 = ClassName "bg-pink-300"
 
+-- | bgRed100
+bgRed100 :: ClassName
+bgRed100 = ClassName "bg-red-100"
+
 -- | bgRed200
 bgRed200 :: ClassName
 bgRed200 = ClassName "bg-red-200"
@@ -111,6 +115,10 @@ borderManzana = ClassName "border-manzana"
 borderNone :: ClassName
 borderNone = ClassName "border-none"
 
+-- | borderRed300
+borderRed300 :: ClassName
+borderRed300 = ClassName "border-red-300"
+
 -- | borderRed600
 borderRed600 :: ClassName
 borderRed600 = ClassName "border-red-600"
@@ -130,6 +138,14 @@ borderWhite = ClassName "border-white"
 -- | checkedBgKiwi
 checkedBgKiwi :: ClassName
 checkedBgKiwi = ClassName "checked:bg-kiwi"
+
+-- | colSpan2
+colSpan2 :: ClassName
+colSpan2 = ClassName "col-span-2"
+
+-- | colSpan3
+colSpan3 :: ClassName
+colSpan3 = ClassName "col-span-3"
 
 -- | container
 container :: ClassName
@@ -191,9 +207,21 @@ flexWrap = ClassName "flex-wrap"
 focusBgWhite :: ClassName
 focusBgWhite = ClassName "focus:bg-white"
 
+-- | focusBorderIndigo500
+focusBorderIndigo500 :: ClassName
+focusBorderIndigo500 = ClassName "focus:border-indigo-500"
+
 -- | focusBorderKiwi
 focusBorderKiwi :: ClassName
 focusBorderKiwi = ClassName "focus:border-kiwi"
+
+-- | focusBorderManzana
+focusBorderManzana :: ClassName
+focusBorderManzana = ClassName "focus:border-manzana"
+
+-- | focusBorderRed500
+focusBorderRed500 :: ClassName
+focusBorderRed500 = ClassName "focus:border-red-500"
 
 -- | focusOutlineNone
 focusOutlineNone :: ClassName
@@ -214,6 +242,10 @@ focusRingDurazno = ClassName "focus:ring-durazno"
 -- | focusRingGray300
 focusRingGray300 :: ClassName
 focusRingGray300 = ClassName "focus:ring-gray-300"
+
+-- | focusRingIndigo500
+focusRingIndigo500 :: ClassName
+focusRingIndigo500 = ClassName "focus:ring-indigo-500"
 
 -- | focusRingInset
 focusRingInset :: ClassName
@@ -238,6 +270,10 @@ focusRingOffsetGray10 = ClassName "focus:ring-offset-gray-10"
 -- | focusRingPurple600
 focusRingPurple600 :: ClassName
 focusRingPurple600 = ClassName "focus:ring-purple-600"
+
+-- | focusRingRed500
+focusRingRed500 :: ClassName
+focusRingRed500 = ClassName "focus:ring-red-500"
 
 -- | focusZ10
 focusZ10 :: ClassName
@@ -274,6 +310,10 @@ gridCols1 = ClassName "grid-cols-1"
 -- | gridCols2
 gridCols2 :: ClassName
 gridCols2 = ClassName "grid-cols-2"
+
+-- | gridCols5
+gridCols5 :: ClassName
+gridCols5 = ClassName "grid-cols-5"
 
 -- | h0
 h0 :: ClassName
@@ -315,6 +355,10 @@ h72 = ClassName "h-72"
 h8 :: ClassName
 h8 = ClassName "h-8"
 
+-- | hFull
+hFull :: ClassName
+hFull = ClassName "h-full"
+
 -- | hidden
 hidden :: ClassName
 hidden = ClassName "hidden"
@@ -342,6 +386,10 @@ hoverBgOpacity75 = ClassName "hover:bg-opacity-75"
 -- | hoverBgPink700
 hoverBgPink700 :: ClassName
 hoverBgPink700 = ClassName "hover:bg-pink-700"
+
+-- | hoverBgRed200
+hoverBgRed200 :: ClassName
+hoverBgRed200 = ClassName "hover:bg-red-200"
 
 -- | hoverBorderB2
 hoverBorderB2 :: ClassName
@@ -374,6 +422,10 @@ inlineFlex = ClassName "inline-flex"
 -- | inset0
 inset0 :: ClassName
 inset0 = ClassName "inset-0"
+
+-- | insetY0
+insetY0 :: ClassName
+insetY0 = ClassName "inset-y-0"
 
 -- | itemsCenter
 itemsCenter :: ClassName
@@ -627,6 +679,22 @@ placeholderGray300 = ClassName "placeholder-gray-300"
 placeholderGray400 :: ClassName
 placeholderGray400 = ClassName "placeholder-gray-400"
 
+-- | placeholderRed300
+placeholderRed300 :: ClassName
+placeholderRed300 = ClassName "placeholder-red-300"
+
+-- | pointerEventsNone
+pointerEventsNone :: ClassName
+pointerEventsNone = ClassName "pointer-events-none"
+
+-- | pr10
+pr10 :: ClassName
+pr10 = ClassName "pr-10"
+
+-- | pr3
+pr3 :: ClassName
+pr3 = ClassName "pr-3"
+
 -- | pr4
 pr4 :: ClassName
 pr4 = ClassName "pr-4"
@@ -871,6 +939,10 @@ textGray300 = ClassName "text-gray-300"
 textGray400 :: ClassName
 textGray400 = ClassName "text-gray-400"
 
+-- | textGray500
+textGray500 :: ClassName
+textGray500 = ClassName "text-gray-500"
+
 -- | textGray700
 textGray700 :: ClassName
 textGray700 = ClassName "text-gray-700"
@@ -894,6 +966,14 @@ textManzana = ClassName "text-manzana"
 -- | textRed500
 textRed500 :: ClassName
 textRed500 = ClassName "text-red-500"
+
+-- | textRed600
+textRed600 :: ClassName
+textRed600 = ClassName "text-red-600"
+
+-- | textRed700
+textRed700 :: ClassName
+textRed700 = ClassName "text-red-700"
 
 -- | textRed900
 textRed900 :: ClassName

@@ -2,15 +2,14 @@ module Listasio.Component.HTML.CreateResource where
 
 import Prelude
 
-import Listasio.Component.HTML.Icons as Icons
 import Data.Array (sortWith)
 import Data.Char.Unicode as Char
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.MediaType.Common as MediaType
 import Data.Newtype (class Newtype, unwrap)
-import Data.Symbol (SProxy(..))
 import Data.String.CodeUnits as String
+import Data.Symbol (SProxy(..))
 import Data.Traversable (traverse)
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
@@ -20,6 +19,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Resource.Resource (class ManageResource, createResource, getMeta)
 import Listasio.Component.HTML.Dropdown as DD
+import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Resource as ResourceComponent
 import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Data.ID (ID)
@@ -260,22 +260,9 @@ formComponent = F.component formInput $ F.defaultSpec
             [ HH.text "Failed to add resource" ]
       , HH.fieldset
           []
-          [ Field.input (Just "Link") proxies.url form
-              [ HP.placeholder "https://blog.com/some-blogpost"
-              , HP.type_ HP.InputText
-              , HE.onPaste $ Just <<< F.injAction <<< PasteUrl
-              ]
-
+          [ url
           , case meta of
-              Loading ->
-                HH.div
-                  [ HP.classes [ T.textSm, T.pt2, T.textGray300 ] ]
-                  [ HH.text "Fetching title and description ..." ]
-
-              Success {can_resolve} | not can_resolve ->
-                HH.div
-                  [ HP.classes [ T.textSm, T.pt2, T.textManzana ] ]
-                  [ HH.text "Looks like the link does not exist. Are you sure you got the right one?" ]
+              Success {can_resolve} | not can_resolve -> HH.text ""
 
               Success {resource: Just resource} ->
                 HH.div
@@ -286,16 +273,15 @@ formComponent = F.component formInput $ F.defaultSpec
                   , ResourceComponent.resource lists resource
                   ]
 
-              _ ->
-                HH.text ""
+              _ -> HH.text ""
 
           , HH.div
               [ HP.classes [ T.mt4 ] ]
               [ HH.div
-                  [ HP.classes [ T.mb2 ] ]
+                  [ HP.classes [ T.mb1 ] ]
                   [ HH.label
-                    [ HP.classes [ T.textGray400, T.textLg ] ]
-                    [ HH.text "List" ]
+                      [ HP.classes [ T.block, T.textSm, T.fontMedium, T.textGray400 ] ]
+                      [ HH.text "List" ]
                   ]
               , HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput handler
               , let mbError = filter (const $ F.getTouched proxies.list form) $ F.getError proxies.list form
@@ -306,22 +292,21 @@ formComponent = F.component formInput $ F.defaultSpec
               ]
 
           , HH.div
-              [ HP.classes [ T.flex, T.spaceX4 ] ]
+              [ HP.classes [ T.grid, T.gridCols5, T.gap4, T.mt4 ] ]
               [ HH.div
-                  [ HP.classes[ T.w40, T.h40, T.mt14 ]
-                  ]
+                  [ HP.classes[ T.wFull, T.hFull, T.colSpan2 ] ]
                   [ case meta of
                       Success {thumbnail: Just thumbnail} ->
                         HH.img
                           [ HP.src thumbnail
-                          , HP.classes [ T.w40, T.h40, T.objectCover, T.roundedLg ]
+                          , HP.classes [ T.wFull, T.hFull, T.objectCover, T.roundedLg ]
                           ]
 
                       Loading ->
                         HH.div
                           [ HP.classes
-                              [ T.w40
-                              , T.h40
+                              [ T.wFull
+                              , T.hFull
                               , T.flex
                               , T.flexCol
                               , T.justifyCenter
@@ -336,8 +321,8 @@ formComponent = F.component formInput $ F.defaultSpec
                       _ ->
                         HH.div
                           [ HP.classes
-                              [ T.w40
-                              , T.h40
+                              [ T.wFull
+                              , T.hFull
                               , T.flex
                               , T.flexCol
                               , T.justifyCenter
@@ -350,21 +335,9 @@ formComponent = F.component formInput $ F.defaultSpec
                           [ Icons.photo [ Icons.classes [ T.h20, T.w20 ] ] ]
                   ]
               , HH.div
-                  []
-                  [ HH.div
-                      [ HP.classes [ T.mt4 ] ]
-                      [ Field.input (Just "Title") proxies.title form
-                          [ HP.placeholder "Some blogpost"
-                          , HP.type_ HP.InputText
-                          ]
-                      ]
-                  , HH.div
-                      [ HP.classes [ T.mt4 ] ]
-                      [ Field.textarea (Just "Description") proxies.description form
-                          [ HP.placeholder "Such description. Much wow."
-                          , HP.rows 2
-                          ]
-                      ]
+                  [ HP.classes [ T.colSpan3 ] ]
+                  [ HH.div [] [ titleField ]
+                  , HH.div [ HP.classes [ T.mt4 ] ] [ description ]
                   ]
               ]
 
@@ -378,6 +351,37 @@ formComponent = F.component formInput $ F.defaultSpec
               [ Field.submit "Add resource" (submitting || isLoading status) ]
           ]
       ]
-    where handler = Just <<< F.injAction <<< HandleDropdown
-          listToItem { id, title } = DDItem { value: id, label: title }
-          ddInput = { placeholder: "Choose a list", items: map listToItem lists }
+    where
+    handler = Just <<< F.injAction <<< HandleDropdown
+    listToItem { id, title } = DDItem { value: id, label: title }
+    ddInput = { placeholder: "Choose a list", items: map listToItem lists }
+
+    url =
+      Field.input proxies.url form $ Field.defaultProps
+        { label = Just "Link"
+        , id = Just "url"
+        , placeholder = Just "https://blog.com/some-blogpost"
+        , required = true
+        , props = [ HE.onPaste $ Just <<< F.injAction <<< PasteUrl ]
+        , message = case meta of
+            Loading -> Just "Fetching title and description ..."
+            Success {can_resolve} | not can_resolve -> Just "Looks like the link does not exist. Are you sure you got the right one?"
+            _ -> Nothing
+        }
+
+
+    titleField =
+      Field.input proxies.title form $ Field.defaultProps
+        { label = Just "Title"
+        , id = Just "title"
+        , placeholder = Just "Some blogpost"
+        , required = true
+        }
+
+    description =
+      Field.textarea proxies.description form $ Field.textareaDefaultProps
+        { label = Just "Description"
+        , id = Just "description"
+        , placeholder = Just "Such description. Much wow."
+        , props = [HP.rows 3]
+        }
