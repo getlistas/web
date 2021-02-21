@@ -537,12 +537,6 @@ select {
   }
 }
 
-.space-x-4 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-x-reverse: 0;
-  margin-right: calc(1rem * var(--tw-space-x-reverse));
-  margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
-}
-
 .divide-x-2 > :not([hidden]) ~ :not([hidden]) {
   --tw-divide-x-reverse: 0;
   border-right-width: calc(2px * var(--tw-divide-x-reverse));
@@ -601,6 +595,11 @@ select {
   background-color: rgba(123, 130, 154, var(--tw-bg-opacity));
 }
 
+.bg-red-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(254, 226, 226, var(--tw-bg-opacity));
+}
+
 .bg-red-200 {
   --tw-bg-opacity: 1;
   background-color: rgba(254, 202, 202, var(--tw-bg-opacity));
@@ -641,6 +640,11 @@ select {
   background-color: rgba(236, 237, 241, var(--tw-bg-opacity));
 }
 
+.hover\:bg-red-200:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgba(254, 202, 202, var(--tw-bg-opacity));
+}
+
 .hover\:bg-pink-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgba(190, 24, 93, var(--tw-bg-opacity));
@@ -659,11 +663,6 @@ select {
 .hover\:bg-durazno:hover {
   --tw-bg-opacity: 1;
   background-color: rgba(249, 183, 169, var(--tw-bg-opacity));
-}
-
-.focus\:bg-white:focus {
-  --tw-bg-opacity: 1;
-  background-color: rgba(255, 255, 255, var(--tw-bg-opacity));
 }
 
 .hover\:bg-opacity-75:hover {
@@ -717,6 +716,11 @@ select {
 .focus\:border-kiwi:focus {
   --tw-border-opacity: 1;
   border-color: rgba(137, 176, 174, var(--tw-border-opacity));
+}
+
+.focus\:border-manzana:focus {
+  --tw-border-opacity: 1;
+  border-color: rgba(233, 117, 91, var(--tw-border-opacity));
 }
 
 .rounded-sm {
@@ -910,6 +914,10 @@ select {
   height: 18rem;
 }
 
+.h-full {
+  height: 100%;
+}
+
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
@@ -1084,10 +1092,6 @@ select {
   margin-top: 3rem;
 }
 
-.mt-14 {
-  margin-top: 3.5rem;
-}
-
 .-mr-1 {
   margin-right: -0.25rem;
 }
@@ -1206,6 +1210,10 @@ select {
   padding-bottom: 0.5rem;
 }
 
+.pr-3 {
+  padding-right: 0.75rem;
+}
+
 .pt-4 {
   padding-top: 1rem;
 }
@@ -1222,23 +1230,12 @@ select {
   padding-top: 1.25rem;
 }
 
+.pr-10 {
+  padding-right: 2.5rem;
+}
+
 .pb-20 {
   padding-bottom: 5rem;
-}
-
-.placeholder-gray-300::-moz-placeholder {
-  --tw-placeholder-opacity: 1;
-  color: rgba(123, 130, 154, var(--tw-placeholder-opacity));
-}
-
-.placeholder-gray-300:-ms-input-placeholder {
-  --tw-placeholder-opacity: 1;
-  color: rgba(123, 130, 154, var(--tw-placeholder-opacity));
-}
-
-.placeholder-gray-300::placeholder {
-  --tw-placeholder-opacity: 1;
-  color: rgba(123, 130, 154, var(--tw-placeholder-opacity));
 }
 
 .placeholder-gray-400::-moz-placeholder {
@@ -1254,6 +1251,25 @@ select {
 .placeholder-gray-400::placeholder {
   --tw-placeholder-opacity: 1;
   color: rgba(86, 91, 108, var(--tw-placeholder-opacity));
+}
+
+.placeholder-red-300::-moz-placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgba(252, 165, 165, var(--tw-placeholder-opacity));
+}
+
+.placeholder-red-300:-ms-input-placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgba(252, 165, 165, var(--tw-placeholder-opacity));
+}
+
+.placeholder-red-300::placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgba(252, 165, 165, var(--tw-placeholder-opacity));
+}
+
+.pointer-events-none {
+  pointer-events: none;
 }
 
 .fixed {
@@ -1273,6 +1289,11 @@ select {
   right: 0px;
   bottom: 0px;
   left: 0px;
+}
+
+.inset-y-0 {
+  top: 0px;
+  bottom: 0px;
 }
 
 .top-0 {
@@ -1407,6 +1428,11 @@ select {
   color: rgba(86, 91, 108, var(--tw-text-opacity));
 }
 
+.text-gray-500 {
+  --tw-text-opacity: 1;
+  color: rgba(107, 114, 128, var(--tw-text-opacity));
+}
+
 .text-gray-700 {
   --tw-text-opacity: 1;
   color: rgba(55, 65, 81, var(--tw-text-opacity));
@@ -1415,6 +1441,11 @@ select {
 .text-red-500 {
   --tw-text-opacity: 1;
   color: rgba(239, 68, 68, var(--tw-text-opacity));
+}
+
+.text-red-700 {
+  --tw-text-opacity: 1;
+  color: rgba(185, 28, 28, var(--tw-text-opacity));
 }
 
 .text-red-900 {
@@ -1532,6 +1563,18 @@ select {
 
 .grid-cols-2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
+.col-span-3 {
+  grid-column: span 3 / span 3;
 }
 
 .transform {
