@@ -2,7 +2,6 @@ module Listasio.Page.Register where
 
 import Prelude
 
-import Listasio.Component.HTML.Icons as Icons
 import Data.Either (note)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
@@ -15,6 +14,7 @@ import Halogen.HTML.Properties as HP
 import Listasio.Api.Request (RegisterFields, initGoogleAuth)
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, googleLoginUser, registerUser)
+import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Message as Message
 import Listasio.Component.HTML.Utils (safeHref, whenElem)
@@ -250,17 +250,35 @@ formComponent =
     proxies = F.mkSProxies (F.FormProxy :: _ RegisterForm)
 
     name =
-      Field.input (Just "Name") proxies.name form
-        [ HP.placeholder "John Doe", HP.type_ HP.InputText ]
+      Field.input proxies.name form $ Field.defaultProps
+        { label = Just "Name"
+        , id = Just "name"
+        , placeholder = Just "John Doe"
+        , required = true
+        }
 
     slug =
-      Field.input (Just "Username") proxies.slug form
-        [ HP.placeholder "john-doe", HP.type_ HP.InputText ]
+      Field.input proxies.slug form $ Field.defaultProps
+        { label = Just "Slug"
+        , id = Just "slug"
+        , placeholder = Just "john-doe"
+        , required = true
+        }
 
     email =
-      Field.input (Just "Email address") proxies.email form
-        [ HP.placeholder "john.doe@email.com", HP.type_ HP.InputEmail ]
+      Field.input proxies.email form $ Field.defaultProps
+        { label = Just "Email address"
+        , id = Just "email"
+        , placeholder = Just "john.doe@email.com"
+        , required = true
+        , type_ = HP.InputEmail
+        }
 
     password =
-      Field.input (Just "Password") proxies.password form
-        [ HP.placeholder "********", HP.type_ HP.InputPassword ]
+      Field.input proxies.password form $ Field.defaultProps
+        { label = Just "Password"
+        , id = Just "password"
+        , placeholder = Just "********"
+        , required = true
+        , type_ = HP.InputPassword
+        }

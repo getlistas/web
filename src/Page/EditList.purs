@@ -11,10 +11,10 @@ import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
-import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, deleteList, getListBySlug, updateList)
+import Listasio.Component.HTML.Button as Button
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.ListForm as ListForm
 import Listasio.Data.Lens (_list)
@@ -176,7 +176,7 @@ component = Connect.component $ H.mkComponent
                     [ HP.classes [ T.mt2, T.maxWXl, T.textSm, T.textGray300 ] ]
                     [ HH.p
                         []
-                        [ HH.text "Once you delete a list, all it's resources are deleted as wall and cannot be recovered." ]
+                        [ HH.text "Once you delete a list, all it's resources are deleted as well and cannot be recovered." ]
                     ]
                 ]
             , HH.div
@@ -189,29 +189,6 @@ component = Connect.component $ H.mkComponent
                     , T.smItemsCenter
                     ]
                 ]
-                [ HH.button
-                    [ HP.classes
-                        [ T.inlineFlex
-                        , T.itemsCenter
-                        , T.px4
-                        , T.py2
-                        , T.border
-                        , T.borderTransparent
-                        , T.fontMedium
-                        , T.roundedMd
-                        , T.textWhite
-                        , T.bgManzana
-                        , T.hoverBgOpacity75
-                        , T.focusOutlineNone
-                        , T.focusRing2
-                        , T.focusRingOffset2
-                        , T.focusRingManzana
-                        , T.smTextSm
-                        ]
-                    , HP.type_ HP.ButtonButton
-                    , HE.onClick \_ -> Just DeleteList
-                    ]
-                    [ HH.text "Delete list" ]
-                ]
+                [ Button.danger  (HH.text "Delete list") false $ Just DeleteList ]
             ]
         ]

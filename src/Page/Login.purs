@@ -244,17 +244,10 @@ formComponent =
       [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev ]
       [ HH.fieldset
           [ HP.classes [ T.w96, T.maxWFull ] ]
-          [ Field.input (Just "Email address") proxies.email form
-              [ HP.placeholder "jonh.doe@email.com"
-              , HP.type_ HP.InputEmail
-              ]
+          [ email
           , HH.div
               [ HP.classes [ T.mt4 ] ]
-              [ Field.input (Just "Password") proxies.password form
-                  [ HP.placeholder "********"
-                  , HP.type_ HP.InputPassword
-                  ]
-                ]
+              [ password ]
           , whenElem (isFailure status) \_ ->
               HH.div
                 [ HP.classes [ T.textRed500, T.my4 ] ]
@@ -264,3 +257,22 @@ formComponent =
               [ Field.submit "Sign in" (submitting || isLoading status) ]
           ]
       ]
+
+    where
+    email =
+      Field.input proxies.email form $ Field.defaultProps
+        { label = Just "Email address"
+        , id = Just "email"
+        , placeholder = Just "john.doe@email.com"
+        , required = true
+        , type_ = HP.InputEmail
+        }
+
+    password =
+      Field.input proxies.password form $ Field.defaultProps
+        { label = Just "Password"
+        , id = Just "password"
+        , placeholder = Just "********"
+        , required = true
+        , type_ = HP.InputPassword
+        }

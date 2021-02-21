@@ -3,21 +3,25 @@ module Listasio.Form.Field where
 import Prelude
 
 import DOM.HTML.Indexed (HTMLinput, HTMLtextarea)
+import Data.Array (catMaybes)
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), isJust)
 import Data.Newtype (class Newtype)
 import Data.Symbol (class IsSymbol, SProxy)
 import Data.Variant (Variant)
 import Formless as F
+import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Listasio.Component.HTML.Utils (cx, maybeElem)
+import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
 import Listasio.Form.Validation (errorToString)
 import Listasio.Form.Validation as V
 import Tailwind as T
 import Type.Row as Row
 
+-- TODO: Move to Button module
 submit :: forall i p. String -> Boolean -> HH.HTML i p
 submit buttonText disabled =
   HH.input
@@ -74,6 +78,29 @@ cancel buttonText disabled action =
     , HP.disabled disabled
     ]
 
+type InputProps form act
+  = { required :: Boolean
+    , hideOptional :: Boolean
+    , placeholder :: Maybe String
+    , id :: Maybe String
+    , props :: Array (HH.IProp HTMLinput (F.Action form act))
+    , type_ :: HP.InputType
+    , message :: Maybe String
+    , label :: Maybe String
+    }
+
+defaultProps :: forall form act. InputProps form act
+defaultProps
+  = { required: false
+    , hideOptional: false
+    , placeholder: Nothing
+    , id: Nothing
+    , props: []
+    , type_: HP.InputText
+    , message: Nothing
+    , label: Nothing
+    }
+
 -- | This helper function creates an input field hooked up with Formless, including styles,
 -- | events, error handling, and more. The function ensures at compile-time that the field we
 -- | want actually exists in the form, that the input, error, and output types of the field are
@@ -105,53 +132,82 @@ input ::
   Newtype (form Variant F.InputFunction) (Variant inputs) =>
   Row.Cons sym (F.FormField V.FormError String out) t0 fields =>
   Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs =>
-  Maybe String ->
   SProxy sym ->
   form Record F.FormField ->
-  Array (HH.IProp HTMLinput (F.Action form act)) ->
+  InputProps form act ->
   F.ComponentHTML form act slots m
-input mbLabel sym form props =
+input sym form groupProps =
   HH.fieldset
-    []
-    [ maybeElem mbLabel \label ->
-        HH.label
-          [ HP.classes [ T.textGray400, T.textLg ] ]
-          [ HH.text label ]
-    , HH.input
-        ( append
-            [ HP.value $ F.getInput sym form
-            , HE.onValueInput $ Just <<< F.setValidate sym
-            , HP.classes
-                [ T.flex1
-                , T.appearanceNone
-                , T.borderNone
-                , T.wFull
-                , cx T.mt2 $ isJust mbLabel
-                , T.py2
-                , T.px4
-                , T.bgGray100
-                , T.textGray400
-                , T.placeholderGray300
-                , T.roundedMd
-                , T.textBase
-                , T.focusBgWhite
-                , T.focusOutlineNone
-                , T.focusRing2
-                , T.focusRingOffset2
-                , T.focusRingOffsetGray10
-                , cx T.focusRingKiwi $ not hasError
-                , cx T.focusRingManzana hasError
-                ]
-            ]
-            props
-        )
-    , maybeElem mbError \err ->
-        HH.div
-          [ HP.classes [ T.textManzana, T.mt2 ] ]
-          [ HH.text $ errorToString err ]
+    [ HP.classes [ T.wFull ] ]
+    [ fieldLabel groupProps
+    , HH.div
+        [ HP.classes [ T.mt1, T.relative, T.roundedMd ] ]
+        [ HH.input
+            ( append
+                ( catMaybes
+                    [ Just $ HP.type_ groupProps.type_
+                    , Just $ HP.value $ F.getInput sym form
+                    , Just $ HE.onValueInput $ Just <<< F.setValidate sym
+                    , Just $ HP.classes $ fieldInputClasses hasError
+                    , Just $ HP.required groupProps.required
+                    , HP.id_ <$> groupProps.id
+                    , HP.name <$> groupProps.id
+                    , HP.placeholder <$> groupProps.placeholder
+                    ]
+                )
+                groupProps.props
+            )
+          -- TODO: extract as function for both input & textarea
+        , whenElem hasError \_ ->
+            HH.div
+              [ HP.classes
+                  [ T.absolute
+                  , T.insetY0
+                  , T.right0
+                  , T.pr3
+                  , T.flex
+                  , T.itemsCenter
+                  , T.pointerEventsNone
+                  ]
+              ]
+              [ Icons.exclamationCircleSolid [ Icons.classes [ T.h5, T.w5, T.textRed500 ] ] ]
+        ]
+      -- TODO: extract as function for both input & textarea
+    , whenElem (not hasError) \_ ->
+        maybeElem groupProps.message \message ->
+          HH.p
+            [ HP.classes [ T.mt2, T.textSm, T.textGray500 ] ]
+            [ HH.text message ]
+      -- TODO: extract as function for both input & textarea
+    , maybeElem mbError \error ->
+          HH.p
+            [ HP.classes [ T.mt2, T.textSm, T.textManzana ] ]
+            [ HH.text $ errorToString error ]
     ]
-  where mbError = filter (const $ F.getTouched sym form) $ F.getError sym form
-        hasError = isJust mbError
+  where
+  mbError = filter (const $ F.getTouched sym form) $ F.getError sym form
+  hasError = isJust mbError
+
+type TextareaProps form act
+  = { required :: Boolean
+    , hideOptional :: Boolean
+    , placeholder :: Maybe String
+    , id :: Maybe String
+    , props :: Array (HH.IProp HTMLtextarea (F.Action form act))
+    , message :: Maybe String
+    , label :: Maybe String
+    }
+
+textareaDefaultProps :: forall form act. TextareaProps form act
+textareaDefaultProps
+  = { required: false
+    , hideOptional: false
+    , placeholder: Nothing
+    , id: Nothing
+    , props: []
+    , message: Nothing
+    , label: Nothing
+    }
 
 textarea ::
   forall form act slots m sym fields inputs out t0 t1.
@@ -160,50 +216,94 @@ textarea ::
   Newtype (form Variant F.InputFunction) (Variant inputs) =>
   Row.Cons sym (F.FormField V.FormError String out) t0 fields =>
   Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs =>
-  Maybe String ->
   SProxy sym ->
   form Record F.FormField ->
-  Array (HH.IProp HTMLtextarea (F.Action form act)) ->
+  TextareaProps form act ->
   F.ComponentHTML form act slots m
-textarea mbLabel sym form props =
+textarea sym form groupProps =
   HH.fieldset
-    []
-    [ maybeElem mbLabel \label ->
-        HH.label
-          [ HP.classes [ T.textGray400, T.textLg ] ]
-          [ HH.text label ]
-    , HH.textarea
-        ( append
-            [ HP.value $ F.getInput sym form
-            , HE.onValueInput $ Just <<< F.setValidate sym
-            , HP.classes
-                [ T.flex1
-                , T.appearanceNone
-                , T.borderNone
-                , T.wFull
-                , cx T.mt2 $ isJust mbLabel
-                , T.py2
-                , T.px4
-                , T.bgGray100
-                , T.textGray400
-                , T.placeholderGray300
-                , T.roundedMd
-                , T.textBase
-                , T.focusBgWhite
-                , T.focusOutlineNone
-                , T.focusRing2
-                , T.focusRingOffset2
-                , T.focusRingOffsetGray10
-                , cx T.focusRingKiwi $ not hasError
-                , cx T.focusRingManzana hasError
-                ]
-            ]
-            props
-        )
-    , maybeElem mbError \err ->
-        HH.div
-          [ HP.classes [ T.textManzana, T.mt2 ] ]
-          [ HH.text $ errorToString err ]
+    [ HP.classes [ T.wFull ] ]
+    [ fieldLabel groupProps
+    , HH.div
+        [ HP.classes [ T.mt1, T.relative, T.roundedMd ] ]
+        [ HH.textarea
+            ( append
+                ( catMaybes
+                    [ Just $ HP.value $ F.getInput sym form
+                    , Just $ HE.onValueInput $ Just <<< F.setValidate sym
+                    , Just $ HP.classes $ fieldInputClasses hasError
+                    , Just $ HP.required groupProps.required
+                    , HP.id_ <$> groupProps.id
+                    , HP.name <$> groupProps.id
+                    , HP.placeholder <$> groupProps.placeholder
+                    ]
+                )
+                groupProps.props
+            )
+        , whenElem hasError \_ ->
+            HH.div
+              [ HP.classes
+                  [ T.absolute
+                  , T.insetY0
+                  , T.right0
+                  , T.pr3
+                  , T.flex
+                  , T.itemsCenter
+                  , T.pointerEventsNone
+                  ]
+              ]
+              [ Icons.exclamationCircleSolid [ Icons.classes [ T.h5, T.w5, T.textRed500 ] ]
+              ]
+        ]
+    , whenElem (not hasError) \_ ->
+        maybeElem groupProps.message \message ->
+          HH.p
+            [ HP.classes [ T.mt2, T.textSm, T.textGray500 ] ]
+            [ HH.text message ]
+    , maybeElem mbError \error ->
+          HH.p
+            [ HP.classes [ T.mt2, T.textSm, T.textManzana ] ]
+            [ HH.text $ errorToString error ]
     ]
-  where mbError = filter (const $ F.getTouched sym form) $ F.getError sym form
-        hasError = isJust mbError
+  where
+  mbError = filter (const $ F.getTouched sym form) $ F.getError sym form
+  hasError = isJust mbError
+
+fieldLabel ::
+  forall form act slots m fields inputs r.
+  Newtype (form Record F.FormField) { | fields } =>
+  Newtype (form Variant F.InputFunction) (Variant inputs) =>
+  { label :: Maybe String, id :: Maybe String, required :: Boolean, hideOptional :: Boolean | r } ->
+  F.ComponentHTML form act slots m
+fieldLabel props =
+  maybeElem props.label \label ->
+    HH.div
+      [ HP.classes [ T.flex, T.justifyBetween ] ]
+      [ HH.label
+          ( catMaybes
+              [ Just $ HP.classes [ T.block, T.textSm, T.fontMedium, T.textGray400 ]
+              , HP.for <$> props.id
+              ]
+          )
+          [ HH.text label ]
+      , whenElem (not props.required && not props.hideOptional) \_ ->
+          HH.span [ HP.classes [ T.textSm, T.textGray300 ] ] [ HH.text "Optional" ]
+      ]
+
+fieldInputClasses :: Boolean -> Array H.ClassName
+fieldInputClasses hasError =
+  [ T.shadowSm
+  , T.block
+  , T.wFull
+  , T.smTextSm
+  , T.roundedMd
+  , cx T.borderGray300 $ not hasError
+  , cx T.focusRingKiwi $ not hasError
+  , cx T.focusBorderKiwi $ not hasError
+  , cx T.pr10 hasError
+  , cx T.borderManzana hasError
+  , cx T.focusRingManzana hasError
+  , cx T.focusBorderManzana hasError
+  , cx T.textRed900 hasError
+  , cx T.placeholderRed300 hasError
+  ]

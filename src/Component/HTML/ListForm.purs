@@ -115,24 +115,12 @@ formComponent =
     HH.form
       [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev ]
       [ HH.fieldset_
-          [ Field.input (Just "Title") proxies.title form
-              [ HP.placeholder "YouTube Videos"
-              , HP.type_ HP.InputText
-              ]
+          [ title
           , HH.div
               [ HP.classes [ T.mt6 ] ]
-              [ Field.textarea (Just "Description") proxies.description form
-                  [ HP.placeholder "Videos to watch all night long"
-                  , HP.rows 3
-                  ]
+              [ description
               ]
-          , HH.div
-              [ HP.classes [ T.mt6 ] ]
-              [ Field.input (Just "Tags") proxies.tags form
-                  [ HP.placeholder "videos,chill"
-                  , HP.type_ HP.InputText
-                  ]
-              ]
+          , HH.div [ HP.classes [ T.mt6 ] ] [ tags ]
           , HH.label
               [ HP.classes [ T.flex, T.itemsCenter, T.my6, T.cursorPointer ] ]
               [ HH.input
@@ -162,3 +150,26 @@ formComponent =
           , Field.submit (if isNew then "Create" else "Save") (submitting || isLoading status)
           ]
       ]
+
+    where
+    title =
+      Field.input proxies.title form $ Field.defaultProps
+        { label = Just "Title"
+        , id = Just "title"
+        , placeholder = Just "YouTube videos" -- TODO better placeholder
+        , required = true
+        }
+
+    tags =
+      Field.input proxies.tags form $ Field.defaultProps
+        { label = Just "Tags"
+        , id = Just "tags"
+        , placeholder = Just "videos, chill" -- TODO better placeholder
+        }
+
+    description =
+      Field.textarea proxies.description form $ Field.textareaDefaultProps
+        { label = Just "Description"
+        , id = Just "description"
+        , props = [HP.rows 3]
+        }
