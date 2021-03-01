@@ -71,8 +71,8 @@ component = Connect.component $ H.mkComponent
       mbCreatedList <- createList newList
 
       case mbCreatedList of
-        Just _ -> do
-           void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Success unit) unit
+        Just createdList -> do
+           void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Success createdList) unit
            navigate Dashboard
         Nothing ->
           void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Failure "Could not create list") unit

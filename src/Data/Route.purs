@@ -24,6 +24,7 @@ data Route
   | CreateResource { url :: Maybe String }
   | ViewList Slug
   | EditList Slug
+  | IntegrationsList Slug
   | Dashboard
   | Resources
   | Discover
@@ -49,6 +50,7 @@ routeCodec =
         , "CreateResource": "resources" / "create" ? { url: optional <<< string }
         , "ViewList": "list" / slug segment
         , "EditList": "list" / slug segment / "edit"
+        , "IntegrationsList": "list" / slug segment / "integrations"
         , "Dashboard": "dashboard" / noArgs
         , "Resources": "dashboard" / "resources" / noArgs
         , "Discover": "discover" / noArgs

@@ -15,6 +15,8 @@ import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, deleteList, getListBySlug, updateList)
 import Listasio.Component.HTML.Button as Button
+import Listasio.Component.HTML.CardsAndSidebar as CardsAndSidebar
+import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.ListForm as ListForm
 import Listasio.Data.Lens (_list)
@@ -93,7 +95,7 @@ component = Connect.component $ H.mkComponent
 
           case mbCreatedList of
             Just createdList -> do
-              void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Success unit) unit
+              void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Success createdList) unit
               H.modify_ _ { list = Success createdList }
             Nothing ->
               void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Failure "Could not create list") unit
@@ -114,13 +116,7 @@ component = Connect.component $ H.mkComponent
       currentUser
       Navigate
       Nothing
-      $ HH.div
-          []
-          [ header
-          , HH.div
-              [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2 ] ]
-              [ content ]
-          ]
+      $ HH.div [] [ header, content ]
     where
     header =
       HH.h1
@@ -130,10 +126,28 @@ component = Connect.component $ H.mkComponent
     content =
       case mbList of
         Success list ->
-          HH.div
-            []
-            [ HH.slot F._formless unit ListForm.formComponent { list: Just list } $ Just <<< HandleListForm
-            , HH.section [ HP.classes [ T.mt12 ] ] [ dangerZone list ]
+          CardsAndSidebar.layout
+            [ { active: true
+              , icon: Icons.userCircle
+              , label: "List settings"
+              , link: Nothing
+              }
+            , { active: false
+              , icon: Icons.gridAdd
+              , label: "Integrations"
+              , link: Just { action: Just <<< Navigate (IntegrationsList list.slug), route: EditList list.slug }
+              }
+            ]
+            [ { cta: Nothing
+              , content: HH.slot F._formless unit ListForm.formComponent { list: Just list } $ Just <<< HandleListForm
+              , title: "Details"
+              , description: Nothing
+              }
+            , { cta: Nothing
+              , content: dangerZone list
+              , title: "Danger zone"
+              , description: Nothing
+              }
             ]
 
         -- TODO: better message
@@ -145,21 +159,15 @@ component = Connect.component $ H.mkComponent
     dangerZone :: ListWithIdAndUser -> _
     dangerZone list =
       HH.div
-        []
-        [ HH.h3
-            [ HP.classes [ T.textGray400, T.text2xl, T.fontBold ] ]
-            [ HH.text "Danger zone" ]
-        , HH.div
-            [ HP.classes
-                [ T.roundedMd
-                , T.border2
-                , T.borderManzana
-                , T.mt4
-                , T.p4
-                ]
+        [ HP.classes
+            [ T.roundedMd
+            , T.border2
+            , T.borderManzana
+            , T.mt4
+            , T.p4
             ]
-            [ deleteListEl list ]
         ]
+        [ deleteListEl list ]
 
     deleteListEl :: ListWithIdAndUser -> _
     deleteListEl list =
