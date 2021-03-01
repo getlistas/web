@@ -33,6 +33,7 @@ import Listasio.Page.Dashboard as Dashboard
 import Listasio.Page.Discover as Discover
 import Listasio.Page.EditList as EditList
 import Listasio.Page.Home as Home
+import Listasio.Page.ListIntegrations as ListIntegrations
 import Listasio.Page.Login as Login
 import Listasio.Page.Profile as Profile
 import Listasio.Page.Register as Register
@@ -65,6 +66,7 @@ type ChildSlots =
   , createResource :: OpaqueSlot Unit
   , viewList :: OpaqueSlot Unit
   , editList :: OpaqueSlot Unit
+  , listintegrations :: OpaqueSlot Unit
   , dashboard :: OpaqueSlot Unit
   , done :: OpaqueSlot Unit
   , discover :: OpaqueSlot Unit
@@ -170,6 +172,10 @@ component = Connect.component $ H.mkComponent
 
       EditList listSlug ->
         HH.slot (SProxy :: _ "editList") unit EditList.component { listSlug } absurd
+          # authorize currentUser
+
+      IntegrationsList listSlug ->
+        HH.slot (SProxy :: _ "listintegrations") unit ListIntegrations.component { listSlug } absurd
           # authorize currentUser
 
       Dashboard ->

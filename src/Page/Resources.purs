@@ -27,7 +27,7 @@ import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Message as Message
 import Listasio.Component.HTML.Resource (resource)
 import Listasio.Component.HTML.ToggleGroup as ToggleGroup
-import Listasio.Component.HTML.Utils (cx)
+import Listasio.Component.HTML.Utils (cx, safeHref)
 import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
@@ -39,6 +39,7 @@ import Listasio.Env (UserEnv)
 import Network.RemoteData (RemoteData(..), fromEither)
 import Tailwind as T
 import Web.Event.Event (Event)
+import Web.UIEvent.MouseEvent as Mouse
 
 data Action
   = Initialize
@@ -333,9 +334,14 @@ component = Connect.component $ H.mkComponent
         # map (\l ->
                 HH.div
                   []
-                  [ HH.div [ HP.classes [ T.textXl, T.textGray400, T.mt6, T.mb4 ] ] [ HH.text l.title ]
-                    , HH.div
-                    [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.lgGridCols3, T.xlGridCols4, T.gap4 ] ]
+                  [ HH.a
+                      [ HP.classes [ T.textXl, T.textGray400, T.mt6, T.mb4, T.block ]
+                      , safeHref $ EditList l.slug
+                      , HE.onClick (Just <<< Navigate (EditList l.slug) <<< Mouse.toEvent)
+                      ]
+                      [ HH.text l.title ]
+                  , HH.div
+                      [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.lgGridCols3, T.xlGridCols4, T.gap4 ] ]
                       $ map (resource lists)
                       $ filteredItems
                   ]

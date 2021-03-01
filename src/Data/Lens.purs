@@ -13,6 +13,9 @@ _count = prop (SProxy :: SProxy "count")
 _currentUser :: forall a r. Lens' { currentUser :: a | r } a
 _currentUser = prop (SProxy :: SProxy "currentUser")
 
+_description :: forall a r. Lens' { description :: a | r } a
+_description = prop (SProxy :: SProxy "description")
+
 _forkInProgress :: forall a r. Lens' { forkInProgress :: a | r } a
 _forkInProgress = prop (SProxy :: SProxy "forkInProgress")
 
@@ -21,6 +24,9 @@ _id = prop (SProxy :: SProxy "id")
 
 _items :: forall a r. Lens' { items :: a | r } a
 _items = prop (SProxy :: SProxy "items")
+
+_is_public :: forall a r. Lens' { is_public :: a | r } a
+_is_public = prop (SProxy :: SProxy "is_public")
 
 _email :: forall a r. Lens' { email :: a | r } a
 _email = prop (SProxy :: SProxy "email")
@@ -48,3 +54,9 @@ _resources = prop (SProxy :: SProxy "resources")
 
 _slug :: forall a r. Lens' { slug :: a | r } a
 _slug = prop (SProxy :: SProxy "slug")
+
+_tags :: forall a r. Lens' { tags :: a | r } a
+_tags = prop (SProxy :: SProxy "tags")
+
+_title :: forall a r. Lens' { title :: a | r } a
+_title = prop (SProxy :: SProxy "title")

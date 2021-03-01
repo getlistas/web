@@ -3,7 +3,7 @@ module Listasio.Component.HTML.ListForm where
 import Prelude
 
 import Data.Filterable (filter)
-import Data.Maybe (Maybe(..), fromMaybe, isNothing)
+import Data.Maybe (Maybe(..), fromMaybe, isNothing, maybe)
 import Data.Newtype (class Newtype)
 import Data.String (joinWith)
 import Data.String as String
@@ -40,7 +40,7 @@ newtype ListForm r f
 derive instance newtypeListForm :: Newtype (ListForm r f) _
 
 data FormQuery a
-  = SetCreateStatus (RemoteData String Unit) a
+  = SetCreateStatus (RemoteData String ListWithIdAndUser) a
 
 derive instance functorFormQuery :: Functor FormQuery
 
@@ -54,6 +54,7 @@ type FormInput
 type ListState
   = ( status :: RemoteData String Unit
     , isNew :: Boolean
+    , initialList :: Maybe ListWithIdAndUser
     )
 
 formComponent ::
@@ -81,6 +82,7 @@ formComponent =
           , is_public: F.noValidation
           }
     , initialInputs: map initialInputs list
+    , initialList: list
     , status: NotAsked
     , isNew: isNothing list
     }
@@ -96,22 +98,25 @@ formComponent =
 
   handleAction = case _ of
     Submit event -> do
-      { status } <- H.get
-      when (not $ isLoading status) do
-        H.liftEffect $ Event.preventDefault event
-        eval F.submit
+      H.liftEffect $ Event.preventDefault event
+      { status, dirty } <- H.get
+      let shouldSubmit = dirty && not (isLoading status)
+      when shouldSubmit do eval F.submit
     where
     eval act = F.handleAction handleAction handleEvent act
 
   handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
+    SetCreateStatus (Success newList) a -> do
+      H.modify_ _ { status = Success unit, initialList = Just newList }
+      pure (Just a)
     SetCreateStatus status a -> do
-      H.modify_ _ { status = status }
+      H.modify_ _ { status = map (const unit) status }
       pure (Just a)
 
   proxies = F.mkSProxies (F.FormProxy :: _ ListForm)
 
-  render { form, status, submitting, isNew } =
+  render { dirty, form, status, submitting, isNew, initialList } =
     HH.form
       [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev ]
       [ HH.fieldset_
@@ -147,7 +152,9 @@ formComponent =
                 [ HP.classes [ T.textRed500, T.my6 ] ]
                 [ HH.text "Could not create list :(" ]
 
-          , Field.submit (if isNew then "Create" else "Save") (submitting || isLoading status)
+          , Field.submit
+              (if isNew then "Create" else "Save")
+              (not dirty || submitting || isLoading status)
           ]
       ]
 
