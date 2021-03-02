@@ -123,21 +123,33 @@ component = Connect.component $ H.mkComponent
         [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
         [ HH.text "List Settings" ]
 
+    mkLayout list cards =
+      CardsAndSidebar.layout
+        [ { active: true
+          , icon: Icons.userCircle
+          , label: "List settings"
+          , link: Nothing
+          }
+        , { active: false
+          , icon: Icons.gridAdd
+          , label: "Integrations"
+          , link:
+              map
+                ( \{ slug } ->
+                    { action: Just <<< Navigate (IntegrationsList slug)
+                    , route: EditList slug
+                    }
+                )
+                list
+          }
+        ]
+        cards
+
     content =
       case mbList of
         Success list ->
-          CardsAndSidebar.layout
-            [ { active: true
-              , icon: Icons.userCircle
-              , label: "List settings"
-              , link: Nothing
-              }
-            , { active: false
-              , icon: Icons.gridAdd
-              , label: "Integrations"
-              , link: Just { action: Just <<< Navigate (IntegrationsList list.slug), route: EditList list.slug }
-              }
-            ]
+          mkLayout
+            (Just list)
             [ { cta: Nothing
               , content: HH.slot F._formless unit ListForm.formComponent { list: Just list } $ Just <<< HandleListForm
               , title: "Details"
@@ -151,10 +163,26 @@ component = Connect.component $ H.mkComponent
             ]
 
         -- TODO: better message
-        Failure msg -> HH.div [ HP.classes [ T.textManzana ] ] [ HH.text msg ]
+        Failure msg ->
+          mkLayout
+            Nothing
+            [ { cta: Nothing
+              , content: HH.div [ HP.classes [ T.textManzana ] ] [ HH.text msg ]
+              , title: "Details"
+              , description: Nothing
+              }
+            ]
 
         -- TODO: better message
-        _ -> HH.text "Loading ..."
+        _ ->
+          mkLayout
+            Nothing
+            [ { cta: Nothing
+              , content: HH.div [ HP.classes [ T.textGray400 ] ] [ HH.text "Loading ..." ]
+              , title: "Details"
+              , description: Nothing
+              }
+            ]
 
     dangerZone :: ListWithIdAndUser -> _
     dangerZone list =

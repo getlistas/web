@@ -91,21 +91,33 @@ component = Connect.component $ H.mkComponent
         [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
         [ HH.text "List Settings" ]
 
+    mkLayout list cards =
+      CardsAndSidebar.layout
+        [ { active: false
+          , icon: Icons.userCircle
+          , label: "List settings"
+          , link:
+              map
+                ( \{slug} ->
+                    { action: Just <<< Navigate (EditList slug)
+                    , route: EditList slug
+                    }
+                )
+                list
+          }
+        , { active: true
+          , icon: Icons.gridAdd
+          , label: "Integrations"
+          , link: Nothing
+          }
+        ]
+        cards
+
     content =
       case mbList of
         Success list ->
-          CardsAndSidebar.layout
-            [ { active: false
-              , icon: Icons.userCircle
-              , label: "List settings"
-              , link: Just { action: Just <<< Navigate (EditList list.slug), route: EditList list.slug }
-              }
-            , { active: true
-              , icon: Icons.gridAdd
-              , label: "Integrations"
-              , link: Nothing
-              }
-            ]
+          mkLayout
+            (Just list)
             [ { cta: Nothing
               , content:
                   HH.div
@@ -117,7 +129,26 @@ component = Connect.component $ H.mkComponent
             ]
 
         -- TODO: better message
-        Failure msg -> HH.div [ HP.classes [ T.textManzana ] ] [ HH.text msg ]
+        Failure msg ->
+          mkLayout
+            Nothing
+            [ { cta: Nothing
+              , content: HH.div [ HP.classes [ T.textManzana ] ] [ HH.text msg ]
+              , title: "Details"
+              , description: Nothing
+              }
+            ]
 
         -- TODO: better message
-        _ -> HH.text "Loading ..."
+        _ ->
+          mkLayout
+            Nothing
+            [ { cta: Nothing
+              , content:
+                  HH.div
+                    [ HP.classes [ T.textKiwi, T.text3xl, T.fontSemibold ] ]
+                    [ HH.text "Coming soon!" ]
+              , title: "RSS feed"
+              , description: Nothing
+              }
+            ]
