@@ -3,7 +3,7 @@ module Listasio.Component.HTML.ListForm where
 import Prelude
 
 import Data.Filterable (filter)
-import Data.Maybe (Maybe(..), fromMaybe, isNothing, maybe)
+import Data.Maybe (Maybe(..), fromMaybe, isNothing)
 import Data.Newtype (class Newtype)
 import Data.String (joinWith)
 import Data.String as String
@@ -94,6 +94,8 @@ formComponent =
     , is_public
     }
 
+  eval act = F.handleAction handleAction handleEvent act
+
   handleEvent = F.raiseResult
 
   handleAction = case _ of
@@ -102,13 +104,12 @@ formComponent =
       { status, dirty } <- H.get
       let shouldSubmit = dirty && not (isLoading status)
       when shouldSubmit do eval F.submit
-    where
-    eval act = F.handleAction handleAction handleEvent act
 
   handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
-    SetCreateStatus (Success newList) a -> do
+    SetCreateStatus (Success newList@{title, description, tags, is_public}) a -> do
       H.modify_ _ { status = Success unit, initialList = Just newList }
+      eval $ F.loadForm $ initialInputs newList
       pure (Just a)
     SetCreateStatus status a -> do
       H.modify_ _ { status = map (const unit) status }
