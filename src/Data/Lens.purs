@@ -52,6 +52,9 @@ _resource_metadata = prop (SProxy :: SProxy "resource_metadata")
 _resources :: forall a r. Lens' { resources :: a | r } a
 _resources = prop (SProxy :: SProxy "resources")
 
+_rss :: forall a r. Lens' { rss :: a | r } a
+_rss = prop (SProxy :: SProxy "rss")
+
 _slug :: forall a r. Lens' { slug :: a | r } a
 _slug = prop (SProxy :: SProxy "slug")
 

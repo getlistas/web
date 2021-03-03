@@ -167,6 +167,10 @@ cursorNotAllowed = ClassName "cursor-not-allowed"
 cursorPointer :: ClassName
 cursorPointer = ClassName "cursor-pointer"
 
+-- | disabledBgGray50
+disabledBgGray50 :: ClassName
+disabledBgGray50 = ClassName "disabled:bg-gray-50"
+
 -- | disabledCursorNotAllowed
 disabledCursorNotAllowed :: ClassName
 disabledCursorNotAllowed = ClassName "disabled:cursor-not-allowed"
@@ -311,6 +315,10 @@ gridCols5 = ClassName "grid-cols-5"
 group :: ClassName
 group = ClassName "group"
 
+-- | groupHoverTextGray700
+groupHoverTextGray700 :: ClassName
+groupHoverTextGray700 = ClassName "group-hover:text-gray-700"
+
 -- | h0
 h0 :: ClassName
 h0 = ClassName "h-0"
@@ -371,10 +379,6 @@ hoverBgDuraznoLight = ClassName "hover:bg-durazno-light"
 hoverBgGray100 :: ClassName
 hoverBgGray100 = ClassName "hover:bg-gray-100"
 
--- | hoverBgGray50
-hoverBgGray50 :: ClassName
-hoverBgGray50 = ClassName "hover:bg-gray-50"
-
 -- | hoverBgKiwi
 hoverBgKiwi :: ClassName
 hoverBgKiwi = ClassName "hover:bg-kiwi"
@@ -406,6 +410,10 @@ hoverBorderKiwi = ClassName "hover:border-kiwi"
 -- | hoverTextGray300
 hoverTextGray300 :: ClassName
 hoverTextGray300 = ClassName "hover:text-gray-300"
+
+-- | hoverTextGray700
+hoverTextGray700 :: ClassName
+hoverTextGray700 = ClassName "hover:text-gray-700"
 
 -- | hoverTextGray900
 hoverTextGray900 :: ClassName
@@ -711,6 +719,14 @@ pb2 = ClassName "pb-2"
 pb4 :: ClassName
 pb4 = ClassName "pb-4"
 
+-- | pl10
+pl10 :: ClassName
+pl10 = ClassName "pl-10"
+
+-- | pl3
+pl3 :: ClassName
+pl3 = ClassName "pl-3"
+
 -- | placeholderGray400
 placeholderGray400 :: ClassName
 placeholderGray400 = ClassName "placeholder-gray-400"
@@ -951,6 +967,10 @@ smTextSm = ClassName "sm:text-sm"
 smWFull :: ClassName
 smWFull = ClassName "sm:w-full"
 
+-- | spaceX4
+spaceX4 :: ClassName
+spaceX4 = ClassName "space-x-4"
+
 -- | spaceY1
 spaceY1 :: ClassName
 spaceY1 = ClassName "space-y-1"
@@ -966,10 +986,6 @@ srOnly = ClassName "sr-only"
 -- | text2xl
 text2xl :: ClassName
 text2xl = ClassName "text-2xl"
-
--- | text3xl
-text3xl :: ClassName
-text3xl = ClassName "text-3xl"
 
 -- | text4xl
 text4xl :: ClassName

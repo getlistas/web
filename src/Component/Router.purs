@@ -19,6 +19,7 @@ import Listasio.Capability.Clipboard (class Clipboard)
 import Listasio.Capability.LogMessages (class LogMessages)
 import Listasio.Capability.Navigate (class Navigate, navigate, locationState)
 import Listasio.Capability.Now (class Now)
+import Listasio.Capability.Resource.Integration (class ManageIntegration)
 import Listasio.Capability.Resource.List (class ManageList)
 import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Capability.Resource.User (class ManageUser)
@@ -83,6 +84,7 @@ component
   => Navigate m
   => ManageUser m
   => ManageResource m
+  => ManageIntegration m
   => ManageList m
   => Clipboard m
   => H.Component HH.HTML Query {} Void m

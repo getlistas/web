@@ -45,6 +45,8 @@ data Endpoint
   | Resource ID
   | CompleteResource ID
   | ResourceMeta
+  | Integrations
+  | Integration ID
 
 derive instance genericEndpoint :: Generic Endpoint _
 
@@ -70,6 +72,8 @@ endpointCodec =
         , "Resource": "resources" / id segment
         , "CompleteResource": "resources" / id segment / "complete"
         , "ResourceMeta": "resource-metadata" / noArgs
+        , "Integrations": "integrations" / "rss" / noArgs
+        , "Integration": "integrations" / "rss" / id segment
         }
 
 id :: RouteDuplex' String -> RouteDuplex' ID

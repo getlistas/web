@@ -30,6 +30,7 @@
   , "slug"
   , "strings"
   , "svg-parser-halogen"
+  , "unsafe-coerce"
   , "variant"
   ]
 , sources =
