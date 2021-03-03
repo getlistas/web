@@ -104,11 +104,10 @@ layout items sections =
       _, true ->
         HH.a
           [ HP.classes
-              [ T.bgGray50
+              [ T.bgGray100
               , T.textKiwi
               , T.hoverTextKiwi
               , T.hoverBgWhite
-              , T.group
               , T.roundedMd
               , T.px3
               , T.py2
@@ -137,7 +136,6 @@ layout items sections =
           [ HP.classes
               [ T.textGray200
               , T.cursorNotAllowed
-              , T.group
               , T.roundedMd
               , T.px3
               , T.py2
@@ -164,8 +162,8 @@ layout items sections =
         HH.a
           [ HP.classes
               [ T.textGray400
-              , T.hoverTextGray900
-              , T.hoverBgGray50
+              , T.hoverTextGray700
+              , T.hoverBgWhite
               , T.group
               , T.roundedMd
               , T.px3
@@ -181,8 +179,7 @@ layout items sections =
           [ icon
               [ Icons.classes
                   [ T.textGray400
-                    -- TODO: group classes
-                    -- , T.groupHoverTextGray500
+                  , T.groupHoverTextGray700
                   , T.flexShrink0
                   , T.negMl1
                   , T.mr3

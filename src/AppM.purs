@@ -23,9 +23,11 @@ import Listasio.Capability.Clipboard (class Clipboard)
 import Listasio.Capability.LogMessages (class LogMessages, logError)
 import Listasio.Capability.Navigate (class Navigate, locationState, navigate)
 import Listasio.Capability.Now (class Now)
+import Listasio.Capability.Resource.Integration (class ManageIntegration)
 import Listasio.Capability.Resource.List (class ManageList)
 import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Capability.Resource.User (class ManageUser)
+import Listasio.Data.Integration as Integration
 import Listasio.Data.List as List
 import Listasio.Data.Log as Log
 import Listasio.Data.Profile as Profile
@@ -190,3 +192,13 @@ instance manageResourceAppM :: ManageResource AppM where
   deleteResource { id } =
     map (const unit) <$> mkAuthRequest conf
     where conf = { endpoint: Resource id, method: Delete }
+
+instance manageIntegrationAppM :: ManageIntegration AppM where
+  createIntegration fields = do
+    map (const unit) <$> mkAuthRequest conf
+    where body = Codec.encode Integration.integrationFieldsCodec fields
+          conf = { endpoint: Integrations, method: Post $ Just body }
+
+  deleteIntegration id =
+    map (const unit) <$> mkAuthRequest conf
+    where conf = { endpoint: Integration id, method: Delete }

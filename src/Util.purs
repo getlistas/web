@@ -4,7 +4,7 @@ import Prelude
 
 import Data.Array.NonEmpty as NEA
 import Data.Either (Either(..), hush)
-import Data.Maybe (Maybe, fromMaybe)
+import Data.Maybe (Maybe(..), fromMaybe)
 import Data.String (Pattern(..), Replacement(..), contains, replace)
 import Data.String.Regex (regex, match, test) as Regex
 import Data.String.Regex.Flags (noFlags) as Regex
@@ -45,3 +45,6 @@ toWebsiteName = case _ of
   str | contains (Pattern "twitch.tv") str -> "Twitch"
   str | contains (Pattern "github.com") str -> "GitHub"
   str -> str
+
+fromPredicate :: forall a. (a -> Boolean) -> a -> Maybe a
+fromPredicate pred a = if pred a then Just a else Nothing

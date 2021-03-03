@@ -10,12 +10,12 @@ import Data.Newtype (class Newtype)
 import Data.Symbol (class IsSymbol, SProxy)
 import Data.Variant (Variant)
 import Formless as F
-import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Listasio.Component.HTML.Input as Input
 import Listasio.Component.HTML.Icons as Icons
-import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
+import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Form.Validation (errorToString)
 import Listasio.Form.Validation as V
 import Tailwind as T
@@ -78,6 +78,7 @@ cancel buttonText disabled action =
     , HP.disabled disabled
     ]
 
+-- TODO: unify with SimpleInputProps using Row Type Maaaagic!!!
 type InputProps form act
   = { required :: Boolean
     , hideOptional :: Boolean
@@ -136,57 +137,20 @@ input ::
   form Record F.FormField ->
   InputProps form act ->
   F.ComponentHTML form act slots m
-input sym form groupProps =
-  HH.fieldset
-    [ HP.classes [ T.wFull ] ]
-    [ fieldLabel groupProps
-    , HH.div
-        [ HP.classes [ T.mt1, T.relative, T.roundedMd ] ]
-        [ HH.input
-            ( append
-                ( catMaybes
-                    [ Just $ HP.type_ groupProps.type_
-                    , Just $ HP.value $ F.getInput sym form
-                    , Just $ HE.onValueInput $ Just <<< F.setValidate sym
-                    , Just $ HP.classes $ fieldInputClasses hasError
-                    , Just $ HP.required groupProps.required
-                    , HP.id_ <$> groupProps.id
-                    , HP.name <$> groupProps.id
-                    , HP.placeholder <$> groupProps.placeholder
-                    ]
-                )
-                groupProps.props
-            )
-          -- TODO: extract as function for both input & textarea
-        , whenElem hasError \_ ->
-            HH.div
-              [ HP.classes
-                  [ T.absolute
-                  , T.insetY0
-                  , T.right0
-                  , T.pr3
-                  , T.flex
-                  , T.itemsCenter
-                  , T.pointerEventsNone
-                  ]
-              ]
-              [ Icons.exclamationCircleSolid [ Icons.classes [ T.h5, T.w5, T.textRed500 ] ] ]
-        ]
-      -- TODO: extract as function for both input & textarea
-    , whenElem (not hasError) \_ ->
-        maybeElem groupProps.message \message ->
-          HH.p
-            [ HP.classes [ T.mt2, T.textSm, T.textGray500 ] ]
-            [ HH.text message ]
-      -- TODO: extract as function for both input & textarea
-    , maybeElem mbError \error ->
-          HH.p
-            [ HP.classes [ T.mt2, T.textSm, T.textManzana ] ]
-            [ HH.text $ errorToString error ]
-    ]
-  where
-  mbError = filter (const $ F.getTouched sym form) $ F.getError sym form
-  hasError = isJust mbError
+input sym form {required, hideOptional, placeholder, id, props, type_, message, label} =
+  Input.input $ Input.defaultProps
+    { value = F.getInput sym form
+    , error = filter (const $ F.getTouched sym form) $ F.getError sym form
+    , action = Just <<< F.setValidate sym
+    , hideOptional = hideOptional
+    , placeholder = placeholder
+    , id = id
+    , props = props
+    , type_ = type_
+    , message = message
+    , required = required
+    , label = label
+    }
 
 type TextareaProps form act
   = { required :: Boolean
@@ -223,7 +187,7 @@ textarea ::
 textarea sym form groupProps =
   HH.fieldset
     [ HP.classes [ T.wFull ] ]
-    [ fieldLabel groupProps
+    [ Input.fieldLabel groupProps
     , HH.div
         [ HP.classes [ T.mt1, T.relative, T.roundedMd ] ]
         [ HH.textarea
@@ -231,7 +195,8 @@ textarea sym form groupProps =
                 ( catMaybes
                     [ Just $ HP.value $ F.getInput sym form
                     , Just $ HE.onValueInput $ Just <<< F.setValidate sym
-                    , Just $ HP.classes $ fieldInputClasses hasError
+                    , Just $ HP.classes $ Input.fieldInputClasses
+                        { hasError, iconBefore: false, iconAfter: false }
                     , Just $ HP.required groupProps.required
                     , HP.id_ <$> groupProps.id
                     , HP.name <$> groupProps.id
@@ -269,41 +234,3 @@ textarea sym form groupProps =
   mbError = filter (const $ F.getTouched sym form) $ F.getError sym form
   hasError = isJust mbError
 
-fieldLabel ::
-  forall form act slots m fields inputs r.
-  Newtype (form Record F.FormField) { | fields } =>
-  Newtype (form Variant F.InputFunction) (Variant inputs) =>
-  { label :: Maybe String, id :: Maybe String, required :: Boolean, hideOptional :: Boolean | r } ->
-  F.ComponentHTML form act slots m
-fieldLabel props =
-  maybeElem props.label \label ->
-    HH.div
-      [ HP.classes [ T.flex, T.justifyBetween ] ]
-      [ HH.label
-          ( catMaybes
-              [ Just $ HP.classes [ T.block, T.textSm, T.fontMedium, T.textGray400 ]
-              , HP.for <$> props.id
-              ]
-          )
-          [ HH.text label ]
-      , whenElem (not props.required && not props.hideOptional) \_ ->
-          HH.span [ HP.classes [ T.textSm, T.textGray300 ] ] [ HH.text "Optional" ]
-      ]
-
-fieldInputClasses :: Boolean -> Array H.ClassName
-fieldInputClasses hasError =
-  [ T.shadowSm
-  , T.block
-  , T.wFull
-  , T.smTextSm
-  , T.roundedMd
-  , cx T.borderGray300 $ not hasError
-  , cx T.focusRingKiwi $ not hasError
-  , cx T.focusBorderKiwi $ not hasError
-  , cx T.pr10 hasError
-  , cx T.borderManzana hasError
-  , cx T.focusRingManzana hasError
-  , cx T.focusBorderManzana hasError
-  , cx T.textRed900 hasError
-  , cx T.placeholderRed300 hasError
-  ]

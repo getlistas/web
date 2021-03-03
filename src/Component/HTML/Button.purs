@@ -33,3 +33,33 @@ danger label disabled action =
     , HE.onClick \_ -> action
     ]
     [ label ]
+
+primary :: forall i p. HH.HTML i p -> Boolean -> Maybe p -> HH.HTML i p
+primary label disabled action =
+  HH.button
+    [ HP.classes
+        [ T.inlineFlex
+        , T.itemsCenter
+        , T.justifyCenter
+        , T.px4
+        , T.py2
+        , T.border
+        , T.borderTransparent
+        , T.fontMedium
+        , T.roundedMd
+        , T.textWhite
+        , T.bgKiwi
+        , T.hoverBgOpacity75
+        , T.focusOutlineNone
+        , T.focusRing2
+        , T.focusRingOffset2
+        , T.focusRingKiwi
+        , T.smTextSm
+        , T.disabledCursorNotAllowed
+        , T.disabledOpacity50
+        ]
+    , HP.type_ HP.ButtonButton
+    , HP.disabled disabled
+    , HE.onClick \_ -> action
+    ]
+    [ label ]
