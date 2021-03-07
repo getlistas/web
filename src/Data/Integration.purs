@@ -1,19 +1,105 @@
 module Listasio.Data.Integration where
 
-import Data.Codec.Argonaut (JsonCodec)
+import Prelude
+
+import Data.Codec (mapCodec)
+import Data.Codec.Argonaut (JsonCodec, JsonDecodeError(..))
 import Data.Codec.Argonaut as CA
+import Data.Codec.Argonaut.Compat as CAC
 import Data.Codec.Argonaut.Record as CAR
+import Data.DateTime (DateTime)
+import Data.Either (Either(..))
+import Data.Maybe (Maybe(..))
+import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 
-type IntegrationFields
+data IntegrationType
+  = IT_Rss
+
+integrationTypeCodec :: JsonCodec IntegrationType
+integrationTypeCodec = CA.prismaticCodec parse toString CA.string
+  where
+  parse "rss" = Just IT_Rss
+  parse _ = Nothing
+
+  toString IT_Rss = "rss"
+
+type RssIntegrationFields
   = { url :: String
     , list :: ID
     }
 
-integrationFieldsCodec :: JsonCodec IntegrationFields
-integrationFieldsCodec =
-  CAR.object "IntegrationFields"
+rssIntegrationFieldsCodec :: JsonCodec RssIntegrationFields
+rssIntegrationFieldsCodec =
+  CAR.object "RssIntegrationFields"
     { url: CA.string
     , list: ID.codec
     }
+
+type IntegrationRep row
+  = ( id :: ID
+    , user :: ID
+    , list :: ID
+    , created_at :: DateTime
+    , updated_at :: DateTime
+    | row
+    )
+
+type RssBody
+  = { url :: String
+    , subscription_id :: String
+    , status :: String
+    , feed_type :: String
+    , metadata :: Maybe String
+    }
+
+type RssIntegration
+  = { | IntegrationRep ( rss :: RssBody ) }
+
+data Integration
+  = RssIntegration RssIntegration
+
+rssBody :: JsonCodec RssBody
+rssBody =
+  CAR.object "RssBody"
+    { url: CA.string
+    , subscription_id: CA.string
+    , status: CA.string
+    , feed_type: CA.string
+    , metadata: CAC.maybe CA.string
+    }
+
+rssIntegrationCodec :: JsonCodec RssIntegration
+rssIntegrationCodec =
+  CAR.object "RssIntegration"
+    { id: ID.codec
+    , user: ID.codec
+    , list: ID.codec
+    , created_at: DateTime.codec
+    , updated_at: DateTime.codec
+    , rss: rssBody
+    }
+
+integrationCodec  :: JsonCodec Integration
+integrationCodec = mapCodec to from codec
+  where
+  codec =
+    CAR.object "Integration_All"
+      { id: ID.codec
+      , user: ID.codec
+      , list: ID.codec
+      , created_at: DateTime.codec
+      , updated_at: DateTime.codec
+      , service: integrationTypeCodec
+      , rss: CAC.maybe rssBody
+      }
+
+  to :: { | IntegrationRep ( service :: IntegrationType, rss :: Maybe RssBody ) } -> Either JsonDecodeError Integration
+  to {service: IT_Rss, rss: Just rss, id, user, list, created_at, updated_at} =
+    Right $ RssIntegration {id, user, list, created_at, updated_at, rss}
+  to {rss: Nothing} = Left $ AtKey "rss" MissingValue
+
+  from :: Integration -> { | IntegrationRep ( service :: IntegrationType, rss :: Maybe RssBody ) }
+  from (RssIntegration {id, user, list, created_at, updated_at, rss}) =
+    {id, user, list, created_at, updated_at, service: IT_Rss, rss: Just rss}

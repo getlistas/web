@@ -194,11 +194,15 @@ instance manageResourceAppM :: ManageResource AppM where
     where conf = { endpoint: Resource id, method: Delete }
 
 instance manageIntegrationAppM :: ManageIntegration AppM where
-  createIntegration fields = do
-    map (const unit) <$> mkAuthRequest conf
-    where body = Codec.encode Integration.integrationFieldsCodec fields
-          conf = { endpoint: Integrations, method: Post $ Just body }
+  createRssIntegration fields = do
+    decode Integration.rssIntegrationCodec =<< mkAuthRequest conf
+    where body = Codec.encode Integration.rssIntegrationFieldsCodec fields
+          conf = { endpoint: RssIntegrations, method: Post $ Just body }
 
-  deleteIntegration id =
+  deleteRssIntegration id =
     map (const unit) <$> mkAuthRequest conf
-    where conf = { endpoint: Integration id, method: Delete }
+    where conf = { endpoint: RssIntegration id, method: Delete }
+
+  getListIntegrations list =
+    decode (CAC.array $ Integration.rssIntegrationCodec) =<< mkAuthRequest conf
+    where conf = { endpoint: Integrations { list, service: Integration.IT_Rss }, method: Get }
