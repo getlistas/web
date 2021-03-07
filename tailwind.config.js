@@ -34,6 +34,11 @@ module.exports = {
       borderWidth: ["hover"],
       cursor: ["disabled"],
       opacity: ["disabled"],
+      ringWidth: ['hover'],
+      ringColor: ['hover'],
+      ringOpacity: ['hover'],
+      ringOffsetWidth: ['hover'],
+      ringOffsetColor: ['hover'],
     },
   },
   plugins: [
