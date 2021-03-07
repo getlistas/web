@@ -56,7 +56,7 @@ input groupProps =
     [ HP.classes [ T.wFull ] ]
     [ fieldLabel groupProps
     , HH.div
-        [ HP.classes [ T.mt1, T.relative, T.roundedMd ] ]
+        [ HP.classes [ cx T.mt1 $ isJust groupProps.label, T.relative, T.roundedMd ] ]
         [ maybeElem groupProps.iconBefore \icon ->
             HH.div
               [ HP.classes

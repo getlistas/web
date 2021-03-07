@@ -403,9 +403,29 @@ hoverBgWhite = ClassName "hover:bg-white"
 hoverBorderB2 :: ClassName
 hoverBorderB2 = ClassName "hover:border-b-2"
 
+-- | hoverBorderGray400
+hoverBorderGray400 :: ClassName
+hoverBorderGray400 = ClassName "hover:border-gray-400"
+
 -- | hoverBorderKiwi
 hoverBorderKiwi :: ClassName
 hoverBorderKiwi = ClassName "hover:border-kiwi"
+
+-- | hoverRing1
+hoverRing1 :: ClassName
+hoverRing1 = ClassName "hover:ring-1"
+
+-- | hoverRingIndigo500
+hoverRingIndigo500 :: ClassName
+hoverRingIndigo500 = ClassName "hover:ring-indigo-500"
+
+-- | hoverRingKiwi
+hoverRingKiwi :: ClassName
+hoverRingKiwi = ClassName "hover:ring-kiwi"
+
+-- | hoverRingOffset2
+hoverRingOffset2 :: ClassName
+hoverRingOffset2 = ClassName "hover:ring-offset-2"
 
 -- | hoverTextGray300
 hoverTextGray300 :: ClassName
@@ -578,6 +598,10 @@ mdGridCols2 = ClassName "md:grid-cols-2"
 -- | minHScreen
 minHScreen :: ClassName
 minHScreen = ClassName "min-h-screen"
+
+-- | ml1
+ml1 :: ClassName
+ml1 = ClassName "ml-1"
 
 -- | ml2
 ml2 :: ClassName
@@ -799,6 +823,10 @@ py2 = ClassName "py-2"
 py3 :: ClassName
 py3 = ClassName "py-3"
 
+-- | py4
+py4 :: ClassName
+py4 = ClassName "py-4"
+
 -- | py5
 py5 :: ClassName
 py5 = ClassName "py-5"
@@ -907,6 +935,10 @@ smGridCols2 = ClassName "sm:grid-cols-2"
 smHScreen :: ClassName
 smHScreen = ClassName "sm:h-screen"
 
+-- | smInline
+smInline :: ClassName
+smInline = ClassName "sm:inline"
+
 -- | smInlineBlock
 smInlineBlock :: ClassName
 smInlineBlock = ClassName "sm:inline-block"
@@ -926,6 +958,14 @@ smJustifyBetween = ClassName "sm:justify-between"
 -- | smMaxWLg
 smMaxWLg :: ClassName
 smMaxWLg = ClassName "sm:max-w-lg"
+
+-- | smMl0
+smMl0 :: ClassName
+smMl0 = ClassName "sm:ml-0"
+
+-- | smMl4
+smMl4 :: ClassName
+smMl4 = ClassName "sm:ml-4"
 
 -- | smMl6
 smMl6 :: ClassName
@@ -959,6 +999,10 @@ smPx6 = ClassName "sm:px-6"
 smRoundedMd :: ClassName
 smRoundedMd = ClassName "sm:rounded-md"
 
+-- | smTextRight
+smTextRight :: ClassName
+smTextRight = ClassName "sm:text-right"
+
 -- | smTextSm
 smTextSm :: ClassName
 smTextSm = ClassName "sm:text-sm"
@@ -974,6 +1018,10 @@ spaceX4 = ClassName "space-x-4"
 -- | spaceY1
 spaceY1 :: ClassName
 spaceY1 = ClassName "space-y-1"
+
+-- | spaceY4
+spaceY4 :: ClassName
+spaceY4 = ClassName "space-y-4"
 
 -- | spaceY6
 spaceY6 :: ClassName
@@ -1030,6 +1078,10 @@ textGray500 = ClassName "text-gray-500"
 -- | textGray700
 textGray700 :: ClassName
 textGray700 = ClassName "text-gray-700"
+
+-- | textGray900
+textGray900 :: ClassName
+textGray900 = ClassName "text-gray-900"
 
 -- | textKiwi
 textKiwi :: ClassName

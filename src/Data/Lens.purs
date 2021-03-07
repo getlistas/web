@@ -43,6 +43,9 @@ _markingAsDone = prop (SProxy :: SProxy "markingAsDone")
 _name :: forall a r. Lens' { name :: a | r } a
 _name = prop (SProxy :: SProxy "name")
 
+_newRss :: forall a r. Lens' { newRss :: a | r } a
+_newRss = prop (SProxy :: SProxy "newRss")
+
 _next :: forall a r. Lens' { next :: a | r } a
 _next = prop (SProxy :: SProxy "next")
 
@@ -54,6 +57,9 @@ _resources = prop (SProxy :: SProxy "resources")
 
 _rss :: forall a r. Lens' { rss :: a | r } a
 _rss = prop (SProxy :: SProxy "rss")
+
+_rssResult :: forall a r. Lens' { rssResult :: a | r } a
+_rssResult = prop (SProxy :: SProxy "rssResult")
 
 _slug :: forall a r. Lens' { slug :: a | r } a
 _slug = prop (SProxy :: SProxy "slug")
