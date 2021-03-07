@@ -257,7 +257,12 @@ component = Connect.component $ H.mkComponent
                     [ HP.classes [ T.textSm ] ]
                     [ HH.p
                         [ HP.classes [ T.fontMedium, T.textGray900 ] ]
-                        [ HH.text i.rss.url ]
+                        [ i.rss.url
+                            # String.replace (String.Pattern "https://") (String.Replacement "")
+                            # String.replace (String.Pattern "http://") (String.Replacement "")
+                            # String.replace (String.Pattern "www.") (String.Replacement "")
+                            # HH.text
+                        ]
                     , HH.div
                         [ HP.classes [ T.textGray500 ] ]
                         [ HH.p

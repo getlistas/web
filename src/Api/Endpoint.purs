@@ -74,8 +74,7 @@ endpointCodec =
         , "Resource": "resources" / id segment
         , "CompleteResource": "resources" / id segment / "complete"
         , "ResourceMeta": "resource-metadata" / noArgs
-        , "Integrations": "integrations"
-        ? { list: id, service: integrationType }
+        , "Integrations": "integrations" ? { list: id, service: integrationType }
         , "RssIntegrations": "integrations" / "rss" / noArgs
         , "RssIntegration": "integrations" / "rss" / id segment
         }
