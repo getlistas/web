@@ -139,7 +139,7 @@ component = Connect.component $ H.mkComponent
     header =
       HH.h1
         [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-        [ HH.text "List Settings" ]
+        [ HH.text $ RemoteData.maybe "..." _.title mbList  ]
 
     mkLayout list cards =
       CardsAndSidebar.layout
