@@ -415,17 +415,9 @@ hoverBorderKiwi = ClassName "hover:border-kiwi"
 hoverRing1 :: ClassName
 hoverRing1 = ClassName "hover:ring-1"
 
--- | hoverRingIndigo500
-hoverRingIndigo500 :: ClassName
-hoverRingIndigo500 = ClassName "hover:ring-indigo-500"
-
 -- | hoverRingKiwi
 hoverRingKiwi :: ClassName
 hoverRingKiwi = ClassName "hover:ring-kiwi"
-
--- | hoverRingOffset2
-hoverRingOffset2 :: ClassName
-hoverRingOffset2 = ClassName "hover:ring-offset-2"
 
 -- | hoverTextGray300
 hoverTextGray300 :: ClassName
@@ -442,6 +434,10 @@ hoverTextGray900 = ClassName "hover:text-gray-900"
 -- | hoverTextKiwi
 hoverTextKiwi :: ClassName
 hoverTextKiwi = ClassName "hover:text-kiwi"
+
+-- | hoverTextManzana
+hoverTextManzana :: ClassName
+hoverTextManzana = ClassName "hover:text-manzana"
 
 -- | hoverTextWhite
 hoverTextWhite :: ClassName
@@ -598,10 +594,6 @@ mdGridCols2 = ClassName "md:grid-cols-2"
 -- | minHScreen
 minHScreen :: ClassName
 minHScreen = ClassName "min-h-screen"
-
--- | ml1
-ml1 :: ClassName
-ml1 = ClassName "ml-1"
 
 -- | ml2
 ml2 :: ClassName
@@ -958,10 +950,6 @@ smJustifyBetween = ClassName "sm:justify-between"
 -- | smMaxWLg
 smMaxWLg :: ClassName
 smMaxWLg = ClassName "sm:max-w-lg"
-
--- | smMl0
-smMl0 :: ClassName
-smMl0 = ClassName "sm:ml-0"
 
 -- | smMl4
 smMl4 :: ClassName
