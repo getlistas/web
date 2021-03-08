@@ -10,7 +10,6 @@ import Data.Lens (over, preview, set)
 import Data.Maybe (Maybe(..))
 import Data.String as String
 import Data.Traversable (for_)
-import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -134,12 +133,13 @@ component = Connect.component $ H.mkComponent
 
     DeleteIntegration id -> do
       mbRss <- H.gets $ preview (_rss <<< _Success)
-      let toDelete = (_ == id ) <<< _.id
-      for_ ((Tuple <$> mbRss <*> (Array.find toDelete =<< mbRss))) $ \(Tuple rss item) -> do
-        H.modify_ $ over (_rss <<< _Success) (Array.filter (not <<< toDelete))
+      let shouldDelete = (_ == id) <<< _.id
+          toDelete = Array.find shouldDelete =<< mbRss
+      for_ ({rss: _, deleted: _} <$> mbRss <*> toDelete) $ \{rss, deleted} -> do
+        H.modify_ $ over (_rss <<< _Success) (Array.filter (not <<< shouldDelete))
         result <- deleteRssIntegration id
         case result of
-          Nothing -> H.modify_ $ over (_rss <<< _Success) (_ `Array.snoc` item)
+          Nothing -> H.modify_ $ over (_rss <<< _Success) (_ `Array.snoc` deleted)
           Just _ -> pure unit
 
   render :: State -> H.ComponentHTML Action Slots m
