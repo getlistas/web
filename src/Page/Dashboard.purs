@@ -157,12 +157,14 @@ component = Connect.component $ H.mkComponent
                       , T.px4
                       , T.textWhite
                       , T.roundedMd
-                      , T.shadowMd
-                      , T.bgDurazno
-                      , T.hoverBgDuraznoLight
+                      , T.bgKiwi
+                      , T.hoverRing2
+                      , T.hoverRingKiwi
+                      , T.hoverRingOffset2
                       , T.focusOutlineNone
                       , T.focusRing2
-                      , T.focusRingDurazno
+                      , T.focusRingKiwi
+                      , T.focusRingOffset2
                       ]
                   ]
                   [ HH.text "Create Resource" ]

@@ -235,10 +235,6 @@ focusRing1 = ClassName "focus:ring-1"
 focusRing2 :: ClassName
 focusRing2 = ClassName "focus:ring-2"
 
--- | focusRingDurazno
-focusRingDurazno :: ClassName
-focusRingDurazno = ClassName "focus:ring-durazno"
-
 -- | focusRingGray300
 focusRingGray300 :: ClassName
 focusRingGray300 = ClassName "focus:ring-gray-300"
@@ -371,10 +367,6 @@ hidden = ClassName "hidden"
 hoverBgDurazno :: ClassName
 hoverBgDurazno = ClassName "hover:bg-durazno"
 
--- | hoverBgDuraznoLight
-hoverBgDuraznoLight :: ClassName
-hoverBgDuraznoLight = ClassName "hover:bg-durazno-light"
-
 -- | hoverBgGray100
 hoverBgGray100 :: ClassName
 hoverBgGray100 = ClassName "hover:bg-gray-100"
@@ -415,9 +407,17 @@ hoverBorderKiwi = ClassName "hover:border-kiwi"
 hoverRing1 :: ClassName
 hoverRing1 = ClassName "hover:ring-1"
 
+-- | hoverRing2
+hoverRing2 :: ClassName
+hoverRing2 = ClassName "hover:ring-2"
+
 -- | hoverRingKiwi
 hoverRingKiwi :: ClassName
 hoverRingKiwi = ClassName "hover:ring-kiwi"
+
+-- | hoverRingOffset2
+hoverRingOffset2 :: ClassName
+hoverRingOffset2 = ClassName "hover:ring-offset-2"
 
 -- | hoverTextGray300
 hoverTextGray300 :: ClassName
