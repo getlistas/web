@@ -1137,11 +1137,6 @@ select{
   background-color: rgba(137, 176, 174, var(--tw-bg-opacity));
 }
 
-.hover\:bg-durazno-light:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgba(248, 215, 190, var(--tw-bg-opacity));
-}
-
 .hover\:bg-durazno:hover {
   --tw-bg-opacity: 1;
   background-color: rgba(249, 183, 169, var(--tw-bg-opacity));
@@ -2543,6 +2538,12 @@ select{
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
+.hover\:ring-2:hover {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
 .focus\:ring-1:focus {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
@@ -2561,6 +2562,10 @@ select{
 
 .focus\:ring-offset-gray-10:focus {
   --tw-ring-offset-color: #FAF9F9;
+}
+
+.hover\:ring-offset-2:hover {
+  --tw-ring-offset-width: 2px;
 }
 
 .focus\:ring-offset-2:focus {
@@ -2595,11 +2600,6 @@ select{
 .focus\:ring-kiwi:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgba(137, 176, 174, var(--tw-ring-opacity));
-}
-
-.focus\:ring-durazno:focus {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgba(249, 183, 169, var(--tw-ring-opacity));
 }
 
 .focus\:ring-manzana:focus {
