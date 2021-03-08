@@ -10,12 +10,14 @@ import Data.Lens (over, preview, set)
 import Data.Maybe (Maybe(..))
 import Data.String as String
 import Data.Traversable (for_)
+import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
-import Listasio.Capability.Resource.Integration (class ManageIntegration, createRssIntegration, getListIntegrations)
+import Listasio.Capability.Resource.Integration (class ManageIntegration, createRssIntegration, deleteRssIntegration, getListIntegrations)
 import Listasio.Capability.Resource.List (class ManageList, getListBySlug)
 import Listasio.Component.HTML.Button as Button
 import Listasio.Component.HTML.CardsAndSidebar as CardsAndSidebar
@@ -24,6 +26,7 @@ import Listasio.Component.HTML.Input as Input
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.ListForm as ListForm
 import Listasio.Data.DateTime as DateTime
+import Listasio.Data.ID (ID)
 import Listasio.Data.Integration (RssIntegration)
 import Listasio.Data.Lens (_id, _newRss, _rss, _rssResult)
 import Listasio.Data.List (ListWithIdAndUser)
@@ -45,6 +48,7 @@ data Action
   | OnNewChange String
   | SaveRss
   | Navigate Route Event
+  | DeleteIntegration ID
 
 type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
@@ -127,6 +131,16 @@ component = Connect.component $ H.mkComponent
                   <<< over (_rss <<< _Success) (_ `Array.snoc` newIntegration)
                   <<< set _newRss ""
           r -> H.modify_ $ set _rssResult $ map (const unit) r
+
+    DeleteIntegration id -> do
+      mbRss <- H.gets $ preview (_rss <<< _Success)
+      let toDelete = (_ == id ) <<< _.id
+      for_ ((Tuple <$> mbRss <*> (Array.find toDelete =<< mbRss))) $ \(Tuple rss item) -> do
+        H.modify_ $ over (_rss <<< _Success) (Array.filter (not <<< toDelete))
+        result <- deleteRssIntegration id
+        case result of
+          Nothing -> H.modify_ $ over (_rss <<< _Success) (_ `Array.snoc` item)
+          Just _ -> pure unit
 
   render :: State -> H.ComponentHTML Action Slots m
   render { newRss, rss, rssResult, currentUser, list: mbList } =
@@ -282,10 +296,16 @@ component = Connect.component $ H.mkComponent
                     , T.smTextRight
                     ]
                 ]
-                -- TODO: delete button
                 [ HH.div
-                    [ HP.classes [ T.fontMedium, T.textGray900 ] ]
-                    [ HH.text "" ]
+                    [ HP.classes [ T.flex ] ]
+                    [ HH.button
+                        [ HE.onClick \_ -> Just $ DeleteIntegration i.id
+                        , HP.classes [ T.cursorPointer ]
+                        , HP.type_ HP.ButtonButton
+                        ]
+                        [ Icons.trash [ Icons.classes [ T.w6, T.h6, T.textGray400, T.hoverTextManzana ] ]
+                        ]
+                    ]
                 ]
             ]
         ]
