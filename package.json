@@ -11,7 +11,7 @@
     "bundle:build": "PRODUCTION=True spago build --purs-args '--codegen corefn'",
     "bundle:dce": "zephyr -f Main.main",
     "bundle:parcel": "parcel build prod/index.html --public-url '.' --no-source-maps",
-    "clean": "rm -rf node_modules output dce-output .spago dist/* *.lock .cache .parcel-cache && git checkout dist/vercel.json",
+    "clean": "rm -rf output dce-output .spago dist/* *.lock .cache .parcel-cache && git checkout dist/vercel.json",
     "css:gen": "postcss build css/tailwind_inputs.css -o dev/tailwind.css",
     "css:gen:all": "twpurs gen-purs --classes css/tailwind-classes.txt --all",
     "css:gen:available": "twpurs gen-available-classes --css dev/tailwind.css --out css/tailwind-classes.txt",
