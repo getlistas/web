@@ -71,8 +71,7 @@ buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
                 [ T.relative
                 , T.inlineFlex
                 , T.itemsCenter
-                , T.px2
-                , T.py2
+                , T.p2
                 , T.roundedRMd
                 , T.border
                 , T.borderGray400
@@ -87,7 +86,7 @@ buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
                 ]
             ]
             [ HH.span [ HP.classes [ T.srOnly] ] [ HH.text "Open options" ]
-            , Icons.dotsHorizontal [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
+            , Icons.dotsVertical [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
             ]
         -- TODO: transitions
         --
