@@ -7,6 +7,7 @@ import Control.Monad.Reader (class MonadAsk)
 import Data.Lens (over)
 import Data.Maybe (Maybe(..))
 import Data.Symbol (SProxy(..))
+import Data.Traversable (for_)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -80,8 +81,10 @@ component = Connect.component $ H.mkComponent
   handleAction = case _ of
     Initialize -> pure unit
 
-    Receive {currentUser} ->
+    Receive {currentUser} -> do
       H.modify_ _ {currentUser = currentUser}
+      for_ currentUser \user ->
+        H.modify_ _ {authStatus = ShowUser user}
 
     Navigate route e -> navigate_ e route
 
@@ -148,246 +151,292 @@ component = Connect.component $ H.mkComponent
         ]
         [ HH.text name ]
 
+    heroText =
+      HH.div
+        [ HP.classes
+            [ T.px4
+            , T.smPx6
+            , T.smTextCenter
+            , T.mdMaxW2xl
+            , T.mdMxAuto
+            , T.lgColSpan6
+            , T.lgTextLeft
+            , T.lgFlex
+            , T.lgItemsCenter
+            ]
+        ]
+        [ HH.div
+            []
+            [ HH.h1
+                [ HP.classes
+                    [ T.mt4
+                    , T.text4xl
+                    , T.trackingTight
+                    , T.fontExtrabold
+                    , T.smMt5
+                    , T.smLeadingNone
+                    , T.lgMt6
+                    , T.lgText5xl
+                    , T.xlText6xl
+                    ]
+                ]
+                [ HH.span
+                    [ HP.classes [ T.textGray400, T.block ] ]
+                    [ HH.text "Digital content" ]
+                , HH.span
+                    [ HP.classes [ T.textKiwi, T.block ] ]
+                    [ HH.text "consumption manager" ]
+                ]
+            , HH.p
+                [ HP.classes
+                    [ T.mt3
+                    , T.textBase
+                    , T.textGray400
+                    , T.smMt5
+                    , T.smTextXl
+                    , T.lgTextLg
+                    , T.xlTextXl
+                    ]
+                ]
+                [ HH.text "Keep your reading and watching lists under control with Listas" ]
+            ]
+        ]
+
+    nav =
+      HH.nav
+        [ HP.classes
+            [ T.relative
+            , T.maxW7xl
+            , T.mxAuto
+            , T.flex
+            , T.itemsCenter
+            , T.justifyBetween
+            , T.px4
+            , T.smPx6
+            ]
+        ]
+        [ HH.div
+            [ HP.classes [ T.flex, T.itemsCenter, T.flex1 ] ]
+            [ HH.div
+                [ HP.classes [ T.flex, T.itemsCenter, T.justifyBetween, T.wFull, T.mdWAuto ] ]
+                [ logo
+                , HH.div
+                    [ HP.classes [ T.negMr2, T.flex, T.itemsCenter, T.mdHidden ] ]
+                    [ HH.button
+                        [ HP.classes
+                            [ T.bgKiwi
+                            , T.roundedMd
+                            , T.p2
+                            , T.inlineFlex
+                            , T.itemsCenter
+                            , T.justifyCenter
+                            , T.textWhite
+                            , T.hoverBgKiwiDark
+                            , T.focusOutlineNone
+                            , T.focusRing2
+                            , T.focusRingInset
+                            , T.focusRingWhite
+                            ]
+                        , HP.type_ HP.ButtonButton
+                        , HE.onClick $ \_ -> Just ToggleMenu
+                        ]
+                        [ HH.span
+                            [ HP.classes [ T.srOnly ] ]
+                            [ HH.text "Open main menu" ]
+                        , Icons.menu [ Icons.classes [ T.h6, T.w6 ] ]
+                        ]
+                    ]
+                ]
+            , HH.div
+                [ HP.classes [ T.hidden, T.spaceX10, T.mdFlex, T.mdMl10 ] ]
+                [ desktopLink Discover "Discover"
+                , desktopLink Pricing "Pricing"
+                , desktopLink About "About"
+                ]
+            ]
+        ]
+
+    mobileNav =
+      whenElem menuOpen \_ ->
+        HH.div
+          [ HP.classes
+              [ T.absolute
+              , T.top0
+              , T.insetX0
+              , T.p2
+              , T.transition
+              , T.transform
+              , T.originTopRight
+              , T.mdHidden
+              ]
+          ]
+          [ HH.div
+              [ HP.classes
+                  [ T.roundedLg
+                  , T.shadowMd
+                  , T.bgWhite
+                  , T.ring1
+                  , T.ringBlack
+                  , T.ringOpacity5
+                  , T.overflowHidden
+                  ]
+              ]
+              [ HH.div
+                  [ HP.classes [ T.px5, T.pt4, T.flex, T.itemsCenter, T.justifyBetween ] ]
+                  [ HH.div [] [ logo ]
+                  , HH.div
+                      [ HP.classes [ T.negMr2 ] ]
+                      [ HH.button
+                          [ HP.classes
+                              [ T.bgWhite
+                              , T.roundedMd
+                              , T.p2
+                              , T.inlineFlex
+                              , T.itemsCenter
+                              , T.justifyCenter
+                              , T.textGray400
+                              , T.hoverBgGray100
+                              , T.focusOutlineNone
+                              , T.focusRing2
+                              , T.focusRingInset
+                              , T.focusRingKiwi
+                              ]
+                          , HP.type_ HP.ButtonButton
+                          , HE.onClick $ \_ -> Just ToggleMenu
+                          ]
+                          [ HH.span
+                              [ HP.classes [ T.srOnly ] ]
+                              [ HH.text "Close menu" ]
+                          , Icons.x
+                              [ Icons.classes [ T.h6, T.w6 ] ]
+                          ]
+                      ]
+                  ]
+              , HH.div
+                  [ HP.classes [ T.px2, T.pt2, T.pb3, T.spaceY1 ] ]
+                  [ mobileLink Discover "Discover"
+                  , mobileLink Pricing "Pricing"
+                  , mobileLink About "About"
+                  ]
+              ]
+          ]
+
+    authBlock =
+      case authStatus of
+        ShowUser _ ->
+          HH.div
+            [ HP.classes
+                [ T.smMaxWMd
+                , T.smWFull
+                , T.smMxAuto
+                , T.smRoundedLg
+                , T.smOverflowHidden
+                ]
+            ]
+            [ HH.div
+                [ HP.classes [ T.flex, T.justifyCenter, T.p4 ] ]
+                [ HH.a
+                  [ HP.classes
+                      [ T.inlineFlex
+                      , T.itemsCenter
+                      , T.justifyCenter
+                      , T.px5
+                      , T.px5
+                      , T.py3
+                      , T.border
+                      , T.borderTransparent
+                      , T.textBase
+                      , T.fontMedium
+                      , T.roundedMd
+                      , T.textWhite
+                      , T.bgKiwi
+                      , T.hoverBgKiwiDark
+                      ]
+                  , safeHref Discover
+                  , HE.onClick $ onNavigate Dashboard
+                  ]
+                  [ HH.text "Go to Dashboard" ]
+              ]
+            ]
+        ShowRegister ->
+          HH.div
+            [ HP.classes
+                [ T.bgWhite
+                , T.smMaxWMd
+                , T.smWFull
+                , T.smMxAuto
+                , T.smRoundedLg
+                , T.shadowLg
+                , T.smOverflowHidden
+                ]
+            ]
+            [ HH.div
+                [ HP.classes [ T.px4, T.py8, T.smPx10 ] ]
+                [ HH.slot (SProxy :: _ "register") unit Register.component unit (Just <<< GoToSignin) ]
+            , HH.div
+                [ HP.classes
+                    [ T.px4
+                    , T.py6
+                    , T.bgWhite
+                    , T.borderT2
+                    , T.borderGray100
+                    , T.smPx10
+                    ]
+                ]
+                [ HH.p
+                    [ HP.classes [ T.textXs, T.leading5, T.textGray500 ] ]
+                    [ HH.text "By signing up, you agree to our "
+                    , HH.a
+                        [ HP.classes [ T.fontMedium, T.textGray900, T.hoverUnderline ]
+                        , safeHref Terms
+                        , HE.onClick $ onNavigate Terms
+                        ]
+                        [ HH.text "Terms" ]
+                    , HH.text " and "
+                    , HH.a
+                        [ HP.classes [ T.fontMedium, T.textGray900, T.hoverUnderline ]
+                        , safeHref Policy
+                        , HE.onClick $ onNavigate Policy
+                        ]
+                        [ HH.text "Data Policy" ]
+                    ]
+                ]
+            ]
+
+        ShowLogin ->
+          HH.div
+            [ HP.classes
+                [ T.bgWhite
+                , T.smMaxWMd
+                , T.smWFull
+                , T.smMxAuto
+                , T.smRoundedLg
+                , T.shadowLg
+                , T.smOverflowHidden
+                ]
+            ]
+            [ HH.div
+                [ HP.classes [ T.px4, T.py8, T.smPx10 ] ]
+                [ HH.slot (SProxy :: _ "login") unit Login.component {redirect: true} (Just <<< GoToRegister) ]
+            ]
+
     heroAndNav =
       HH.div
         [ HP.classes [ T.relative, T.bgGray10, T.overflowHidden ] ]
         [ HH.div
             [ HP.classes [ T.relative, T.pt6, T.pb16, T.smPb24 ] ]
-            [ HH.nav
-                [ HP.classes
-                    [ T.relative
-                    , T.maxW7xl
-                    , T.mxAuto
-                    , T.flex
-                    , T.itemsCenter
-                    , T.justifyBetween
-                    , T.px4
-                    , T.smPx6
-                    ]
-                ]
-                [ HH.div
-                    [ HP.classes [ T.flex, T.itemsCenter, T.flex1 ] ]
-                    [ HH.div
-                        [ HP.classes [ T.flex, T.itemsCenter, T.justifyBetween, T.wFull, T.mdWAuto ] ]
-                        [ logo
-                        , HH.div
-                            [ HP.classes [ T.negMr2, T.flex, T.itemsCenter, T.mdHidden ] ]
-                            [ HH.button
-                                [ HP.classes
-                                    [ T.bgKiwi
-                                    , T.roundedMd
-                                    , T.p2
-                                    , T.inlineFlex
-                                    , T.itemsCenter
-                                    , T.justifyCenter
-                                    , T.textWhite
-                                    , T.hoverBgKiwiDark
-                                    , T.focusOutlineNone
-                                    , T.focusRing2
-                                    , T.focusRingInset
-                                    , T.focusRingWhite
-                                    ]
-                                , HP.type_ HP.ButtonButton
-                                , HE.onClick $ \_ -> Just ToggleMenu
-                                ]
-                                [ HH.span
-                                    [ HP.classes [ T.srOnly ] ]
-                                    [ HH.text "Open main menu" ]
-                                , Icons.menu [ Icons.classes [ T.h6, T.w6 ] ]
-                                ]
-                            ]
-                        ]
-                    , HH.div
-                        [ HP.classes [ T.hidden, T.spaceX10, T.mdFlex, T.mdMl10 ] ]
-                        [ desktopLink Discover "Discover"
-                        , desktopLink Pricing "Pricing"
-                        , desktopLink About "About"
-                        ]
-                    ]
-                ]
-            , whenElem menuOpen \_ ->
-                HH.div
-                  [ HP.classes
-                      [ T.absolute
-                      , T.top0
-                      , T.insetX0
-                      , T.p2
-                      , T.transition
-                      , T.transform
-                      , T.originTopRight
-                      , T.mdHidden
-                      ]
-                  ]
-                  [ HH.div
-                      [ HP.classes
-                          [ T.roundedLg
-                          , T.shadowMd
-                          , T.bgWhite
-                          , T.ring1
-                          , T.ringBlack
-                          , T.ringOpacity5
-                          , T.overflowHidden
-                          ]
-                      ]
-                      [ HH.div
-                          [ HP.classes [ T.px5, T.pt4, T.flex, T.itemsCenter, T.justifyBetween ] ]
-                          [ HH.div [] [ logo ]
-                          , HH.div
-                              [ HP.classes [ T.negMr2 ] ]
-                              [ HH.button
-                                  [ HP.classes
-                                      [ T.bgWhite
-                                      , T.roundedMd
-                                      , T.p2
-                                      , T.inlineFlex
-                                      , T.itemsCenter
-                                      , T.justifyCenter
-                                      , T.textGray400
-                                      , T.hoverBgGray100
-                                      , T.focusOutlineNone
-                                      , T.focusRing2
-                                      , T.focusRingInset
-                                      , T.focusRingKiwi
-                                      ]
-                                  , HP.type_ HP.ButtonButton
-                                  , HE.onClick $ \_ -> Just ToggleMenu
-                                  ]
-                                  [ HH.span
-                                      [ HP.classes [ T.srOnly ] ]
-                                      [ HH.text "Close menu" ]
-                                  , Icons.x
-                                      [ Icons.classes [ T.h6, T.w6 ] ]
-                                  ]
-                              ]
-                          ]
-                      , HH.div
-                          [ HP.classes [ T.px2, T.pt2, T.pb3, T.spaceY1 ] ]
-                          [ mobileLink Discover "Discover"
-                          , mobileLink Pricing "Pricing"
-                          , mobileLink About "About"
-                          ]
-                      ]
-                  ]
+            [ nav
+            , mobileNav
             , HH.main
                 [ HP.classes [ T.mt16, T.smMt24 ] ]
                 [ HH.div
                     [ HP.classes [ T.mxAuto, T.maxW7xl ] ]
                     [ HH.div
                         [ HP.classes [ T.lgGrid, T.lgGridCols12, T.lgGap8 ] ]
-                        [ HH.div
-                            [ HP.classes
-                                [ T.px4
-                                , T.smPx6
-                                , T.smTextCenter
-                                , T.mdMaxW2xl
-                                , T.mdMxAuto
-                                , T.lgColSpan6
-                                , T.lgTextLeft
-                                , T.lgFlex
-                                , T.lgItemsCenter
-                                ]
-                            ]
-                            [ HH.div
-                                []
-                                [ HH.h1
-                                    [ HP.classes
-                                        [ T.mt4
-                                        , T.text4xl
-                                        , T.trackingTight
-                                        , T.fontExtrabold
-                                        , T.smMt5
-                                        , T.smLeadingNone
-                                        , T.lgMt6
-                                        , T.lgText5xl
-                                        , T.xlText6xl
-                                        ]
-                                    ]
-                                    [ HH.span
-                                        [ HP.classes [ T.textGray400, T.block ] ]
-                                        [ HH.text "Digital content" ]
-                                    , HH.span
-                                        [ HP.classes [ T.textKiwi, T.block ] ]
-                                        [ HH.text "consumption manager" ]
-                                    ]
-                                , HH.p
-                                    [ HP.classes
-                                        [ T.mt3
-                                        , T.textBase
-                                        , T.textGray400
-                                        , T.smMt5
-                                        , T.smTextXl
-                                        , T.lgTextLg
-                                        , T.xlTextXl
-                                        ]
-                                    ]
-                                    [ HH.text "Keep your reading and watching lists under control with Listas" ]
-                                ]
-                            ]
+                        [ heroText
                         , HH.div
                             [ HP.classes [ T.mt16, T.smMt24, T.lgMt0, T.lgColSpan6 ] ]
-                            [ case authStatus of
-                                ShowUser _ -> HH.text "Already logged in"
-                                ShowRegister ->
-                                  HH.div
-                                    [ HP.classes
-                                        [ T.bgWhite
-                                        , T.smMaxWMd
-                                        , T.smWFull
-                                        , T.smMxAuto
-                                        , T.smRoundedLg
-                                        , T.shadowLg
-                                        , T.smOverflowHidden
-                                        ]
-                                    ]
-                                    [ HH.div
-                                        [ HP.classes [ T.px4, T.py8, T.smPx10 ] ]
-                                        [ HH.slot (SProxy :: _ "register") unit Register.component unit (Just <<< GoToSignin) ]
-                                    , HH.div
-                                        [ HP.classes
-                                            [ T.px4
-                                            , T.py6
-                                            , T.bgWhite
-                                            , T.borderT2
-                                            , T.borderGray100
-                                            , T.smPx10
-                                            ]
-                                        ]
-                                        [ HH.p
-                                            [ HP.classes [ T.textXs, T.leading5, T.textGray500 ] ]
-                                            [ HH.text "By signing up, you agree to our "
-                                            , HH.a
-                                                [ HP.classes [ T.fontMedium, T.textGray900, T.hoverUnderline ]
-                                                , safeHref Terms
-                                                , HE.onClick $ onNavigate Terms
-                                                ]
-                                                [ HH.text "Terms" ]
-                                            , HH.text " and "
-                                            , HH.a
-                                                [ HP.classes [ T.fontMedium, T.textGray900, T.hoverUnderline ]
-                                                , safeHref Policy
-                                                , HE.onClick $ onNavigate Policy
-                                                ]
-                                                [ HH.text "Data Policy" ]
-                                            ]
-                                        ]
-                                    ]
-
-                                ShowLogin ->
-                                  HH.div
-                                    [ HP.classes
-                                        [ T.bgWhite
-                                        , T.smMaxWMd
-                                        , T.smWFull
-                                        , T.smMxAuto
-                                        , T.smRoundedLg
-                                        , T.shadowLg
-                                        , T.smOverflowHidden
-                                        ]
-                                    ]
-                                    [ HH.div
-                                        [ HP.classes [ T.px4, T.py8, T.smPx10 ] ]
-                                        [ HH.slot (SProxy :: _ "login") unit Login.component {redirect: true} (Just <<< GoToRegister) ]
-                                ]
+                            [ authBlock
                             ]
                         ]
                     ]
