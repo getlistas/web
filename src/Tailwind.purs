@@ -1467,10 +1467,6 @@ textGray700 = ClassName "text-gray-700"
 textGray900 :: ClassName
 textGray900 = ClassName "text-gray-900"
 
--- | textIndigo400
-textIndigo400 :: ClassName
-textIndigo400 = ClassName "text-indigo-400"
-
 -- | textKiwi
 textKiwi :: ClassName
 textKiwi = ClassName "text-kiwi"
@@ -1623,9 +1619,9 @@ xlGridCols4 = ClassName "xl:grid-cols-4"
 xlH56 :: ClassName
 xlH56 = ClassName "xl:h-56"
 
--- | xlItemsCenter
-xlItemsCenter :: ClassName
-xlItemsCenter = ClassName "xl:items-center"
+-- | xlItemsEnd
+xlItemsEnd :: ClassName
+xlItemsEnd = ClassName "xl:items-end"
 
 -- | xlJustifyBetween
 xlJustifyBetween :: ClassName
