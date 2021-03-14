@@ -21,7 +21,6 @@ import Listasio.Capability.Now (class Now, nowDateTime)
 import Listasio.Capability.Resource.Resource (class ManageResource, completeResource, deleteResource, getListResources)
 import Listasio.Component.HTML.ButtonGroupMenu as ButtonGroupMenu
 import Listasio.Component.HTML.Icons as Icons
-import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (cx, maybeElem, safeHref, whenElem)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
@@ -196,7 +195,7 @@ component = H.mkComponent
     shortUrl url =
       maybeElem (takeDomain url) \short ->
         HH.div
-          [ HP.classes [ T.textGray300, T.textSm, T.mb1, T.mr2, T.flex, T.itemsCenter ] ]
+          [ HP.classes [ T.textGray300, T.textSm, T.mb1, T.mr2, T.flex, T.itemsCenter, T.truncate ] ]
           [ HH.img [ HP.classes [ T.inlineBlock, T.w4, T.h4, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
           , HH.text short
           ]
@@ -258,69 +257,88 @@ component = H.mkComponent
           ]
           [ HH.text "Something went wrong" ]
 
+    nextLink {url} content =
+      HH.a
+        [ HP.href url
+        , HP.target "_blank"
+        , HP.rel "noreferrer noopener nofollow"
+        , HP.classes [ T.cursorPointer, T.flex ]
+        ]
+        [ content ]
+
+
     nextEl :: ListResource -> _
     nextEl next =
       HH.div
-        [ HP.classes [ T.px4, T.pb2, T.pt4, T.flex, T.flexCol, T.justifyBetween, T.h40 ] ]
-        [ HH.a
-            [ HP.href next.url
-            , HP.target "_blank"
-            , HP.rel "noreferrer noopener nofollow"
-            , HP.classes [ T.cursorPointer, T.flex ]
-            ]
-            [ HH.img [ HP.classes [ T.h20, T.w32, T.mr4, T.objectCover ], HP.src $ fromMaybe "https://via.placeholder.com/87" next.thumbnail ]
-            , HH.div
-                [ HP.classes [ T.overflowHidden ] ]
-                [ HH.div
-                    [ HP.classes [ T.textBase, T.textGray400, T.leadingRelaxed, T.truncate ] ]
-                    [ HH.text next.title ]
-                , maybeElem next.description \des ->
-                    HH.div [ HP.classes [ T.mt1, T.textSm, T.textGray400, T.lineClamp3 ] ] [ HH.text des ]
+        [ HP.classes [ T.px4, T.pb2, T.pt4, T.flex, T.h40 ] ]
+        [ nextLink next
+            $ HH.div
+                [ HP.classes [ T.h32, T.w32, T.mr4 ] ]
+                [ case next.thumbnail of
+                    Just url ->
+                      HH.img [ HP.classes [ T.hFull, T.wFull, T.objectCover, T.roundedLg ], HP.src url ]
+                    Nothing ->
+                      HH.div
+                        [ HP.classes
+                            [ T.wFull
+                            , T.hFull
+                            , T.flex
+                            , T.flexCol
+                            , T.justifyCenter
+                            , T.itemsCenter
+                            , T.textGray200
+                            , T.bgGray100
+                            , T.roundedLg
+                            , T.mr4
+                            ]
+                        ]
+                        [ Icons.photo [ Icons.classes [ T.h20, T.w20 ] ] ]
                 ]
-            ]
         , HH.div
-            [ HP.classes [ T.mt4, T.flex, T.justifyBetween, T.itemsStart ] ]
+            [ HP.classes [ T.flex, T.flexCol, T.justifyBetween, T.wFull ] ]
             [ HH.div
-                [ HP.classes [ T.flex, T.flexWrap, T.itemsCenter ] ]
-                [ shortUrl next.url
-                -- TODO: resource tags
-                , whenElem (not $ null list.tags) \_ ->
-                    HH.div [ HP.classes [ T.flex, T.flexWrap ] ] $ map Tag.tag list.tags
+                []
+                [ nextLink next $
+                    HH.div
+                      [ HP.classes [ T.textBase, T.textGray400, T.leadingRelaxed, T.lineClamp2 ] ]
+                      [ HH.text next.title ]
+                , nextLink next $
+                    HH.div [ HP.classes [ T.mt2 ] ] [ shortUrl next.url ]
                 ]
-            , ButtonGroupMenu.buttonGroupMenu
-                { mainAction: Just $ CompleteResource next
-                , label: HH.div
-                           [ HP.classes [ T.flex, T.itemsCenter ] ]
-                           [ Icons.check [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textKiwi ] ]
-                           , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Done" ]
-                           ]
-                , toggleMenu: Just ToggleShowNextMenu
-                , isOpen: showNextMenu
-                }
-                $ cons'
-                    { action: Just $ AndCloseNextMenu $ CopyResourceURL next
-                    , label: HH.div
-                               [ HP.classes [ T.flex, T.itemsCenter ] ]
-                               [ Icons.clipboardCopy [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
-                               , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy link" ]
-                               ]
+            , HH.div
+                [ HP.classes [ T.mt2, T.flex, T.justifyEnd ] ]
+                [ ButtonGroupMenu.buttonGroupMenu
+                    { mainAction: Just $ CompleteResource next
+                    , label: HH.text "Done"
+                    , toggleMenu: Just ToggleShowNextMenu
+                    , isOpen: showNextMenu
                     }
-                    [ { action: Just $ AndCloseNextMenu $ CopyToShare next
-                      , label: HH.div
-                                [ HP.classes [ T.flex, T.itemsCenter ] ]
-                                [ Icons.share [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
-                                , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy share link" ]
-                                ]
-                      }
-                    , { action: Just $ AndCloseNextMenu $ DeleteResource next
-                      , label: HH.div
-                                [ HP.classes [ T.flex, T.itemsCenter ] ]
-                                [ Icons.trash [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
-                                , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Remove" ]
-                                ]
-                      }
-                    ]
+                    $ cons'
+                        { action: Just $ AndCloseNextMenu $ CopyResourceURL next
+                        , label: HH.div
+                                  [ HP.classes [ T.flex, T.itemsCenter ] ]
+                                  [ Icons.clipboardCopy [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
+                                  , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy link" ]
+                                  ]
+                        }
+                        [ { action: Just $ AndCloseNextMenu $ CopyToShare next
+                          , label: HH.div
+                                    [ HP.classes [ T.flex, T.itemsCenter ] ]
+                                    [ Icons.share [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
+                                    , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy share link" ]
+                                    ]
+                          }
+                        , { action: Just $ AndCloseNextMenu $ DeleteResource next
+                          , label: HH.div
+                                    [ HP.classes [ T.flex, T.itemsCenter ] ]
+                                    [ Icons.trash [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
+                                    , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Remove" ]
+                                    ]
+                          }
+                        ]
+                ]
             ]
+
         ]
 
     header =

@@ -375,6 +375,10 @@ h16 = ClassName "h-16"
 h20 :: ClassName
 h20 = ClassName "h-20"
 
+-- | h32
+h32 :: ClassName
+h32 = ClassName "h-32"
+
 -- | h40
 h40 :: ClassName
 h40 = ClassName "h-40"
@@ -547,6 +551,10 @@ justifyBetween = ClassName "justify-between"
 justifyCenter :: ClassName
 justifyCenter = ClassName "justify-center"
 
+-- | justifyEnd
+justifyEnd :: ClassName
+justifyEnd = ClassName "justify-end"
+
 -- | leading5
 leading5 :: ClassName
 leading5 = ClassName "leading-5"
@@ -675,9 +683,9 @@ lgTextLg = ClassName "lg:text-lg"
 lgTranslateY20 :: ClassName
 lgTranslateY20 = ClassName "lg:translate-y-20"
 
--- | lineClamp3
-lineClamp3 :: ClassName
-lineClamp3 = ClassName "line-clamp-3"
+-- | lineClamp2
+lineClamp2 :: ClassName
+lineClamp2 = ClassName "line-clamp-2"
 
 -- | listResource
 listResource :: ClassName
