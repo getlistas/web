@@ -23,6 +23,7 @@ import Listasio.Component.HTML.Utils (safeHref, whenElem)
 import Listasio.Data.Lens (_menuOpen)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
+import Listasio.Data.Username as Username
 import Listasio.Env (UserEnv)
 import Tailwind as T
 import Web.Event.Event (Event)
@@ -254,6 +255,53 @@ component = Connect.component $ H.mkComponent
                 , desktopLink About "About"
                 ]
             ]
+          , case currentUser of
+              Nothing ->
+                HH.div
+                  [ HP.classes [ T.hidden, T.mdFlex ] ]
+                  [ HH.a
+                      [ HP.classes
+                          [ T.inlineFlex
+                          , T.itemsCenter
+                          , T.px4
+                          , T.py2
+                          , T.border
+                          , T.borderTransparent
+                          , T.textSm
+                          , T.fontMedium
+                          , T.roundedMd
+                          , T.textWhite
+                          , T.bgKiwi
+                          , T.hoverBgKiwiDark
+                          , T.focusRing2
+                          , T.focusRingKiwi
+                          , T.focusRingOffset2
+                          , T.focusOutlineNone
+                          ]
+                      , safeHref Login
+                      , HE.onClick $ onNavigate Login
+                      ]
+                      [ HH.text "Sign in" ]
+                  ]
+              Just {name} ->
+                HH.div
+                  [ HP.classes [ T.hidden, T.mdFlex ] ]
+                  [ HH.a
+                      [ HP.classes
+                          [ T.inlineFlex
+                          , T.itemsCenter
+                          , T.py1
+                          , T.fontBold
+                          , T.textGray300
+                          , T.borderB2
+                          , T.borderKiwi
+                          , T.hoverTextGray400
+                          ]
+                      , safeHref Dashboard
+                      , HE.onClick $ onNavigate Dashboard
+                      ]
+                      [ HH.text $ Username.toString name ]
+                  ]
         ]
 
     mobileNav =
@@ -316,8 +364,46 @@ component = Connect.component $ H.mkComponent
                   [ HP.classes [ T.px2, T.pt2, T.pb3, T.spaceY1 ] ]
                   [ mobileLink Discover "Discover"
                   , mobileLink Pricing "Pricing"
-                  , mobileLink About "About"
+                  , mobileLink About "About Us"
                   ]
+              , case currentUser of
+                  Nothing ->
+                    HH.a
+                      [ HP.classes
+                          [ T.block
+                          , T.wFull
+                          , T.px5
+                          , T.py3
+                          , T.textCenter
+                          , T.fontMedium
+                          , T.textKiwiDark
+                          , T.bgGray50
+                          , T.hoverBgGray100
+                          ]
+                      , safeHref Login
+                      , HE.onClick $ onNavigate Login
+                      ]
+                      [ HH.text "Sign in" ]
+                  Just {name} ->
+                    HH.a
+                      [ HP.classes
+                          [ T.block
+                          , T.wFull
+                          , T.px5
+                          , T.py3
+                          , T.textCenter
+                          , T.fontBold
+                          , T.textGray300
+                          , T.bgGray50
+                          , T.hoverBgGray100
+                          ]
+                      , safeHref Dashboard
+                      , HE.onClick $ onNavigate Dashboard
+                      ]
+                      [ HH.span
+                          [ HP.classes [ T.py1, T.borderB2, T.borderKiwi ] ]
+                          [ HH.text $ Username.toString name ]
+                      ]
               ]
           ]
 

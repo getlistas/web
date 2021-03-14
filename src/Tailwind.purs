@@ -479,6 +479,10 @@ hoverTextGray10 = ClassName "hover:text-gray-10"
 hoverTextGray300 :: ClassName
 hoverTextGray300 = ClassName "hover:text-gray-300"
 
+-- | hoverTextGray400
+hoverTextGray400 :: ClassName
+hoverTextGray400 = ClassName "hover:text-gray-400"
+
 -- | hoverTextGray700
 hoverTextGray700 :: ClassName
 hoverTextGray700 = ClassName "hover:text-gray-700"
@@ -1470,6 +1474,10 @@ textGray900 = ClassName "text-gray-900"
 -- | textKiwi
 textKiwi :: ClassName
 textKiwi = ClassName "text-kiwi"
+
+-- | textKiwiDark
+textKiwiDark :: ClassName
+textKiwiDark = ClassName "text-kiwi-dark"
 
 -- | textLeft
 textLeft :: ClassName
