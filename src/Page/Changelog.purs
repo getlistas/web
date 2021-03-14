@@ -13,7 +13,7 @@ import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
-import Listasio.Data.Route (Route(..))
+import Listasio.Data.Route (Route)
 import Listasio.Env (UserEnv)
 import Tailwind as T
 import Web.Event.Event (Event)

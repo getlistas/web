@@ -13,8 +13,8 @@ import Formless as F
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Listasio.Component.HTML.Input as Input
 import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Input as Input
 import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Form.Validation (errorToString)
 import Listasio.Form.Validation as V
@@ -38,12 +38,10 @@ submit buttonText disabled =
         , T.bgKiwi
         , T.textWhite
         , T.roundedMd
-        , T.shadowMd
-        , T.hoverBgOpacity75
+        , T.hoverBgKiwiDark
         , T.focusOutlineNone
         , T.focusRing2
         , T.focusRingOffset2
-        , T.focusRingOffsetGray10
         , T.focusRingKiwi
         ]
     , HP.disabled disabled

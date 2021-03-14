@@ -6,14 +6,18 @@ import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Lens (over)
 import Data.Maybe (Maybe(..))
+import Data.Symbol (SProxy(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Capability.Resource.User (class ManageUser)
 import Listasio.Component.HTML.Footer (footer)
 import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Login as Login
+import Listasio.Component.HTML.Register as Register
 import Listasio.Component.HTML.Utils (safeHref, whenElem)
 import Listasio.Data.Lens (_menuOpen)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
@@ -23,21 +27,37 @@ import Tailwind as T
 import Web.Event.Event (Event)
 import Web.UIEvent.MouseEvent as Mouse
 
+data Form
+  = ShowRegister
+  | ShowLogin
+  | ShowUser ProfileWithIdAndEmail
+
+derive instance eqForm :: Eq Form
+
+type ChildSlots
+  = ( register :: Register.Slot
+    , login :: Login.Slot
+    )
+
 data Action
   = Initialize
   | Receive { currentUser :: Maybe ProfileWithIdAndEmail }
   | Navigate Route Event
   | ToggleMenu
+  | GoToSignin Register.Output
+  | GoToRegister Login.Output
 
 type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
     , menuOpen :: Boolean
+    , authStatus :: Form
     }
 
 component
   :: forall q o m r
    . MonadAff m
   => MonadAsk { userEnv :: UserEnv | r } m
+  => ManageUser m
   => Navigate m
   => H.Component HH.HTML q {} o m
 component = Connect.component $ H.mkComponent
@@ -50,9 +70,13 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState {currentUser} = {currentUser, menuOpen: false}
+  initialState {currentUser} =
+    { currentUser
+    , menuOpen: false
+    , authStatus: ShowRegister
+    }
 
-  handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
+  handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
     Initialize -> pure unit
 
@@ -63,8 +87,18 @@ component = Connect.component $ H.mkComponent
 
     ToggleMenu -> H.modify_ $ over _menuOpen not
 
-  render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {currentUser, menuOpen} =
+    GoToSignin Register.GoToSignin -> do
+       {authStatus} <- H.get
+       when (authStatus == ShowRegister) do
+          H.modify_ _ { authStatus = ShowLogin }
+
+    GoToRegister Login.GoToRegister -> do
+       {authStatus} <- H.get
+       when (authStatus == ShowLogin) do
+          H.modify_ _ { authStatus = ShowRegister }
+
+  render :: State -> H.ComponentHTML Action ChildSlots m
+  render {currentUser, menuOpen, authStatus} =
     HH.div
       [ HP.classes [ T.bgWhite ] ]
       [ heroAndNav
@@ -118,27 +152,6 @@ component = Connect.component $ H.mkComponent
       HH.div
         [ HP.classes [ T.relative, T.bgGray10, T.overflowHidden ] ]
         [ HH.div
-            [ HP.classes [ T.hidden, T.smBlock, T.smAbsolute, T.smInset0 ] ]
-            [ Icons.mesh
-                [ Icons.classes
-                    [ T.absolute
-                    , T.bottom0
-                    , T.right0
-                    , T.transform
-                    , T.translateX1d2
-                    , T.mb48
-                    , T.textGray300
-                    , T.lgTop0
-                    , T.lgMt28
-                    , T.lgMb0
-                    , T.xlTransformNone
-                    , T.xlTranslateX0
-                    ]
-                , HP.attr (HH.AttrName "height") $ show 384
-                , HP.attr (HH.AttrName "width") $ show 364
-                ]
-            ]
-        , HH.div
             [ HP.classes [ T.relative, T.pt6, T.pb16, T.smPb24 ] ]
             [ HH.nav
                 [ HP.classes
@@ -312,195 +325,68 @@ component = Connect.component $ H.mkComponent
                             ]
                         , HH.div
                             [ HP.classes [ T.mt16, T.smMt24, T.lgMt0, T.lgColSpan6 ] ]
-                            [ HH.div
-                                [ HP.classes
-                                    [ T.bgWhite
-                                    , T.smMaxWMd
-                                    , T.smWFull
-                                    , T.smMxAuto
-                                    , T.smRoundedLg
-                                    , T.shadowLg
-                                    , T.smOverflowHidden
-                                    ]
-                                ]
-                                [ HH.div
-                                    [ HP.classes [ T.px4, T.py8, T.smPx10 ] ]
-                                    [ HH.div
-                                        []
-                                        [ HH.a
-                                            [ HP.classes
-                                                [ T.wFull
-                                                , T.inlineFlex
-                                                , T.justifyCenter
-                                                , T.py2
-                                                , T.px4
-                                                , T.border
-                                                , T.borderGray300
-                                                , T.roundedMd
-                                                , T.shadowSm
-                                                , T.bgWhite
-                                                , T.textSm
-                                                , T.fontMedium
-                                                , T.textGray500
-                                                , T.hoverBgGray50
-                                                ]
-                                            , HP.href "#"
-                                            ]
-                                            [ HH.span
-                                                [ HP.classes [ T.srOnly ] ]
-                                                [ HH.text "Sign in with Google" ]
-                                            , Icons.google [ Icons.classes [ T.w5, T.h5 ] ]
-                                            ]
-                                        ]
-                                    , HH.div
-                                        [ HP.classes [ T.mt6, T.relative ] ]
-                                        [ HH.div
-                                            [ HP.classes [ T.absolute, T.inset0, T.flex, T.itemsCenter ] ]
-                                            [ HH.div
-                                                [ HP.classes [ T.wFull, T.borderT, T.borderGray300 ] ]
-                                                []
-                                            ]
-                                        , HH.div
-                                            [ HP.classes [ T.relative, T.flex, T.justifyCenter, T.textSm ] ]
-                                            [ HH.span
-                                                [ HP.classes [ T.px2, T.bgWhite, T.textGray500 ] ]
-                                                [ HH.text "Or" ]
-                                            ]
-                                        ]
-                                    , HH.div
-                                        [ HP.classes [ T.mt6 ] ]
-                                        [ HH.form
-                                            [ HP.classes [ T.spaceY6 ] ]
-                                            [ HH.div
-                                                []
-                                                [ HH.label
-                                                    [ HP.classes [ T.srOnly ], HP.for "name" ]
-                                                    [ HH.text "Full name" ]
-                                                , HH.input
-                                                    [ HP.classes
-                                                        [ T.block
-                                                        , T.wFull
-                                                        , T.shadowSm
-                                                        , T.focusRingIndigo500
-                                                        , T.focusBorderIndigo500
-                                                        , T.smTextSm
-                                                        , T.borderGray300
-                                                        , T.roundedMd
-                                                        ]
-                                                    , HP.required true
-                                                    , HP.placeholder "Full name"
-                                                    , HP.autocomplete true
-                                                    , HP.id_ "name"
-                                                    , HP.name "name"
-                                                    , HP.type_ HP.InputText
-                                                    ]
-                                                ]
-                                            , HH.div
-                                                []
-                                                [ HH.label
-                                                    [ HP.classes [ T.srOnly ], HP.for "mobile-or-email" ]
-                                                    [ HH.text "Mobile number or email" ]
-                                                , HH.input
-                                                    [ HP.classes
-                                                        [ T.block
-                                                        , T.wFull
-                                                        , T.shadowSm
-                                                        , T.focusRingIndigo500
-                                                        , T.focusBorderIndigo500
-                                                        , T.smTextSm
-                                                        , T.borderGray300
-                                                        , T.roundedMd
-                                                        ]
-                                                    , HP.required true
-                                                    , HP.placeholder "Mobile number or email"
-                                                    , HP.autocomplete true
-                                                    , HP.id_ "mobile-or-email"
-                                                    , HP.name "mobile-or-email"
-                                                    , HP.type_ HP.InputText
-                                                    ]
-                                                ]
-                                            , HH.div
-                                                []
-                                                [ HH.label
-                                                    [ HP.classes [ T.srOnly ], HP.for "password" ]
-                                                    [ HH.text "Password" ]
-                                                , HH.input
-                                                    [ HP.classes
-                                                        [ T.block
-                                                        , T.wFull
-                                                        , T.shadowSm
-                                                        , T.focusRingIndigo500
-                                                        , T.focusBorderIndigo500
-                                                        , T.smTextSm
-                                                        , T.borderGray300
-                                                        , T.roundedMd
-                                                        ]
-                                                    , HP.required true
-                                                    , HP.autocomplete true
-                                                    , HP.placeholder "Password"
-                                                    , HP.type_ HP.InputPassword
-                                                    , HP.name "password"
-                                                    , HP.id_ "password"
-                                                    ]
-                                                ]
-                                            , HH.div
-                                                []
-                                                [ HH.button
-                                                    [ HP.classes
-                                                        [ T.wFull
-                                                        , T.flex
-                                                        , T.justifyCenter
-                                                        , T.py2
-                                                        , T.px4
-                                                        , T.border
-                                                        , T.borderTransparent
-                                                        , T.roundedMd
-                                                        , T.shadowSm
-                                                        , T.textSm
-                                                        , T.fontMedium
-                                                        , T.textWhite
-                                                        , T.bgKiwi
-                                                        , T.hoverBgKiwiDark
-                                                        , T.focusOutlineNone
-                                                        , T.focusRing2
-                                                        , T.focusRingOffset2
-                                                        , T.focusRingKiwi
-                                                        ]
-                                                    , HP.type_ HP.ButtonSubmit
-                                                    ]
-                                                    [ HH.text "Create your account" ]
-                                                ]
-                                            ]
-                                        ]
-                                    ]
-                                , HH.div
+                            [ case authStatus of
+                                ShowUser _ -> HH.text "Already logged in"
+                                ShowRegister ->
+                                  HH.div
                                     [ HP.classes
-                                        [ T.px4
-                                        , T.py6
-                                        , T.bgWhite
-                                        , T.borderT2
-                                        , T.borderGray100
-                                        , T.smPx10
+                                        [ T.bgWhite
+                                        , T.smMaxWMd
+                                        , T.smWFull
+                                        , T.smMxAuto
+                                        , T.smRoundedLg
+                                        , T.shadowLg
+                                        , T.smOverflowHidden
                                         ]
                                     ]
-                                    [ HH.p
-                                        [ HP.classes [ T.textXs, T.leading5, T.textGray500 ] ]
-                                        [ HH.text "By signing up, you agree to our "
-                                        , HH.a
-                                            [ HP.classes [ T.fontMedium, T.textGray900, T.hoverUnderline ]
-                                            , safeHref Terms
-                                            , HE.onClick $ onNavigate Terms
+                                    [ HH.div
+                                        [ HP.classes [ T.px4, T.py8, T.smPx10 ] ]
+                                        [ HH.slot (SProxy :: _ "register") unit Register.component unit (Just <<< GoToSignin) ]
+                                    , HH.div
+                                        [ HP.classes
+                                            [ T.px4
+                                            , T.py6
+                                            , T.bgWhite
+                                            , T.borderT2
+                                            , T.borderGray100
+                                            , T.smPx10
                                             ]
-                                            [ HH.text "Terms" ]
-                                        , HH.text " and "
-                                        , HH.a
-                                            [ HP.classes [ T.fontMedium, T.textGray900, T.hoverUnderline ]
-                                            , safeHref Policy
-                                            , HE.onClick $ onNavigate Policy
+                                        ]
+                                        [ HH.p
+                                            [ HP.classes [ T.textXs, T.leading5, T.textGray500 ] ]
+                                            [ HH.text "By signing up, you agree to our "
+                                            , HH.a
+                                                [ HP.classes [ T.fontMedium, T.textGray900, T.hoverUnderline ]
+                                                , safeHref Terms
+                                                , HE.onClick $ onNavigate Terms
+                                                ]
+                                                [ HH.text "Terms" ]
+                                            , HH.text " and "
+                                            , HH.a
+                                                [ HP.classes [ T.fontMedium, T.textGray900, T.hoverUnderline ]
+                                                , safeHref Policy
+                                                , HE.onClick $ onNavigate Policy
+                                                ]
+                                                [ HH.text "Data Policy" ]
                                             ]
-                                            [ HH.text "Data Policy" ]
                                         ]
                                     ]
+
+                                ShowLogin ->
+                                  HH.div
+                                    [ HP.classes
+                                        [ T.bgWhite
+                                        , T.smMaxWMd
+                                        , T.smWFull
+                                        , T.smMxAuto
+                                        , T.smRoundedLg
+                                        , T.shadowLg
+                                        , T.smOverflowHidden
+                                        ]
+                                    ]
+                                    [ HH.div
+                                        [ HP.classes [ T.px4, T.py8, T.smPx10 ] ]
+                                        [ HH.slot (SProxy :: _ "login") unit Login.component {redirect: true} (Just <<< GoToRegister) ]
                                 ]
                             ]
                         ]
