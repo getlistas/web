@@ -596,6 +596,12 @@ select{
   margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
 }
 
+.space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+}
+
 .space-y-4 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
@@ -606,6 +612,12 @@ select{
   --tw-space-x-reverse: 0;
   margin-right: calc(1rem * var(--tw-space-x-reverse));
   margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+.space-x-5 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(1.25rem * var(--tw-space-x-reverse));
+  margin-left: calc(1.25rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
 .space-y-6 > :not([hidden]) ~ :not([hidden]) {
@@ -707,6 +719,11 @@ select{
 .bg-indigo-600 {
   --tw-bg-opacity: 1;
   background-color: rgba(79, 70, 229, var(--tw-bg-opacity));
+}
+
+.bg-kiwi-light {
+  --tw-bg-opacity: 1;
+  background-color: rgba(193, 212, 211, var(--tw-bg-opacity));
 }
 
 .bg-kiwi {
@@ -2516,6 +2533,11 @@ select{
   padding-bottom: 2rem;
 }
 
+.py-10 {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
 .py-12 {
   padding-top: 3rem;
   padding-bottom: 3rem;
@@ -3761,6 +3783,12 @@ select{
 }
 
 @media (min-width: 640px) {
+  .sm\:space-y-0 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(0px * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(0px * var(--tw-space-y-reverse));
+  }
+
   .group:hover .sm\:group-hover\:bg-transparent {
     background-color: transparent;
   }
@@ -4811,6 +4839,10 @@ select{
     display: flex;
   }
 
+  .sm\:grid {
+    display: grid;
+  }
+
   .sm\:items-start {
     align-items: flex-start;
   }
@@ -5583,6 +5615,10 @@ select{
 
   .sm\:w-full {
     width: 100%;
+  }
+
+  .sm\:gap-6 {
+    gap: 1.5rem;
   }
 
   .sm\:grid-cols-2 {
@@ -9119,6 +9155,12 @@ select{
 }
 
 @media (min-width: 1280px) {
+  .xl\:space-y-10 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(2.5rem * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(2.5rem * var(--tw-space-y-reverse));
+  }
+
   .group:hover .xl\:group-hover\:bg-transparent {
     background-color: transparent;
   }
@@ -10145,6 +10187,22 @@ select{
     --tw-border-opacity: 1;
   }
 
+  .xl\:flex {
+    display: flex;
+  }
+
+  .xl\:items-end {
+    align-items: flex-end;
+  }
+
+  .xl\:justify-between {
+    justify-content: space-between;
+  }
+
+  .xl\:h-56 {
+    height: 14rem;
+  }
+
   .xl\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
@@ -10215,6 +10273,11 @@ select{
     opacity: 1;
   }
 
+  .xl\:px-10 {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+
   .xl\:py-20 {
     padding-top: 5rem;
     padding-bottom: 5rem;
@@ -10263,6 +10326,10 @@ select{
   .group:hover .xl\:group-hover\:shadow-none {
     --tw-shadow: 0 0 #0000;
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  }
+
+  .xl\:text-left {
+    text-align: left;
   }
 
   .group:hover .xl\:group-hover\:text-transparent {
@@ -10788,6 +10855,10 @@ select{
 
   .group:hover .xl\:group-hover\:no-underline {
     text-decoration: none;
+  }
+
+  .xl\:w-56 {
+    width: 14rem;
   }
 
   .xl\:grid-cols-4 {
