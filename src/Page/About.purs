@@ -135,7 +135,7 @@ component = Connect.component $ H.mkComponent
                     ]
                 ]
             , HH.div
-                [ HP.classes [ T.spaceY2, T.xlFlex, T.xlItemsCenter, T.xlJustifyBetween ] ]
+                [ HP.classes [ T.spaceY2, T.xlFlex, T.xlItemsEnd, T.xlJustifyBetween ] ]
                 [ HH.div
                     [ HP.classes [ T.fontMedium, T.textLg, T.leading6, T.spaceY1 ] ]
                     [ HH.h3
