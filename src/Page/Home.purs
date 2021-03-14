@@ -182,10 +182,10 @@ component = Connect.component $ H.mkComponent
                 ]
                 [ HH.span
                     [ HP.classes [ T.textGray400, T.block ] ]
-                    [ HH.text "Digital content" ]
+                    [ HH.text "Your reading lists" ]
                 , HH.span
                     [ HP.classes [ T.textKiwi, T.block ] ]
-                    [ HH.text "consumption manager" ]
+                    [ HH.text "Under control" ]
                 ]
             , HH.p
                 [ HP.classes
@@ -198,7 +198,7 @@ component = Connect.component $ H.mkComponent
                     , T.xlTextXl
                     ]
                 ]
-                [ HH.text "Keep your reading and watching lists under control with Listas" ]
+                [ HH.text "Manage your reading lists with Listas" ]
             ]
         ]
 
@@ -505,7 +505,7 @@ component = Connect.component $ H.mkComponent
             ]
             [ HH.h2
                 [ HP.classes [ T.textBase, T.fontSemibold, T.trackingWider, T.textDurazno, T.uppercase ] ]
-                [ HH.text "Control your reading list" ]
+                [ HH.text "Control your reading lists" ]
             , HH.p
                 [ HP.classes
                     [ T.mt2
@@ -516,7 +516,7 @@ component = Connect.component $ H.mkComponent
                     , T.smText4xl
                     ]
                 ]
-                [ HH.text "All you ever wanted to keep your reading list tiddy" ]
+                [ HH.text "All you ever wanted to keep your reading lists tiddy" ]
             , HH.p
                 [ HP.classes [ T.mt5, T.maxWProse, T.mxAuto, T.textXl, T.textGray500 ] ]
                 [ HH.text "Phasellus lorem quam molestie id quisque diam aenean nulla in. Accumsan in quis quis nunc, ullamcorper malesuada. Eleifend condimentum id viverra nulla." ]
@@ -531,7 +531,7 @@ component = Connect.component $ H.mkComponent
                         false
                     , feature
                         Icons.userGroup
-                        "Follow othr lists"
+                        "Follow other lists"
                         "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis."
                         false
                     , feature

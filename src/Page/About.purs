@@ -64,18 +64,9 @@ component = Connect.component $ H.mkComponent
               [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
               [ HH.text "About" ]
           , team
-              [ { avatar: "https://pbs.twimg.com/profile_images/1194743088373219330/10-3KEsy_400x400.jpg"
-                , name: "Hahuel"
-                , role: "Designer"
-                , icon: Icons.photo
-                , links:
-                    [ { icon: Icons.twitter, url: "https://twitter.com/DvNahuel" }
-                    , { icon: Icons.website, url: "https://dvnahuel.website/" }
-                    ]
-                }
-              , { avatar: "https://avatars.githubusercontent.com/u/6719053?s=460&u=67beac88e53b8a83a0327eb03d0554547f4373e6&v=4"
+              [ { avatar: "https://avatars.githubusercontent.com/u/6719053?s=460&u=67beac88e53b8a83a0327eb03d0554547f4373e6&v=4"
                 , name: "Nicolas"
-                , role: "Backend Developer"
+                , role: "Backend"
                 , icon: Icons.terminal
                 , links:
                     [ { icon: Icons.twitter, url: "https://twitter.com/delvallenicolas" }
@@ -84,12 +75,21 @@ component = Connect.component $ H.mkComponent
                 }
               , { avatar: "https://avatars.githubusercontent.com/u/8309423?s=460&u=0f306a70fdcc2359d21b4918efaabf617a396c91&v=4"
                 , name: "Christian"
-                , role: "Frontend Developer"
+                , role: "Frontend"
                 , icon: Icons.code
                 , links:
                     [ { icon: Icons.twitter, url: "https://twitter.com/gillchristian" }
                     , { icon: Icons.github, url: "https://github.com/gillchristian" }
                     , { icon: Icons.website, url: "https://gillchristian.xyz" }
+                    ]
+                }
+              , { avatar: "https://pbs.twimg.com/profile_images/1194743088373219330/10-3KEsy_400x400.jpg"
+                , name: "Hahuel"
+                , role: "Design"
+                , icon: Icons.photo
+                , links:
+                    [ { icon: Icons.twitter, url: "https://twitter.com/DvNahuel" }
+                    , { icon: Icons.website, url: "https://dvnahuel.website/" }
                     ]
                 }
               ]
