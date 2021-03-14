@@ -15,7 +15,9 @@ module.exports = {
           10: "#FAF9F9",
         },
         kiwi: {
+          light: '#C1D4D3',
           DEFAULT: "#89B0AE",
+          dark: '#749593'
         },
         durazno: {
           light: "#F8D7BE",
@@ -45,5 +47,6 @@ module.exports = {
     require("@tailwindcss/forms"),
     require("@tailwindcss/line-clamp"),
     require("tailwind-scrollbar"),
+    require('@tailwindcss/aspect-ratio'),
   ],
 };

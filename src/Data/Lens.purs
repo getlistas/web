@@ -40,6 +40,9 @@ _list = prop (SProxy :: SProxy "list")
 _markingAsDone :: forall a r. Lens' { markingAsDone :: a | r } a
 _markingAsDone = prop (SProxy :: SProxy "markingAsDone")
 
+_menuOpen :: forall a r. Lens' { menuOpen :: a | r } a
+_menuOpen = prop (SProxy :: SProxy "menuOpen")
+
 _name :: forall a r. Lens' { name :: a | r } a
 _name = prop (SProxy :: SProxy "name")
 
