@@ -17,6 +17,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, discoverLists, forkList, getLists)
+import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (maybeElem, whenElem)
@@ -58,7 +59,7 @@ noteError :: forall a. Maybe a -> Either String a
 noteError = note "Could not fetch top lists"
 
 perPage :: Int
-perPage = 10
+perPage = 25
 
 limit :: Maybe Int
 limit = Just perPage
@@ -159,9 +160,27 @@ component = Connect.component $ H.mkComponent
           [ HH.h1
               [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
               [ HH.text "Discover" ]
+          , wip
           , feed
           ]
     where
+    wip =
+      HH.div
+        [ HP.classes [ T.p2, T.roundedLg, T.bgDurazno, T.smP3, T.mb8 ] ]
+        [ HH.div
+            [ HP.classes [ T.flex, T.itemsCenter ] ]
+            [ HH.span
+                [ HP.classes [ T.flex, T.p2, T.roundedLg, T.bgManzana ] ]
+                [ Icons.code
+                    [ Icons.classes [ T.h6, T.w6, T.textWhite ] ]
+                ]
+            , HH.p
+                [ HP.classes [ T.ml3, T.fontMedium, T.textWhite ] ]
+                [ HH.text "Work in progress"
+                ]
+            ]
+        ]
+
     feed = case lists of
       Success { refreshing, items } ->
         HH.div
@@ -181,12 +200,12 @@ component = Connect.component $ H.mkComponent
           , HH.p_ [ HH.text msg ]
           ]
 
-      _ -> HH.div [ HP.classes [ T.textCenter ] ] [ HH.text "Loading ..." ]
+      _ -> HH.div [ HP.classes [ T.pt4, T.textCenter ] ] [ HH.text "Loading ..." ]
 
     listInfo :: ListWithIdAndUser -> H.ComponentHTML Action slots m
     listInfo list@{ title, description, tags, author } =
       HH.div
-        [ HP.classes [ T.m4, T.p2, T.border2, T.borderKiwi, T.roundedMd ] ]
+        [ HP.classes [ T.p2, T.border2, T.borderKiwi, T.roundedMd ] ]
         [ HH.div [ HP.classes [ T.textLg, T.borderB2, T.borderGray200, T.mb4 ] ] [ HH.text title ]
         , maybeElem description \des -> HH.div [ HP.classes [ T.textSm, T.mb4 ] ] [ HH.text des ]
         , whenElem (not $ null tags) \_ ->
@@ -194,7 +213,10 @@ component = Connect.component $ H.mkComponent
               [ HP.classes [ T.flex, T.textSm ] ]
               $ map Tag.tag tags
         , whenElem (author /= You) \_ ->
-            button "Copy this list" (Just $ ForkList list) $ isForkingThisList list state
+            HH.div
+              [ HP.classes [ T.mt4 ] ]
+              [ button "Copy list" (Just $ ForkList list) $ isForkingThisList list state
+              ]
         ]
 
 button :: forall i p. String -> Maybe p -> Boolean -> HH.HTML i p
@@ -205,13 +227,16 @@ button text action disabled =
         [ T.cursorPointer
         , T.py2
         , T.px4
-        , T.bgPink300
+        , T.bgKiwi
         , T.textWhite
         , T.fontSemibold
+        , T.textSm
         , T.roundedLg
-        , T.shadowMd
-        , T.hoverBgPink700
+        , T.hoverBgKiwiDark
         , T.focusOutlineNone
+        , T.focusRing2
+        , T.focusRingOffset2
+        , T.focusRingKiwiDark
         , T.disabledCursorNotAllowed
         , T.disabledOpacity50
         ]

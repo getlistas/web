@@ -5,15 +5,16 @@ import Prelude
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Maybe (Maybe(..))
-import Listasio.Capability.Navigate (class Navigate, navigate_)
-import Listasio.Component.HTML.Header (header)
-import Listasio.Data.Profile (ProfileWithIdAndEmail)
-import Listasio.Data.Route (Route)
-import Listasio.Env (UserEnv)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
+import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Layout as Layout
+import Listasio.Data.Profile (ProfileWithIdAndEmail)
+import Listasio.Data.Route (Route)
+import Listasio.Env (UserEnv)
 import Tailwind as T
 import Web.Event.Event (Event)
 
@@ -53,10 +54,33 @@ component = Connect.component $ H.mkComponent
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render { currentUser } =
-    HH.div
-      [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-      [ header currentUser Navigate Nothing
-      , HH.div
-          [ HP.classes [ T.container, T.textCenter, T.mt10 ] ]
-          [ HH.text "profile" ]
-      ]
+    Layout.dashboard
+      currentUser
+      Navigate
+      Nothing
+      $ HH.div
+          []
+          [ HH.h1
+              [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
+              [ HH.text "User Profile" ]
+          , wip
+          ]
+    where
+    wip =
+      HH.div
+        [ HP.classes [ T.p2, T.roundedLg, T.bgDurazno, T.smP3, T.mb8 ] ]
+        [ HH.div
+            [ HP.classes [ T.flex, T.itemsCenter ] ]
+            [ HH.span
+                [ HP.classes [ T.flex, T.p2, T.roundedLg, T.bgManzana ] ]
+                [ Icons.code
+                    [ Icons.classes [ T.h6, T.w6, T.textWhite ] ]
+                ]
+            , HH.p
+                [ HP.classes [ T.ml3, T.fontMedium, T.textWhite ] ]
+                [ HH.text "Work in progress"
+                ]
+            ]
+        ]
+
+

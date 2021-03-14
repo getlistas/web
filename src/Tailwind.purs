@@ -35,10 +35,6 @@ bgDurazno = ClassName "bg-durazno"
 bgDuraznoLight :: ClassName
 bgDuraznoLight = ClassName "bg-durazno-light"
 
--- | bgGradientToT
-bgGradientToT :: ClassName
-bgGradientToT = ClassName "bg-gradient-to-t"
-
 -- | bgGray100
 bgGray100 :: ClassName
 bgGray100 = ClassName "bg-gray-100"
@@ -59,17 +55,9 @@ bgGray300 = ClassName "bg-gray-300"
 bgGray50 :: ClassName
 bgGray50 = ClassName "bg-gray-50"
 
--- | bgGray600
-bgGray600 :: ClassName
-bgGray600 = ClassName "bg-gray-600"
-
 -- | bgGray800
 bgGray800 :: ClassName
 bgGray800 = ClassName "bg-gray-800"
-
--- | bgGray900
-bgGray900 :: ClassName
-bgGray900 = ClassName "bg-gray-900"
 
 -- | bgIndigo600
 bgIndigo600 :: ClassName
@@ -86,10 +74,6 @@ bgKiwiDark = ClassName "bg-kiwi-dark"
 -- | bgManzana
 bgManzana :: ClassName
 bgManzana = ClassName "bg-manzana"
-
--- | bgPink300
-bgPink300 :: ClassName
-bgPink300 = ClassName "bg-pink-300"
 
 -- | bgRed100
 bgRed100 :: ClassName
@@ -183,10 +167,6 @@ bottom0 = ClassName "bottom-0"
 checkedBgKiwi :: ClassName
 checkedBgKiwi = ClassName "checked:bg-kiwi"
 
--- | colSpan1
-colSpan1 :: ClassName
-colSpan1 = ClassName "col-span-1"
-
 -- | colSpan2
 colSpan2 :: ClassName
 colSpan2 = ClassName "col-span-2"
@@ -223,10 +203,6 @@ disabledCursorNotAllowed = ClassName "disabled:cursor-not-allowed"
 disabledOpacity50 :: ClassName
 disabledOpacity50 = ClassName "disabled:opacity-50"
 
--- | divideGray300
-divideGray300 :: ClassName
-divideGray300 = ClassName "divide-gray-300"
-
 -- | divideWhite
 divideWhite :: ClassName
 divideWhite = ClassName "divide-white"
@@ -234,10 +210,6 @@ divideWhite = ClassName "divide-white"
 -- | divideX2
 divideX2 :: ClassName
 divideX2 = ClassName "divide-x-2"
-
--- | divideX
-divideX :: ClassName
-divideX = ClassName "divide-x"
 
 -- | fixed
 fixed :: ClassName
@@ -271,10 +243,6 @@ flexWrap = ClassName "flex-wrap"
 flowRoot :: ClassName
 flowRoot = ClassName "flow-root"
 
--- | focusBorderDurazno
-focusBorderDurazno :: ClassName
-focusBorderDurazno = ClassName "focus:border-durazno"
-
 -- | focusBorderIndigo500
 focusBorderIndigo500 :: ClassName
 focusBorderIndigo500 = ClassName "focus:border-indigo-500"
@@ -287,10 +255,6 @@ focusBorderKiwi = ClassName "focus:border-kiwi"
 focusBorderManzana :: ClassName
 focusBorderManzana = ClassName "focus:border-manzana"
 
--- | focusBorderTransparent
-focusBorderTransparent :: ClassName
-focusBorderTransparent = ClassName "focus:border-transparent"
-
 -- | focusOutlineNone
 focusOutlineNone :: ClassName
 focusOutlineNone = ClassName "focus:outline-none"
@@ -302,10 +266,6 @@ focusRing1 = ClassName "focus:ring-1"
 -- | focusRing2
 focusRing2 :: ClassName
 focusRing2 = ClassName "focus:ring-2"
-
--- | focusRingDurazno
-focusRingDurazno :: ClassName
-focusRingDurazno = ClassName "focus:ring-durazno"
 
 -- | focusRingGray300
 focusRingGray300 :: ClassName
@@ -323,6 +283,10 @@ focusRingInset = ClassName "focus:ring-inset"
 focusRingKiwi :: ClassName
 focusRingKiwi = ClassName "focus:ring-kiwi"
 
+-- | focusRingKiwiDark
+focusRingKiwiDark :: ClassName
+focusRingKiwiDark = ClassName "focus:ring-kiwi-dark"
+
 -- | focusRingManzana
 focusRingManzana :: ClassName
 focusRingManzana = ClassName "focus:ring-manzana"
@@ -330,10 +294,6 @@ focusRingManzana = ClassName "focus:ring-manzana"
 -- | focusRingOffset2
 focusRingOffset2 :: ClassName
 focusRingOffset2 = ClassName "focus:ring-offset-2"
-
--- | focusRingOffsetDurazno
-focusRingOffsetDurazno :: ClassName
-focusRingOffsetDurazno = ClassName "focus:ring-offset-durazno"
 
 -- | focusRingOffsetGray10
 focusRingOffsetGray10 :: ClassName
@@ -371,14 +331,6 @@ fontNormal = ClassName "font-normal"
 fontSemibold :: ClassName
 fontSemibold = ClassName "font-semibold"
 
--- | fromDuraznoLight
-fromDuraznoLight :: ClassName
-fromDuraznoLight = ClassName "from-durazno-light"
-
--- | gap0p5
-gap0p5 :: ClassName
-gap0p5 = ClassName "gap-0.5"
-
 -- | gap4
 gap4 :: ClassName
 gap4 = ClassName "gap-4"
@@ -386,14 +338,6 @@ gap4 = ClassName "gap-4"
 -- | gap8
 gap8 :: ClassName
 gap8 = ClassName "gap-8"
-
--- | gapX4
-gapX4 :: ClassName
-gapX4 = ClassName "gap-x-4"
-
--- | gapY8
-gapY8 :: ClassName
-gapY8 = ClassName "gap-y-8"
 
 -- | grid
 grid :: ClassName
@@ -426,14 +370,6 @@ h0 = ClassName "h-0"
 -- | h10
 h10 :: ClassName
 h10 = ClassName "h-10"
-
--- | h11
-h11 :: ClassName
-h11 = ClassName "h-11"
-
--- | h12
-h12 :: ClassName
-h12 = ClassName "h-12"
 
 -- | h16
 h16 :: ClassName
@@ -479,10 +415,6 @@ hFull = ClassName "h-full"
 hidden :: ClassName
 hidden = ClassName "hidden"
 
--- | hoverBgBlack
-hoverBgBlack :: ClassName
-hoverBgBlack = ClassName "hover:bg-black"
-
 -- | hoverBgDurazno
 hoverBgDurazno :: ClassName
 hoverBgDurazno = ClassName "hover:bg-durazno"
@@ -495,10 +427,6 @@ hoverBgGray100 = ClassName "hover:bg-gray-100"
 hoverBgGray50 :: ClassName
 hoverBgGray50 = ClassName "hover:bg-gray-50"
 
--- | hoverBgGray700
-hoverBgGray700 :: ClassName
-hoverBgGray700 = ClassName "hover:bg-gray-700"
-
 -- | hoverBgKiwi
 hoverBgKiwi :: ClassName
 hoverBgKiwi = ClassName "hover:bg-kiwi"
@@ -510,10 +438,6 @@ hoverBgKiwiDark = ClassName "hover:bg-kiwi-dark"
 -- | hoverBgOpacity75
 hoverBgOpacity75 :: ClassName
 hoverBgOpacity75 = ClassName "hover:bg-opacity-75"
-
--- | hoverBgPink700
-hoverBgPink700 :: ClassName
-hoverBgPink700 = ClassName "hover:bg-pink-700"
 
 -- | hoverBgRed200
 hoverBgRed200 :: ClassName
@@ -631,10 +555,6 @@ leading5 = ClassName "leading-5"
 leading6 :: ClassName
 leading6 = ClassName "leading-6"
 
--- | leading7
-leading7 :: ClassName
-leading7 = ClassName "leading-7"
-
 -- | leadingNone
 leadingNone :: ClassName
 leadingNone = ClassName "leading-none"
@@ -651,14 +571,6 @@ leadingRelaxed = ClassName "leading-relaxed"
 left0 :: ClassName
 left0 = ClassName "left-0"
 
--- | left1d2
-left1d2 :: ClassName
-left1d2 = ClassName "left-1/2"
-
--- | lgAbsolute
-lgAbsolute :: ClassName
-lgAbsolute = ClassName "lg:absolute"
-
 -- | lgColSpan3
 lgColSpan3 :: ClassName
 lgColSpan3 = ClassName "lg:col-span-3"
@@ -674,10 +586,6 @@ lgColSpan9 = ClassName "lg:col-span-9"
 -- | lgFlex
 lgFlex :: ClassName
 lgFlex = ClassName "lg:flex"
-
--- | lgGap24
-lgGap24 :: ClassName
-lgGap24 = ClassName "lg:gap-24"
 
 -- | lgGap4
 lgGap4 :: ClassName
@@ -707,33 +615,13 @@ lgGridCols2 = ClassName "lg:grid-cols-2"
 lgGridCols3 :: ClassName
 lgGridCols3 = ClassName "lg:grid-cols-3"
 
--- | lgHFull
-lgHFull :: ClassName
-lgHFull = ClassName "lg:h-full"
-
--- | lgInsetY0
-lgInsetY0 :: ClassName
-lgInsetY0 = ClassName "lg:inset-y-0"
-
 -- | lgItemsCenter
 lgItemsCenter :: ClassName
 lgItemsCenter = ClassName "lg:items-center"
 
--- | lgItemsStart
-lgItemsStart :: ClassName
-lgItemsStart = ClassName "lg:items-start"
-
--- | lgLeft80
-lgLeft80 :: ClassName
-lgLeft80 = ClassName "lg:left-80"
-
 -- | lgMaxW7xl
 lgMaxW7xl :: ClassName
 lgMaxW7xl = ClassName "lg:max-w-7xl"
-
--- | lgMaxWNone
-lgMaxWNone :: ClassName
-lgMaxWNone = ClassName "lg:max-w-none"
 
 -- | lgMb0
 lgMb0 :: ClassName
@@ -751,21 +639,9 @@ lgMt28 = ClassName "lg:mt-28"
 lgMt6 :: ClassName
 lgMt6 = ClassName "lg:mt-6"
 
--- | lgMxAuto
-lgMxAuto :: ClassName
-lgMxAuto = ClassName "lg:mx-auto"
-
--- | lgPl12
-lgPl12 :: ClassName
-lgPl12 = ClassName "lg:pl-12"
-
 -- | lgPr0
 lgPr0 :: ClassName
 lgPr0 = ClassName "lg:pr-0"
-
--- | lgPt20
-lgPt20 :: ClassName
-lgPt20 = ClassName "lg:pt-20"
 
 -- | lgPx0
 lgPx0 :: ClassName
@@ -783,29 +659,9 @@ lgPy0 = ClassName "lg:py-0"
 lgPy16 :: ClassName
 lgPy16 = ClassName "lg:py-16"
 
--- | lgPy20
-lgPy20 :: ClassName
-lgPy20 = ClassName "lg:py-20"
-
 -- | lgPy32
 lgPy32 :: ClassName
 lgPy32 = ClassName "lg:py-32"
-
--- | lgPy48
-lgPy48 :: ClassName
-lgPy48 = ClassName "lg:py-48"
-
--- | lgRelative
-lgRelative :: ClassName
-lgRelative = ClassName "lg:relative"
-
--- | lgRight0
-lgRight0 :: ClassName
-lgRight0 = ClassName "lg:right-0"
-
--- | lgRight72
-lgRight72 :: ClassName
-lgRight72 = ClassName "lg:right-72"
 
 -- | lgSelfCenter
 lgSelfCenter :: ClassName
@@ -831,22 +687,6 @@ lgTop0 = ClassName "lg:top-0"
 lgTranslateY20 :: ClassName
 lgTranslateY20 = ClassName "lg:translate-y-20"
 
--- | lgW1d2
-lgW1d2 :: ClassName
-lgW1d2 = ClassName "lg:w-1/2"
-
--- | lgWAuto
-lgWAuto :: ClassName
-lgWAuto = ClassName "lg:w-auto"
-
--- | lgWFull
-lgWFull :: ClassName
-lgWFull = ClassName "lg:w-full"
-
--- | lgWScreen
-lgWScreen :: ClassName
-lgWScreen = ClassName "lg:w-screen"
-
 -- | lineClamp3
 lineClamp3 :: ClassName
 lineClamp3 = ClassName "line-clamp-3"
@@ -863,25 +703,9 @@ listResourceSettings = ClassName "list-resource-settings"
 m1 :: ClassName
 m1 = ClassName "m-1"
 
--- | m4
-m4 :: ClassName
-m4 = ClassName "m-4"
-
--- | maxH12
-maxH12 :: ClassName
-maxH12 = ClassName "max-h-12"
-
 -- | maxH44
 maxH44 :: ClassName
 maxH44 = ClassName "max-h-44"
-
--- | maxW2xl
-maxW2xl :: ClassName
-maxW2xl = ClassName "max-w-2xl"
-
--- | maxW3xl
-maxW3xl :: ClassName
-maxW3xl = ClassName "max-w-3xl"
 
 -- | maxW7xl
 maxW7xl :: ClassName
@@ -947,17 +771,9 @@ mdAspectW2 = ClassName "md:aspect-w-2"
 mdFlex :: ClassName
 mdFlex = ClassName "md:flex"
 
--- | mdFlexGrow
-mdFlexGrow :: ClassName
-mdFlexGrow = ClassName "md:flex-grow"
-
 -- | mdGridCols2
 mdGridCols2 :: ClassName
 mdGridCols2 = ClassName "md:grid-cols-2"
-
--- | mdGridCols3
-mdGridCols3 :: ClassName
-mdGridCols3 = ClassName "md:grid-cols-3"
 
 -- | mdHFull
 mdHFull :: ClassName
@@ -1003,13 +819,13 @@ mdWAuto = ClassName "md:w-auto"
 minHScreen :: ClassName
 minHScreen = ClassName "min-h-screen"
 
--- | minW0
-minW0 :: ClassName
-minW0 = ClassName "min-w-0"
-
 -- | ml2
 ml2 :: ClassName
 ml2 = ClassName "ml-2"
+
+-- | ml3
+ml3 :: ClassName
+ml3 = ClassName "ml-3"
 
 -- | ml4
 ml4 :: ClassName
@@ -1055,10 +871,6 @@ mt16 = ClassName "mt-16"
 mt1 :: ClassName
 mt1 = ClassName "mt-1"
 
--- | mt20
-mt20 :: ClassName
-mt20 = ClassName "mt-20"
-
 -- | mt24
 mt24 :: ClassName
 mt24 = ClassName "mt-24"
@@ -1066,10 +878,6 @@ mt24 = ClassName "mt-24"
 -- | mt2
 mt2 :: ClassName
 mt2 = ClassName "mt-2"
-
--- | mt32
-mt32 :: ClassName
-mt32 = ClassName "mt-32"
 
 -- | mt3
 mt3 :: ClassName
@@ -1127,10 +935,6 @@ negMr1 = ClassName "-mr-1"
 negMr2 :: ClassName
 negMr2 = ClassName "-mr-2"
 
--- | negMr40
-negMr40 :: ClassName
-negMr40 = ClassName "-mr-40"
-
 -- | negMt6
 negMt6 :: ClassName
 negMt6 = ClassName "-mt-6"
@@ -1154,10 +958,6 @@ objectLeftTop = ClassName "object-left-top"
 -- | opacity50
 opacity50 :: ClassName
 opacity50 = ClassName "opacity-50"
-
--- | opacity90
-opacity90 :: ClassName
-opacity90 = ClassName "opacity-90"
 
 -- | originTopRight
 originTopRight :: ClassName
@@ -1186,10 +986,6 @@ p4 = ClassName "p-4"
 -- | p8
 p8 :: ClassName
 p8 = ClassName "p-8"
-
--- | pb10
-pb10 :: ClassName
-pb10 = ClassName "pb-10"
 
 -- | pb12
 pb12 :: ClassName
@@ -1227,21 +1023,9 @@ pl10 = ClassName "pl-10"
 pl3 :: ClassName
 pl3 = ClassName "pl-3"
 
--- | pl4
-pl4 :: ClassName
-pl4 = ClassName "pl-4"
-
--- | pl5
-pl5 :: ClassName
-pl5 = ClassName "pl-5"
-
 -- | placeholderGray400
 placeholderGray400 :: ClassName
 placeholderGray400 = ClassName "placeholder-gray-400"
-
--- | placeholderGray500
-placeholderGray500 :: ClassName
-placeholderGray500 = ClassName "placeholder-gray-500"
 
 -- | placeholderRed300
 placeholderRed300 :: ClassName
@@ -1263,17 +1047,9 @@ pr3 = ClassName "pr-3"
 pr4 :: ClassName
 pr4 = ClassName "pr-4"
 
--- | pr5
-pr5 :: ClassName
-pr5 = ClassName "pr-5"
-
 -- | pt10
 pt10 :: ClassName
 pt10 = ClassName "pt-10"
-
--- | pt12
-pt12 :: ClassName
-pt12 = ClassName "pt-12"
 
 -- | pt1
 pt1 :: ClassName
@@ -1291,25 +1067,13 @@ pt4 = ClassName "pt-4"
 pt5 :: ClassName
 pt5 = ClassName "pt-5"
 
--- | pt64
-pt64 :: ClassName
-pt64 = ClassName "pt-64"
-
 -- | pt6
 pt6 :: ClassName
 pt6 = ClassName "pt-6"
 
--- | pt8
-pt8 :: ClassName
-pt8 = ClassName "pt-8"
-
 -- | px2
 px2 :: ClassName
 px2 = ClassName "px-2"
-
--- | px2p5
-px2p5 :: ClassName
-px2p5 = ClassName "px-2.5"
 
 -- | px3
 px3 :: ClassName
@@ -1326,14 +1090,6 @@ px5 = ClassName "px-5"
 -- | px6
 px6 :: ClassName
 px6 = ClassName "px-6"
-
--- | px8
-px8 :: ClassName
-px8 = ClassName "px-8"
-
--- | py10
-py10 :: ClassName
-py10 = ClassName "py-10"
 
 -- | py12
 py12 :: ClassName
@@ -1379,10 +1135,6 @@ relative = ClassName "relative"
 right0 :: ClassName
 right0 = ClassName "right-0"
 
--- | right1d2
-right1d2 :: ClassName
-right1d2 = ClassName "right-1/2"
-
 -- | ring1
 ring1 :: ClassName
 ring1 = ClassName "ring-1"
@@ -1395,21 +1147,9 @@ ringBlack = ClassName "ring-black"
 ringOpacity5 :: ClassName
 ringOpacity5 = ClassName "ring-opacity-5"
 
--- | rounded2xl
-rounded2xl :: ClassName
-rounded2xl = ClassName "rounded-2xl"
-
--- | rounded
-rounded :: ClassName
-rounded = ClassName "rounded"
-
 -- | roundedFull
 roundedFull :: ClassName
 roundedFull = ClassName "rounded-full"
-
--- | roundedL3xl
-roundedL3xl :: ClassName
-roundedL3xl = ClassName "rounded-l-3xl"
 
 -- | roundedLMd
 roundedLMd :: ClassName
@@ -1422,10 +1162,6 @@ roundedLg = ClassName "rounded-lg"
 -- | roundedMd
 roundedMd :: ClassName
 roundedMd = ClassName "rounded-md"
-
--- | roundedR3xl
-roundedR3xl :: ClassName
-roundedR3xl = ClassName "rounded-r-3xl"
 
 -- | roundedRMd
 roundedRMd :: ClassName
@@ -1543,14 +1279,6 @@ smMaxWLg = ClassName "sm:max-w-lg"
 smMaxWMd :: ClassName
 smMaxWMd = ClassName "sm:max-w-md"
 
--- | smMaxWXl
-smMaxWXl :: ClassName
-smMaxWXl = ClassName "sm:max-w-xl"
-
--- | smMl3
-smMl3 :: ClassName
-smMl3 = ClassName "sm:ml-3"
-
 -- | smMl4
 smMl4 :: ClassName
 smMl4 = ClassName "sm:ml-4"
@@ -1570,10 +1298,6 @@ smMt12 = ClassName "sm:mt-12"
 -- | smMt24
 smMt24 :: ClassName
 smMt24 = ClassName "sm:mt-24"
-
--- | smMt32
-smMt32 :: ClassName
-smMt32 = ClassName "sm:mt-32"
 
 -- | smMt5
 smMt5 :: ClassName
@@ -1595,6 +1319,10 @@ smOverflowHidden = ClassName "sm:overflow-hidden"
 smP0 :: ClassName
 smP0 = ClassName "sm:p-0"
 
+-- | smP3
+smP3 :: ClassName
+smP3 = ClassName "sm:p-3"
+
 -- | smP6
 smP6 :: ClassName
 smP6 = ClassName "sm:p-6"
@@ -1603,25 +1331,13 @@ smP6 = ClassName "sm:p-6"
 smPb24 :: ClassName
 smPb24 = ClassName "sm:pb-24"
 
--- | smPt12
-smPt12 :: ClassName
-smPt12 = ClassName "sm:pt-12"
-
 -- | smPt16
 smPt16 :: ClassName
 smPt16 = ClassName "sm:pt-16"
 
--- | smPx0
-smPx0 :: ClassName
-smPx0 = ClassName "sm:px-0"
-
 -- | smPx10
 smPx10 :: ClassName
 smPx10 = ClassName "sm:px-10"
-
--- | smPx12
-smPx12 :: ClassName
-smPx12 = ClassName "sm:px-12"
 
 -- | smPx16
 smPx16 :: ClassName
@@ -1631,25 +1347,9 @@ smPx16 = ClassName "sm:px-16"
 smPx6 :: ClassName
 smPx6 = ClassName "sm:px-6"
 
--- | smPy16
-smPy16 :: ClassName
-smPy16 = ClassName "sm:py-16"
-
--- | smPy20
-smPy20 :: ClassName
-smPy20 = ClassName "sm:py-20"
-
 -- | smPy24
 smPy24 :: ClassName
 smPy24 = ClassName "sm:py-24"
-
--- | smPy3
-smPy3 :: ClassName
-smPy3 = ClassName "sm:py-3"
-
--- | smRelative
-smRelative :: ClassName
-smRelative = ClassName "sm:relative"
 
 -- | smRoundedLg
 smRoundedLg :: ClassName
@@ -1662,10 +1362,6 @@ smRoundedMd = ClassName "sm:rounded-md"
 -- | smText4xl
 smText4xl :: ClassName
 smText4xl = ClassName "sm:text-4xl"
-
--- | smText5xl
-smText5xl :: ClassName
-smText5xl = ClassName "sm:text-5xl"
 
 -- | smTextCenter
 smTextCenter :: ClassName
@@ -1694,10 +1390,6 @@ smWFull = ClassName "sm:w-full"
 -- | spaceX10
 spaceX10 :: ClassName
 spaceX10 = ClassName "space-x-10"
-
--- | spaceX1
-spaceX1 :: ClassName
-spaceX1 = ClassName "space-x-1"
 
 -- | spaceX4
 spaceX4 :: ClassName
@@ -1827,10 +1519,6 @@ textXl = ClassName "text-xl"
 textXs :: ClassName
 textXs = ClassName "text-xs"
 
--- | textYellow400
-textYellow400 :: ClassName
-textYellow400 = ClassName "text-yellow-400"
-
 -- | top0
 top0 :: ClassName
 top0 = ClassName "top-0"
@@ -1838,10 +1526,6 @@ top0 = ClassName "top-0"
 -- | trackingTight
 trackingTight :: ClassName
 trackingTight = ClassName "tracking-tight"
-
--- | trackingWide
-trackingWide :: ClassName
-trackingWide = ClassName "tracking-wide"
 
 -- | trackingWider
 trackingWider :: ClassName
@@ -1883,10 +1567,6 @@ truncate = ClassName "truncate"
 uppercase :: ClassName
 uppercase = ClassName "uppercase"
 
--- | viaDurazno
-viaDurazno :: ClassName
-viaDurazno = ClassName "via-durazno"
-
 -- | w10
 w10 :: ClassName
 w10 = ClassName "w-10"
@@ -1894,10 +1574,6 @@ w10 = ClassName "w-10"
 -- | w11d12
 w11d12 :: ClassName
 w11d12 = ClassName "w-11/12"
-
--- | w1d2
-w1d2 :: ClassName
-w1d2 = ClassName "w-1/2"
 
 -- | w20
 w20 :: ClassName
@@ -1930,10 +1606,6 @@ w8 = ClassName "w-8"
 -- | w96
 w96 :: ClassName
 w96 = ClassName "w-96"
-
--- | wAuto
-wAuto :: ClassName
-wAuto = ClassName "w-auto"
 
 -- | wFull
 wFull :: ClassName
