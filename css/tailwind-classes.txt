@@ -13,6 +13,39 @@ _32xlAnimateSpin;32xl:animate-spin
 _32xlAnimateSpinSlow;32xl:animate-spin-slow
 _32xlAntialiased;32xl:antialiased
 _32xlAppearanceNone;32xl:appearance-none
+_32xlAspectH10;32xl:aspect-h-10
+_32xlAspectH11;32xl:aspect-h-11
+_32xlAspectH12;32xl:aspect-h-12
+_32xlAspectH13;32xl:aspect-h-13
+_32xlAspectH14;32xl:aspect-h-14
+_32xlAspectH15;32xl:aspect-h-15
+_32xlAspectH16;32xl:aspect-h-16
+_32xlAspectH1;32xl:aspect-h-1
+_32xlAspectH2;32xl:aspect-h-2
+_32xlAspectH3;32xl:aspect-h-3
+_32xlAspectH4;32xl:aspect-h-4
+_32xlAspectH5;32xl:aspect-h-5
+_32xlAspectH6;32xl:aspect-h-6
+_32xlAspectH7;32xl:aspect-h-7
+_32xlAspectH8;32xl:aspect-h-8
+_32xlAspectH9;32xl:aspect-h-9
+_32xlAspectNone;32xl:aspect-none
+_32xlAspectW10;32xl:aspect-w-10
+_32xlAspectW11;32xl:aspect-w-11
+_32xlAspectW12;32xl:aspect-w-12
+_32xlAspectW13;32xl:aspect-w-13
+_32xlAspectW14;32xl:aspect-w-14
+_32xlAspectW15;32xl:aspect-w-15
+_32xlAspectW16;32xl:aspect-w-16
+_32xlAspectW1;32xl:aspect-w-1
+_32xlAspectW2;32xl:aspect-w-2
+_32xlAspectW3;32xl:aspect-w-3
+_32xlAspectW4;32xl:aspect-w-4
+_32xlAspectW5;32xl:aspect-w-5
+_32xlAspectW6;32xl:aspect-w-6
+_32xlAspectW7;32xl:aspect-w-7
+_32xlAspectW8;32xl:aspect-w-8
+_32xlAspectW9;32xl:aspect-w-9
 _32xlAutoColsAuto;32xl:auto-cols-auto
 _32xlAutoColsFr;32xl:auto-cols-fr
 _32xlAutoColsMax;32xl:auto-cols-max
@@ -85,6 +118,8 @@ _32xlBgIndigo700;32xl:bg-indigo-700
 _32xlBgIndigo800;32xl:bg-indigo-800
 _32xlBgIndigo900;32xl:bg-indigo-900
 _32xlBgKiwi;32xl:bg-kiwi
+_32xlBgKiwiDark;32xl:bg-kiwi-dark
+_32xlBgKiwiLight;32xl:bg-kiwi-light
 _32xlBgLeft;32xl:bg-left
 _32xlBgLeftBottom;32xl:bg-left-bottom
 _32xlBgLeftTop;32xl:bg-left-top
@@ -220,6 +255,8 @@ _32xlBorderIndigo700;32xl:border-indigo-700
 _32xlBorderIndigo800;32xl:border-indigo-800
 _32xlBorderIndigo900;32xl:border-indigo-900
 _32xlBorderKiwi;32xl:border-kiwi
+_32xlBorderKiwiDark;32xl:border-kiwi-dark
+_32xlBorderKiwiLight;32xl:border-kiwi-light
 _32xlBorderL0;32xl:border-l-0
 _32xlBorderL2;32xl:border-l-2
 _32xlBorderL4;32xl:border-l-4
@@ -391,6 +428,8 @@ _32xlCheckedBgIndigo700;32xl:checked:bg-indigo-700
 _32xlCheckedBgIndigo800;32xl:checked:bg-indigo-800
 _32xlCheckedBgIndigo900;32xl:checked:bg-indigo-900
 _32xlCheckedBgKiwi;32xl:checked:bg-kiwi
+_32xlCheckedBgKiwiDark;32xl:checked:bg-kiwi-dark
+_32xlCheckedBgKiwiLight;32xl:checked:bg-kiwi-light
 _32xlCheckedBgManzana;32xl:checked:bg-manzana
 _32xlCheckedBgPink100;32xl:checked:bg-pink-100
 _32xlCheckedBgPink200;32xl:checked:bg-pink-200
@@ -480,6 +519,8 @@ _32xlCheckedBorderIndigo700;32xl:checked:border-indigo-700
 _32xlCheckedBorderIndigo800;32xl:checked:border-indigo-800
 _32xlCheckedBorderIndigo900;32xl:checked:border-indigo-900
 _32xlCheckedBorderKiwi;32xl:checked:border-kiwi
+_32xlCheckedBorderKiwiDark;32xl:checked:border-kiwi-dark
+_32xlCheckedBorderKiwiLight;32xl:checked:border-kiwi-light
 _32xlCheckedBorderManzana;32xl:checked:border-manzana
 _32xlCheckedBorderPink100;32xl:checked:border-pink-100
 _32xlCheckedBorderPink200;32xl:checked:border-pink-200
@@ -639,6 +680,8 @@ _32xlDisabledBgIndigo700;32xl:disabled:bg-indigo-700
 _32xlDisabledBgIndigo800;32xl:disabled:bg-indigo-800
 _32xlDisabledBgIndigo900;32xl:disabled:bg-indigo-900
 _32xlDisabledBgKiwi;32xl:disabled:bg-kiwi
+_32xlDisabledBgKiwiDark;32xl:disabled:bg-kiwi-dark
+_32xlDisabledBgKiwiLight;32xl:disabled:bg-kiwi-light
 _32xlDisabledBgManzana;32xl:disabled:bg-manzana
 _32xlDisabledBgPink100;32xl:disabled:bg-pink-100
 _32xlDisabledBgPink200;32xl:disabled:bg-pink-200
@@ -753,6 +796,8 @@ _32xlDivideIndigo700;32xl:divide-indigo-700
 _32xlDivideIndigo800;32xl:divide-indigo-800
 _32xlDivideIndigo900;32xl:divide-indigo-900
 _32xlDivideKiwi;32xl:divide-kiwi
+_32xlDivideKiwiDark;32xl:divide-kiwi-dark
+_32xlDivideKiwiLight;32xl:divide-kiwi-light
 _32xlDivideManzana;32xl:divide-manzana
 _32xlDivideNone;32xl:divide-none
 _32xlDivideOpacity0;32xl:divide-opacity-0
@@ -905,6 +950,8 @@ _32xlFocusBgIndigo700;32xl:focus:bg-indigo-700
 _32xlFocusBgIndigo800;32xl:focus:bg-indigo-800
 _32xlFocusBgIndigo900;32xl:focus:bg-indigo-900
 _32xlFocusBgKiwi;32xl:focus:bg-kiwi
+_32xlFocusBgKiwiDark;32xl:focus:bg-kiwi-dark
+_32xlFocusBgKiwiLight;32xl:focus:bg-kiwi-light
 _32xlFocusBgManzana;32xl:focus:bg-manzana
 _32xlFocusBgOpacity0;32xl:focus:bg-opacity-0
 _32xlFocusBgOpacity100;32xl:focus:bg-opacity-100
@@ -1009,6 +1056,8 @@ _32xlFocusBorderIndigo700;32xl:focus:border-indigo-700
 _32xlFocusBorderIndigo800;32xl:focus:border-indigo-800
 _32xlFocusBorderIndigo900;32xl:focus:border-indigo-900
 _32xlFocusBorderKiwi;32xl:focus:border-kiwi
+_32xlFocusBorderKiwiDark;32xl:focus:border-kiwi-dark
+_32xlFocusBorderKiwiLight;32xl:focus:border-kiwi-light
 _32xlFocusBorderManzana;32xl:focus:border-manzana
 _32xlFocusBorderOpacity0;32xl:focus:border-opacity-0
 _32xlFocusBorderOpacity100;32xl:focus:border-opacity-100
@@ -1113,6 +1162,8 @@ _32xlFocusFromIndigo700;32xl:focus:from-indigo-700
 _32xlFocusFromIndigo800;32xl:focus:from-indigo-800
 _32xlFocusFromIndigo900;32xl:focus:from-indigo-900
 _32xlFocusFromKiwi;32xl:focus:from-kiwi
+_32xlFocusFromKiwiDark;32xl:focus:from-kiwi-dark
+_32xlFocusFromKiwiLight;32xl:focus:from-kiwi-light
 _32xlFocusFromManzana;32xl:focus:from-manzana
 _32xlFocusFromPink100;32xl:focus:from-pink-100
 _32xlFocusFromPink200;32xl:focus:from-pink-200
@@ -1325,6 +1376,8 @@ _32xlFocusPlaceholderIndigo700;32xl:focus:placeholder-indigo-700
 _32xlFocusPlaceholderIndigo800;32xl:focus:placeholder-indigo-800
 _32xlFocusPlaceholderIndigo900;32xl:focus:placeholder-indigo-900
 _32xlFocusPlaceholderKiwi;32xl:focus:placeholder-kiwi
+_32xlFocusPlaceholderKiwiDark;32xl:focus:placeholder-kiwi-dark
+_32xlFocusPlaceholderKiwiLight;32xl:focus:placeholder-kiwi-light
 _32xlFocusPlaceholderManzana;32xl:focus:placeholder-manzana
 _32xlFocusPlaceholderOpacity0;32xl:focus:placeholder-opacity-0
 _32xlFocusPlaceholderOpacity100;32xl:focus:placeholder-opacity-100
@@ -1436,6 +1489,8 @@ _32xlFocusRingIndigo800;32xl:focus:ring-indigo-800
 _32xlFocusRingIndigo900;32xl:focus:ring-indigo-900
 _32xlFocusRingInset;32xl:focus:ring-inset
 _32xlFocusRingKiwi;32xl:focus:ring-kiwi
+_32xlFocusRingKiwiDark;32xl:focus:ring-kiwi-dark
+_32xlFocusRingKiwiLight;32xl:focus:ring-kiwi-light
 _32xlFocusRingManzana;32xl:focus:ring-manzana
 _32xlFocusRingOffset0;32xl:focus:ring-offset-0
 _32xlFocusRingOffset1;32xl:focus:ring-offset-1
@@ -1488,6 +1543,8 @@ _32xlFocusRingOffsetIndigo700;32xl:focus:ring-offset-indigo-700
 _32xlFocusRingOffsetIndigo800;32xl:focus:ring-offset-indigo-800
 _32xlFocusRingOffsetIndigo900;32xl:focus:ring-offset-indigo-900
 _32xlFocusRingOffsetKiwi;32xl:focus:ring-offset-kiwi
+_32xlFocusRingOffsetKiwiDark;32xl:focus:ring-offset-kiwi-dark
+_32xlFocusRingOffsetKiwiLight;32xl:focus:ring-offset-kiwi-light
 _32xlFocusRingOffsetManzana;32xl:focus:ring-offset-manzana
 _32xlFocusRingOffsetPink100;32xl:focus:ring-offset-pink-100
 _32xlFocusRingOffsetPink200;32xl:focus:ring-offset-pink-200
@@ -1694,6 +1751,8 @@ _32xlFocusTextIndigo700;32xl:focus:text-indigo-700
 _32xlFocusTextIndigo800;32xl:focus:text-indigo-800
 _32xlFocusTextIndigo900;32xl:focus:text-indigo-900
 _32xlFocusTextKiwi;32xl:focus:text-kiwi
+_32xlFocusTextKiwiDark;32xl:focus:text-kiwi-dark
+_32xlFocusTextKiwiLight;32xl:focus:text-kiwi-light
 _32xlFocusTextManzana;32xl:focus:text-manzana
 _32xlFocusTextOpacity0;32xl:focus:text-opacity-0
 _32xlFocusTextOpacity100;32xl:focus:text-opacity-100
@@ -1798,6 +1857,8 @@ _32xlFocusToIndigo700;32xl:focus:to-indigo-700
 _32xlFocusToIndigo800;32xl:focus:to-indigo-800
 _32xlFocusToIndigo900;32xl:focus:to-indigo-900
 _32xlFocusToKiwi;32xl:focus:to-kiwi
+_32xlFocusToKiwiDark;32xl:focus:to-kiwi-dark
+_32xlFocusToKiwiLight;32xl:focus:to-kiwi-light
 _32xlFocusToManzana;32xl:focus:to-manzana
 _32xlFocusToPink100;32xl:focus:to-pink-100
 _32xlFocusToPink200;32xl:focus:to-pink-200
@@ -1972,6 +2033,8 @@ _32xlFocusViaIndigo700;32xl:focus:via-indigo-700
 _32xlFocusViaIndigo800;32xl:focus:via-indigo-800
 _32xlFocusViaIndigo900;32xl:focus:via-indigo-900
 _32xlFocusViaKiwi;32xl:focus:via-kiwi
+_32xlFocusViaKiwiDark;32xl:focus:via-kiwi-dark
+_32xlFocusViaKiwiLight;32xl:focus:via-kiwi-light
 _32xlFocusViaManzana;32xl:focus:via-manzana
 _32xlFocusViaPink100;32xl:focus:via-pink-100
 _32xlFocusViaPink200;32xl:focus:via-pink-200
@@ -2061,6 +2124,8 @@ _32xlFocusWithinBgIndigo700;32xl:focus-within:bg-indigo-700
 _32xlFocusWithinBgIndigo800;32xl:focus-within:bg-indigo-800
 _32xlFocusWithinBgIndigo900;32xl:focus-within:bg-indigo-900
 _32xlFocusWithinBgKiwi;32xl:focus-within:bg-kiwi
+_32xlFocusWithinBgKiwiDark;32xl:focus-within:bg-kiwi-dark
+_32xlFocusWithinBgKiwiLight;32xl:focus-within:bg-kiwi-light
 _32xlFocusWithinBgManzana;32xl:focus-within:bg-manzana
 _32xlFocusWithinBgOpacity0;32xl:focus-within:bg-opacity-0
 _32xlFocusWithinBgOpacity100;32xl:focus-within:bg-opacity-100
@@ -2165,6 +2230,8 @@ _32xlFocusWithinBorderIndigo700;32xl:focus-within:border-indigo-700
 _32xlFocusWithinBorderIndigo800;32xl:focus-within:border-indigo-800
 _32xlFocusWithinBorderIndigo900;32xl:focus-within:border-indigo-900
 _32xlFocusWithinBorderKiwi;32xl:focus-within:border-kiwi
+_32xlFocusWithinBorderKiwiDark;32xl:focus-within:border-kiwi-dark
+_32xlFocusWithinBorderKiwiLight;32xl:focus-within:border-kiwi-light
 _32xlFocusWithinBorderManzana;32xl:focus-within:border-manzana
 _32xlFocusWithinBorderOpacity0;32xl:focus-within:border-opacity-0
 _32xlFocusWithinBorderOpacity100;32xl:focus-within:border-opacity-100
@@ -2297,6 +2364,8 @@ _32xlFocusWithinRingIndigo800;32xl:focus-within:ring-indigo-800
 _32xlFocusWithinRingIndigo900;32xl:focus-within:ring-indigo-900
 _32xlFocusWithinRingInset;32xl:focus-within:ring-inset
 _32xlFocusWithinRingKiwi;32xl:focus-within:ring-kiwi
+_32xlFocusWithinRingKiwiDark;32xl:focus-within:ring-kiwi-dark
+_32xlFocusWithinRingKiwiLight;32xl:focus-within:ring-kiwi-light
 _32xlFocusWithinRingManzana;32xl:focus-within:ring-manzana
 _32xlFocusWithinRingOffset0;32xl:focus-within:ring-offset-0
 _32xlFocusWithinRingOffset1;32xl:focus-within:ring-offset-1
@@ -2349,6 +2418,8 @@ _32xlFocusWithinRingOffsetIndigo700;32xl:focus-within:ring-offset-indigo-700
 _32xlFocusWithinRingOffsetIndigo800;32xl:focus-within:ring-offset-indigo-800
 _32xlFocusWithinRingOffsetIndigo900;32xl:focus-within:ring-offset-indigo-900
 _32xlFocusWithinRingOffsetKiwi;32xl:focus-within:ring-offset-kiwi
+_32xlFocusWithinRingOffsetKiwiDark;32xl:focus-within:ring-offset-kiwi-dark
+_32xlFocusWithinRingOffsetKiwiLight;32xl:focus-within:ring-offset-kiwi-light
 _32xlFocusWithinRingOffsetManzana;32xl:focus-within:ring-offset-manzana
 _32xlFocusWithinRingOffsetPink100;32xl:focus-within:ring-offset-pink-100
 _32xlFocusWithinRingOffsetPink200;32xl:focus-within:ring-offset-pink-200
@@ -2504,6 +2575,8 @@ _32xlFocusWithinTextIndigo700;32xl:focus-within:text-indigo-700
 _32xlFocusWithinTextIndigo800;32xl:focus-within:text-indigo-800
 _32xlFocusWithinTextIndigo900;32xl:focus-within:text-indigo-900
 _32xlFocusWithinTextKiwi;32xl:focus-within:text-kiwi
+_32xlFocusWithinTextKiwiDark;32xl:focus-within:text-kiwi-dark
+_32xlFocusWithinTextKiwiLight;32xl:focus-within:text-kiwi-light
 _32xlFocusWithinTextManzana;32xl:focus-within:text-manzana
 _32xlFocusWithinTextOpacity0;32xl:focus-within:text-opacity-0
 _32xlFocusWithinTextOpacity100;32xl:focus-within:text-opacity-100
@@ -2635,6 +2708,8 @@ _32xlFromIndigo700;32xl:from-indigo-700
 _32xlFromIndigo800;32xl:from-indigo-800
 _32xlFromIndigo900;32xl:from-indigo-900
 _32xlFromKiwi;32xl:from-kiwi
+_32xlFromKiwiDark;32xl:from-kiwi-dark
+_32xlFromKiwiLight;32xl:from-kiwi-light
 _32xlFromManzana;32xl:from-manzana
 _32xlFromPink100;32xl:from-pink-100
 _32xlFromPink200;32xl:from-pink-200
@@ -2854,6 +2929,8 @@ _32xlGroupHoverBgIndigo700;32xl:group-hover:bg-indigo-700
 _32xlGroupHoverBgIndigo800;32xl:group-hover:bg-indigo-800
 _32xlGroupHoverBgIndigo900;32xl:group-hover:bg-indigo-900
 _32xlGroupHoverBgKiwi;32xl:group-hover:bg-kiwi
+_32xlGroupHoverBgKiwiDark;32xl:group-hover:bg-kiwi-dark
+_32xlGroupHoverBgKiwiLight;32xl:group-hover:bg-kiwi-light
 _32xlGroupHoverBgManzana;32xl:group-hover:bg-manzana
 _32xlGroupHoverBgOpacity0;32xl:group-hover:bg-opacity-0
 _32xlGroupHoverBgOpacity100;32xl:group-hover:bg-opacity-100
@@ -2958,6 +3035,8 @@ _32xlGroupHoverBorderIndigo700;32xl:group-hover:border-indigo-700
 _32xlGroupHoverBorderIndigo800;32xl:group-hover:border-indigo-800
 _32xlGroupHoverBorderIndigo900;32xl:group-hover:border-indigo-900
 _32xlGroupHoverBorderKiwi;32xl:group-hover:border-kiwi
+_32xlGroupHoverBorderKiwiDark;32xl:group-hover:border-kiwi-dark
+_32xlGroupHoverBorderKiwiLight;32xl:group-hover:border-kiwi-light
 _32xlGroupHoverBorderManzana;32xl:group-hover:border-manzana
 _32xlGroupHoverBorderOpacity0;32xl:group-hover:border-opacity-0
 _32xlGroupHoverBorderOpacity100;32xl:group-hover:border-opacity-100
@@ -3087,6 +3166,8 @@ _32xlGroupHoverTextIndigo700;32xl:group-hover:text-indigo-700
 _32xlGroupHoverTextIndigo800;32xl:group-hover:text-indigo-800
 _32xlGroupHoverTextIndigo900;32xl:group-hover:text-indigo-900
 _32xlGroupHoverTextKiwi;32xl:group-hover:text-kiwi
+_32xlGroupHoverTextKiwiDark;32xl:group-hover:text-kiwi-dark
+_32xlGroupHoverTextKiwiLight;32xl:group-hover:text-kiwi-light
 _32xlGroupHoverTextManzana;32xl:group-hover:text-manzana
 _32xlGroupHoverTextOpacity0;32xl:group-hover:text-opacity-0
 _32xlGroupHoverTextOpacity100;32xl:group-hover:text-opacity-100
@@ -3246,6 +3327,8 @@ _32xlHoverBgIndigo700;32xl:hover:bg-indigo-700
 _32xlHoverBgIndigo800;32xl:hover:bg-indigo-800
 _32xlHoverBgIndigo900;32xl:hover:bg-indigo-900
 _32xlHoverBgKiwi;32xl:hover:bg-kiwi
+_32xlHoverBgKiwiDark;32xl:hover:bg-kiwi-dark
+_32xlHoverBgKiwiLight;32xl:hover:bg-kiwi-light
 _32xlHoverBgManzana;32xl:hover:bg-manzana
 _32xlHoverBgOpacity0;32xl:hover:bg-opacity-0
 _32xlHoverBgOpacity100;32xl:hover:bg-opacity-100
@@ -3360,6 +3443,8 @@ _32xlHoverBorderIndigo700;32xl:hover:border-indigo-700
 _32xlHoverBorderIndigo800;32xl:hover:border-indigo-800
 _32xlHoverBorderIndigo900;32xl:hover:border-indigo-900
 _32xlHoverBorderKiwi;32xl:hover:border-kiwi
+_32xlHoverBorderKiwiDark;32xl:hover:border-kiwi-dark
+_32xlHoverBorderKiwiLight;32xl:hover:border-kiwi-light
 _32xlHoverBorderL0;32xl:hover:border-l-0
 _32xlHoverBorderL2;32xl:hover:border-l-2
 _32xlHoverBorderL4;32xl:hover:border-l-4
@@ -3479,6 +3564,8 @@ _32xlHoverFromIndigo700;32xl:hover:from-indigo-700
 _32xlHoverFromIndigo800;32xl:hover:from-indigo-800
 _32xlHoverFromIndigo900;32xl:hover:from-indigo-900
 _32xlHoverFromKiwi;32xl:hover:from-kiwi
+_32xlHoverFromKiwiDark;32xl:hover:from-kiwi-dark
+_32xlHoverFromKiwiLight;32xl:hover:from-kiwi-light
 _32xlHoverFromManzana;32xl:hover:from-manzana
 _32xlHoverFromPink100;32xl:hover:from-pink-100
 _32xlHoverFromPink200;32xl:hover:from-pink-200
@@ -3694,6 +3781,8 @@ _32xlHoverRingIndigo800;32xl:hover:ring-indigo-800
 _32xlHoverRingIndigo900;32xl:hover:ring-indigo-900
 _32xlHoverRingInset;32xl:hover:ring-inset
 _32xlHoverRingKiwi;32xl:hover:ring-kiwi
+_32xlHoverRingKiwiDark;32xl:hover:ring-kiwi-dark
+_32xlHoverRingKiwiLight;32xl:hover:ring-kiwi-light
 _32xlHoverRingManzana;32xl:hover:ring-manzana
 _32xlHoverRingOffset0;32xl:hover:ring-offset-0
 _32xlHoverRingOffset1;32xl:hover:ring-offset-1
@@ -3746,6 +3835,8 @@ _32xlHoverRingOffsetIndigo700;32xl:hover:ring-offset-indigo-700
 _32xlHoverRingOffsetIndigo800;32xl:hover:ring-offset-indigo-800
 _32xlHoverRingOffsetIndigo900;32xl:hover:ring-offset-indigo-900
 _32xlHoverRingOffsetKiwi;32xl:hover:ring-offset-kiwi
+_32xlHoverRingOffsetKiwiDark;32xl:hover:ring-offset-kiwi-dark
+_32xlHoverRingOffsetKiwiLight;32xl:hover:ring-offset-kiwi-light
 _32xlHoverRingOffsetManzana;32xl:hover:ring-offset-manzana
 _32xlHoverRingOffsetPink100;32xl:hover:ring-offset-pink-100
 _32xlHoverRingOffsetPink200;32xl:hover:ring-offset-pink-200
@@ -3951,6 +4042,8 @@ _32xlHoverTextIndigo700;32xl:hover:text-indigo-700
 _32xlHoverTextIndigo800;32xl:hover:text-indigo-800
 _32xlHoverTextIndigo900;32xl:hover:text-indigo-900
 _32xlHoverTextKiwi;32xl:hover:text-kiwi
+_32xlHoverTextKiwiDark;32xl:hover:text-kiwi-dark
+_32xlHoverTextKiwiLight;32xl:hover:text-kiwi-light
 _32xlHoverTextManzana;32xl:hover:text-manzana
 _32xlHoverTextOpacity0;32xl:hover:text-opacity-0
 _32xlHoverTextOpacity100;32xl:hover:text-opacity-100
@@ -4055,6 +4148,8 @@ _32xlHoverToIndigo700;32xl:hover:to-indigo-700
 _32xlHoverToIndigo800;32xl:hover:to-indigo-800
 _32xlHoverToIndigo900;32xl:hover:to-indigo-900
 _32xlHoverToKiwi;32xl:hover:to-kiwi
+_32xlHoverToKiwiDark;32xl:hover:to-kiwi-dark
+_32xlHoverToKiwiLight;32xl:hover:to-kiwi-light
 _32xlHoverToManzana;32xl:hover:to-manzana
 _32xlHoverToPink100;32xl:hover:to-pink-100
 _32xlHoverToPink200;32xl:hover:to-pink-200
@@ -4229,6 +4324,8 @@ _32xlHoverViaIndigo700;32xl:hover:via-indigo-700
 _32xlHoverViaIndigo800;32xl:hover:via-indigo-800
 _32xlHoverViaIndigo900;32xl:hover:via-indigo-900
 _32xlHoverViaKiwi;32xl:hover:via-kiwi
+_32xlHoverViaKiwiDark;32xl:hover:via-kiwi-dark
+_32xlHoverViaKiwiLight;32xl:hover:via-kiwi-light
 _32xlHoverViaManzana;32xl:hover:via-manzana
 _32xlHoverViaPink100;32xl:hover:via-pink-100
 _32xlHoverViaPink200;32xl:hover:via-pink-200
@@ -5783,6 +5880,8 @@ _32xlPlaceholderIndigo700;32xl:placeholder-indigo-700
 _32xlPlaceholderIndigo800;32xl:placeholder-indigo-800
 _32xlPlaceholderIndigo900;32xl:placeholder-indigo-900
 _32xlPlaceholderKiwi;32xl:placeholder-kiwi
+_32xlPlaceholderKiwiDark;32xl:placeholder-kiwi-dark
+_32xlPlaceholderKiwiLight;32xl:placeholder-kiwi-light
 _32xlPlaceholderManzana;32xl:placeholder-manzana
 _32xlPlaceholderOpacity0;32xl:placeholder-opacity-0
 _32xlPlaceholderOpacity100;32xl:placeholder-opacity-100
@@ -6085,6 +6184,8 @@ _32xlRingIndigo800;32xl:ring-indigo-800
 _32xlRingIndigo900;32xl:ring-indigo-900
 _32xlRingInset;32xl:ring-inset
 _32xlRingKiwi;32xl:ring-kiwi
+_32xlRingKiwiDark;32xl:ring-kiwi-dark
+_32xlRingKiwiLight;32xl:ring-kiwi-light
 _32xlRingManzana;32xl:ring-manzana
 _32xlRingOffset0;32xl:ring-offset-0
 _32xlRingOffset1;32xl:ring-offset-1
@@ -6137,6 +6238,8 @@ _32xlRingOffsetIndigo700;32xl:ring-offset-indigo-700
 _32xlRingOffsetIndigo800;32xl:ring-offset-indigo-800
 _32xlRingOffsetIndigo900;32xl:ring-offset-indigo-900
 _32xlRingOffsetKiwi;32xl:ring-offset-kiwi
+_32xlRingOffsetKiwiDark;32xl:ring-offset-kiwi-dark
+_32xlRingOffsetKiwiLight;32xl:ring-offset-kiwi-light
 _32xlRingOffsetManzana;32xl:ring-offset-manzana
 _32xlRingOffsetPink100;32xl:ring-offset-pink-100
 _32xlRingOffsetPink200;32xl:ring-offset-pink-200
@@ -6561,6 +6664,8 @@ _32xlTextIndigo800;32xl:text-indigo-800
 _32xlTextIndigo900;32xl:text-indigo-900
 _32xlTextJustify;32xl:text-justify
 _32xlTextKiwi;32xl:text-kiwi
+_32xlTextKiwiDark;32xl:text-kiwi-dark
+_32xlTextKiwiLight;32xl:text-kiwi-light
 _32xlTextLeft;32xl:text-left
 _32xlTextLg;32xl:text-lg
 _32xlTextManzana;32xl:text-manzana
@@ -6671,6 +6776,8 @@ _32xlToIndigo700;32xl:to-indigo-700
 _32xlToIndigo800;32xl:to-indigo-800
 _32xlToIndigo900;32xl:to-indigo-900
 _32xlToKiwi;32xl:to-kiwi
+_32xlToKiwiDark;32xl:to-kiwi-dark
+_32xlToKiwiLight;32xl:to-kiwi-light
 _32xlToManzana;32xl:to-manzana
 _32xlToPink100;32xl:to-pink-100
 _32xlToPink200;32xl:to-pink-200
@@ -6906,6 +7013,8 @@ _32xlViaIndigo700;32xl:via-indigo-700
 _32xlViaIndigo800;32xl:via-indigo-800
 _32xlViaIndigo900;32xl:via-indigo-900
 _32xlViaKiwi;32xl:via-kiwi
+_32xlViaKiwiDark;32xl:via-kiwi-dark
+_32xlViaKiwiLight;32xl:via-kiwi-light
 _32xlViaManzana;32xl:via-manzana
 _32xlViaPink100;32xl:via-pink-100
 _32xlViaPink200;32xl:via-pink-200
@@ -7043,6 +7152,39 @@ animateSpin;animate-spin
 animateSpinSlow;animate-spin-slow
 antialiased;antialiased
 appearanceNone;appearance-none
+aspectH10;aspect-h-10
+aspectH11;aspect-h-11
+aspectH12;aspect-h-12
+aspectH13;aspect-h-13
+aspectH14;aspect-h-14
+aspectH15;aspect-h-15
+aspectH16;aspect-h-16
+aspectH1;aspect-h-1
+aspectH2;aspect-h-2
+aspectH3;aspect-h-3
+aspectH4;aspect-h-4
+aspectH5;aspect-h-5
+aspectH6;aspect-h-6
+aspectH7;aspect-h-7
+aspectH8;aspect-h-8
+aspectH9;aspect-h-9
+aspectNone;aspect-none
+aspectW10;aspect-w-10
+aspectW11;aspect-w-11
+aspectW12;aspect-w-12
+aspectW13;aspect-w-13
+aspectW14;aspect-w-14
+aspectW15;aspect-w-15
+aspectW16;aspect-w-16
+aspectW1;aspect-w-1
+aspectW2;aspect-w-2
+aspectW3;aspect-w-3
+aspectW4;aspect-w-4
+aspectW5;aspect-w-5
+aspectW6;aspect-w-6
+aspectW7;aspect-w-7
+aspectW8;aspect-w-8
+aspectW9;aspect-w-9
 autoColsAuto;auto-cols-auto
 autoColsFr;auto-cols-fr
 autoColsMax;auto-cols-max
@@ -7115,6 +7257,8 @@ bgIndigo700;bg-indigo-700
 bgIndigo800;bg-indigo-800
 bgIndigo900;bg-indigo-900
 bgKiwi;bg-kiwi
+bgKiwiDark;bg-kiwi-dark
+bgKiwiLight;bg-kiwi-light
 bgLeft;bg-left
 bgLeftBottom;bg-left-bottom
 bgLeftTop;bg-left-top
@@ -7250,6 +7394,8 @@ borderIndigo700;border-indigo-700
 borderIndigo800;border-indigo-800
 borderIndigo900;border-indigo-900
 borderKiwi;border-kiwi
+borderKiwiDark;border-kiwi-dark
+borderKiwiLight;border-kiwi-light
 borderL0;border-l-0
 borderL2;border-l-2
 borderL4;border-l-4
@@ -7421,6 +7567,8 @@ checkedBgIndigo700;checked:bg-indigo-700
 checkedBgIndigo800;checked:bg-indigo-800
 checkedBgIndigo900;checked:bg-indigo-900
 checkedBgKiwi;checked:bg-kiwi
+checkedBgKiwiDark;checked:bg-kiwi-dark
+checkedBgKiwiLight;checked:bg-kiwi-light
 checkedBgManzana;checked:bg-manzana
 checkedBgPink100;checked:bg-pink-100
 checkedBgPink200;checked:bg-pink-200
@@ -7510,6 +7658,8 @@ checkedBorderIndigo700;checked:border-indigo-700
 checkedBorderIndigo800;checked:border-indigo-800
 checkedBorderIndigo900;checked:border-indigo-900
 checkedBorderKiwi;checked:border-kiwi
+checkedBorderKiwiDark;checked:border-kiwi-dark
+checkedBorderKiwiLight;checked:border-kiwi-light
 checkedBorderManzana;checked:border-manzana
 checkedBorderPink100;checked:border-pink-100
 checkedBorderPink200;checked:border-pink-200
@@ -7669,6 +7819,8 @@ disabledBgIndigo700;disabled:bg-indigo-700
 disabledBgIndigo800;disabled:bg-indigo-800
 disabledBgIndigo900;disabled:bg-indigo-900
 disabledBgKiwi;disabled:bg-kiwi
+disabledBgKiwiDark;disabled:bg-kiwi-dark
+disabledBgKiwiLight;disabled:bg-kiwi-light
 disabledBgManzana;disabled:bg-manzana
 disabledBgPink100;disabled:bg-pink-100
 disabledBgPink200;disabled:bg-pink-200
@@ -7783,6 +7935,8 @@ divideIndigo700;divide-indigo-700
 divideIndigo800;divide-indigo-800
 divideIndigo900;divide-indigo-900
 divideKiwi;divide-kiwi
+divideKiwiDark;divide-kiwi-dark
+divideKiwiLight;divide-kiwi-light
 divideManzana;divide-manzana
 divideNone;divide-none
 divideOpacity0;divide-opacity-0
@@ -7935,6 +8089,8 @@ focusBgIndigo700;focus:bg-indigo-700
 focusBgIndigo800;focus:bg-indigo-800
 focusBgIndigo900;focus:bg-indigo-900
 focusBgKiwi;focus:bg-kiwi
+focusBgKiwiDark;focus:bg-kiwi-dark
+focusBgKiwiLight;focus:bg-kiwi-light
 focusBgManzana;focus:bg-manzana
 focusBgOpacity0;focus:bg-opacity-0
 focusBgOpacity100;focus:bg-opacity-100
@@ -8039,6 +8195,8 @@ focusBorderIndigo700;focus:border-indigo-700
 focusBorderIndigo800;focus:border-indigo-800
 focusBorderIndigo900;focus:border-indigo-900
 focusBorderKiwi;focus:border-kiwi
+focusBorderKiwiDark;focus:border-kiwi-dark
+focusBorderKiwiLight;focus:border-kiwi-light
 focusBorderManzana;focus:border-manzana
 focusBorderOpacity0;focus:border-opacity-0
 focusBorderOpacity100;focus:border-opacity-100
@@ -8143,6 +8301,8 @@ focusFromIndigo700;focus:from-indigo-700
 focusFromIndigo800;focus:from-indigo-800
 focusFromIndigo900;focus:from-indigo-900
 focusFromKiwi;focus:from-kiwi
+focusFromKiwiDark;focus:from-kiwi-dark
+focusFromKiwiLight;focus:from-kiwi-light
 focusFromManzana;focus:from-manzana
 focusFromPink100;focus:from-pink-100
 focusFromPink200;focus:from-pink-200
@@ -8355,6 +8515,8 @@ focusPlaceholderIndigo700;focus:placeholder-indigo-700
 focusPlaceholderIndigo800;focus:placeholder-indigo-800
 focusPlaceholderIndigo900;focus:placeholder-indigo-900
 focusPlaceholderKiwi;focus:placeholder-kiwi
+focusPlaceholderKiwiDark;focus:placeholder-kiwi-dark
+focusPlaceholderKiwiLight;focus:placeholder-kiwi-light
 focusPlaceholderManzana;focus:placeholder-manzana
 focusPlaceholderOpacity0;focus:placeholder-opacity-0
 focusPlaceholderOpacity100;focus:placeholder-opacity-100
@@ -8466,6 +8628,8 @@ focusRingIndigo800;focus:ring-indigo-800
 focusRingIndigo900;focus:ring-indigo-900
 focusRingInset;focus:ring-inset
 focusRingKiwi;focus:ring-kiwi
+focusRingKiwiDark;focus:ring-kiwi-dark
+focusRingKiwiLight;focus:ring-kiwi-light
 focusRingManzana;focus:ring-manzana
 focusRingOffset0;focus:ring-offset-0
 focusRingOffset1;focus:ring-offset-1
@@ -8518,6 +8682,8 @@ focusRingOffsetIndigo700;focus:ring-offset-indigo-700
 focusRingOffsetIndigo800;focus:ring-offset-indigo-800
 focusRingOffsetIndigo900;focus:ring-offset-indigo-900
 focusRingOffsetKiwi;focus:ring-offset-kiwi
+focusRingOffsetKiwiDark;focus:ring-offset-kiwi-dark
+focusRingOffsetKiwiLight;focus:ring-offset-kiwi-light
 focusRingOffsetManzana;focus:ring-offset-manzana
 focusRingOffsetPink100;focus:ring-offset-pink-100
 focusRingOffsetPink200;focus:ring-offset-pink-200
@@ -8724,6 +8890,8 @@ focusTextIndigo700;focus:text-indigo-700
 focusTextIndigo800;focus:text-indigo-800
 focusTextIndigo900;focus:text-indigo-900
 focusTextKiwi;focus:text-kiwi
+focusTextKiwiDark;focus:text-kiwi-dark
+focusTextKiwiLight;focus:text-kiwi-light
 focusTextManzana;focus:text-manzana
 focusTextOpacity0;focus:text-opacity-0
 focusTextOpacity100;focus:text-opacity-100
@@ -8828,6 +8996,8 @@ focusToIndigo700;focus:to-indigo-700
 focusToIndigo800;focus:to-indigo-800
 focusToIndigo900;focus:to-indigo-900
 focusToKiwi;focus:to-kiwi
+focusToKiwiDark;focus:to-kiwi-dark
+focusToKiwiLight;focus:to-kiwi-light
 focusToManzana;focus:to-manzana
 focusToPink100;focus:to-pink-100
 focusToPink200;focus:to-pink-200
@@ -9002,6 +9172,8 @@ focusViaIndigo700;focus:via-indigo-700
 focusViaIndigo800;focus:via-indigo-800
 focusViaIndigo900;focus:via-indigo-900
 focusViaKiwi;focus:via-kiwi
+focusViaKiwiDark;focus:via-kiwi-dark
+focusViaKiwiLight;focus:via-kiwi-light
 focusViaManzana;focus:via-manzana
 focusViaPink100;focus:via-pink-100
 focusViaPink200;focus:via-pink-200
@@ -9091,6 +9263,8 @@ focusWithinBgIndigo700;focus-within:bg-indigo-700
 focusWithinBgIndigo800;focus-within:bg-indigo-800
 focusWithinBgIndigo900;focus-within:bg-indigo-900
 focusWithinBgKiwi;focus-within:bg-kiwi
+focusWithinBgKiwiDark;focus-within:bg-kiwi-dark
+focusWithinBgKiwiLight;focus-within:bg-kiwi-light
 focusWithinBgManzana;focus-within:bg-manzana
 focusWithinBgOpacity0;focus-within:bg-opacity-0
 focusWithinBgOpacity100;focus-within:bg-opacity-100
@@ -9195,6 +9369,8 @@ focusWithinBorderIndigo700;focus-within:border-indigo-700
 focusWithinBorderIndigo800;focus-within:border-indigo-800
 focusWithinBorderIndigo900;focus-within:border-indigo-900
 focusWithinBorderKiwi;focus-within:border-kiwi
+focusWithinBorderKiwiDark;focus-within:border-kiwi-dark
+focusWithinBorderKiwiLight;focus-within:border-kiwi-light
 focusWithinBorderManzana;focus-within:border-manzana
 focusWithinBorderOpacity0;focus-within:border-opacity-0
 focusWithinBorderOpacity100;focus-within:border-opacity-100
@@ -9327,6 +9503,8 @@ focusWithinRingIndigo800;focus-within:ring-indigo-800
 focusWithinRingIndigo900;focus-within:ring-indigo-900
 focusWithinRingInset;focus-within:ring-inset
 focusWithinRingKiwi;focus-within:ring-kiwi
+focusWithinRingKiwiDark;focus-within:ring-kiwi-dark
+focusWithinRingKiwiLight;focus-within:ring-kiwi-light
 focusWithinRingManzana;focus-within:ring-manzana
 focusWithinRingOffset0;focus-within:ring-offset-0
 focusWithinRingOffset1;focus-within:ring-offset-1
@@ -9379,6 +9557,8 @@ focusWithinRingOffsetIndigo700;focus-within:ring-offset-indigo-700
 focusWithinRingOffsetIndigo800;focus-within:ring-offset-indigo-800
 focusWithinRingOffsetIndigo900;focus-within:ring-offset-indigo-900
 focusWithinRingOffsetKiwi;focus-within:ring-offset-kiwi
+focusWithinRingOffsetKiwiDark;focus-within:ring-offset-kiwi-dark
+focusWithinRingOffsetKiwiLight;focus-within:ring-offset-kiwi-light
 focusWithinRingOffsetManzana;focus-within:ring-offset-manzana
 focusWithinRingOffsetPink100;focus-within:ring-offset-pink-100
 focusWithinRingOffsetPink200;focus-within:ring-offset-pink-200
@@ -9534,6 +9714,8 @@ focusWithinTextIndigo700;focus-within:text-indigo-700
 focusWithinTextIndigo800;focus-within:text-indigo-800
 focusWithinTextIndigo900;focus-within:text-indigo-900
 focusWithinTextKiwi;focus-within:text-kiwi
+focusWithinTextKiwiDark;focus-within:text-kiwi-dark
+focusWithinTextKiwiLight;focus-within:text-kiwi-light
 focusWithinTextManzana;focus-within:text-manzana
 focusWithinTextOpacity0;focus-within:text-opacity-0
 focusWithinTextOpacity100;focus-within:text-opacity-100
@@ -9665,6 +9847,8 @@ fromIndigo700;from-indigo-700
 fromIndigo800;from-indigo-800
 fromIndigo900;from-indigo-900
 fromKiwi;from-kiwi
+fromKiwiDark;from-kiwi-dark
+fromKiwiLight;from-kiwi-light
 fromManzana;from-manzana
 fromPink100;from-pink-100
 fromPink200;from-pink-200
@@ -9885,6 +10069,8 @@ groupHoverBgIndigo700;group-hover:bg-indigo-700
 groupHoverBgIndigo800;group-hover:bg-indigo-800
 groupHoverBgIndigo900;group-hover:bg-indigo-900
 groupHoverBgKiwi;group-hover:bg-kiwi
+groupHoverBgKiwiDark;group-hover:bg-kiwi-dark
+groupHoverBgKiwiLight;group-hover:bg-kiwi-light
 groupHoverBgManzana;group-hover:bg-manzana
 groupHoverBgOpacity0;group-hover:bg-opacity-0
 groupHoverBgOpacity100;group-hover:bg-opacity-100
@@ -9989,6 +10175,8 @@ groupHoverBorderIndigo700;group-hover:border-indigo-700
 groupHoverBorderIndigo800;group-hover:border-indigo-800
 groupHoverBorderIndigo900;group-hover:border-indigo-900
 groupHoverBorderKiwi;group-hover:border-kiwi
+groupHoverBorderKiwiDark;group-hover:border-kiwi-dark
+groupHoverBorderKiwiLight;group-hover:border-kiwi-light
 groupHoverBorderManzana;group-hover:border-manzana
 groupHoverBorderOpacity0;group-hover:border-opacity-0
 groupHoverBorderOpacity100;group-hover:border-opacity-100
@@ -10118,6 +10306,8 @@ groupHoverTextIndigo700;group-hover:text-indigo-700
 groupHoverTextIndigo800;group-hover:text-indigo-800
 groupHoverTextIndigo900;group-hover:text-indigo-900
 groupHoverTextKiwi;group-hover:text-kiwi
+groupHoverTextKiwiDark;group-hover:text-kiwi-dark
+groupHoverTextKiwiLight;group-hover:text-kiwi-light
 groupHoverTextManzana;group-hover:text-manzana
 groupHoverTextOpacity0;group-hover:text-opacity-0
 groupHoverTextOpacity100;group-hover:text-opacity-100
@@ -10277,6 +10467,8 @@ hoverBgIndigo700;hover:bg-indigo-700
 hoverBgIndigo800;hover:bg-indigo-800
 hoverBgIndigo900;hover:bg-indigo-900
 hoverBgKiwi;hover:bg-kiwi
+hoverBgKiwiDark;hover:bg-kiwi-dark
+hoverBgKiwiLight;hover:bg-kiwi-light
 hoverBgManzana;hover:bg-manzana
 hoverBgOpacity0;hover:bg-opacity-0
 hoverBgOpacity100;hover:bg-opacity-100
@@ -10391,6 +10583,8 @@ hoverBorderIndigo700;hover:border-indigo-700
 hoverBorderIndigo800;hover:border-indigo-800
 hoverBorderIndigo900;hover:border-indigo-900
 hoverBorderKiwi;hover:border-kiwi
+hoverBorderKiwiDark;hover:border-kiwi-dark
+hoverBorderKiwiLight;hover:border-kiwi-light
 hoverBorderL0;hover:border-l-0
 hoverBorderL2;hover:border-l-2
 hoverBorderL4;hover:border-l-4
@@ -10510,6 +10704,8 @@ hoverFromIndigo700;hover:from-indigo-700
 hoverFromIndigo800;hover:from-indigo-800
 hoverFromIndigo900;hover:from-indigo-900
 hoverFromKiwi;hover:from-kiwi
+hoverFromKiwiDark;hover:from-kiwi-dark
+hoverFromKiwiLight;hover:from-kiwi-light
 hoverFromManzana;hover:from-manzana
 hoverFromPink100;hover:from-pink-100
 hoverFromPink200;hover:from-pink-200
@@ -10725,6 +10921,8 @@ hoverRingIndigo800;hover:ring-indigo-800
 hoverRingIndigo900;hover:ring-indigo-900
 hoverRingInset;hover:ring-inset
 hoverRingKiwi;hover:ring-kiwi
+hoverRingKiwiDark;hover:ring-kiwi-dark
+hoverRingKiwiLight;hover:ring-kiwi-light
 hoverRingManzana;hover:ring-manzana
 hoverRingOffset0;hover:ring-offset-0
 hoverRingOffset1;hover:ring-offset-1
@@ -10777,6 +10975,8 @@ hoverRingOffsetIndigo700;hover:ring-offset-indigo-700
 hoverRingOffsetIndigo800;hover:ring-offset-indigo-800
 hoverRingOffsetIndigo900;hover:ring-offset-indigo-900
 hoverRingOffsetKiwi;hover:ring-offset-kiwi
+hoverRingOffsetKiwiDark;hover:ring-offset-kiwi-dark
+hoverRingOffsetKiwiLight;hover:ring-offset-kiwi-light
 hoverRingOffsetManzana;hover:ring-offset-manzana
 hoverRingOffsetPink100;hover:ring-offset-pink-100
 hoverRingOffsetPink200;hover:ring-offset-pink-200
@@ -10961,7 +11161,9 @@ hoverScrollbarThumbIndigo600;hover:scrollbar-thumb-indigo-600
 hoverScrollbarThumbIndigo700;hover:scrollbar-thumb-indigo-700
 hoverScrollbarThumbIndigo800;hover:scrollbar-thumb-indigo-800
 hoverScrollbarThumbIndigo900;hover:scrollbar-thumb-indigo-900
+hoverScrollbarThumbKiwiDark;hover:scrollbar-thumb-kiwi-dark
 hoverScrollbarThumbKiwiDefault;hover:scrollbar-thumb-kiwi-DEFAULT
+hoverScrollbarThumbKiwiLight;hover:scrollbar-thumb-kiwi-light
 hoverScrollbarThumbManzanaDefault;hover:scrollbar-thumb-manzana-DEFAULT
 hoverScrollbarThumbPink100;hover:scrollbar-thumb-pink-100
 hoverScrollbarThumbPink200;hover:scrollbar-thumb-pink-200
@@ -11071,6 +11273,8 @@ hoverTextIndigo700;hover:text-indigo-700
 hoverTextIndigo800;hover:text-indigo-800
 hoverTextIndigo900;hover:text-indigo-900
 hoverTextKiwi;hover:text-kiwi
+hoverTextKiwiDark;hover:text-kiwi-dark
+hoverTextKiwiLight;hover:text-kiwi-light
 hoverTextManzana;hover:text-manzana
 hoverTextOpacity0;hover:text-opacity-0
 hoverTextOpacity100;hover:text-opacity-100
@@ -11175,6 +11379,8 @@ hoverToIndigo700;hover:to-indigo-700
 hoverToIndigo800;hover:to-indigo-800
 hoverToIndigo900;hover:to-indigo-900
 hoverToKiwi;hover:to-kiwi
+hoverToKiwiDark;hover:to-kiwi-dark
+hoverToKiwiLight;hover:to-kiwi-light
 hoverToManzana;hover:to-manzana
 hoverToPink100;hover:to-pink-100
 hoverToPink200;hover:to-pink-200
@@ -11349,6 +11555,8 @@ hoverViaIndigo700;hover:via-indigo-700
 hoverViaIndigo800;hover:via-indigo-800
 hoverViaIndigo900;hover:via-indigo-900
 hoverViaKiwi;hover:via-kiwi
+hoverViaKiwiDark;hover:via-kiwi-dark
+hoverViaKiwiLight;hover:via-kiwi-light
 hoverViaManzana;hover:via-manzana
 hoverViaPink100;hover:via-pink-100
 hoverViaPink200;hover:via-pink-200
@@ -11620,6 +11828,39 @@ lgAnimateSpin;lg:animate-spin
 lgAnimateSpinSlow;lg:animate-spin-slow
 lgAntialiased;lg:antialiased
 lgAppearanceNone;lg:appearance-none
+lgAspectH10;lg:aspect-h-10
+lgAspectH11;lg:aspect-h-11
+lgAspectH12;lg:aspect-h-12
+lgAspectH13;lg:aspect-h-13
+lgAspectH14;lg:aspect-h-14
+lgAspectH15;lg:aspect-h-15
+lgAspectH16;lg:aspect-h-16
+lgAspectH1;lg:aspect-h-1
+lgAspectH2;lg:aspect-h-2
+lgAspectH3;lg:aspect-h-3
+lgAspectH4;lg:aspect-h-4
+lgAspectH5;lg:aspect-h-5
+lgAspectH6;lg:aspect-h-6
+lgAspectH7;lg:aspect-h-7
+lgAspectH8;lg:aspect-h-8
+lgAspectH9;lg:aspect-h-9
+lgAspectNone;lg:aspect-none
+lgAspectW10;lg:aspect-w-10
+lgAspectW11;lg:aspect-w-11
+lgAspectW12;lg:aspect-w-12
+lgAspectW13;lg:aspect-w-13
+lgAspectW14;lg:aspect-w-14
+lgAspectW15;lg:aspect-w-15
+lgAspectW16;lg:aspect-w-16
+lgAspectW1;lg:aspect-w-1
+lgAspectW2;lg:aspect-w-2
+lgAspectW3;lg:aspect-w-3
+lgAspectW4;lg:aspect-w-4
+lgAspectW5;lg:aspect-w-5
+lgAspectW6;lg:aspect-w-6
+lgAspectW7;lg:aspect-w-7
+lgAspectW8;lg:aspect-w-8
+lgAspectW9;lg:aspect-w-9
 lgAutoColsAuto;lg:auto-cols-auto
 lgAutoColsFr;lg:auto-cols-fr
 lgAutoColsMax;lg:auto-cols-max
@@ -11692,6 +11933,8 @@ lgBgIndigo700;lg:bg-indigo-700
 lgBgIndigo800;lg:bg-indigo-800
 lgBgIndigo900;lg:bg-indigo-900
 lgBgKiwi;lg:bg-kiwi
+lgBgKiwiDark;lg:bg-kiwi-dark
+lgBgKiwiLight;lg:bg-kiwi-light
 lgBgLeft;lg:bg-left
 lgBgLeftBottom;lg:bg-left-bottom
 lgBgLeftTop;lg:bg-left-top
@@ -11827,6 +12070,8 @@ lgBorderIndigo700;lg:border-indigo-700
 lgBorderIndigo800;lg:border-indigo-800
 lgBorderIndigo900;lg:border-indigo-900
 lgBorderKiwi;lg:border-kiwi
+lgBorderKiwiDark;lg:border-kiwi-dark
+lgBorderKiwiLight;lg:border-kiwi-light
 lgBorderL0;lg:border-l-0
 lgBorderL2;lg:border-l-2
 lgBorderL4;lg:border-l-4
@@ -11998,6 +12243,8 @@ lgCheckedBgIndigo700;lg:checked:bg-indigo-700
 lgCheckedBgIndigo800;lg:checked:bg-indigo-800
 lgCheckedBgIndigo900;lg:checked:bg-indigo-900
 lgCheckedBgKiwi;lg:checked:bg-kiwi
+lgCheckedBgKiwiDark;lg:checked:bg-kiwi-dark
+lgCheckedBgKiwiLight;lg:checked:bg-kiwi-light
 lgCheckedBgManzana;lg:checked:bg-manzana
 lgCheckedBgPink100;lg:checked:bg-pink-100
 lgCheckedBgPink200;lg:checked:bg-pink-200
@@ -12087,6 +12334,8 @@ lgCheckedBorderIndigo700;lg:checked:border-indigo-700
 lgCheckedBorderIndigo800;lg:checked:border-indigo-800
 lgCheckedBorderIndigo900;lg:checked:border-indigo-900
 lgCheckedBorderKiwi;lg:checked:border-kiwi
+lgCheckedBorderKiwiDark;lg:checked:border-kiwi-dark
+lgCheckedBorderKiwiLight;lg:checked:border-kiwi-light
 lgCheckedBorderManzana;lg:checked:border-manzana
 lgCheckedBorderPink100;lg:checked:border-pink-100
 lgCheckedBorderPink200;lg:checked:border-pink-200
@@ -12246,6 +12495,8 @@ lgDisabledBgIndigo700;lg:disabled:bg-indigo-700
 lgDisabledBgIndigo800;lg:disabled:bg-indigo-800
 lgDisabledBgIndigo900;lg:disabled:bg-indigo-900
 lgDisabledBgKiwi;lg:disabled:bg-kiwi
+lgDisabledBgKiwiDark;lg:disabled:bg-kiwi-dark
+lgDisabledBgKiwiLight;lg:disabled:bg-kiwi-light
 lgDisabledBgManzana;lg:disabled:bg-manzana
 lgDisabledBgPink100;lg:disabled:bg-pink-100
 lgDisabledBgPink200;lg:disabled:bg-pink-200
@@ -12360,6 +12611,8 @@ lgDivideIndigo700;lg:divide-indigo-700
 lgDivideIndigo800;lg:divide-indigo-800
 lgDivideIndigo900;lg:divide-indigo-900
 lgDivideKiwi;lg:divide-kiwi
+lgDivideKiwiDark;lg:divide-kiwi-dark
+lgDivideKiwiLight;lg:divide-kiwi-light
 lgDivideManzana;lg:divide-manzana
 lgDivideNone;lg:divide-none
 lgDivideOpacity0;lg:divide-opacity-0
@@ -12512,6 +12765,8 @@ lgFocusBgIndigo700;lg:focus:bg-indigo-700
 lgFocusBgIndigo800;lg:focus:bg-indigo-800
 lgFocusBgIndigo900;lg:focus:bg-indigo-900
 lgFocusBgKiwi;lg:focus:bg-kiwi
+lgFocusBgKiwiDark;lg:focus:bg-kiwi-dark
+lgFocusBgKiwiLight;lg:focus:bg-kiwi-light
 lgFocusBgManzana;lg:focus:bg-manzana
 lgFocusBgOpacity0;lg:focus:bg-opacity-0
 lgFocusBgOpacity100;lg:focus:bg-opacity-100
@@ -12616,6 +12871,8 @@ lgFocusBorderIndigo700;lg:focus:border-indigo-700
 lgFocusBorderIndigo800;lg:focus:border-indigo-800
 lgFocusBorderIndigo900;lg:focus:border-indigo-900
 lgFocusBorderKiwi;lg:focus:border-kiwi
+lgFocusBorderKiwiDark;lg:focus:border-kiwi-dark
+lgFocusBorderKiwiLight;lg:focus:border-kiwi-light
 lgFocusBorderManzana;lg:focus:border-manzana
 lgFocusBorderOpacity0;lg:focus:border-opacity-0
 lgFocusBorderOpacity100;lg:focus:border-opacity-100
@@ -12720,6 +12977,8 @@ lgFocusFromIndigo700;lg:focus:from-indigo-700
 lgFocusFromIndigo800;lg:focus:from-indigo-800
 lgFocusFromIndigo900;lg:focus:from-indigo-900
 lgFocusFromKiwi;lg:focus:from-kiwi
+lgFocusFromKiwiDark;lg:focus:from-kiwi-dark
+lgFocusFromKiwiLight;lg:focus:from-kiwi-light
 lgFocusFromManzana;lg:focus:from-manzana
 lgFocusFromPink100;lg:focus:from-pink-100
 lgFocusFromPink200;lg:focus:from-pink-200
@@ -12932,6 +13191,8 @@ lgFocusPlaceholderIndigo700;lg:focus:placeholder-indigo-700
 lgFocusPlaceholderIndigo800;lg:focus:placeholder-indigo-800
 lgFocusPlaceholderIndigo900;lg:focus:placeholder-indigo-900
 lgFocusPlaceholderKiwi;lg:focus:placeholder-kiwi
+lgFocusPlaceholderKiwiDark;lg:focus:placeholder-kiwi-dark
+lgFocusPlaceholderKiwiLight;lg:focus:placeholder-kiwi-light
 lgFocusPlaceholderManzana;lg:focus:placeholder-manzana
 lgFocusPlaceholderOpacity0;lg:focus:placeholder-opacity-0
 lgFocusPlaceholderOpacity100;lg:focus:placeholder-opacity-100
@@ -13043,6 +13304,8 @@ lgFocusRingIndigo800;lg:focus:ring-indigo-800
 lgFocusRingIndigo900;lg:focus:ring-indigo-900
 lgFocusRingInset;lg:focus:ring-inset
 lgFocusRingKiwi;lg:focus:ring-kiwi
+lgFocusRingKiwiDark;lg:focus:ring-kiwi-dark
+lgFocusRingKiwiLight;lg:focus:ring-kiwi-light
 lgFocusRingManzana;lg:focus:ring-manzana
 lgFocusRingOffset0;lg:focus:ring-offset-0
 lgFocusRingOffset1;lg:focus:ring-offset-1
@@ -13095,6 +13358,8 @@ lgFocusRingOffsetIndigo700;lg:focus:ring-offset-indigo-700
 lgFocusRingOffsetIndigo800;lg:focus:ring-offset-indigo-800
 lgFocusRingOffsetIndigo900;lg:focus:ring-offset-indigo-900
 lgFocusRingOffsetKiwi;lg:focus:ring-offset-kiwi
+lgFocusRingOffsetKiwiDark;lg:focus:ring-offset-kiwi-dark
+lgFocusRingOffsetKiwiLight;lg:focus:ring-offset-kiwi-light
 lgFocusRingOffsetManzana;lg:focus:ring-offset-manzana
 lgFocusRingOffsetPink100;lg:focus:ring-offset-pink-100
 lgFocusRingOffsetPink200;lg:focus:ring-offset-pink-200
@@ -13301,6 +13566,8 @@ lgFocusTextIndigo700;lg:focus:text-indigo-700
 lgFocusTextIndigo800;lg:focus:text-indigo-800
 lgFocusTextIndigo900;lg:focus:text-indigo-900
 lgFocusTextKiwi;lg:focus:text-kiwi
+lgFocusTextKiwiDark;lg:focus:text-kiwi-dark
+lgFocusTextKiwiLight;lg:focus:text-kiwi-light
 lgFocusTextManzana;lg:focus:text-manzana
 lgFocusTextOpacity0;lg:focus:text-opacity-0
 lgFocusTextOpacity100;lg:focus:text-opacity-100
@@ -13405,6 +13672,8 @@ lgFocusToIndigo700;lg:focus:to-indigo-700
 lgFocusToIndigo800;lg:focus:to-indigo-800
 lgFocusToIndigo900;lg:focus:to-indigo-900
 lgFocusToKiwi;lg:focus:to-kiwi
+lgFocusToKiwiDark;lg:focus:to-kiwi-dark
+lgFocusToKiwiLight;lg:focus:to-kiwi-light
 lgFocusToManzana;lg:focus:to-manzana
 lgFocusToPink100;lg:focus:to-pink-100
 lgFocusToPink200;lg:focus:to-pink-200
@@ -13579,6 +13848,8 @@ lgFocusViaIndigo700;lg:focus:via-indigo-700
 lgFocusViaIndigo800;lg:focus:via-indigo-800
 lgFocusViaIndigo900;lg:focus:via-indigo-900
 lgFocusViaKiwi;lg:focus:via-kiwi
+lgFocusViaKiwiDark;lg:focus:via-kiwi-dark
+lgFocusViaKiwiLight;lg:focus:via-kiwi-light
 lgFocusViaManzana;lg:focus:via-manzana
 lgFocusViaPink100;lg:focus:via-pink-100
 lgFocusViaPink200;lg:focus:via-pink-200
@@ -13668,6 +13939,8 @@ lgFocusWithinBgIndigo700;lg:focus-within:bg-indigo-700
 lgFocusWithinBgIndigo800;lg:focus-within:bg-indigo-800
 lgFocusWithinBgIndigo900;lg:focus-within:bg-indigo-900
 lgFocusWithinBgKiwi;lg:focus-within:bg-kiwi
+lgFocusWithinBgKiwiDark;lg:focus-within:bg-kiwi-dark
+lgFocusWithinBgKiwiLight;lg:focus-within:bg-kiwi-light
 lgFocusWithinBgManzana;lg:focus-within:bg-manzana
 lgFocusWithinBgOpacity0;lg:focus-within:bg-opacity-0
 lgFocusWithinBgOpacity100;lg:focus-within:bg-opacity-100
@@ -13772,6 +14045,8 @@ lgFocusWithinBorderIndigo700;lg:focus-within:border-indigo-700
 lgFocusWithinBorderIndigo800;lg:focus-within:border-indigo-800
 lgFocusWithinBorderIndigo900;lg:focus-within:border-indigo-900
 lgFocusWithinBorderKiwi;lg:focus-within:border-kiwi
+lgFocusWithinBorderKiwiDark;lg:focus-within:border-kiwi-dark
+lgFocusWithinBorderKiwiLight;lg:focus-within:border-kiwi-light
 lgFocusWithinBorderManzana;lg:focus-within:border-manzana
 lgFocusWithinBorderOpacity0;lg:focus-within:border-opacity-0
 lgFocusWithinBorderOpacity100;lg:focus-within:border-opacity-100
@@ -13904,6 +14179,8 @@ lgFocusWithinRingIndigo800;lg:focus-within:ring-indigo-800
 lgFocusWithinRingIndigo900;lg:focus-within:ring-indigo-900
 lgFocusWithinRingInset;lg:focus-within:ring-inset
 lgFocusWithinRingKiwi;lg:focus-within:ring-kiwi
+lgFocusWithinRingKiwiDark;lg:focus-within:ring-kiwi-dark
+lgFocusWithinRingKiwiLight;lg:focus-within:ring-kiwi-light
 lgFocusWithinRingManzana;lg:focus-within:ring-manzana
 lgFocusWithinRingOffset0;lg:focus-within:ring-offset-0
 lgFocusWithinRingOffset1;lg:focus-within:ring-offset-1
@@ -13956,6 +14233,8 @@ lgFocusWithinRingOffsetIndigo700;lg:focus-within:ring-offset-indigo-700
 lgFocusWithinRingOffsetIndigo800;lg:focus-within:ring-offset-indigo-800
 lgFocusWithinRingOffsetIndigo900;lg:focus-within:ring-offset-indigo-900
 lgFocusWithinRingOffsetKiwi;lg:focus-within:ring-offset-kiwi
+lgFocusWithinRingOffsetKiwiDark;lg:focus-within:ring-offset-kiwi-dark
+lgFocusWithinRingOffsetKiwiLight;lg:focus-within:ring-offset-kiwi-light
 lgFocusWithinRingOffsetManzana;lg:focus-within:ring-offset-manzana
 lgFocusWithinRingOffsetPink100;lg:focus-within:ring-offset-pink-100
 lgFocusWithinRingOffsetPink200;lg:focus-within:ring-offset-pink-200
@@ -14111,6 +14390,8 @@ lgFocusWithinTextIndigo700;lg:focus-within:text-indigo-700
 lgFocusWithinTextIndigo800;lg:focus-within:text-indigo-800
 lgFocusWithinTextIndigo900;lg:focus-within:text-indigo-900
 lgFocusWithinTextKiwi;lg:focus-within:text-kiwi
+lgFocusWithinTextKiwiDark;lg:focus-within:text-kiwi-dark
+lgFocusWithinTextKiwiLight;lg:focus-within:text-kiwi-light
 lgFocusWithinTextManzana;lg:focus-within:text-manzana
 lgFocusWithinTextOpacity0;lg:focus-within:text-opacity-0
 lgFocusWithinTextOpacity100;lg:focus-within:text-opacity-100
@@ -14242,6 +14523,8 @@ lgFromIndigo700;lg:from-indigo-700
 lgFromIndigo800;lg:from-indigo-800
 lgFromIndigo900;lg:from-indigo-900
 lgFromKiwi;lg:from-kiwi
+lgFromKiwiDark;lg:from-kiwi-dark
+lgFromKiwiLight;lg:from-kiwi-light
 lgFromManzana;lg:from-manzana
 lgFromPink100;lg:from-pink-100
 lgFromPink200;lg:from-pink-200
@@ -14461,6 +14744,8 @@ lgGroupHoverBgIndigo700;lg:group-hover:bg-indigo-700
 lgGroupHoverBgIndigo800;lg:group-hover:bg-indigo-800
 lgGroupHoverBgIndigo900;lg:group-hover:bg-indigo-900
 lgGroupHoverBgKiwi;lg:group-hover:bg-kiwi
+lgGroupHoverBgKiwiDark;lg:group-hover:bg-kiwi-dark
+lgGroupHoverBgKiwiLight;lg:group-hover:bg-kiwi-light
 lgGroupHoverBgManzana;lg:group-hover:bg-manzana
 lgGroupHoverBgOpacity0;lg:group-hover:bg-opacity-0
 lgGroupHoverBgOpacity100;lg:group-hover:bg-opacity-100
@@ -14565,6 +14850,8 @@ lgGroupHoverBorderIndigo700;lg:group-hover:border-indigo-700
 lgGroupHoverBorderIndigo800;lg:group-hover:border-indigo-800
 lgGroupHoverBorderIndigo900;lg:group-hover:border-indigo-900
 lgGroupHoverBorderKiwi;lg:group-hover:border-kiwi
+lgGroupHoverBorderKiwiDark;lg:group-hover:border-kiwi-dark
+lgGroupHoverBorderKiwiLight;lg:group-hover:border-kiwi-light
 lgGroupHoverBorderManzana;lg:group-hover:border-manzana
 lgGroupHoverBorderOpacity0;lg:group-hover:border-opacity-0
 lgGroupHoverBorderOpacity100;lg:group-hover:border-opacity-100
@@ -14694,6 +14981,8 @@ lgGroupHoverTextIndigo700;lg:group-hover:text-indigo-700
 lgGroupHoverTextIndigo800;lg:group-hover:text-indigo-800
 lgGroupHoverTextIndigo900;lg:group-hover:text-indigo-900
 lgGroupHoverTextKiwi;lg:group-hover:text-kiwi
+lgGroupHoverTextKiwiDark;lg:group-hover:text-kiwi-dark
+lgGroupHoverTextKiwiLight;lg:group-hover:text-kiwi-light
 lgGroupHoverTextManzana;lg:group-hover:text-manzana
 lgGroupHoverTextOpacity0;lg:group-hover:text-opacity-0
 lgGroupHoverTextOpacity100;lg:group-hover:text-opacity-100
@@ -14853,6 +15142,8 @@ lgHoverBgIndigo700;lg:hover:bg-indigo-700
 lgHoverBgIndigo800;lg:hover:bg-indigo-800
 lgHoverBgIndigo900;lg:hover:bg-indigo-900
 lgHoverBgKiwi;lg:hover:bg-kiwi
+lgHoverBgKiwiDark;lg:hover:bg-kiwi-dark
+lgHoverBgKiwiLight;lg:hover:bg-kiwi-light
 lgHoverBgManzana;lg:hover:bg-manzana
 lgHoverBgOpacity0;lg:hover:bg-opacity-0
 lgHoverBgOpacity100;lg:hover:bg-opacity-100
@@ -14967,6 +15258,8 @@ lgHoverBorderIndigo700;lg:hover:border-indigo-700
 lgHoverBorderIndigo800;lg:hover:border-indigo-800
 lgHoverBorderIndigo900;lg:hover:border-indigo-900
 lgHoverBorderKiwi;lg:hover:border-kiwi
+lgHoverBorderKiwiDark;lg:hover:border-kiwi-dark
+lgHoverBorderKiwiLight;lg:hover:border-kiwi-light
 lgHoverBorderL0;lg:hover:border-l-0
 lgHoverBorderL2;lg:hover:border-l-2
 lgHoverBorderL4;lg:hover:border-l-4
@@ -15086,6 +15379,8 @@ lgHoverFromIndigo700;lg:hover:from-indigo-700
 lgHoverFromIndigo800;lg:hover:from-indigo-800
 lgHoverFromIndigo900;lg:hover:from-indigo-900
 lgHoverFromKiwi;lg:hover:from-kiwi
+lgHoverFromKiwiDark;lg:hover:from-kiwi-dark
+lgHoverFromKiwiLight;lg:hover:from-kiwi-light
 lgHoverFromManzana;lg:hover:from-manzana
 lgHoverFromPink100;lg:hover:from-pink-100
 lgHoverFromPink200;lg:hover:from-pink-200
@@ -15301,6 +15596,8 @@ lgHoverRingIndigo800;lg:hover:ring-indigo-800
 lgHoverRingIndigo900;lg:hover:ring-indigo-900
 lgHoverRingInset;lg:hover:ring-inset
 lgHoverRingKiwi;lg:hover:ring-kiwi
+lgHoverRingKiwiDark;lg:hover:ring-kiwi-dark
+lgHoverRingKiwiLight;lg:hover:ring-kiwi-light
 lgHoverRingManzana;lg:hover:ring-manzana
 lgHoverRingOffset0;lg:hover:ring-offset-0
 lgHoverRingOffset1;lg:hover:ring-offset-1
@@ -15353,6 +15650,8 @@ lgHoverRingOffsetIndigo700;lg:hover:ring-offset-indigo-700
 lgHoverRingOffsetIndigo800;lg:hover:ring-offset-indigo-800
 lgHoverRingOffsetIndigo900;lg:hover:ring-offset-indigo-900
 lgHoverRingOffsetKiwi;lg:hover:ring-offset-kiwi
+lgHoverRingOffsetKiwiDark;lg:hover:ring-offset-kiwi-dark
+lgHoverRingOffsetKiwiLight;lg:hover:ring-offset-kiwi-light
 lgHoverRingOffsetManzana;lg:hover:ring-offset-manzana
 lgHoverRingOffsetPink100;lg:hover:ring-offset-pink-100
 lgHoverRingOffsetPink200;lg:hover:ring-offset-pink-200
@@ -15558,6 +15857,8 @@ lgHoverTextIndigo700;lg:hover:text-indigo-700
 lgHoverTextIndigo800;lg:hover:text-indigo-800
 lgHoverTextIndigo900;lg:hover:text-indigo-900
 lgHoverTextKiwi;lg:hover:text-kiwi
+lgHoverTextKiwiDark;lg:hover:text-kiwi-dark
+lgHoverTextKiwiLight;lg:hover:text-kiwi-light
 lgHoverTextManzana;lg:hover:text-manzana
 lgHoverTextOpacity0;lg:hover:text-opacity-0
 lgHoverTextOpacity100;lg:hover:text-opacity-100
@@ -15662,6 +15963,8 @@ lgHoverToIndigo700;lg:hover:to-indigo-700
 lgHoverToIndigo800;lg:hover:to-indigo-800
 lgHoverToIndigo900;lg:hover:to-indigo-900
 lgHoverToKiwi;lg:hover:to-kiwi
+lgHoverToKiwiDark;lg:hover:to-kiwi-dark
+lgHoverToKiwiLight;lg:hover:to-kiwi-light
 lgHoverToManzana;lg:hover:to-manzana
 lgHoverToPink100;lg:hover:to-pink-100
 lgHoverToPink200;lg:hover:to-pink-200
@@ -15836,6 +16139,8 @@ lgHoverViaIndigo700;lg:hover:via-indigo-700
 lgHoverViaIndigo800;lg:hover:via-indigo-800
 lgHoverViaIndigo900;lg:hover:via-indigo-900
 lgHoverViaKiwi;lg:hover:via-kiwi
+lgHoverViaKiwiDark;lg:hover:via-kiwi-dark
+lgHoverViaKiwiLight;lg:hover:via-kiwi-light
 lgHoverViaManzana;lg:hover:via-manzana
 lgHoverViaPink100;lg:hover:via-pink-100
 lgHoverViaPink200;lg:hover:via-pink-200
@@ -17390,6 +17695,8 @@ lgPlaceholderIndigo700;lg:placeholder-indigo-700
 lgPlaceholderIndigo800;lg:placeholder-indigo-800
 lgPlaceholderIndigo900;lg:placeholder-indigo-900
 lgPlaceholderKiwi;lg:placeholder-kiwi
+lgPlaceholderKiwiDark;lg:placeholder-kiwi-dark
+lgPlaceholderKiwiLight;lg:placeholder-kiwi-light
 lgPlaceholderManzana;lg:placeholder-manzana
 lgPlaceholderOpacity0;lg:placeholder-opacity-0
 lgPlaceholderOpacity100;lg:placeholder-opacity-100
@@ -17692,6 +17999,8 @@ lgRingIndigo800;lg:ring-indigo-800
 lgRingIndigo900;lg:ring-indigo-900
 lgRingInset;lg:ring-inset
 lgRingKiwi;lg:ring-kiwi
+lgRingKiwiDark;lg:ring-kiwi-dark
+lgRingKiwiLight;lg:ring-kiwi-light
 lgRingManzana;lg:ring-manzana
 lgRingOffset0;lg:ring-offset-0
 lgRingOffset1;lg:ring-offset-1
@@ -17744,6 +18053,8 @@ lgRingOffsetIndigo700;lg:ring-offset-indigo-700
 lgRingOffsetIndigo800;lg:ring-offset-indigo-800
 lgRingOffsetIndigo900;lg:ring-offset-indigo-900
 lgRingOffsetKiwi;lg:ring-offset-kiwi
+lgRingOffsetKiwiDark;lg:ring-offset-kiwi-dark
+lgRingOffsetKiwiLight;lg:ring-offset-kiwi-light
 lgRingOffsetManzana;lg:ring-offset-manzana
 lgRingOffsetPink100;lg:ring-offset-pink-100
 lgRingOffsetPink200;lg:ring-offset-pink-200
@@ -18168,6 +18479,8 @@ lgTextIndigo800;lg:text-indigo-800
 lgTextIndigo900;lg:text-indigo-900
 lgTextJustify;lg:text-justify
 lgTextKiwi;lg:text-kiwi
+lgTextKiwiDark;lg:text-kiwi-dark
+lgTextKiwiLight;lg:text-kiwi-light
 lgTextLeft;lg:text-left
 lgTextLg;lg:text-lg
 lgTextManzana;lg:text-manzana
@@ -18278,6 +18591,8 @@ lgToIndigo700;lg:to-indigo-700
 lgToIndigo800;lg:to-indigo-800
 lgToIndigo900;lg:to-indigo-900
 lgToKiwi;lg:to-kiwi
+lgToKiwiDark;lg:to-kiwi-dark
+lgToKiwiLight;lg:to-kiwi-light
 lgToManzana;lg:to-manzana
 lgToPink100;lg:to-pink-100
 lgToPink200;lg:to-pink-200
@@ -18513,6 +18828,8 @@ lgViaIndigo700;lg:via-indigo-700
 lgViaIndigo800;lg:via-indigo-800
 lgViaIndigo900;lg:via-indigo-900
 lgViaKiwi;lg:via-kiwi
+lgViaKiwiDark;lg:via-kiwi-dark
+lgViaKiwiLight;lg:via-kiwi-light
 lgViaManzana;lg:via-manzana
 lgViaPink100;lg:via-pink-100
 lgViaPink200;lg:via-pink-200
@@ -18798,6 +19115,39 @@ mdAnimateSpin;md:animate-spin
 mdAnimateSpinSlow;md:animate-spin-slow
 mdAntialiased;md:antialiased
 mdAppearanceNone;md:appearance-none
+mdAspectH10;md:aspect-h-10
+mdAspectH11;md:aspect-h-11
+mdAspectH12;md:aspect-h-12
+mdAspectH13;md:aspect-h-13
+mdAspectH14;md:aspect-h-14
+mdAspectH15;md:aspect-h-15
+mdAspectH16;md:aspect-h-16
+mdAspectH1;md:aspect-h-1
+mdAspectH2;md:aspect-h-2
+mdAspectH3;md:aspect-h-3
+mdAspectH4;md:aspect-h-4
+mdAspectH5;md:aspect-h-5
+mdAspectH6;md:aspect-h-6
+mdAspectH7;md:aspect-h-7
+mdAspectH8;md:aspect-h-8
+mdAspectH9;md:aspect-h-9
+mdAspectNone;md:aspect-none
+mdAspectW10;md:aspect-w-10
+mdAspectW11;md:aspect-w-11
+mdAspectW12;md:aspect-w-12
+mdAspectW13;md:aspect-w-13
+mdAspectW14;md:aspect-w-14
+mdAspectW15;md:aspect-w-15
+mdAspectW16;md:aspect-w-16
+mdAspectW1;md:aspect-w-1
+mdAspectW2;md:aspect-w-2
+mdAspectW3;md:aspect-w-3
+mdAspectW4;md:aspect-w-4
+mdAspectW5;md:aspect-w-5
+mdAspectW6;md:aspect-w-6
+mdAspectW7;md:aspect-w-7
+mdAspectW8;md:aspect-w-8
+mdAspectW9;md:aspect-w-9
 mdAutoColsAuto;md:auto-cols-auto
 mdAutoColsFr;md:auto-cols-fr
 mdAutoColsMax;md:auto-cols-max
@@ -18870,6 +19220,8 @@ mdBgIndigo700;md:bg-indigo-700
 mdBgIndigo800;md:bg-indigo-800
 mdBgIndigo900;md:bg-indigo-900
 mdBgKiwi;md:bg-kiwi
+mdBgKiwiDark;md:bg-kiwi-dark
+mdBgKiwiLight;md:bg-kiwi-light
 mdBgLeft;md:bg-left
 mdBgLeftBottom;md:bg-left-bottom
 mdBgLeftTop;md:bg-left-top
@@ -19005,6 +19357,8 @@ mdBorderIndigo700;md:border-indigo-700
 mdBorderIndigo800;md:border-indigo-800
 mdBorderIndigo900;md:border-indigo-900
 mdBorderKiwi;md:border-kiwi
+mdBorderKiwiDark;md:border-kiwi-dark
+mdBorderKiwiLight;md:border-kiwi-light
 mdBorderL0;md:border-l-0
 mdBorderL2;md:border-l-2
 mdBorderL4;md:border-l-4
@@ -19176,6 +19530,8 @@ mdCheckedBgIndigo700;md:checked:bg-indigo-700
 mdCheckedBgIndigo800;md:checked:bg-indigo-800
 mdCheckedBgIndigo900;md:checked:bg-indigo-900
 mdCheckedBgKiwi;md:checked:bg-kiwi
+mdCheckedBgKiwiDark;md:checked:bg-kiwi-dark
+mdCheckedBgKiwiLight;md:checked:bg-kiwi-light
 mdCheckedBgManzana;md:checked:bg-manzana
 mdCheckedBgPink100;md:checked:bg-pink-100
 mdCheckedBgPink200;md:checked:bg-pink-200
@@ -19265,6 +19621,8 @@ mdCheckedBorderIndigo700;md:checked:border-indigo-700
 mdCheckedBorderIndigo800;md:checked:border-indigo-800
 mdCheckedBorderIndigo900;md:checked:border-indigo-900
 mdCheckedBorderKiwi;md:checked:border-kiwi
+mdCheckedBorderKiwiDark;md:checked:border-kiwi-dark
+mdCheckedBorderKiwiLight;md:checked:border-kiwi-light
 mdCheckedBorderManzana;md:checked:border-manzana
 mdCheckedBorderPink100;md:checked:border-pink-100
 mdCheckedBorderPink200;md:checked:border-pink-200
@@ -19424,6 +19782,8 @@ mdDisabledBgIndigo700;md:disabled:bg-indigo-700
 mdDisabledBgIndigo800;md:disabled:bg-indigo-800
 mdDisabledBgIndigo900;md:disabled:bg-indigo-900
 mdDisabledBgKiwi;md:disabled:bg-kiwi
+mdDisabledBgKiwiDark;md:disabled:bg-kiwi-dark
+mdDisabledBgKiwiLight;md:disabled:bg-kiwi-light
 mdDisabledBgManzana;md:disabled:bg-manzana
 mdDisabledBgPink100;md:disabled:bg-pink-100
 mdDisabledBgPink200;md:disabled:bg-pink-200
@@ -19538,6 +19898,8 @@ mdDivideIndigo700;md:divide-indigo-700
 mdDivideIndigo800;md:divide-indigo-800
 mdDivideIndigo900;md:divide-indigo-900
 mdDivideKiwi;md:divide-kiwi
+mdDivideKiwiDark;md:divide-kiwi-dark
+mdDivideKiwiLight;md:divide-kiwi-light
 mdDivideManzana;md:divide-manzana
 mdDivideNone;md:divide-none
 mdDivideOpacity0;md:divide-opacity-0
@@ -19690,6 +20052,8 @@ mdFocusBgIndigo700;md:focus:bg-indigo-700
 mdFocusBgIndigo800;md:focus:bg-indigo-800
 mdFocusBgIndigo900;md:focus:bg-indigo-900
 mdFocusBgKiwi;md:focus:bg-kiwi
+mdFocusBgKiwiDark;md:focus:bg-kiwi-dark
+mdFocusBgKiwiLight;md:focus:bg-kiwi-light
 mdFocusBgManzana;md:focus:bg-manzana
 mdFocusBgOpacity0;md:focus:bg-opacity-0
 mdFocusBgOpacity100;md:focus:bg-opacity-100
@@ -19794,6 +20158,8 @@ mdFocusBorderIndigo700;md:focus:border-indigo-700
 mdFocusBorderIndigo800;md:focus:border-indigo-800
 mdFocusBorderIndigo900;md:focus:border-indigo-900
 mdFocusBorderKiwi;md:focus:border-kiwi
+mdFocusBorderKiwiDark;md:focus:border-kiwi-dark
+mdFocusBorderKiwiLight;md:focus:border-kiwi-light
 mdFocusBorderManzana;md:focus:border-manzana
 mdFocusBorderOpacity0;md:focus:border-opacity-0
 mdFocusBorderOpacity100;md:focus:border-opacity-100
@@ -19898,6 +20264,8 @@ mdFocusFromIndigo700;md:focus:from-indigo-700
 mdFocusFromIndigo800;md:focus:from-indigo-800
 mdFocusFromIndigo900;md:focus:from-indigo-900
 mdFocusFromKiwi;md:focus:from-kiwi
+mdFocusFromKiwiDark;md:focus:from-kiwi-dark
+mdFocusFromKiwiLight;md:focus:from-kiwi-light
 mdFocusFromManzana;md:focus:from-manzana
 mdFocusFromPink100;md:focus:from-pink-100
 mdFocusFromPink200;md:focus:from-pink-200
@@ -20110,6 +20478,8 @@ mdFocusPlaceholderIndigo700;md:focus:placeholder-indigo-700
 mdFocusPlaceholderIndigo800;md:focus:placeholder-indigo-800
 mdFocusPlaceholderIndigo900;md:focus:placeholder-indigo-900
 mdFocusPlaceholderKiwi;md:focus:placeholder-kiwi
+mdFocusPlaceholderKiwiDark;md:focus:placeholder-kiwi-dark
+mdFocusPlaceholderKiwiLight;md:focus:placeholder-kiwi-light
 mdFocusPlaceholderManzana;md:focus:placeholder-manzana
 mdFocusPlaceholderOpacity0;md:focus:placeholder-opacity-0
 mdFocusPlaceholderOpacity100;md:focus:placeholder-opacity-100
@@ -20221,6 +20591,8 @@ mdFocusRingIndigo800;md:focus:ring-indigo-800
 mdFocusRingIndigo900;md:focus:ring-indigo-900
 mdFocusRingInset;md:focus:ring-inset
 mdFocusRingKiwi;md:focus:ring-kiwi
+mdFocusRingKiwiDark;md:focus:ring-kiwi-dark
+mdFocusRingKiwiLight;md:focus:ring-kiwi-light
 mdFocusRingManzana;md:focus:ring-manzana
 mdFocusRingOffset0;md:focus:ring-offset-0
 mdFocusRingOffset1;md:focus:ring-offset-1
@@ -20273,6 +20645,8 @@ mdFocusRingOffsetIndigo700;md:focus:ring-offset-indigo-700
 mdFocusRingOffsetIndigo800;md:focus:ring-offset-indigo-800
 mdFocusRingOffsetIndigo900;md:focus:ring-offset-indigo-900
 mdFocusRingOffsetKiwi;md:focus:ring-offset-kiwi
+mdFocusRingOffsetKiwiDark;md:focus:ring-offset-kiwi-dark
+mdFocusRingOffsetKiwiLight;md:focus:ring-offset-kiwi-light
 mdFocusRingOffsetManzana;md:focus:ring-offset-manzana
 mdFocusRingOffsetPink100;md:focus:ring-offset-pink-100
 mdFocusRingOffsetPink200;md:focus:ring-offset-pink-200
@@ -20479,6 +20853,8 @@ mdFocusTextIndigo700;md:focus:text-indigo-700
 mdFocusTextIndigo800;md:focus:text-indigo-800
 mdFocusTextIndigo900;md:focus:text-indigo-900
 mdFocusTextKiwi;md:focus:text-kiwi
+mdFocusTextKiwiDark;md:focus:text-kiwi-dark
+mdFocusTextKiwiLight;md:focus:text-kiwi-light
 mdFocusTextManzana;md:focus:text-manzana
 mdFocusTextOpacity0;md:focus:text-opacity-0
 mdFocusTextOpacity100;md:focus:text-opacity-100
@@ -20583,6 +20959,8 @@ mdFocusToIndigo700;md:focus:to-indigo-700
 mdFocusToIndigo800;md:focus:to-indigo-800
 mdFocusToIndigo900;md:focus:to-indigo-900
 mdFocusToKiwi;md:focus:to-kiwi
+mdFocusToKiwiDark;md:focus:to-kiwi-dark
+mdFocusToKiwiLight;md:focus:to-kiwi-light
 mdFocusToManzana;md:focus:to-manzana
 mdFocusToPink100;md:focus:to-pink-100
 mdFocusToPink200;md:focus:to-pink-200
@@ -20757,6 +21135,8 @@ mdFocusViaIndigo700;md:focus:via-indigo-700
 mdFocusViaIndigo800;md:focus:via-indigo-800
 mdFocusViaIndigo900;md:focus:via-indigo-900
 mdFocusViaKiwi;md:focus:via-kiwi
+mdFocusViaKiwiDark;md:focus:via-kiwi-dark
+mdFocusViaKiwiLight;md:focus:via-kiwi-light
 mdFocusViaManzana;md:focus:via-manzana
 mdFocusViaPink100;md:focus:via-pink-100
 mdFocusViaPink200;md:focus:via-pink-200
@@ -20846,6 +21226,8 @@ mdFocusWithinBgIndigo700;md:focus-within:bg-indigo-700
 mdFocusWithinBgIndigo800;md:focus-within:bg-indigo-800
 mdFocusWithinBgIndigo900;md:focus-within:bg-indigo-900
 mdFocusWithinBgKiwi;md:focus-within:bg-kiwi
+mdFocusWithinBgKiwiDark;md:focus-within:bg-kiwi-dark
+mdFocusWithinBgKiwiLight;md:focus-within:bg-kiwi-light
 mdFocusWithinBgManzana;md:focus-within:bg-manzana
 mdFocusWithinBgOpacity0;md:focus-within:bg-opacity-0
 mdFocusWithinBgOpacity100;md:focus-within:bg-opacity-100
@@ -20950,6 +21332,8 @@ mdFocusWithinBorderIndigo700;md:focus-within:border-indigo-700
 mdFocusWithinBorderIndigo800;md:focus-within:border-indigo-800
 mdFocusWithinBorderIndigo900;md:focus-within:border-indigo-900
 mdFocusWithinBorderKiwi;md:focus-within:border-kiwi
+mdFocusWithinBorderKiwiDark;md:focus-within:border-kiwi-dark
+mdFocusWithinBorderKiwiLight;md:focus-within:border-kiwi-light
 mdFocusWithinBorderManzana;md:focus-within:border-manzana
 mdFocusWithinBorderOpacity0;md:focus-within:border-opacity-0
 mdFocusWithinBorderOpacity100;md:focus-within:border-opacity-100
@@ -21082,6 +21466,8 @@ mdFocusWithinRingIndigo800;md:focus-within:ring-indigo-800
 mdFocusWithinRingIndigo900;md:focus-within:ring-indigo-900
 mdFocusWithinRingInset;md:focus-within:ring-inset
 mdFocusWithinRingKiwi;md:focus-within:ring-kiwi
+mdFocusWithinRingKiwiDark;md:focus-within:ring-kiwi-dark
+mdFocusWithinRingKiwiLight;md:focus-within:ring-kiwi-light
 mdFocusWithinRingManzana;md:focus-within:ring-manzana
 mdFocusWithinRingOffset0;md:focus-within:ring-offset-0
 mdFocusWithinRingOffset1;md:focus-within:ring-offset-1
@@ -21134,6 +21520,8 @@ mdFocusWithinRingOffsetIndigo700;md:focus-within:ring-offset-indigo-700
 mdFocusWithinRingOffsetIndigo800;md:focus-within:ring-offset-indigo-800
 mdFocusWithinRingOffsetIndigo900;md:focus-within:ring-offset-indigo-900
 mdFocusWithinRingOffsetKiwi;md:focus-within:ring-offset-kiwi
+mdFocusWithinRingOffsetKiwiDark;md:focus-within:ring-offset-kiwi-dark
+mdFocusWithinRingOffsetKiwiLight;md:focus-within:ring-offset-kiwi-light
 mdFocusWithinRingOffsetManzana;md:focus-within:ring-offset-manzana
 mdFocusWithinRingOffsetPink100;md:focus-within:ring-offset-pink-100
 mdFocusWithinRingOffsetPink200;md:focus-within:ring-offset-pink-200
@@ -21289,6 +21677,8 @@ mdFocusWithinTextIndigo700;md:focus-within:text-indigo-700
 mdFocusWithinTextIndigo800;md:focus-within:text-indigo-800
 mdFocusWithinTextIndigo900;md:focus-within:text-indigo-900
 mdFocusWithinTextKiwi;md:focus-within:text-kiwi
+mdFocusWithinTextKiwiDark;md:focus-within:text-kiwi-dark
+mdFocusWithinTextKiwiLight;md:focus-within:text-kiwi-light
 mdFocusWithinTextManzana;md:focus-within:text-manzana
 mdFocusWithinTextOpacity0;md:focus-within:text-opacity-0
 mdFocusWithinTextOpacity100;md:focus-within:text-opacity-100
@@ -21420,6 +21810,8 @@ mdFromIndigo700;md:from-indigo-700
 mdFromIndigo800;md:from-indigo-800
 mdFromIndigo900;md:from-indigo-900
 mdFromKiwi;md:from-kiwi
+mdFromKiwiDark;md:from-kiwi-dark
+mdFromKiwiLight;md:from-kiwi-light
 mdFromManzana;md:from-manzana
 mdFromPink100;md:from-pink-100
 mdFromPink200;md:from-pink-200
@@ -21639,6 +22031,8 @@ mdGroupHoverBgIndigo700;md:group-hover:bg-indigo-700
 mdGroupHoverBgIndigo800;md:group-hover:bg-indigo-800
 mdGroupHoverBgIndigo900;md:group-hover:bg-indigo-900
 mdGroupHoverBgKiwi;md:group-hover:bg-kiwi
+mdGroupHoverBgKiwiDark;md:group-hover:bg-kiwi-dark
+mdGroupHoverBgKiwiLight;md:group-hover:bg-kiwi-light
 mdGroupHoverBgManzana;md:group-hover:bg-manzana
 mdGroupHoverBgOpacity0;md:group-hover:bg-opacity-0
 mdGroupHoverBgOpacity100;md:group-hover:bg-opacity-100
@@ -21743,6 +22137,8 @@ mdGroupHoverBorderIndigo700;md:group-hover:border-indigo-700
 mdGroupHoverBorderIndigo800;md:group-hover:border-indigo-800
 mdGroupHoverBorderIndigo900;md:group-hover:border-indigo-900
 mdGroupHoverBorderKiwi;md:group-hover:border-kiwi
+mdGroupHoverBorderKiwiDark;md:group-hover:border-kiwi-dark
+mdGroupHoverBorderKiwiLight;md:group-hover:border-kiwi-light
 mdGroupHoverBorderManzana;md:group-hover:border-manzana
 mdGroupHoverBorderOpacity0;md:group-hover:border-opacity-0
 mdGroupHoverBorderOpacity100;md:group-hover:border-opacity-100
@@ -21872,6 +22268,8 @@ mdGroupHoverTextIndigo700;md:group-hover:text-indigo-700
 mdGroupHoverTextIndigo800;md:group-hover:text-indigo-800
 mdGroupHoverTextIndigo900;md:group-hover:text-indigo-900
 mdGroupHoverTextKiwi;md:group-hover:text-kiwi
+mdGroupHoverTextKiwiDark;md:group-hover:text-kiwi-dark
+mdGroupHoverTextKiwiLight;md:group-hover:text-kiwi-light
 mdGroupHoverTextManzana;md:group-hover:text-manzana
 mdGroupHoverTextOpacity0;md:group-hover:text-opacity-0
 mdGroupHoverTextOpacity100;md:group-hover:text-opacity-100
@@ -22031,6 +22429,8 @@ mdHoverBgIndigo700;md:hover:bg-indigo-700
 mdHoverBgIndigo800;md:hover:bg-indigo-800
 mdHoverBgIndigo900;md:hover:bg-indigo-900
 mdHoverBgKiwi;md:hover:bg-kiwi
+mdHoverBgKiwiDark;md:hover:bg-kiwi-dark
+mdHoverBgKiwiLight;md:hover:bg-kiwi-light
 mdHoverBgManzana;md:hover:bg-manzana
 mdHoverBgOpacity0;md:hover:bg-opacity-0
 mdHoverBgOpacity100;md:hover:bg-opacity-100
@@ -22145,6 +22545,8 @@ mdHoverBorderIndigo700;md:hover:border-indigo-700
 mdHoverBorderIndigo800;md:hover:border-indigo-800
 mdHoverBorderIndigo900;md:hover:border-indigo-900
 mdHoverBorderKiwi;md:hover:border-kiwi
+mdHoverBorderKiwiDark;md:hover:border-kiwi-dark
+mdHoverBorderKiwiLight;md:hover:border-kiwi-light
 mdHoverBorderL0;md:hover:border-l-0
 mdHoverBorderL2;md:hover:border-l-2
 mdHoverBorderL4;md:hover:border-l-4
@@ -22264,6 +22666,8 @@ mdHoverFromIndigo700;md:hover:from-indigo-700
 mdHoverFromIndigo800;md:hover:from-indigo-800
 mdHoverFromIndigo900;md:hover:from-indigo-900
 mdHoverFromKiwi;md:hover:from-kiwi
+mdHoverFromKiwiDark;md:hover:from-kiwi-dark
+mdHoverFromKiwiLight;md:hover:from-kiwi-light
 mdHoverFromManzana;md:hover:from-manzana
 mdHoverFromPink100;md:hover:from-pink-100
 mdHoverFromPink200;md:hover:from-pink-200
@@ -22479,6 +22883,8 @@ mdHoverRingIndigo800;md:hover:ring-indigo-800
 mdHoverRingIndigo900;md:hover:ring-indigo-900
 mdHoverRingInset;md:hover:ring-inset
 mdHoverRingKiwi;md:hover:ring-kiwi
+mdHoverRingKiwiDark;md:hover:ring-kiwi-dark
+mdHoverRingKiwiLight;md:hover:ring-kiwi-light
 mdHoverRingManzana;md:hover:ring-manzana
 mdHoverRingOffset0;md:hover:ring-offset-0
 mdHoverRingOffset1;md:hover:ring-offset-1
@@ -22531,6 +22937,8 @@ mdHoverRingOffsetIndigo700;md:hover:ring-offset-indigo-700
 mdHoverRingOffsetIndigo800;md:hover:ring-offset-indigo-800
 mdHoverRingOffsetIndigo900;md:hover:ring-offset-indigo-900
 mdHoverRingOffsetKiwi;md:hover:ring-offset-kiwi
+mdHoverRingOffsetKiwiDark;md:hover:ring-offset-kiwi-dark
+mdHoverRingOffsetKiwiLight;md:hover:ring-offset-kiwi-light
 mdHoverRingOffsetManzana;md:hover:ring-offset-manzana
 mdHoverRingOffsetPink100;md:hover:ring-offset-pink-100
 mdHoverRingOffsetPink200;md:hover:ring-offset-pink-200
@@ -22736,6 +23144,8 @@ mdHoverTextIndigo700;md:hover:text-indigo-700
 mdHoverTextIndigo800;md:hover:text-indigo-800
 mdHoverTextIndigo900;md:hover:text-indigo-900
 mdHoverTextKiwi;md:hover:text-kiwi
+mdHoverTextKiwiDark;md:hover:text-kiwi-dark
+mdHoverTextKiwiLight;md:hover:text-kiwi-light
 mdHoverTextManzana;md:hover:text-manzana
 mdHoverTextOpacity0;md:hover:text-opacity-0
 mdHoverTextOpacity100;md:hover:text-opacity-100
@@ -22840,6 +23250,8 @@ mdHoverToIndigo700;md:hover:to-indigo-700
 mdHoverToIndigo800;md:hover:to-indigo-800
 mdHoverToIndigo900;md:hover:to-indigo-900
 mdHoverToKiwi;md:hover:to-kiwi
+mdHoverToKiwiDark;md:hover:to-kiwi-dark
+mdHoverToKiwiLight;md:hover:to-kiwi-light
 mdHoverToManzana;md:hover:to-manzana
 mdHoverToPink100;md:hover:to-pink-100
 mdHoverToPink200;md:hover:to-pink-200
@@ -23014,6 +23426,8 @@ mdHoverViaIndigo700;md:hover:via-indigo-700
 mdHoverViaIndigo800;md:hover:via-indigo-800
 mdHoverViaIndigo900;md:hover:via-indigo-900
 mdHoverViaKiwi;md:hover:via-kiwi
+mdHoverViaKiwiDark;md:hover:via-kiwi-dark
+mdHoverViaKiwiLight;md:hover:via-kiwi-light
 mdHoverViaManzana;md:hover:via-manzana
 mdHoverViaPink100;md:hover:via-pink-100
 mdHoverViaPink200;md:hover:via-pink-200
@@ -24568,6 +24982,8 @@ mdPlaceholderIndigo700;md:placeholder-indigo-700
 mdPlaceholderIndigo800;md:placeholder-indigo-800
 mdPlaceholderIndigo900;md:placeholder-indigo-900
 mdPlaceholderKiwi;md:placeholder-kiwi
+mdPlaceholderKiwiDark;md:placeholder-kiwi-dark
+mdPlaceholderKiwiLight;md:placeholder-kiwi-light
 mdPlaceholderManzana;md:placeholder-manzana
 mdPlaceholderOpacity0;md:placeholder-opacity-0
 mdPlaceholderOpacity100;md:placeholder-opacity-100
@@ -24870,6 +25286,8 @@ mdRingIndigo800;md:ring-indigo-800
 mdRingIndigo900;md:ring-indigo-900
 mdRingInset;md:ring-inset
 mdRingKiwi;md:ring-kiwi
+mdRingKiwiDark;md:ring-kiwi-dark
+mdRingKiwiLight;md:ring-kiwi-light
 mdRingManzana;md:ring-manzana
 mdRingOffset0;md:ring-offset-0
 mdRingOffset1;md:ring-offset-1
@@ -24922,6 +25340,8 @@ mdRingOffsetIndigo700;md:ring-offset-indigo-700
 mdRingOffsetIndigo800;md:ring-offset-indigo-800
 mdRingOffsetIndigo900;md:ring-offset-indigo-900
 mdRingOffsetKiwi;md:ring-offset-kiwi
+mdRingOffsetKiwiDark;md:ring-offset-kiwi-dark
+mdRingOffsetKiwiLight;md:ring-offset-kiwi-light
 mdRingOffsetManzana;md:ring-offset-manzana
 mdRingOffsetPink100;md:ring-offset-pink-100
 mdRingOffsetPink200;md:ring-offset-pink-200
@@ -25346,6 +25766,8 @@ mdTextIndigo800;md:text-indigo-800
 mdTextIndigo900;md:text-indigo-900
 mdTextJustify;md:text-justify
 mdTextKiwi;md:text-kiwi
+mdTextKiwiDark;md:text-kiwi-dark
+mdTextKiwiLight;md:text-kiwi-light
 mdTextLeft;md:text-left
 mdTextLg;md:text-lg
 mdTextManzana;md:text-manzana
@@ -25456,6 +25878,8 @@ mdToIndigo700;md:to-indigo-700
 mdToIndigo800;md:to-indigo-800
 mdToIndigo900;md:to-indigo-900
 mdToKiwi;md:to-kiwi
+mdToKiwiDark;md:to-kiwi-dark
+mdToKiwiLight;md:to-kiwi-light
 mdToManzana;md:to-manzana
 mdToPink100;md:to-pink-100
 mdToPink200;md:to-pink-200
@@ -25691,6 +26115,8 @@ mdViaIndigo700;md:via-indigo-700
 mdViaIndigo800;md:via-indigo-800
 mdViaIndigo900;md:via-indigo-900
 mdViaKiwi;md:via-kiwi
+mdViaKiwiDark;md:via-kiwi-dark
+mdViaKiwiLight;md:via-kiwi-light
 mdViaManzana;md:via-manzana
 mdViaPink100;md:via-pink-100
 mdViaPink200;md:via-pink-200
@@ -26965,6 +27391,8 @@ placeholderIndigo700;placeholder-indigo-700
 placeholderIndigo800;placeholder-indigo-800
 placeholderIndigo900;placeholder-indigo-900
 placeholderKiwi;placeholder-kiwi
+placeholderKiwiDark;placeholder-kiwi-dark
+placeholderKiwiLight;placeholder-kiwi-light
 placeholderManzana;placeholder-manzana
 placeholderOpacity0;placeholder-opacity-0
 placeholderOpacity100;placeholder-opacity-100
@@ -27267,6 +27695,8 @@ ringIndigo800;ring-indigo-800
 ringIndigo900;ring-indigo-900
 ringInset;ring-inset
 ringKiwi;ring-kiwi
+ringKiwiDark;ring-kiwi-dark
+ringKiwiLight;ring-kiwi-light
 ringManzana;ring-manzana
 ringOffset0;ring-offset-0
 ringOffset1;ring-offset-1
@@ -27319,6 +27749,8 @@ ringOffsetIndigo700;ring-offset-indigo-700
 ringOffsetIndigo800;ring-offset-indigo-800
 ringOffsetIndigo900;ring-offset-indigo-900
 ringOffsetKiwi;ring-offset-kiwi
+ringOffsetKiwiDark;ring-offset-kiwi-dark
+ringOffsetKiwiLight;ring-offset-kiwi-light
 ringOffsetManzana;ring-offset-manzana
 ringOffsetPink100;ring-offset-pink-100
 ringOffsetPink200;ring-offset-pink-200
@@ -27610,7 +28042,9 @@ scrollbarThumbIndigo600;scrollbar-thumb-indigo-600
 scrollbarThumbIndigo700;scrollbar-thumb-indigo-700
 scrollbarThumbIndigo800;scrollbar-thumb-indigo-800
 scrollbarThumbIndigo900;scrollbar-thumb-indigo-900
+scrollbarThumbKiwiDark;scrollbar-thumb-kiwi-dark
 scrollbarThumbKiwiDefault;scrollbar-thumb-kiwi-DEFAULT
+scrollbarThumbKiwiLight;scrollbar-thumb-kiwi-light
 scrollbarThumbManzanaDefault;scrollbar-thumb-manzana-DEFAULT
 scrollbarThumbPink100;scrollbar-thumb-pink-100
 scrollbarThumbPink200;scrollbar-thumb-pink-200
@@ -27699,7 +28133,9 @@ scrollbarTrackIndigo600;scrollbar-track-indigo-600
 scrollbarTrackIndigo700;scrollbar-track-indigo-700
 scrollbarTrackIndigo800;scrollbar-track-indigo-800
 scrollbarTrackIndigo900;scrollbar-track-indigo-900
+scrollbarTrackKiwiDark;scrollbar-track-kiwi-dark
 scrollbarTrackKiwiDefault;scrollbar-track-kiwi-DEFAULT
+scrollbarTrackKiwiLight;scrollbar-track-kiwi-light
 scrollbarTrackManzanaDefault;scrollbar-track-manzana-DEFAULT
 scrollbarTrackPink100;scrollbar-track-pink-100
 scrollbarTrackPink200;scrollbar-track-pink-200
@@ -27788,6 +28224,39 @@ smAnimateSpin;sm:animate-spin
 smAnimateSpinSlow;sm:animate-spin-slow
 smAntialiased;sm:antialiased
 smAppearanceNone;sm:appearance-none
+smAspectH10;sm:aspect-h-10
+smAspectH11;sm:aspect-h-11
+smAspectH12;sm:aspect-h-12
+smAspectH13;sm:aspect-h-13
+smAspectH14;sm:aspect-h-14
+smAspectH15;sm:aspect-h-15
+smAspectH16;sm:aspect-h-16
+smAspectH1;sm:aspect-h-1
+smAspectH2;sm:aspect-h-2
+smAspectH3;sm:aspect-h-3
+smAspectH4;sm:aspect-h-4
+smAspectH5;sm:aspect-h-5
+smAspectH6;sm:aspect-h-6
+smAspectH7;sm:aspect-h-7
+smAspectH8;sm:aspect-h-8
+smAspectH9;sm:aspect-h-9
+smAspectNone;sm:aspect-none
+smAspectW10;sm:aspect-w-10
+smAspectW11;sm:aspect-w-11
+smAspectW12;sm:aspect-w-12
+smAspectW13;sm:aspect-w-13
+smAspectW14;sm:aspect-w-14
+smAspectW15;sm:aspect-w-15
+smAspectW16;sm:aspect-w-16
+smAspectW1;sm:aspect-w-1
+smAspectW2;sm:aspect-w-2
+smAspectW3;sm:aspect-w-3
+smAspectW4;sm:aspect-w-4
+smAspectW5;sm:aspect-w-5
+smAspectW6;sm:aspect-w-6
+smAspectW7;sm:aspect-w-7
+smAspectW8;sm:aspect-w-8
+smAspectW9;sm:aspect-w-9
 smAutoColsAuto;sm:auto-cols-auto
 smAutoColsFr;sm:auto-cols-fr
 smAutoColsMax;sm:auto-cols-max
@@ -27860,6 +28329,8 @@ smBgIndigo700;sm:bg-indigo-700
 smBgIndigo800;sm:bg-indigo-800
 smBgIndigo900;sm:bg-indigo-900
 smBgKiwi;sm:bg-kiwi
+smBgKiwiDark;sm:bg-kiwi-dark
+smBgKiwiLight;sm:bg-kiwi-light
 smBgLeft;sm:bg-left
 smBgLeftBottom;sm:bg-left-bottom
 smBgLeftTop;sm:bg-left-top
@@ -27995,6 +28466,8 @@ smBorderIndigo700;sm:border-indigo-700
 smBorderIndigo800;sm:border-indigo-800
 smBorderIndigo900;sm:border-indigo-900
 smBorderKiwi;sm:border-kiwi
+smBorderKiwiDark;sm:border-kiwi-dark
+smBorderKiwiLight;sm:border-kiwi-light
 smBorderL0;sm:border-l-0
 smBorderL2;sm:border-l-2
 smBorderL4;sm:border-l-4
@@ -28166,6 +28639,8 @@ smCheckedBgIndigo700;sm:checked:bg-indigo-700
 smCheckedBgIndigo800;sm:checked:bg-indigo-800
 smCheckedBgIndigo900;sm:checked:bg-indigo-900
 smCheckedBgKiwi;sm:checked:bg-kiwi
+smCheckedBgKiwiDark;sm:checked:bg-kiwi-dark
+smCheckedBgKiwiLight;sm:checked:bg-kiwi-light
 smCheckedBgManzana;sm:checked:bg-manzana
 smCheckedBgPink100;sm:checked:bg-pink-100
 smCheckedBgPink200;sm:checked:bg-pink-200
@@ -28255,6 +28730,8 @@ smCheckedBorderIndigo700;sm:checked:border-indigo-700
 smCheckedBorderIndigo800;sm:checked:border-indigo-800
 smCheckedBorderIndigo900;sm:checked:border-indigo-900
 smCheckedBorderKiwi;sm:checked:border-kiwi
+smCheckedBorderKiwiDark;sm:checked:border-kiwi-dark
+smCheckedBorderKiwiLight;sm:checked:border-kiwi-light
 smCheckedBorderManzana;sm:checked:border-manzana
 smCheckedBorderPink100;sm:checked:border-pink-100
 smCheckedBorderPink200;sm:checked:border-pink-200
@@ -28414,6 +28891,8 @@ smDisabledBgIndigo700;sm:disabled:bg-indigo-700
 smDisabledBgIndigo800;sm:disabled:bg-indigo-800
 smDisabledBgIndigo900;sm:disabled:bg-indigo-900
 smDisabledBgKiwi;sm:disabled:bg-kiwi
+smDisabledBgKiwiDark;sm:disabled:bg-kiwi-dark
+smDisabledBgKiwiLight;sm:disabled:bg-kiwi-light
 smDisabledBgManzana;sm:disabled:bg-manzana
 smDisabledBgPink100;sm:disabled:bg-pink-100
 smDisabledBgPink200;sm:disabled:bg-pink-200
@@ -28528,6 +29007,8 @@ smDivideIndigo700;sm:divide-indigo-700
 smDivideIndigo800;sm:divide-indigo-800
 smDivideIndigo900;sm:divide-indigo-900
 smDivideKiwi;sm:divide-kiwi
+smDivideKiwiDark;sm:divide-kiwi-dark
+smDivideKiwiLight;sm:divide-kiwi-light
 smDivideManzana;sm:divide-manzana
 smDivideNone;sm:divide-none
 smDivideOpacity0;sm:divide-opacity-0
@@ -28680,6 +29161,8 @@ smFocusBgIndigo700;sm:focus:bg-indigo-700
 smFocusBgIndigo800;sm:focus:bg-indigo-800
 smFocusBgIndigo900;sm:focus:bg-indigo-900
 smFocusBgKiwi;sm:focus:bg-kiwi
+smFocusBgKiwiDark;sm:focus:bg-kiwi-dark
+smFocusBgKiwiLight;sm:focus:bg-kiwi-light
 smFocusBgManzana;sm:focus:bg-manzana
 smFocusBgOpacity0;sm:focus:bg-opacity-0
 smFocusBgOpacity100;sm:focus:bg-opacity-100
@@ -28784,6 +29267,8 @@ smFocusBorderIndigo700;sm:focus:border-indigo-700
 smFocusBorderIndigo800;sm:focus:border-indigo-800
 smFocusBorderIndigo900;sm:focus:border-indigo-900
 smFocusBorderKiwi;sm:focus:border-kiwi
+smFocusBorderKiwiDark;sm:focus:border-kiwi-dark
+smFocusBorderKiwiLight;sm:focus:border-kiwi-light
 smFocusBorderManzana;sm:focus:border-manzana
 smFocusBorderOpacity0;sm:focus:border-opacity-0
 smFocusBorderOpacity100;sm:focus:border-opacity-100
@@ -28888,6 +29373,8 @@ smFocusFromIndigo700;sm:focus:from-indigo-700
 smFocusFromIndigo800;sm:focus:from-indigo-800
 smFocusFromIndigo900;sm:focus:from-indigo-900
 smFocusFromKiwi;sm:focus:from-kiwi
+smFocusFromKiwiDark;sm:focus:from-kiwi-dark
+smFocusFromKiwiLight;sm:focus:from-kiwi-light
 smFocusFromManzana;sm:focus:from-manzana
 smFocusFromPink100;sm:focus:from-pink-100
 smFocusFromPink200;sm:focus:from-pink-200
@@ -29100,6 +29587,8 @@ smFocusPlaceholderIndigo700;sm:focus:placeholder-indigo-700
 smFocusPlaceholderIndigo800;sm:focus:placeholder-indigo-800
 smFocusPlaceholderIndigo900;sm:focus:placeholder-indigo-900
 smFocusPlaceholderKiwi;sm:focus:placeholder-kiwi
+smFocusPlaceholderKiwiDark;sm:focus:placeholder-kiwi-dark
+smFocusPlaceholderKiwiLight;sm:focus:placeholder-kiwi-light
 smFocusPlaceholderManzana;sm:focus:placeholder-manzana
 smFocusPlaceholderOpacity0;sm:focus:placeholder-opacity-0
 smFocusPlaceholderOpacity100;sm:focus:placeholder-opacity-100
@@ -29211,6 +29700,8 @@ smFocusRingIndigo800;sm:focus:ring-indigo-800
 smFocusRingIndigo900;sm:focus:ring-indigo-900
 smFocusRingInset;sm:focus:ring-inset
 smFocusRingKiwi;sm:focus:ring-kiwi
+smFocusRingKiwiDark;sm:focus:ring-kiwi-dark
+smFocusRingKiwiLight;sm:focus:ring-kiwi-light
 smFocusRingManzana;sm:focus:ring-manzana
 smFocusRingOffset0;sm:focus:ring-offset-0
 smFocusRingOffset1;sm:focus:ring-offset-1
@@ -29263,6 +29754,8 @@ smFocusRingOffsetIndigo700;sm:focus:ring-offset-indigo-700
 smFocusRingOffsetIndigo800;sm:focus:ring-offset-indigo-800
 smFocusRingOffsetIndigo900;sm:focus:ring-offset-indigo-900
 smFocusRingOffsetKiwi;sm:focus:ring-offset-kiwi
+smFocusRingOffsetKiwiDark;sm:focus:ring-offset-kiwi-dark
+smFocusRingOffsetKiwiLight;sm:focus:ring-offset-kiwi-light
 smFocusRingOffsetManzana;sm:focus:ring-offset-manzana
 smFocusRingOffsetPink100;sm:focus:ring-offset-pink-100
 smFocusRingOffsetPink200;sm:focus:ring-offset-pink-200
@@ -29469,6 +29962,8 @@ smFocusTextIndigo700;sm:focus:text-indigo-700
 smFocusTextIndigo800;sm:focus:text-indigo-800
 smFocusTextIndigo900;sm:focus:text-indigo-900
 smFocusTextKiwi;sm:focus:text-kiwi
+smFocusTextKiwiDark;sm:focus:text-kiwi-dark
+smFocusTextKiwiLight;sm:focus:text-kiwi-light
 smFocusTextManzana;sm:focus:text-manzana
 smFocusTextOpacity0;sm:focus:text-opacity-0
 smFocusTextOpacity100;sm:focus:text-opacity-100
@@ -29573,6 +30068,8 @@ smFocusToIndigo700;sm:focus:to-indigo-700
 smFocusToIndigo800;sm:focus:to-indigo-800
 smFocusToIndigo900;sm:focus:to-indigo-900
 smFocusToKiwi;sm:focus:to-kiwi
+smFocusToKiwiDark;sm:focus:to-kiwi-dark
+smFocusToKiwiLight;sm:focus:to-kiwi-light
 smFocusToManzana;sm:focus:to-manzana
 smFocusToPink100;sm:focus:to-pink-100
 smFocusToPink200;sm:focus:to-pink-200
@@ -29747,6 +30244,8 @@ smFocusViaIndigo700;sm:focus:via-indigo-700
 smFocusViaIndigo800;sm:focus:via-indigo-800
 smFocusViaIndigo900;sm:focus:via-indigo-900
 smFocusViaKiwi;sm:focus:via-kiwi
+smFocusViaKiwiDark;sm:focus:via-kiwi-dark
+smFocusViaKiwiLight;sm:focus:via-kiwi-light
 smFocusViaManzana;sm:focus:via-manzana
 smFocusViaPink100;sm:focus:via-pink-100
 smFocusViaPink200;sm:focus:via-pink-200
@@ -29836,6 +30335,8 @@ smFocusWithinBgIndigo700;sm:focus-within:bg-indigo-700
 smFocusWithinBgIndigo800;sm:focus-within:bg-indigo-800
 smFocusWithinBgIndigo900;sm:focus-within:bg-indigo-900
 smFocusWithinBgKiwi;sm:focus-within:bg-kiwi
+smFocusWithinBgKiwiDark;sm:focus-within:bg-kiwi-dark
+smFocusWithinBgKiwiLight;sm:focus-within:bg-kiwi-light
 smFocusWithinBgManzana;sm:focus-within:bg-manzana
 smFocusWithinBgOpacity0;sm:focus-within:bg-opacity-0
 smFocusWithinBgOpacity100;sm:focus-within:bg-opacity-100
@@ -29940,6 +30441,8 @@ smFocusWithinBorderIndigo700;sm:focus-within:border-indigo-700
 smFocusWithinBorderIndigo800;sm:focus-within:border-indigo-800
 smFocusWithinBorderIndigo900;sm:focus-within:border-indigo-900
 smFocusWithinBorderKiwi;sm:focus-within:border-kiwi
+smFocusWithinBorderKiwiDark;sm:focus-within:border-kiwi-dark
+smFocusWithinBorderKiwiLight;sm:focus-within:border-kiwi-light
 smFocusWithinBorderManzana;sm:focus-within:border-manzana
 smFocusWithinBorderOpacity0;sm:focus-within:border-opacity-0
 smFocusWithinBorderOpacity100;sm:focus-within:border-opacity-100
@@ -30072,6 +30575,8 @@ smFocusWithinRingIndigo800;sm:focus-within:ring-indigo-800
 smFocusWithinRingIndigo900;sm:focus-within:ring-indigo-900
 smFocusWithinRingInset;sm:focus-within:ring-inset
 smFocusWithinRingKiwi;sm:focus-within:ring-kiwi
+smFocusWithinRingKiwiDark;sm:focus-within:ring-kiwi-dark
+smFocusWithinRingKiwiLight;sm:focus-within:ring-kiwi-light
 smFocusWithinRingManzana;sm:focus-within:ring-manzana
 smFocusWithinRingOffset0;sm:focus-within:ring-offset-0
 smFocusWithinRingOffset1;sm:focus-within:ring-offset-1
@@ -30124,6 +30629,8 @@ smFocusWithinRingOffsetIndigo700;sm:focus-within:ring-offset-indigo-700
 smFocusWithinRingOffsetIndigo800;sm:focus-within:ring-offset-indigo-800
 smFocusWithinRingOffsetIndigo900;sm:focus-within:ring-offset-indigo-900
 smFocusWithinRingOffsetKiwi;sm:focus-within:ring-offset-kiwi
+smFocusWithinRingOffsetKiwiDark;sm:focus-within:ring-offset-kiwi-dark
+smFocusWithinRingOffsetKiwiLight;sm:focus-within:ring-offset-kiwi-light
 smFocusWithinRingOffsetManzana;sm:focus-within:ring-offset-manzana
 smFocusWithinRingOffsetPink100;sm:focus-within:ring-offset-pink-100
 smFocusWithinRingOffsetPink200;sm:focus-within:ring-offset-pink-200
@@ -30279,6 +30786,8 @@ smFocusWithinTextIndigo700;sm:focus-within:text-indigo-700
 smFocusWithinTextIndigo800;sm:focus-within:text-indigo-800
 smFocusWithinTextIndigo900;sm:focus-within:text-indigo-900
 smFocusWithinTextKiwi;sm:focus-within:text-kiwi
+smFocusWithinTextKiwiDark;sm:focus-within:text-kiwi-dark
+smFocusWithinTextKiwiLight;sm:focus-within:text-kiwi-light
 smFocusWithinTextManzana;sm:focus-within:text-manzana
 smFocusWithinTextOpacity0;sm:focus-within:text-opacity-0
 smFocusWithinTextOpacity100;sm:focus-within:text-opacity-100
@@ -30410,6 +30919,8 @@ smFromIndigo700;sm:from-indigo-700
 smFromIndigo800;sm:from-indigo-800
 smFromIndigo900;sm:from-indigo-900
 smFromKiwi;sm:from-kiwi
+smFromKiwiDark;sm:from-kiwi-dark
+smFromKiwiLight;sm:from-kiwi-light
 smFromManzana;sm:from-manzana
 smFromPink100;sm:from-pink-100
 smFromPink200;sm:from-pink-200
@@ -30629,6 +31140,8 @@ smGroupHoverBgIndigo700;sm:group-hover:bg-indigo-700
 smGroupHoverBgIndigo800;sm:group-hover:bg-indigo-800
 smGroupHoverBgIndigo900;sm:group-hover:bg-indigo-900
 smGroupHoverBgKiwi;sm:group-hover:bg-kiwi
+smGroupHoverBgKiwiDark;sm:group-hover:bg-kiwi-dark
+smGroupHoverBgKiwiLight;sm:group-hover:bg-kiwi-light
 smGroupHoverBgManzana;sm:group-hover:bg-manzana
 smGroupHoverBgOpacity0;sm:group-hover:bg-opacity-0
 smGroupHoverBgOpacity100;sm:group-hover:bg-opacity-100
@@ -30733,6 +31246,8 @@ smGroupHoverBorderIndigo700;sm:group-hover:border-indigo-700
 smGroupHoverBorderIndigo800;sm:group-hover:border-indigo-800
 smGroupHoverBorderIndigo900;sm:group-hover:border-indigo-900
 smGroupHoverBorderKiwi;sm:group-hover:border-kiwi
+smGroupHoverBorderKiwiDark;sm:group-hover:border-kiwi-dark
+smGroupHoverBorderKiwiLight;sm:group-hover:border-kiwi-light
 smGroupHoverBorderManzana;sm:group-hover:border-manzana
 smGroupHoverBorderOpacity0;sm:group-hover:border-opacity-0
 smGroupHoverBorderOpacity100;sm:group-hover:border-opacity-100
@@ -30862,6 +31377,8 @@ smGroupHoverTextIndigo700;sm:group-hover:text-indigo-700
 smGroupHoverTextIndigo800;sm:group-hover:text-indigo-800
 smGroupHoverTextIndigo900;sm:group-hover:text-indigo-900
 smGroupHoverTextKiwi;sm:group-hover:text-kiwi
+smGroupHoverTextKiwiDark;sm:group-hover:text-kiwi-dark
+smGroupHoverTextKiwiLight;sm:group-hover:text-kiwi-light
 smGroupHoverTextManzana;sm:group-hover:text-manzana
 smGroupHoverTextOpacity0;sm:group-hover:text-opacity-0
 smGroupHoverTextOpacity100;sm:group-hover:text-opacity-100
@@ -31021,6 +31538,8 @@ smHoverBgIndigo700;sm:hover:bg-indigo-700
 smHoverBgIndigo800;sm:hover:bg-indigo-800
 smHoverBgIndigo900;sm:hover:bg-indigo-900
 smHoverBgKiwi;sm:hover:bg-kiwi
+smHoverBgKiwiDark;sm:hover:bg-kiwi-dark
+smHoverBgKiwiLight;sm:hover:bg-kiwi-light
 smHoverBgManzana;sm:hover:bg-manzana
 smHoverBgOpacity0;sm:hover:bg-opacity-0
 smHoverBgOpacity100;sm:hover:bg-opacity-100
@@ -31135,6 +31654,8 @@ smHoverBorderIndigo700;sm:hover:border-indigo-700
 smHoverBorderIndigo800;sm:hover:border-indigo-800
 smHoverBorderIndigo900;sm:hover:border-indigo-900
 smHoverBorderKiwi;sm:hover:border-kiwi
+smHoverBorderKiwiDark;sm:hover:border-kiwi-dark
+smHoverBorderKiwiLight;sm:hover:border-kiwi-light
 smHoverBorderL0;sm:hover:border-l-0
 smHoverBorderL2;sm:hover:border-l-2
 smHoverBorderL4;sm:hover:border-l-4
@@ -31254,6 +31775,8 @@ smHoverFromIndigo700;sm:hover:from-indigo-700
 smHoverFromIndigo800;sm:hover:from-indigo-800
 smHoverFromIndigo900;sm:hover:from-indigo-900
 smHoverFromKiwi;sm:hover:from-kiwi
+smHoverFromKiwiDark;sm:hover:from-kiwi-dark
+smHoverFromKiwiLight;sm:hover:from-kiwi-light
 smHoverFromManzana;sm:hover:from-manzana
 smHoverFromPink100;sm:hover:from-pink-100
 smHoverFromPink200;sm:hover:from-pink-200
@@ -31469,6 +31992,8 @@ smHoverRingIndigo800;sm:hover:ring-indigo-800
 smHoverRingIndigo900;sm:hover:ring-indigo-900
 smHoverRingInset;sm:hover:ring-inset
 smHoverRingKiwi;sm:hover:ring-kiwi
+smHoverRingKiwiDark;sm:hover:ring-kiwi-dark
+smHoverRingKiwiLight;sm:hover:ring-kiwi-light
 smHoverRingManzana;sm:hover:ring-manzana
 smHoverRingOffset0;sm:hover:ring-offset-0
 smHoverRingOffset1;sm:hover:ring-offset-1
@@ -31521,6 +32046,8 @@ smHoverRingOffsetIndigo700;sm:hover:ring-offset-indigo-700
 smHoverRingOffsetIndigo800;sm:hover:ring-offset-indigo-800
 smHoverRingOffsetIndigo900;sm:hover:ring-offset-indigo-900
 smHoverRingOffsetKiwi;sm:hover:ring-offset-kiwi
+smHoverRingOffsetKiwiDark;sm:hover:ring-offset-kiwi-dark
+smHoverRingOffsetKiwiLight;sm:hover:ring-offset-kiwi-light
 smHoverRingOffsetManzana;sm:hover:ring-offset-manzana
 smHoverRingOffsetPink100;sm:hover:ring-offset-pink-100
 smHoverRingOffsetPink200;sm:hover:ring-offset-pink-200
@@ -31726,6 +32253,8 @@ smHoverTextIndigo700;sm:hover:text-indigo-700
 smHoverTextIndigo800;sm:hover:text-indigo-800
 smHoverTextIndigo900;sm:hover:text-indigo-900
 smHoverTextKiwi;sm:hover:text-kiwi
+smHoverTextKiwiDark;sm:hover:text-kiwi-dark
+smHoverTextKiwiLight;sm:hover:text-kiwi-light
 smHoverTextManzana;sm:hover:text-manzana
 smHoverTextOpacity0;sm:hover:text-opacity-0
 smHoverTextOpacity100;sm:hover:text-opacity-100
@@ -31830,6 +32359,8 @@ smHoverToIndigo700;sm:hover:to-indigo-700
 smHoverToIndigo800;sm:hover:to-indigo-800
 smHoverToIndigo900;sm:hover:to-indigo-900
 smHoverToKiwi;sm:hover:to-kiwi
+smHoverToKiwiDark;sm:hover:to-kiwi-dark
+smHoverToKiwiLight;sm:hover:to-kiwi-light
 smHoverToManzana;sm:hover:to-manzana
 smHoverToPink100;sm:hover:to-pink-100
 smHoverToPink200;sm:hover:to-pink-200
@@ -32004,6 +32535,8 @@ smHoverViaIndigo700;sm:hover:via-indigo-700
 smHoverViaIndigo800;sm:hover:via-indigo-800
 smHoverViaIndigo900;sm:hover:via-indigo-900
 smHoverViaKiwi;sm:hover:via-kiwi
+smHoverViaKiwiDark;sm:hover:via-kiwi-dark
+smHoverViaKiwiLight;sm:hover:via-kiwi-light
 smHoverViaManzana;sm:hover:via-manzana
 smHoverViaPink100;sm:hover:via-pink-100
 smHoverViaPink200;sm:hover:via-pink-200
@@ -33558,6 +34091,8 @@ smPlaceholderIndigo700;sm:placeholder-indigo-700
 smPlaceholderIndigo800;sm:placeholder-indigo-800
 smPlaceholderIndigo900;sm:placeholder-indigo-900
 smPlaceholderKiwi;sm:placeholder-kiwi
+smPlaceholderKiwiDark;sm:placeholder-kiwi-dark
+smPlaceholderKiwiLight;sm:placeholder-kiwi-light
 smPlaceholderManzana;sm:placeholder-manzana
 smPlaceholderOpacity0;sm:placeholder-opacity-0
 smPlaceholderOpacity100;sm:placeholder-opacity-100
@@ -33860,6 +34395,8 @@ smRingIndigo800;sm:ring-indigo-800
 smRingIndigo900;sm:ring-indigo-900
 smRingInset;sm:ring-inset
 smRingKiwi;sm:ring-kiwi
+smRingKiwiDark;sm:ring-kiwi-dark
+smRingKiwiLight;sm:ring-kiwi-light
 smRingManzana;sm:ring-manzana
 smRingOffset0;sm:ring-offset-0
 smRingOffset1;sm:ring-offset-1
@@ -33912,6 +34449,8 @@ smRingOffsetIndigo700;sm:ring-offset-indigo-700
 smRingOffsetIndigo800;sm:ring-offset-indigo-800
 smRingOffsetIndigo900;sm:ring-offset-indigo-900
 smRingOffsetKiwi;sm:ring-offset-kiwi
+smRingOffsetKiwiDark;sm:ring-offset-kiwi-dark
+smRingOffsetKiwiLight;sm:ring-offset-kiwi-light
 smRingOffsetManzana;sm:ring-offset-manzana
 smRingOffsetPink100;sm:ring-offset-pink-100
 smRingOffsetPink200;sm:ring-offset-pink-200
@@ -34336,6 +34875,8 @@ smTextIndigo800;sm:text-indigo-800
 smTextIndigo900;sm:text-indigo-900
 smTextJustify;sm:text-justify
 smTextKiwi;sm:text-kiwi
+smTextKiwiDark;sm:text-kiwi-dark
+smTextKiwiLight;sm:text-kiwi-light
 smTextLeft;sm:text-left
 smTextLg;sm:text-lg
 smTextManzana;sm:text-manzana
@@ -34446,6 +34987,8 @@ smToIndigo700;sm:to-indigo-700
 smToIndigo800;sm:to-indigo-800
 smToIndigo900;sm:to-indigo-900
 smToKiwi;sm:to-kiwi
+smToKiwiDark;sm:to-kiwi-dark
+smToKiwiLight;sm:to-kiwi-light
 smToManzana;sm:to-manzana
 smToPink100;sm:to-pink-100
 smToPink200;sm:to-pink-200
@@ -34681,6 +35224,8 @@ smViaIndigo700;sm:via-indigo-700
 smViaIndigo800;sm:via-indigo-800
 smViaIndigo900;sm:via-indigo-900
 smViaKiwi;sm:via-kiwi
+smViaKiwiDark;sm:via-kiwi-dark
+smViaKiwiLight;sm:via-kiwi-light
 smViaManzana;sm:via-manzana
 smViaPink100;sm:via-pink-100
 smViaPink200;sm:via-pink-200
@@ -34953,6 +35498,8 @@ textIndigo800;text-indigo-800
 textIndigo900;text-indigo-900
 textJustify;text-justify
 textKiwi;text-kiwi
+textKiwiDark;text-kiwi-dark
+textKiwiLight;text-kiwi-light
 textLeft;text-left
 textLg;text-lg
 textManzana;text-manzana
@@ -35063,6 +35610,8 @@ toIndigo700;to-indigo-700
 toIndigo800;to-indigo-800
 toIndigo900;to-indigo-900
 toKiwi;to-kiwi
+toKiwiDark;to-kiwi-dark
+toKiwiLight;to-kiwi-light
 toManzana;to-manzana
 toPink100;to-pink-100
 toPink200;to-pink-200
@@ -35298,6 +35847,8 @@ viaIndigo700;via-indigo-700
 viaIndigo800;via-indigo-800
 viaIndigo900;via-indigo-900
 viaKiwi;via-kiwi
+viaKiwiDark;via-kiwi-dark
+viaKiwiLight;via-kiwi-light
 viaManzana;via-manzana
 viaPink100;via-pink-100
 viaPink200;via-pink-200
@@ -35428,6 +35979,39 @@ xlAnimateSpin;xl:animate-spin
 xlAnimateSpinSlow;xl:animate-spin-slow
 xlAntialiased;xl:antialiased
 xlAppearanceNone;xl:appearance-none
+xlAspectH10;xl:aspect-h-10
+xlAspectH11;xl:aspect-h-11
+xlAspectH12;xl:aspect-h-12
+xlAspectH13;xl:aspect-h-13
+xlAspectH14;xl:aspect-h-14
+xlAspectH15;xl:aspect-h-15
+xlAspectH16;xl:aspect-h-16
+xlAspectH1;xl:aspect-h-1
+xlAspectH2;xl:aspect-h-2
+xlAspectH3;xl:aspect-h-3
+xlAspectH4;xl:aspect-h-4
+xlAspectH5;xl:aspect-h-5
+xlAspectH6;xl:aspect-h-6
+xlAspectH7;xl:aspect-h-7
+xlAspectH8;xl:aspect-h-8
+xlAspectH9;xl:aspect-h-9
+xlAspectNone;xl:aspect-none
+xlAspectW10;xl:aspect-w-10
+xlAspectW11;xl:aspect-w-11
+xlAspectW12;xl:aspect-w-12
+xlAspectW13;xl:aspect-w-13
+xlAspectW14;xl:aspect-w-14
+xlAspectW15;xl:aspect-w-15
+xlAspectW16;xl:aspect-w-16
+xlAspectW1;xl:aspect-w-1
+xlAspectW2;xl:aspect-w-2
+xlAspectW3;xl:aspect-w-3
+xlAspectW4;xl:aspect-w-4
+xlAspectW5;xl:aspect-w-5
+xlAspectW6;xl:aspect-w-6
+xlAspectW7;xl:aspect-w-7
+xlAspectW8;xl:aspect-w-8
+xlAspectW9;xl:aspect-w-9
 xlAutoColsAuto;xl:auto-cols-auto
 xlAutoColsFr;xl:auto-cols-fr
 xlAutoColsMax;xl:auto-cols-max
@@ -35500,6 +36084,8 @@ xlBgIndigo700;xl:bg-indigo-700
 xlBgIndigo800;xl:bg-indigo-800
 xlBgIndigo900;xl:bg-indigo-900
 xlBgKiwi;xl:bg-kiwi
+xlBgKiwiDark;xl:bg-kiwi-dark
+xlBgKiwiLight;xl:bg-kiwi-light
 xlBgLeft;xl:bg-left
 xlBgLeftBottom;xl:bg-left-bottom
 xlBgLeftTop;xl:bg-left-top
@@ -35635,6 +36221,8 @@ xlBorderIndigo700;xl:border-indigo-700
 xlBorderIndigo800;xl:border-indigo-800
 xlBorderIndigo900;xl:border-indigo-900
 xlBorderKiwi;xl:border-kiwi
+xlBorderKiwiDark;xl:border-kiwi-dark
+xlBorderKiwiLight;xl:border-kiwi-light
 xlBorderL0;xl:border-l-0
 xlBorderL2;xl:border-l-2
 xlBorderL4;xl:border-l-4
@@ -35806,6 +36394,8 @@ xlCheckedBgIndigo700;xl:checked:bg-indigo-700
 xlCheckedBgIndigo800;xl:checked:bg-indigo-800
 xlCheckedBgIndigo900;xl:checked:bg-indigo-900
 xlCheckedBgKiwi;xl:checked:bg-kiwi
+xlCheckedBgKiwiDark;xl:checked:bg-kiwi-dark
+xlCheckedBgKiwiLight;xl:checked:bg-kiwi-light
 xlCheckedBgManzana;xl:checked:bg-manzana
 xlCheckedBgPink100;xl:checked:bg-pink-100
 xlCheckedBgPink200;xl:checked:bg-pink-200
@@ -35895,6 +36485,8 @@ xlCheckedBorderIndigo700;xl:checked:border-indigo-700
 xlCheckedBorderIndigo800;xl:checked:border-indigo-800
 xlCheckedBorderIndigo900;xl:checked:border-indigo-900
 xlCheckedBorderKiwi;xl:checked:border-kiwi
+xlCheckedBorderKiwiDark;xl:checked:border-kiwi-dark
+xlCheckedBorderKiwiLight;xl:checked:border-kiwi-light
 xlCheckedBorderManzana;xl:checked:border-manzana
 xlCheckedBorderPink100;xl:checked:border-pink-100
 xlCheckedBorderPink200;xl:checked:border-pink-200
@@ -36054,6 +36646,8 @@ xlDisabledBgIndigo700;xl:disabled:bg-indigo-700
 xlDisabledBgIndigo800;xl:disabled:bg-indigo-800
 xlDisabledBgIndigo900;xl:disabled:bg-indigo-900
 xlDisabledBgKiwi;xl:disabled:bg-kiwi
+xlDisabledBgKiwiDark;xl:disabled:bg-kiwi-dark
+xlDisabledBgKiwiLight;xl:disabled:bg-kiwi-light
 xlDisabledBgManzana;xl:disabled:bg-manzana
 xlDisabledBgPink100;xl:disabled:bg-pink-100
 xlDisabledBgPink200;xl:disabled:bg-pink-200
@@ -36168,6 +36762,8 @@ xlDivideIndigo700;xl:divide-indigo-700
 xlDivideIndigo800;xl:divide-indigo-800
 xlDivideIndigo900;xl:divide-indigo-900
 xlDivideKiwi;xl:divide-kiwi
+xlDivideKiwiDark;xl:divide-kiwi-dark
+xlDivideKiwiLight;xl:divide-kiwi-light
 xlDivideManzana;xl:divide-manzana
 xlDivideNone;xl:divide-none
 xlDivideOpacity0;xl:divide-opacity-0
@@ -36320,6 +36916,8 @@ xlFocusBgIndigo700;xl:focus:bg-indigo-700
 xlFocusBgIndigo800;xl:focus:bg-indigo-800
 xlFocusBgIndigo900;xl:focus:bg-indigo-900
 xlFocusBgKiwi;xl:focus:bg-kiwi
+xlFocusBgKiwiDark;xl:focus:bg-kiwi-dark
+xlFocusBgKiwiLight;xl:focus:bg-kiwi-light
 xlFocusBgManzana;xl:focus:bg-manzana
 xlFocusBgOpacity0;xl:focus:bg-opacity-0
 xlFocusBgOpacity100;xl:focus:bg-opacity-100
@@ -36424,6 +37022,8 @@ xlFocusBorderIndigo700;xl:focus:border-indigo-700
 xlFocusBorderIndigo800;xl:focus:border-indigo-800
 xlFocusBorderIndigo900;xl:focus:border-indigo-900
 xlFocusBorderKiwi;xl:focus:border-kiwi
+xlFocusBorderKiwiDark;xl:focus:border-kiwi-dark
+xlFocusBorderKiwiLight;xl:focus:border-kiwi-light
 xlFocusBorderManzana;xl:focus:border-manzana
 xlFocusBorderOpacity0;xl:focus:border-opacity-0
 xlFocusBorderOpacity100;xl:focus:border-opacity-100
@@ -36528,6 +37128,8 @@ xlFocusFromIndigo700;xl:focus:from-indigo-700
 xlFocusFromIndigo800;xl:focus:from-indigo-800
 xlFocusFromIndigo900;xl:focus:from-indigo-900
 xlFocusFromKiwi;xl:focus:from-kiwi
+xlFocusFromKiwiDark;xl:focus:from-kiwi-dark
+xlFocusFromKiwiLight;xl:focus:from-kiwi-light
 xlFocusFromManzana;xl:focus:from-manzana
 xlFocusFromPink100;xl:focus:from-pink-100
 xlFocusFromPink200;xl:focus:from-pink-200
@@ -36740,6 +37342,8 @@ xlFocusPlaceholderIndigo700;xl:focus:placeholder-indigo-700
 xlFocusPlaceholderIndigo800;xl:focus:placeholder-indigo-800
 xlFocusPlaceholderIndigo900;xl:focus:placeholder-indigo-900
 xlFocusPlaceholderKiwi;xl:focus:placeholder-kiwi
+xlFocusPlaceholderKiwiDark;xl:focus:placeholder-kiwi-dark
+xlFocusPlaceholderKiwiLight;xl:focus:placeholder-kiwi-light
 xlFocusPlaceholderManzana;xl:focus:placeholder-manzana
 xlFocusPlaceholderOpacity0;xl:focus:placeholder-opacity-0
 xlFocusPlaceholderOpacity100;xl:focus:placeholder-opacity-100
@@ -36851,6 +37455,8 @@ xlFocusRingIndigo800;xl:focus:ring-indigo-800
 xlFocusRingIndigo900;xl:focus:ring-indigo-900
 xlFocusRingInset;xl:focus:ring-inset
 xlFocusRingKiwi;xl:focus:ring-kiwi
+xlFocusRingKiwiDark;xl:focus:ring-kiwi-dark
+xlFocusRingKiwiLight;xl:focus:ring-kiwi-light
 xlFocusRingManzana;xl:focus:ring-manzana
 xlFocusRingOffset0;xl:focus:ring-offset-0
 xlFocusRingOffset1;xl:focus:ring-offset-1
@@ -36903,6 +37509,8 @@ xlFocusRingOffsetIndigo700;xl:focus:ring-offset-indigo-700
 xlFocusRingOffsetIndigo800;xl:focus:ring-offset-indigo-800
 xlFocusRingOffsetIndigo900;xl:focus:ring-offset-indigo-900
 xlFocusRingOffsetKiwi;xl:focus:ring-offset-kiwi
+xlFocusRingOffsetKiwiDark;xl:focus:ring-offset-kiwi-dark
+xlFocusRingOffsetKiwiLight;xl:focus:ring-offset-kiwi-light
 xlFocusRingOffsetManzana;xl:focus:ring-offset-manzana
 xlFocusRingOffsetPink100;xl:focus:ring-offset-pink-100
 xlFocusRingOffsetPink200;xl:focus:ring-offset-pink-200
@@ -37109,6 +37717,8 @@ xlFocusTextIndigo700;xl:focus:text-indigo-700
 xlFocusTextIndigo800;xl:focus:text-indigo-800
 xlFocusTextIndigo900;xl:focus:text-indigo-900
 xlFocusTextKiwi;xl:focus:text-kiwi
+xlFocusTextKiwiDark;xl:focus:text-kiwi-dark
+xlFocusTextKiwiLight;xl:focus:text-kiwi-light
 xlFocusTextManzana;xl:focus:text-manzana
 xlFocusTextOpacity0;xl:focus:text-opacity-0
 xlFocusTextOpacity100;xl:focus:text-opacity-100
@@ -37213,6 +37823,8 @@ xlFocusToIndigo700;xl:focus:to-indigo-700
 xlFocusToIndigo800;xl:focus:to-indigo-800
 xlFocusToIndigo900;xl:focus:to-indigo-900
 xlFocusToKiwi;xl:focus:to-kiwi
+xlFocusToKiwiDark;xl:focus:to-kiwi-dark
+xlFocusToKiwiLight;xl:focus:to-kiwi-light
 xlFocusToManzana;xl:focus:to-manzana
 xlFocusToPink100;xl:focus:to-pink-100
 xlFocusToPink200;xl:focus:to-pink-200
@@ -37387,6 +37999,8 @@ xlFocusViaIndigo700;xl:focus:via-indigo-700
 xlFocusViaIndigo800;xl:focus:via-indigo-800
 xlFocusViaIndigo900;xl:focus:via-indigo-900
 xlFocusViaKiwi;xl:focus:via-kiwi
+xlFocusViaKiwiDark;xl:focus:via-kiwi-dark
+xlFocusViaKiwiLight;xl:focus:via-kiwi-light
 xlFocusViaManzana;xl:focus:via-manzana
 xlFocusViaPink100;xl:focus:via-pink-100
 xlFocusViaPink200;xl:focus:via-pink-200
@@ -37476,6 +38090,8 @@ xlFocusWithinBgIndigo700;xl:focus-within:bg-indigo-700
 xlFocusWithinBgIndigo800;xl:focus-within:bg-indigo-800
 xlFocusWithinBgIndigo900;xl:focus-within:bg-indigo-900
 xlFocusWithinBgKiwi;xl:focus-within:bg-kiwi
+xlFocusWithinBgKiwiDark;xl:focus-within:bg-kiwi-dark
+xlFocusWithinBgKiwiLight;xl:focus-within:bg-kiwi-light
 xlFocusWithinBgManzana;xl:focus-within:bg-manzana
 xlFocusWithinBgOpacity0;xl:focus-within:bg-opacity-0
 xlFocusWithinBgOpacity100;xl:focus-within:bg-opacity-100
@@ -37580,6 +38196,8 @@ xlFocusWithinBorderIndigo700;xl:focus-within:border-indigo-700
 xlFocusWithinBorderIndigo800;xl:focus-within:border-indigo-800
 xlFocusWithinBorderIndigo900;xl:focus-within:border-indigo-900
 xlFocusWithinBorderKiwi;xl:focus-within:border-kiwi
+xlFocusWithinBorderKiwiDark;xl:focus-within:border-kiwi-dark
+xlFocusWithinBorderKiwiLight;xl:focus-within:border-kiwi-light
 xlFocusWithinBorderManzana;xl:focus-within:border-manzana
 xlFocusWithinBorderOpacity0;xl:focus-within:border-opacity-0
 xlFocusWithinBorderOpacity100;xl:focus-within:border-opacity-100
@@ -37712,6 +38330,8 @@ xlFocusWithinRingIndigo800;xl:focus-within:ring-indigo-800
 xlFocusWithinRingIndigo900;xl:focus-within:ring-indigo-900
 xlFocusWithinRingInset;xl:focus-within:ring-inset
 xlFocusWithinRingKiwi;xl:focus-within:ring-kiwi
+xlFocusWithinRingKiwiDark;xl:focus-within:ring-kiwi-dark
+xlFocusWithinRingKiwiLight;xl:focus-within:ring-kiwi-light
 xlFocusWithinRingManzana;xl:focus-within:ring-manzana
 xlFocusWithinRingOffset0;xl:focus-within:ring-offset-0
 xlFocusWithinRingOffset1;xl:focus-within:ring-offset-1
@@ -37764,6 +38384,8 @@ xlFocusWithinRingOffsetIndigo700;xl:focus-within:ring-offset-indigo-700
 xlFocusWithinRingOffsetIndigo800;xl:focus-within:ring-offset-indigo-800
 xlFocusWithinRingOffsetIndigo900;xl:focus-within:ring-offset-indigo-900
 xlFocusWithinRingOffsetKiwi;xl:focus-within:ring-offset-kiwi
+xlFocusWithinRingOffsetKiwiDark;xl:focus-within:ring-offset-kiwi-dark
+xlFocusWithinRingOffsetKiwiLight;xl:focus-within:ring-offset-kiwi-light
 xlFocusWithinRingOffsetManzana;xl:focus-within:ring-offset-manzana
 xlFocusWithinRingOffsetPink100;xl:focus-within:ring-offset-pink-100
 xlFocusWithinRingOffsetPink200;xl:focus-within:ring-offset-pink-200
@@ -37919,6 +38541,8 @@ xlFocusWithinTextIndigo700;xl:focus-within:text-indigo-700
 xlFocusWithinTextIndigo800;xl:focus-within:text-indigo-800
 xlFocusWithinTextIndigo900;xl:focus-within:text-indigo-900
 xlFocusWithinTextKiwi;xl:focus-within:text-kiwi
+xlFocusWithinTextKiwiDark;xl:focus-within:text-kiwi-dark
+xlFocusWithinTextKiwiLight;xl:focus-within:text-kiwi-light
 xlFocusWithinTextManzana;xl:focus-within:text-manzana
 xlFocusWithinTextOpacity0;xl:focus-within:text-opacity-0
 xlFocusWithinTextOpacity100;xl:focus-within:text-opacity-100
@@ -38050,6 +38674,8 @@ xlFromIndigo700;xl:from-indigo-700
 xlFromIndigo800;xl:from-indigo-800
 xlFromIndigo900;xl:from-indigo-900
 xlFromKiwi;xl:from-kiwi
+xlFromKiwiDark;xl:from-kiwi-dark
+xlFromKiwiLight;xl:from-kiwi-light
 xlFromManzana;xl:from-manzana
 xlFromPink100;xl:from-pink-100
 xlFromPink200;xl:from-pink-200
@@ -38269,6 +38895,8 @@ xlGroupHoverBgIndigo700;xl:group-hover:bg-indigo-700
 xlGroupHoverBgIndigo800;xl:group-hover:bg-indigo-800
 xlGroupHoverBgIndigo900;xl:group-hover:bg-indigo-900
 xlGroupHoverBgKiwi;xl:group-hover:bg-kiwi
+xlGroupHoverBgKiwiDark;xl:group-hover:bg-kiwi-dark
+xlGroupHoverBgKiwiLight;xl:group-hover:bg-kiwi-light
 xlGroupHoverBgManzana;xl:group-hover:bg-manzana
 xlGroupHoverBgOpacity0;xl:group-hover:bg-opacity-0
 xlGroupHoverBgOpacity100;xl:group-hover:bg-opacity-100
@@ -38373,6 +39001,8 @@ xlGroupHoverBorderIndigo700;xl:group-hover:border-indigo-700
 xlGroupHoverBorderIndigo800;xl:group-hover:border-indigo-800
 xlGroupHoverBorderIndigo900;xl:group-hover:border-indigo-900
 xlGroupHoverBorderKiwi;xl:group-hover:border-kiwi
+xlGroupHoverBorderKiwiDark;xl:group-hover:border-kiwi-dark
+xlGroupHoverBorderKiwiLight;xl:group-hover:border-kiwi-light
 xlGroupHoverBorderManzana;xl:group-hover:border-manzana
 xlGroupHoverBorderOpacity0;xl:group-hover:border-opacity-0
 xlGroupHoverBorderOpacity100;xl:group-hover:border-opacity-100
@@ -38502,6 +39132,8 @@ xlGroupHoverTextIndigo700;xl:group-hover:text-indigo-700
 xlGroupHoverTextIndigo800;xl:group-hover:text-indigo-800
 xlGroupHoverTextIndigo900;xl:group-hover:text-indigo-900
 xlGroupHoverTextKiwi;xl:group-hover:text-kiwi
+xlGroupHoverTextKiwiDark;xl:group-hover:text-kiwi-dark
+xlGroupHoverTextKiwiLight;xl:group-hover:text-kiwi-light
 xlGroupHoverTextManzana;xl:group-hover:text-manzana
 xlGroupHoverTextOpacity0;xl:group-hover:text-opacity-0
 xlGroupHoverTextOpacity100;xl:group-hover:text-opacity-100
@@ -38661,6 +39293,8 @@ xlHoverBgIndigo700;xl:hover:bg-indigo-700
 xlHoverBgIndigo800;xl:hover:bg-indigo-800
 xlHoverBgIndigo900;xl:hover:bg-indigo-900
 xlHoverBgKiwi;xl:hover:bg-kiwi
+xlHoverBgKiwiDark;xl:hover:bg-kiwi-dark
+xlHoverBgKiwiLight;xl:hover:bg-kiwi-light
 xlHoverBgManzana;xl:hover:bg-manzana
 xlHoverBgOpacity0;xl:hover:bg-opacity-0
 xlHoverBgOpacity100;xl:hover:bg-opacity-100
@@ -38775,6 +39409,8 @@ xlHoverBorderIndigo700;xl:hover:border-indigo-700
 xlHoverBorderIndigo800;xl:hover:border-indigo-800
 xlHoverBorderIndigo900;xl:hover:border-indigo-900
 xlHoverBorderKiwi;xl:hover:border-kiwi
+xlHoverBorderKiwiDark;xl:hover:border-kiwi-dark
+xlHoverBorderKiwiLight;xl:hover:border-kiwi-light
 xlHoverBorderL0;xl:hover:border-l-0
 xlHoverBorderL2;xl:hover:border-l-2
 xlHoverBorderL4;xl:hover:border-l-4
@@ -38894,6 +39530,8 @@ xlHoverFromIndigo700;xl:hover:from-indigo-700
 xlHoverFromIndigo800;xl:hover:from-indigo-800
 xlHoverFromIndigo900;xl:hover:from-indigo-900
 xlHoverFromKiwi;xl:hover:from-kiwi
+xlHoverFromKiwiDark;xl:hover:from-kiwi-dark
+xlHoverFromKiwiLight;xl:hover:from-kiwi-light
 xlHoverFromManzana;xl:hover:from-manzana
 xlHoverFromPink100;xl:hover:from-pink-100
 xlHoverFromPink200;xl:hover:from-pink-200
@@ -39109,6 +39747,8 @@ xlHoverRingIndigo800;xl:hover:ring-indigo-800
 xlHoverRingIndigo900;xl:hover:ring-indigo-900
 xlHoverRingInset;xl:hover:ring-inset
 xlHoverRingKiwi;xl:hover:ring-kiwi
+xlHoverRingKiwiDark;xl:hover:ring-kiwi-dark
+xlHoverRingKiwiLight;xl:hover:ring-kiwi-light
 xlHoverRingManzana;xl:hover:ring-manzana
 xlHoverRingOffset0;xl:hover:ring-offset-0
 xlHoverRingOffset1;xl:hover:ring-offset-1
@@ -39161,6 +39801,8 @@ xlHoverRingOffsetIndigo700;xl:hover:ring-offset-indigo-700
 xlHoverRingOffsetIndigo800;xl:hover:ring-offset-indigo-800
 xlHoverRingOffsetIndigo900;xl:hover:ring-offset-indigo-900
 xlHoverRingOffsetKiwi;xl:hover:ring-offset-kiwi
+xlHoverRingOffsetKiwiDark;xl:hover:ring-offset-kiwi-dark
+xlHoverRingOffsetKiwiLight;xl:hover:ring-offset-kiwi-light
 xlHoverRingOffsetManzana;xl:hover:ring-offset-manzana
 xlHoverRingOffsetPink100;xl:hover:ring-offset-pink-100
 xlHoverRingOffsetPink200;xl:hover:ring-offset-pink-200
@@ -39366,6 +40008,8 @@ xlHoverTextIndigo700;xl:hover:text-indigo-700
 xlHoverTextIndigo800;xl:hover:text-indigo-800
 xlHoverTextIndigo900;xl:hover:text-indigo-900
 xlHoverTextKiwi;xl:hover:text-kiwi
+xlHoverTextKiwiDark;xl:hover:text-kiwi-dark
+xlHoverTextKiwiLight;xl:hover:text-kiwi-light
 xlHoverTextManzana;xl:hover:text-manzana
 xlHoverTextOpacity0;xl:hover:text-opacity-0
 xlHoverTextOpacity100;xl:hover:text-opacity-100
@@ -39470,6 +40114,8 @@ xlHoverToIndigo700;xl:hover:to-indigo-700
 xlHoverToIndigo800;xl:hover:to-indigo-800
 xlHoverToIndigo900;xl:hover:to-indigo-900
 xlHoverToKiwi;xl:hover:to-kiwi
+xlHoverToKiwiDark;xl:hover:to-kiwi-dark
+xlHoverToKiwiLight;xl:hover:to-kiwi-light
 xlHoverToManzana;xl:hover:to-manzana
 xlHoverToPink100;xl:hover:to-pink-100
 xlHoverToPink200;xl:hover:to-pink-200
@@ -39644,6 +40290,8 @@ xlHoverViaIndigo700;xl:hover:via-indigo-700
 xlHoverViaIndigo800;xl:hover:via-indigo-800
 xlHoverViaIndigo900;xl:hover:via-indigo-900
 xlHoverViaKiwi;xl:hover:via-kiwi
+xlHoverViaKiwiDark;xl:hover:via-kiwi-dark
+xlHoverViaKiwiLight;xl:hover:via-kiwi-light
 xlHoverViaManzana;xl:hover:via-manzana
 xlHoverViaPink100;xl:hover:via-pink-100
 xlHoverViaPink200;xl:hover:via-pink-200
@@ -41198,6 +41846,8 @@ xlPlaceholderIndigo700;xl:placeholder-indigo-700
 xlPlaceholderIndigo800;xl:placeholder-indigo-800
 xlPlaceholderIndigo900;xl:placeholder-indigo-900
 xlPlaceholderKiwi;xl:placeholder-kiwi
+xlPlaceholderKiwiDark;xl:placeholder-kiwi-dark
+xlPlaceholderKiwiLight;xl:placeholder-kiwi-light
 xlPlaceholderManzana;xl:placeholder-manzana
 xlPlaceholderOpacity0;xl:placeholder-opacity-0
 xlPlaceholderOpacity100;xl:placeholder-opacity-100
@@ -41500,6 +42150,8 @@ xlRingIndigo800;xl:ring-indigo-800
 xlRingIndigo900;xl:ring-indigo-900
 xlRingInset;xl:ring-inset
 xlRingKiwi;xl:ring-kiwi
+xlRingKiwiDark;xl:ring-kiwi-dark
+xlRingKiwiLight;xl:ring-kiwi-light
 xlRingManzana;xl:ring-manzana
 xlRingOffset0;xl:ring-offset-0
 xlRingOffset1;xl:ring-offset-1
@@ -41552,6 +42204,8 @@ xlRingOffsetIndigo700;xl:ring-offset-indigo-700
 xlRingOffsetIndigo800;xl:ring-offset-indigo-800
 xlRingOffsetIndigo900;xl:ring-offset-indigo-900
 xlRingOffsetKiwi;xl:ring-offset-kiwi
+xlRingOffsetKiwiDark;xl:ring-offset-kiwi-dark
+xlRingOffsetKiwiLight;xl:ring-offset-kiwi-light
 xlRingOffsetManzana;xl:ring-offset-manzana
 xlRingOffsetPink100;xl:ring-offset-pink-100
 xlRingOffsetPink200;xl:ring-offset-pink-200
@@ -41976,6 +42630,8 @@ xlTextIndigo800;xl:text-indigo-800
 xlTextIndigo900;xl:text-indigo-900
 xlTextJustify;xl:text-justify
 xlTextKiwi;xl:text-kiwi
+xlTextKiwiDark;xl:text-kiwi-dark
+xlTextKiwiLight;xl:text-kiwi-light
 xlTextLeft;xl:text-left
 xlTextLg;xl:text-lg
 xlTextManzana;xl:text-manzana
@@ -42086,6 +42742,8 @@ xlToIndigo700;xl:to-indigo-700
 xlToIndigo800;xl:to-indigo-800
 xlToIndigo900;xl:to-indigo-900
 xlToKiwi;xl:to-kiwi
+xlToKiwiDark;xl:to-kiwi-dark
+xlToKiwiLight;xl:to-kiwi-light
 xlToManzana;xl:to-manzana
 xlToPink100;xl:to-pink-100
 xlToPink200;xl:to-pink-200
@@ -42321,6 +42979,8 @@ xlViaIndigo700;xl:via-indigo-700
 xlViaIndigo800;xl:via-indigo-800
 xlViaIndigo900;xl:via-indigo-900
 xlViaKiwi;xl:via-kiwi
+xlViaKiwiDark;xl:via-kiwi-dark
+xlViaKiwiLight;xl:via-kiwi-light
 xlViaManzana;xl:via-manzana
 xlViaPink100;xl:via-pink-100
 xlViaPink200;xl:via-pink-200
