@@ -273,7 +273,7 @@ component = H.mkComponent
         [ HP.classes [ T.px4, T.pb2, T.pt4, T.flex, T.h40 ] ]
         [ nextLink next
             $ HH.div
-                [ HP.classes [ T.h32, T.w32, T.mr4 ] ]
+                [ HP.classes [ T.h32, T.w44, T.mr4 ] ]
                 [ case next.thumbnail of
                     Just url ->
                       HH.img [ HP.classes [ T.hFull, T.wFull, T.objectCover, T.roundedLg ], HP.src url ]

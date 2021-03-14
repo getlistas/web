@@ -1587,13 +1587,13 @@ w11d12 = ClassName "w-11/12"
 w20 :: ClassName
 w20 = ClassName "w-20"
 
--- | w32
-w32 :: ClassName
-w32 = ClassName "w-32"
-
 -- | w40
 w40 :: ClassName
 w40 = ClassName "w-40"
+
+-- | w44
+w44 :: ClassName
+w44 = ClassName "w-44"
 
 -- | w4
 w4 :: ClassName
