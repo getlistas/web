@@ -5,7 +5,7 @@ import Prelude
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Lens (over)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), maybe)
 import Data.Symbol (SProxy(..))
 import Data.Traversable (for_)
 import Effect.Aff.Class (class MonadAff)
@@ -75,7 +75,7 @@ component = Connect.component $ H.mkComponent
   initialState {currentUser} =
     { currentUser
     , menuOpen: false
-    , authStatus: ShowRegister
+    , authStatus: maybe ShowRegister ShowUser currentUser
     }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
