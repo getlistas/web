@@ -28,6 +28,7 @@ import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..), routeCodec)
 import Listasio.Env (UserEnv)
 import Listasio.Page.About as About
+import Listasio.Page.Changelog as Changelog
 import Listasio.Page.CreateList as CreateList
 import Listasio.Page.CreateResource as CreateResource
 import Listasio.Page.Dashboard as Dashboard
@@ -36,10 +37,13 @@ import Listasio.Page.EditList as EditList
 import Listasio.Page.Home as Home
 import Listasio.Page.ListIntegrations as ListIntegrations
 import Listasio.Page.Login as Login
+import Listasio.Page.Policy as Policy
+import Listasio.Page.Pricing as Pricing
 import Listasio.Page.Profile as Profile
 import Listasio.Page.Register as Register
 import Listasio.Page.Resources as Resources
 import Listasio.Page.Settings as Settings
+import Listasio.Page.Terms as Terms
 import Listasio.Page.VerifyFailure as VerifyFailure
 import Listasio.Page.ViewList as ViewList
 import Routing.Duplex as RD
@@ -59,20 +63,27 @@ data Action
 type ChildSlots =
   ( home :: OpaqueSlot Unit
   , about :: OpaqueSlot Unit
+  , discover :: OpaqueSlot Unit
+  , pricing :: OpaqueSlot Unit
+  , profile :: OpaqueSlot Unit
+  , changelog :: OpaqueSlot Unit
+    -- Legal
+  , terms :: OpaqueSlot Unit
+  , policy :: OpaqueSlot Unit
+    -- Auth
   , login :: OpaqueSlot Unit
   , register :: OpaqueSlot Unit
+  , verifySuccess :: OpaqueSlot Unit
+  , verifyFailure :: OpaqueSlot Unit
+    -- Private
+  , dashboard :: OpaqueSlot Unit
+  , resources :: OpaqueSlot Unit
   , settings :: OpaqueSlot Unit
-  , profile :: OpaqueSlot Unit
   , createList :: OpaqueSlot Unit
   , createResource :: OpaqueSlot Unit
   , viewList :: OpaqueSlot Unit
   , editList :: OpaqueSlot Unit
   , listintegrations :: OpaqueSlot Unit
-  , dashboard :: OpaqueSlot Unit
-  , done :: OpaqueSlot Unit
-  , discover :: OpaqueSlot Unit
-  , verifySuccess :: OpaqueSlot Unit
-  , verifyFailure :: OpaqueSlot Unit
   )
 
 component
@@ -138,20 +149,32 @@ component = Connect.component $ H.mkComponent
       About ->
         HH.slot (SProxy :: _ "about") unit About.component {} absurd
 
+      Discover ->
+        HH.slot (SProxy :: _ "discover") unit Discover.component {} absurd
+
+      Pricing ->
+        HH.slot (SProxy :: _ "pricing") unit Pricing.component {} absurd
+
+      Changelog ->
+        HH.slot (SProxy :: _ "changelog") unit Changelog.component {} absurd
+
+      Profile _ ->
+        HH.slot (SProxy :: _ "profile") unit Profile.component {} absurd
+
+      -- LEGAL -----------------------------------------------------------------
+
+      Terms ->
+        HH.slot (SProxy :: _ "terms") unit Terms.component {} absurd
+
+      Policy ->
+        HH.slot (SProxy :: _ "policy") unit Policy.component {} absurd
+
+      -- AUTH ------------------------------------------------------------------
       Login ->
         HH.slot (SProxy :: _ "login") unit Login.component { redirect: true, registerSuccess: false } absurd
 
       Register ->
         HH.slot (SProxy :: _ "register") unit Register.component unit absurd
-
-      Profile _ ->
-        HH.slot (SProxy :: _ "profile") unit Profile.component {} absurd
-
-      ViewList _ ->
-        HH.slot (SProxy :: _ "viewList") unit ViewList.component {} absurd
-
-      Discover ->
-        HH.slot (SProxy :: _ "discover") unit Discover.component {} absurd
 
       VerifyEmailSuccess ->
         HH.slot (SProxy :: _ "verifySuccess") unit Login.component { redirect: true, registerSuccess: true } absurd
@@ -160,6 +183,14 @@ component = Connect.component $ H.mkComponent
         HH.slot (SProxy :: _ "verifyFailure") unit VerifyFailure.component {} absurd
 
       -- PRIVATE ---------------------------------------------------------------
+      Dashboard ->
+        HH.slot (SProxy :: _ "dashboard") unit Dashboard.component {} absurd
+          # authorize currentUser
+
+      Resources ->
+        HH.slot (SProxy :: _ "resources") unit Resources.component {} absurd
+          # authorize currentUser
+
       Settings ->
         HH.slot (SProxy :: _ "settings") unit Settings.component {} absurd
           # authorize currentUser
@@ -172,20 +203,15 @@ component = Connect.component $ H.mkComponent
         HH.slot (SProxy :: _ "createResource") unit CreateResource.component { url } absurd
           # authorize currentUser
 
+      ViewList _ ->
+        HH.slot (SProxy :: _ "viewList") unit ViewList.component {} absurd
+
       EditList listSlug ->
         HH.slot (SProxy :: _ "editList") unit EditList.component { listSlug } absurd
           # authorize currentUser
 
       IntegrationsList listSlug ->
         HH.slot (SProxy :: _ "listintegrations") unit ListIntegrations.component { listSlug } absurd
-          # authorize currentUser
-
-      Dashboard ->
-        HH.slot (SProxy :: _ "dashboard") unit Dashboard.component {} absurd
-          # authorize currentUser
-
-      Resources ->
-        HH.slot (SProxy :: _ "done") unit Resources.component {} absurd
           # authorize currentUser
 
     Nothing ->

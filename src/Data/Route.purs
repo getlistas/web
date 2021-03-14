@@ -16,20 +16,27 @@ import Slug as Slug
 data Route
   = Home
   | About
+  | Discover
+  | Pricing
+  | Changelog
+  | Profile Username
+    -- Legal
+  | Terms
+  | Policy
+    -- Auth
   | Login
   | Register
+  | VerifyEmailSuccess
+  | VerifyEmailFailure
+    -- Private
+  | Dashboard
+  | Resources
   | Settings
-  | Profile Username
   | CreateList
   | CreateResource { url :: Maybe String }
   | ViewList Slug
   | EditList Slug
   | IntegrationsList Slug
-  | Dashboard
-  | Resources
-  | Discover
-  | VerifyEmailSuccess
-  | VerifyEmailFailure
 
 derive instance genericRoute :: Generic Route _
 derive instance eqRoute :: Eq Route
@@ -42,20 +49,28 @@ routeCodec =
     $ sum
         { "Home": noArgs
         , "About": "about" / noArgs
+        , "Discover": "discover" / noArgs
+        , "Pricing": "pricing" / noArgs
+        , "Changelog": "changelog" / noArgs
+        , "Profile": "u" / uname segment
+          -- Legal
+        , "Terms": "terms" / noArgs
+        , "Policy": "policy" / noArgs
+          -- Auth
         , "Login": "signin" / noArgs
         , "Register": "register" / noArgs
+        , "VerifyEmailSuccess": "verify-email" / "success" / noArgs
+        , "VerifyEmailFailure": "verify-email" / "failure" / noArgs
+          -- Private
+        , "Dashboard": "dashboard" / noArgs
+        , "Resources": "dashboard" / "resources" / noArgs
         , "Settings": "settings" / noArgs
-        , "Profile": "profile" / uname segment
         , "CreateList": "list" / "create" / noArgs
         , "CreateResource": "resources" / "create" ? { url: optional <<< string }
         , "ViewList": "list" / slug segment
         , "EditList": "list" / slug segment / "edit"
         , "IntegrationsList": "list" / slug segment / "integrations"
-        , "Dashboard": "dashboard" / noArgs
-        , "Resources": "dashboard" / "resources" / noArgs
-        , "Discover": "discover" / noArgs
-        , "VerifyEmailSuccess": "verify-email" / "success" / noArgs
-        , "VerifyEmailFailure": "verify-email" / "failure" / noArgs
+
         }
 
 -- TODO: Data.Slug with codecs

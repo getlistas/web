@@ -1,8 +1,7 @@
-module Listasio.Page.About where
+module Listasio.Page.Changelog where
 
 import Prelude
 
-import Listasio.Component.HTML.Icons as Icons
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Maybe (Maybe(..))
@@ -11,6 +10,7 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
@@ -57,28 +57,28 @@ component = Connect.component $ H.mkComponent
     Layout.dashboard
       currentUser
       Navigate
-      (Just About)
+      Nothing
       $ HH.div
           []
           [ HH.h1
               [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-              [ HH.text "About" ]
-          , HH.div
-              [ HP.classes [ T.textGray400 ] ]
-              [ HH.div
-                  [ HP.classes [ T.mt4, T.flex, T.itemsCenter ] ]
-                  [ Icons.photo [ Icons.classes [ T.h5, T.w5, T.mr2 ] ]
-                  , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://twitter.com/DvNahuel" ] [ HH.text "@DvNahuel" ]
-                  ]
-              , HH.div
-                  [ HP.classes [ T.mt4, T.flex, T.itemsCenter ] ]
-                  [ Icons.terminal [ Icons.classes [ T.h5, T.w5, T.mr2 ] ]
-                  , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://github.com/ndelvalle" ] [ HH.text "@ndelvalle" ]
-                  ]
-              , HH.div
-                  [ HP.classes [ T.mt4, T.flex, T.itemsCenter ] ]
-                  [ Icons.code [ Icons.classes [ T.h5, T.w5, T.mr2 ] ]
-                  , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://gillchristian.xyz" ] [ HH.text "@gillchristian" ]
-                  ]
-              ]
+              [ HH.text "Changelog" ]
+          , wip
           ]
+    where
+    wip =
+      HH.div
+        [ HP.classes [ T.p2, T.roundedLg, T.bgDurazno, T.smP3, T.mb8 ] ]
+        [ HH.div
+            [ HP.classes [ T.flex, T.itemsCenter ] ]
+            [ HH.span
+                [ HP.classes [ T.flex, T.p2, T.roundedLg, T.bgManzana ] ]
+                [ Icons.code
+                    [ Icons.classes [ T.h6, T.w6, T.textWhite ] ]
+                ]
+            , HH.p
+                [ HP.classes [ T.ml3, T.fontMedium, T.textWhite ] ]
+                [ HH.text "Work in progress"
+                ]
+            ]
+        ]

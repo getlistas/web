@@ -1,4 +1,4 @@
-module Listasio.Page.About where
+module Listasio.Page.Pricing where
 
 import Prelude
 
@@ -13,7 +13,7 @@ import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
-import Listasio.Data.Route (Route(..))
+import Listasio.Data.Route (Route)
 import Listasio.Env (UserEnv)
 import Tailwind as T
 import Web.Event.Event (Event)
@@ -57,28 +57,28 @@ component = Connect.component $ H.mkComponent
     Layout.dashboard
       currentUser
       Navigate
-      (Just About)
+      Nothing
       $ HH.div
           []
           [ HH.h1
               [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-              [ HH.text "About" ]
-          , HH.div
-              [ HP.classes [ T.textGray400 ] ]
-              [ HH.div
-                  [ HP.classes [ T.mt4, T.flex, T.itemsCenter ] ]
-                  [ Icons.photo [ Icons.classes [ T.h5, T.w5, T.mr2 ] ]
-                  , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://twitter.com/DvNahuel" ] [ HH.text "@DvNahuel" ]
-                  ]
-              , HH.div
-                  [ HP.classes [ T.mt4, T.flex, T.itemsCenter ] ]
-                  [ Icons.terminal [ Icons.classes [ T.h5, T.w5, T.mr2 ] ]
-                  , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://github.com/ndelvalle" ] [ HH.text "@ndelvalle" ]
-                  ]
-              , HH.div
-                  [ HP.classes [ T.mt4, T.flex, T.itemsCenter ] ]
-                  [ Icons.code [ Icons.classes [ T.h5, T.w5, T.mr2 ] ]
-                  , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://gillchristian.xyz" ] [ HH.text "@gillchristian" ]
-                  ]
-              ]
+              [ HH.text "Pricing" ]
+          , wip
           ]
+    where
+    wip =
+      HH.div
+        [ HP.classes [ T.p2, T.roundedLg, T.bgDurazno, T.smP3, T.mb8 ] ]
+        [ HH.div
+            [ HP.classes [ T.flex, T.itemsCenter ] ]
+            [ HH.span
+                [ HP.classes [ T.flex, T.p2, T.roundedLg, T.bgManzana ] ]
+                [ Icons.code
+                    [ Icons.classes [ T.h6, T.w6, T.textWhite ] ]
+                ]
+            , HH.p
+                [ HP.classes [ T.ml3, T.fontMedium, T.textWhite ] ]
+                [ HH.text "Work in progress"
+                ]
+            ]
+        ]
