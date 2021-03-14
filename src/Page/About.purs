@@ -2,7 +2,6 @@ module Listasio.Page.About where
 
 import Prelude
 
-import Listasio.Component.HTML.Icons as Icons
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Maybe (Maybe(..))
@@ -11,6 +10,7 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Layout as Layout
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
@@ -63,22 +63,108 @@ component = Connect.component $ H.mkComponent
           [ HH.h1
               [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
               [ HH.text "About" ]
-          , HH.div
-              [ HP.classes [ T.textGray400 ] ]
-              [ HH.div
-                  [ HP.classes [ T.mt4, T.flex, T.itemsCenter ] ]
-                  [ Icons.photo [ Icons.classes [ T.h5, T.w5, T.mr2 ] ]
-                  , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://twitter.com/DvNahuel" ] [ HH.text "@DvNahuel" ]
-                  ]
-              , HH.div
-                  [ HP.classes [ T.mt4, T.flex, T.itemsCenter ] ]
-                  [ Icons.terminal [ Icons.classes [ T.h5, T.w5, T.mr2 ] ]
-                  , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://github.com/ndelvalle" ] [ HH.text "@ndelvalle" ]
-                  ]
-              , HH.div
-                  [ HP.classes [ T.mt4, T.flex, T.itemsCenter ] ]
-                  [ Icons.code [ Icons.classes [ T.h5, T.w5, T.mr2 ] ]
-                  , HH.a [ HP.classes [ T.textManzana ], HP.target "_blank", HP.href "https://gillchristian.xyz" ] [ HH.text "@gillchristian" ]
-                  ]
+          , team
+              [ { avatar: "https://pbs.twimg.com/profile_images/1194743088373219330/10-3KEsy_400x400.jpg"
+                , name: "Hahuel"
+                , role: "Designer"
+                , icon: Icons.photo
+                , links:
+                    [ { icon: Icons.twitter, url: "https://twitter.com/DvNahuel" }
+                    , { icon: Icons.website, url: "https://dvnahuel.website/" }
+                    ]
+                }
+              , { avatar: "https://avatars.githubusercontent.com/u/6719053?s=460&u=67beac88e53b8a83a0327eb03d0554547f4373e6&v=4"
+                , name: "Nicolas"
+                , role: "Backend Developer"
+                , icon: Icons.terminal
+                , links:
+                    [ { icon: Icons.twitter, url: "https://twitter.com/delvallenicolas" }
+                    , { icon: Icons.github, url: "https://github.com/ndelvalle" }
+                    ]
+                }
+              , { avatar: "https://avatars.githubusercontent.com/u/8309423?s=460&u=0f306a70fdcc2359d21b4918efaabf617a396c91&v=4"
+                , name: "Christian"
+                , role: "Frontend Developer"
+                , icon: Icons.code
+                , links:
+                    [ { icon: Icons.twitter, url: "https://twitter.com/gillchristian" }
+                    , { icon: Icons.github, url: "https://github.com/gillchristian" }
+                    , { icon: Icons.website, url: "https://gillchristian.xyz" }
+                    ]
+                }
               ]
           ]
+    where
+    team members =
+      HH.ul
+        [ HP.classes
+            [ T.spaceY4
+            , T.smGrid
+            , T.smGridCols2
+            , T.smGap6
+            , T.smSpaceY0
+            , T.lgGridCols3
+            , T.lgGap8
+            ]
+        ]
+        $ map memberEl members
+
+    memberEl {avatar, name, role,icon,  links} =
+      HH.li
+        [ HP.classes
+            [ T.py10
+            , T.px6
+            , T.bgKiwiLight
+            , T.textCenter
+            , T.roundedLg
+            , T.xlPx10
+            , T.xlTextLeft
+            ]
+        ]
+        [ HH.div
+            [ HP.classes [ T.spaceY6, T.xlSpaceY10 ] ]
+            [ HH.img
+                [ HP.src avatar
+                , HP.classes
+                    [ T.mxAuto
+                    , T.h40
+                    , T.w40
+                    , T.roundedFull
+                    , T.xlW56
+                    , T.xlH56
+                    ]
+                ]
+            , HH.div
+                [ HP.classes [ T.spaceY2, T.xlFlex, T.xlItemsCenter, T.xlJustifyBetween ] ]
+                [ HH.div
+                    [ HP.classes [ T.fontMedium, T.textLg, T.leading6, T.spaceY1 ] ]
+                    [ HH.h3
+                        [ HP.classes [ T.textWhite ] ]
+                        [ HH.text name ]
+                    , HH.p
+                        [ HP.classes [ T.textGray400 ] ]
+                        [ icon [ Icons.classes [ T.w5, T.h5, T.mr2, T.inlineBlock ] ]
+                        , HH.text role
+                        ]
+                    ]
+                , HH.ul
+                    [ HP.classes [ T.flex, T.justifyCenter, T.spaceX5 ] ]
+                    $ map socialEl links
+
+                ]
+            ]
+        ]
+
+    socialEl {icon, url} =
+      HH.li
+        []
+        [ HH.a
+            [ HP.classes [ T.textGray400, T.hoverTextGray300 ]
+            , HP.href url
+            , HP.target "_blank"
+            , HP.rel "noopener noreferrer"
+            ]
+            [ icon
+                [ Icons.classes [ T.w5, T.h5 ] ]
+            ]
+        ]

@@ -71,6 +71,10 @@ bgKiwi = ClassName "bg-kiwi"
 bgKiwiDark :: ClassName
 bgKiwiDark = ClassName "bg-kiwi-dark"
 
+-- | bgKiwiLight
+bgKiwiLight :: ClassName
+bgKiwiLight = ClassName "bg-kiwi-light"
+
 -- | bgManzana
 bgManzana :: ClassName
 bgManzana = ClassName "bg-manzana"
@@ -159,10 +163,6 @@ borderTransparent = ClassName "border-transparent"
 borderWhite :: ClassName
 borderWhite = ClassName "border-white"
 
--- | bottom0
-bottom0 :: ClassName
-bottom0 = ClassName "bottom-0"
-
 -- | checkedBgKiwi
 checkedBgKiwi :: ClassName
 checkedBgKiwi = ClassName "checked:bg-kiwi"
@@ -242,10 +242,6 @@ flexWrap = ClassName "flex-wrap"
 -- | flowRoot
 flowRoot :: ClassName
 flowRoot = ClassName "flow-root"
-
--- | focusBorderIndigo500
-focusBorderIndigo500 :: ClassName
-focusBorderIndigo500 = ClassName "focus:border-indigo-500"
 
 -- | focusBorderKiwi
 focusBorderKiwi :: ClassName
@@ -623,17 +619,9 @@ lgItemsCenter = ClassName "lg:items-center"
 lgMaxW7xl :: ClassName
 lgMaxW7xl = ClassName "lg:max-w-7xl"
 
--- | lgMb0
-lgMb0 :: ClassName
-lgMb0 = ClassName "lg:mb-0"
-
 -- | lgMt0
 lgMt0 :: ClassName
 lgMt0 = ClassName "lg:mt-0"
-
--- | lgMt28
-lgMt28 :: ClassName
-lgMt28 = ClassName "lg:mt-28"
 
 -- | lgMt6
 lgMt6 :: ClassName
@@ -678,10 +666,6 @@ lgTextLeft = ClassName "lg:text-left"
 -- | lgTextLg
 lgTextLg :: ClassName
 lgTextLg = ClassName "lg:text-lg"
-
--- | lgTop0
-lgTop0 :: ClassName
-lgTop0 = ClassName "lg:top-0"
 
 -- | lgTranslateY20
 lgTranslateY20 :: ClassName
@@ -738,10 +722,6 @@ mb1 = ClassName "mb-1"
 -- | mb2
 mb2 :: ClassName
 mb2 = ClassName "mb-2"
-
--- | mb48
-mb48 :: ClassName
-mb48 = ClassName "mb-48"
 
 -- | mb4
 mb4 :: ClassName
@@ -1091,6 +1071,10 @@ px5 = ClassName "px-5"
 px6 :: ClassName
 px6 = ClassName "px-6"
 
+-- | py10
+py10 :: ClassName
+py10 = ClassName "py-10"
+
 -- | py12
 py12 :: ClassName
 py12 = ClassName "py-12"
@@ -1207,10 +1191,6 @@ shadowSm = ClassName "shadow-sm"
 shadowXl :: ClassName
 shadowXl = ClassName "shadow-xl"
 
--- | smAbsolute
-smAbsolute :: ClassName
-smAbsolute = ClassName "sm:absolute"
-
 -- | smAlignMiddle
 smAlignMiddle :: ClassName
 smAlignMiddle = ClassName "sm:align-middle"
@@ -1226,6 +1206,14 @@ smFlex = ClassName "sm:flex"
 -- | smFlexShrink0
 smFlexShrink0 :: ClassName
 smFlexShrink0 = ClassName "sm:flex-shrink-0"
+
+-- | smGap6
+smGap6 :: ClassName
+smGap6 = ClassName "sm:gap-6"
+
+-- | smGrid
+smGrid :: ClassName
+smGrid = ClassName "sm:grid"
 
 -- | smGridCols2
 smGridCols2 :: ClassName
@@ -1246,10 +1234,6 @@ smInline = ClassName "sm:inline"
 -- | smInlineBlock
 smInlineBlock :: ClassName
 smInlineBlock = ClassName "sm:inline-block"
-
--- | smInset0
-smInset0 :: ClassName
-smInset0 = ClassName "sm:inset-0"
 
 -- | smItemsCenter
 smItemsCenter :: ClassName
@@ -1359,6 +1343,10 @@ smRoundedLg = ClassName "sm:rounded-lg"
 smRoundedMd :: ClassName
 smRoundedMd = ClassName "sm:rounded-md"
 
+-- | smSpaceY0
+smSpaceY0 :: ClassName
+smSpaceY0 = ClassName "sm:space-y-0"
+
 -- | smText4xl
 smText4xl :: ClassName
 smText4xl = ClassName "sm:text-4xl"
@@ -1395,6 +1383,10 @@ spaceX10 = ClassName "space-x-10"
 spaceX4 :: ClassName
 spaceX4 = ClassName "space-x-4"
 
+-- | spaceX5
+spaceX5 :: ClassName
+spaceX5 = ClassName "space-x-5"
+
 -- | spaceX6
 spaceX6 :: ClassName
 spaceX6 = ClassName "space-x-6"
@@ -1402,6 +1394,10 @@ spaceX6 = ClassName "space-x-6"
 -- | spaceY1
 spaceY1 :: ClassName
 spaceY1 = ClassName "space-y-1"
+
+-- | spaceY2
+spaceY2 :: ClassName
+spaceY2 = ClassName "space-y-2"
 
 -- | spaceY4
 spaceY4 :: ClassName
@@ -1470,6 +1466,10 @@ textGray700 = ClassName "text-gray-700"
 -- | textGray900
 textGray900 :: ClassName
 textGray900 = ClassName "text-gray-900"
+
+-- | textIndigo400
+textIndigo400 :: ClassName
+textIndigo400 = ClassName "text-indigo-400"
 
 -- | textKiwi
 textKiwi :: ClassName
@@ -1547,10 +1547,6 @@ transitionAll = ClassName "transition-all"
 transitionOpacity :: ClassName
 transitionOpacity = ClassName "transition-opacity"
 
--- | translateX1d2
-translateX1d2 :: ClassName
-translateX1d2 = ClassName "translate-x-1/2"
-
 -- | translateX6
 translateX6 :: ClassName
 translateX6 = ClassName "translate-x-6"
@@ -1615,9 +1611,29 @@ wFull = ClassName "w-full"
 wScreen :: ClassName
 wScreen = ClassName "w-screen"
 
+-- | xlFlex
+xlFlex :: ClassName
+xlFlex = ClassName "xl:flex"
+
 -- | xlGridCols4
 xlGridCols4 :: ClassName
 xlGridCols4 = ClassName "xl:grid-cols-4"
+
+-- | xlH56
+xlH56 :: ClassName
+xlH56 = ClassName "xl:h-56"
+
+-- | xlItemsCenter
+xlItemsCenter :: ClassName
+xlItemsCenter = ClassName "xl:items-center"
+
+-- | xlJustifyBetween
+xlJustifyBetween :: ClassName
+xlJustifyBetween = ClassName "xl:justify-between"
+
+-- | xlPx10
+xlPx10 :: ClassName
+xlPx10 = ClassName "xl:px-10"
 
 -- | xlPx20
 xlPx20 :: ClassName
@@ -1627,21 +1643,25 @@ xlPx20 = ClassName "xl:px-20"
 xlPy20 :: ClassName
 xlPy20 = ClassName "xl:py-20"
 
+-- | xlSpaceY10
+xlSpaceY10 :: ClassName
+xlSpaceY10 = ClassName "xl:space-y-10"
+
 -- | xlText6xl
 xlText6xl :: ClassName
 xlText6xl = ClassName "xl:text-6xl"
+
+-- | xlTextLeft
+xlTextLeft :: ClassName
+xlTextLeft = ClassName "xl:text-left"
 
 -- | xlTextXl
 xlTextXl :: ClassName
 xlTextXl = ClassName "xl:text-xl"
 
--- | xlTransformNone
-xlTransformNone :: ClassName
-xlTransformNone = ClassName "xl:transform-none"
-
--- | xlTranslateX0
-xlTranslateX0 :: ClassName
-xlTranslateX0 = ClassName "xl:translate-x-0"
+-- | xlW56
+xlW56 :: ClassName
+xlW56 = ClassName "xl:w-56"
 
 -- | z0
 z0 :: ClassName
