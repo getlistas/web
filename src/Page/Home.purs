@@ -8,7 +8,6 @@ import Data.Lens (over)
 import Data.Maybe (Maybe(..), maybe)
 import Data.Symbol (SProxy(..))
 import Effect.Aff.Class (class MonadAff)
-import Effect.Class.Console (log)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -37,13 +36,6 @@ data Form
 
 derive instance eqForm :: Eq Form
 
-instance showForm :: Show Form where
-  show = case _ of
-    ShowLoading -> "ShowLoading"
-    ShowLogin -> "ShowLogin"
-    ShowRegister -> "ShowRegister"
-    ShowUser u -> "ShowUser (" <> show u <> ")"
-
 type ChildSlots
   = ( register :: Register.Slot
     , login :: Login.Slot
@@ -51,7 +43,7 @@ type ChildSlots
 
 data Action
   = Initialize
-  | Receive { currentUser :: Maybe ProfileWithIdAndEmail }
+  | Receive {currentUser :: Maybe ProfileWithIdAndEmail}
   | Navigate Route Event
   | ToggleMenu
   | GoToSignin Register.Output
@@ -88,21 +80,10 @@ component = Connect.component $ H.mkComponent
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
-    Initialize -> do
-      {currentUser, authStatus} <- H.get
-      log $ ("Initialize: " <> _) $ show currentUser
-      log $ ("Initialize: " <> _) $ show authStatus
+    Initialize -> pure unit
 
     Receive {currentUser} -> do
-      {authStatus} <- H.get
-      log $ ("Receive: " <> _) $ show currentUser
-      log $ ("Receive: " <> _) $ show authStatus
-      H.modify_ _ {currentUser = currentUser}
-      case currentUser of
-        Just user -> H.modify_ _ {authStatus = ShowUser user}
-        Nothing -> H.modify_ _ {authStatus = ShowRegister}
-      st <- H.get
-      log $ ("Receive (after status set): " <> _) $ show st.authStatus
+     H.modify_ _ {authStatus = maybe ShowRegister ShowUser currentUser, currentUser = currentUser}
 
     Navigate route e -> navigate_ e route
 
@@ -750,7 +731,7 @@ component = Connect.component $ H.mkComponent
         [ HH.div
             [ HP.classes
                 [ T.h56
-                , T.bgIndigo600
+                , T.bgKiwiLight
                 , T.smH72
                 , T.mdAbsolute
                 , T.mdLeft0
