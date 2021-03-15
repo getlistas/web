@@ -7,7 +7,6 @@ import Control.Monad.Reader (class MonadAsk)
 import Data.Lens (over)
 import Data.Maybe (Maybe(..), maybe)
 import Data.Symbol (SProxy(..))
-import Data.Traversable (for_)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class.Console (log)
 import Halogen as H
@@ -93,15 +92,17 @@ component = Connect.component $ H.mkComponent
       {currentUser, authStatus} <- H.get
       log $ ("Initialize: " <> _) $ show currentUser
       log $ ("Initialize: " <> _) $ show authStatus
-      pure unit
 
     Receive {currentUser} -> do
       {authStatus} <- H.get
       log $ ("Receive: " <> _) $ show currentUser
       log $ ("Receive: " <> _) $ show authStatus
       H.modify_ _ {currentUser = currentUser}
-      for_ currentUser \user ->
-        H.modify_ _ {authStatus = ShowUser user}
+      case currentUser of
+        Just user -> H.modify_ _ {authStatus = ShowUser user}
+        Nothing -> H.modify_ _ {authStatus = ShowRegister}
+      st <- H.get
+      log $ ("Receive (after status set): " <> _) $ show st.authStatus
 
     Navigate route e -> navigate_ e route
 
