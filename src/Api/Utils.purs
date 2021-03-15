@@ -5,54 +5,112 @@ module Listasio.Api.Utils where
 
 import Prelude
 
-import Affjax (request)
-import Listasio.Api.Request (BaseURL, RequestOptions, Token, defaultRequest, readToken, writeToken)
-import Listasio.Capability.LogMessages (class LogMessages, logError)
-import Listasio.Capability.Now (class Now)
-import Listasio.Data.Profile (ProfileWithIdAndEmail)
-import Listasio.Data.Username (Username)
-import Listasio.Env (UserEnv)
-import Control.Monad.Reader (class MonadAsk, ask, asks)
-import Data.Argonaut.Core (Json)
-import Data.Bifunctor (rmap)
+import Affjax (printError, request)
+import Affjax.StatusCode (StatusCode(..))
+import Control.Monad.Reader (class MonadAsk, ask)
 import Data.Codec.Argonaut (JsonCodec, printJsonDecodeError)
 import Data.Codec.Argonaut as CA
-import Data.Either (Either(..), hush)
+import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
 import Effect.Aff.Bus as Bus
 import Effect.Aff.Class (class MonadAff, liftAff)
-import Effect.Class (class MonadEffect, liftEffect)
+import Effect.Class (liftEffect)
 import Effect.Ref as Ref
+import Listasio.Api.Request (BaseURL, RequestOptions, Token, defaultRequest, readToken, removeToken, writeToken)
+import Listasio.Capability.LogMessages (class LogMessages, logError)
+import Listasio.Capability.Now (class Now)
+import Listasio.Data.Profile (ProfileWithIdAndEmail)
+import Listasio.Env (UserEnv)
 
--- | This function performs a request that does not require authentication by pulling the base URL
--- | out of the app environment and running an asynchronous request. This function only requires the
--- | `baseUrl` field from the app environment. See `Listasio.AppM` for examples of this in action.
+-- TODO: parse API errors into an union type
+data HttpError
+  = RequestError
+  | ServerError StatusCode String
+  | ClientError StatusCode String
+  | DecodingError String
+
+instance showHttpError :: Show HttpError where
+  show RequestError = "RequestError"
+  show (ServerError code msg) = "ServerError " <> show code <> " " <> msg
+  show (ClientError code msg) = "ClientError " <> show code <> " " <> msg
+  show (DecodingError msg) = "DecodingError " <> msg
+
+-- | This function performs a request that does not require authentication by
+-- | pulling the base URL out of the app environment and running an asynchronous
+-- | request. This function only requires the `baseUrl` field from the app
+-- | environment.
 mkRequest
-  :: forall m r
+  :: forall a m r
    . MonadAff m
   => MonadAsk { baseUrl :: BaseURL | r } m
+  => LogMessages m
+  => Now m
   => RequestOptions
-  -> m (Maybe Json)
-mkRequest opts = do
-  { baseUrl } <- ask
+  -> JsonCodec a
+  -> m (Either HttpError a)
+mkRequest opts codec = do
+  {baseUrl} <- ask
   response <- liftAff $ request $ defaultRequest baseUrl Nothing opts
-  pure $ hush $ rmap _.body response
+  case response of
+    Left err -> do
+      logError $ printError err
+      pure $ Left RequestError
+    Right {status} | status >= (StatusCode 500) -> pure $ Left $ ServerError status "Something went wrong"
+    Right {status} | status >= (StatusCode 400) -> pure $ Left $ ClientError status "Something went wrong"
+    Right {body} ->
+      case CA.decode codec body of
+        Left err -> do
+           let errorMsg = printJsonDecodeError err
+           logError errorMsg
+           pure $ Left $ DecodingError errorMsg
+        Right decodedBody -> pure $ Right decodedBody
 
--- | This function performs a request that requires authentication by pulling the base URL out
--- | of the app environment, reading the auth token from local storage, and then performing
--- | the asynchronous request. See `Listasio.AppM` for examples of this in action.
+clearUserEnv :: forall m r . MonadAff m => MonadAsk { userEnv :: UserEnv | r } m => m Unit
+clearUserEnv = do
+  {userEnv} <- ask
+  liftEffect do
+    removeToken
+    Ref.write Nothing userEnv.currentUser
+  liftAff $ Bus.write Nothing userEnv.userBus
+
+-- | This function performs a request that requires authentication by pulling
+-- | the base URL out of the app environment, reading the auth token from local
+-- | storage, and then performing the asynchronous request. In case of an auth
+-- | error (401 or fetch failure) the user is cleared from the `userEnv`.
 mkAuthRequest
-  :: forall m r
+  :: forall a m r
    . MonadAff m
-  => MonadAsk { baseUrl :: BaseURL | r } m
+  => MonadAsk { baseUrl :: BaseURL, userEnv :: UserEnv | r } m
+  => LogMessages m
+  => Now m
   => RequestOptions
-  -> m (Maybe Json)
-mkAuthRequest opts = do
-  { baseUrl } <- ask
+  -> JsonCodec a
+  -> m (Either HttpError a)
+mkAuthRequest opts codec = do
+  {baseUrl} <- ask
   token <- liftEffect readToken
   response <- liftAff $ request $ defaultRequest baseUrl token opts
-  pure $ hush $ rmap _.body response
+  case response of
+    Left err -> do
+      logError $ printError err
+      clearUserEnv
+      pure $ Left RequestError
+
+    Right {status: StatusCode 401} -> do
+      clearUserEnv
+      pure $ Left $ ClientError (StatusCode 401) "Something went wrong"
+
+    Right {status} | status >= (StatusCode 500) -> pure $ Left $ ServerError status "Something went wrong"
+    Right {status} | status >= (StatusCode 400) -> pure $ Left $ ClientError status "Something went wrong"
+
+    Right {body} ->
+      case CA.decode codec body of
+        Left err -> do
+           let errorMsg = printJsonDecodeError err
+           logError errorMsg
+           pure $ Left $ DecodingError errorMsg
+        Right decodedBody -> pure $ Right decodedBody
 
 -- | Logging requires uptading the application environment and writing the auth
 -- | token to local storage. This helper function makes it easy to layer those
@@ -78,31 +136,3 @@ authenticate req fields = do
       -- any time we write to the current user ref, we should also broadcast the change
       liftAff $ Bus.write (Just profile) userEnv.userBus
       pure (Just profile)
-
--- | This small utility decodes JSON and logs any failures that occurred, returning the parsed
--- | value only if decoding succeeded. This utility makes it easy to abstract the mechanices of
--- | dealing with malformed responses. See `Listasio.AppM` for examples of this in practice.
-decode :: forall m a. LogMessages m => Now m => JsonCodec a -> Maybe Json -> m (Maybe a)
-decode _ Nothing = logError "Response malformed" *> pure Nothing
-decode codec (Just json) = case CA.decode codec json of
-  Left err -> logError (printJsonDecodeError err) *> pure Nothing
-  Right response -> pure (Just response)
-
--- | This small utility is similar to the prior `decode` function, but it's designed to work with
--- | decoders that require knowing the currently-authenticated user to work. For example, our
--- | `Profile` type depends on the currently-logged-in user (if there is one) to determine whether
--- | you are the author, you follow the author, or you don't follow the author. This utility
--- | handles the mechanics of retrieving the current user and providing the username to the
--- | provided decoder.
-decodeWithUser
-  :: forall m a r
-   . MonadEffect m
-  => MonadAsk { userEnv :: UserEnv | r } m
-  => LogMessages m
-  => Now m
-  => (Maybe Username -> JsonCodec a)
-  -> Maybe Json
-  -> m (Maybe a)
-decodeWithUser codec json = do
-  maybeProfile <- (liftEffect <<< Ref.read) =<< asks _.userEnv.currentUser
-  decode (codec (_.name <$> maybeProfile)) json
