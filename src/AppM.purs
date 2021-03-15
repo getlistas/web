@@ -6,7 +6,7 @@ import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, ask, asks, runReader
 import Data.Codec.Argonaut as Codec
 import Data.Codec.Argonaut.Compat as CAC
 import Data.Codec.Argonaut.Record as CAR
-import Data.Either (Either(..))
+import Data.Either (Either(..), hush)
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
 import Effect.Aff.Bus as Bus
@@ -18,7 +18,7 @@ import Effect.Ref as Ref
 import Listasio.Api.Endpoint (Endpoint(..), SortingResources(..))
 import Listasio.Api.Request (RequestMethod(..))
 import Listasio.Api.Request as Request
-import Listasio.Api.Utils (authenticate, decode, mkAuthRequest, mkRequest)
+import Listasio.Api.Utils (authenticate, mkAuthRequest, mkRequest)
 import Listasio.Capability.Clipboard (class Clipboard)
 import Listasio.Capability.LogMessages (class LogMessages, logError)
 import Listasio.Capability.Navigate (class Navigate, locationState, navigate)
@@ -107,102 +107,108 @@ instance manageUserAppM :: ManageUser AppM where
       Right profile -> pure $ Just profile
 
   getCurrentUser = do
-    mbJson <- mkAuthRequest { endpoint: User, method: Get }
-    map (map _.user)
-      $ decode (CAR.object "User" { user: Profile.profileWithIdAndEmailCodec }) mbJson
+    userOrError <- mkAuthRequest {endpoint: User, method: Get} codec
+    pure $ hush $ map _.user userOrError
+    where codec = CAR.object "User" {user: Profile.profileWithIdAndEmailCodec}
 
   updateUser fields =
-    void
-      $ mkAuthRequest
-          { endpoint: User
-          , method: Put $ Just $ Codec.encode Profile.profileCodec fields
-          }
+    void $ mkAuthRequest
+      { endpoint: User
+      , method: Put $ Just $ Codec.encode Profile.profileCodec fields
+      }
+      Codec.json
 
 instance manageListAppM :: ManageList AppM where
   createList list = do
     {currentUser} <- asks _.userEnv
     mbId <- map _.id <$> (liftEffect $ Ref.read currentUser)
-    decode (List.listWitIdAndUserCodec mbId) =<< mkAuthRequest conf
+    hush <$> mkAuthRequest conf (List.listWitIdAndUserCodec mbId)
     where method = Post $ Just $ Codec.encode List.createListFieldsCodec list
-          conf = { endpoint: Lists, method }
+          conf = {endpoint: Lists, method}
 
   getList id = do
     {userEnv} <- ask
     mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
-    decode (List.listWitIdUserAndMetaCodec mbId) =<< mkAuthRequest conf
-    where conf = { endpoint: List id, method: Get }
+    hush <$> mkAuthRequest conf (List.listWitIdUserAndMetaCodec mbId)
+    where conf = {endpoint: List id, method: Get}
 
-  getListBySlug { list, user } = do
+  getListBySlug {list, user} = do
     {userEnv} <- ask
     mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
-    decode (List.listWitIdAndUserCodec mbId) =<< mkAuthRequest conf
-    where conf = { endpoint: ListBySlug user list, method: Get }
+    hush <$> mkAuthRequest conf (List.listWitIdAndUserCodec mbId)
+    where conf = {endpoint: ListBySlug user list, method: Get}
 
   getLists = do
     {userEnv} <- ask
     mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
-    decode (CAC.array $ List.listWitIdUserAndMetaCodec mbId) =<< mkAuthRequest conf
-    where conf = { endpoint: Lists, method: Get }
+    hush <$> mkAuthRequest conf (CAC.array $ List.listWitIdUserAndMetaCodec mbId)
+    where conf = {endpoint: Lists, method: Get}
 
   updateList id list = do
     {currentUser} <- asks _.userEnv
     mbId <- map _.id <$> (liftEffect $ Ref.read currentUser)
-    decode (List.listWitIdAndUserCodec mbId) =<< mkAuthRequest conf
+    hush <$> mkAuthRequest conf (List.listWitIdAndUserCodec mbId)
     where method = Put $ Just $ Codec.encode List.createListFieldsCodec list
-          conf = { endpoint: List id, method }
+          conf = {endpoint: List id, method}
 
-  deleteList id = void $ mkAuthRequest { endpoint: List id, method: Delete }
+  deleteList id = void $ mkAuthRequest {endpoint: List id, method: Delete} Codec.json
 
   forkList id = do
     {userEnv} <- ask
     mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
-    decode (List.listWitIdAndUserCodec mbId) =<< mkAuthRequest conf
-    where conf = { endpoint: ListFork id, method: Post Nothing }
+    hush <$> mkAuthRequest conf (List.listWitIdAndUserCodec mbId)
+    where conf = {endpoint: ListFork id, method: Post Nothing}
 
   discoverLists pagination = do
     {userEnv} <- ask
     mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
-    decode (CAC.array $ List.listWitIdAndUserCodec mbId) =<< mkRequest conf
-    where conf = { endpoint: Discover pagination, method: Get }
+    hush <$> mkRequest conf (CAC.array $ List.listWitIdAndUserCodec mbId)
+    where conf = {endpoint: Discover pagination, method: Get}
 
 instance manageResourceAppM :: ManageResource AppM where
   getMeta url = do
-    decode ResourceMeta.metaCodec =<< mkAuthRequest conf
-    where method = Post $ Just $ Codec.encode (CAR.object "Url" { url: Codec.string }) { url }
-          conf = { endpoint: ResourceMeta, method }
+    hush <$> mkAuthRequest conf codec
+    where method = Post $ Just $ Codec.encode (CAR.object "Url" {url: Codec.string}) {url}
+          conf = {endpoint: ResourceMeta, method}
+          codec = ResourceMeta.metaCodec
 
   getListResources list = do
-    decode (CAC.array Resource.listResourceCodec) =<< mkAuthRequest conf
-    where conf = { endpoint, method: Get }
-          endpoint = ResourcesByList { list, sort: PositionAsc, completed: false }
+    hush <$> mkAuthRequest conf codec
+    where conf = {endpoint, method: Get}
+          endpoint = ResourcesByList {list, sort: PositionAsc, completed: false}
+          codec = CAC.array Resource.listResourceCodec
 
   getResources = do
-    decode (CAC.array Resource.listResourceCodec) =<< mkAuthRequest conf
-    where conf = { endpoint: Resources, method: Get }
+    hush <$> mkAuthRequest conf codec
+    where conf = {endpoint: Resources, method: Get}
+          codec = CAC.array Resource.listResourceCodec
 
   createResource newResource =
-    decode Resource.listResourceCodec =<< mkAuthRequest conf
+    hush <$> mkAuthRequest conf codec
     where method = Post $ Just $ Codec.encode Resource.resourceCodec newResource
-          conf = { endpoint: Resources, method }
+          conf = {endpoint: Resources, method}
+          codec = Resource.listResourceCodec
 
-  completeResource { id } =
-    map (const unit) <$> mkAuthRequest conf
-    where conf = { endpoint: CompleteResource id, method: Post Nothing }
+  completeResource {id} =
+    map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
+    where conf = {endpoint: CompleteResource id, method: Post Nothing}
 
-  deleteResource { id } =
-    map (const unit) <$> mkAuthRequest conf
-    where conf = { endpoint: Resource id, method: Delete }
+  deleteResource {id} =
+    map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
+    where conf = {endpoint: Resource id, method: Delete}
 
 instance manageIntegrationAppM :: ManageIntegration AppM where
   createRssIntegration fields = do
-    decode Integration.rssIntegrationCodec =<< mkAuthRequest conf
+    hush <$> mkAuthRequest conf codec
     where body = Codec.encode Integration.rssIntegrationFieldsCodec fields
-          conf = { endpoint: RssIntegrations, method: Post $ Just body }
+          conf = {endpoint: RssIntegrations, method: Post $ Just body}
+          codec = Integration.rssIntegrationCodec
 
   deleteRssIntegration id =
-    map (const unit) <$> mkAuthRequest conf
-    where conf = { endpoint: RssIntegration id, method: Delete }
+    map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
+    where conf = {endpoint: RssIntegration id, method: Delete}
 
   getListIntegrations list =
-    decode (CAC.array $ Integration.rssIntegrationCodec) =<< mkAuthRequest conf
-    where conf = { endpoint: Integrations { list, service: Integration.IT_Rss }, method: Get }
+    hush <$> mkAuthRequest conf codec
+    where conf = {endpoint: Integrations {list, service: Integration.IT_Rss}, method: Get}
+          codec = CAC.array $ Integration.rssIntegrationCodec

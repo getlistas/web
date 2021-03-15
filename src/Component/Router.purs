@@ -89,7 +89,7 @@ type ChildSlots =
 component
   :: forall m r
    . MonadAff m
-  => MonadAsk { userEnv :: UserEnv | r } m
+  => MonadAsk {userEnv :: UserEnv | r} m
   => Now m
   => LogMessages m
   => Navigate m
@@ -100,7 +100,7 @@ component
   => Clipboard m
   => H.Component HH.HTML Query {} Void m
 component = Connect.component $ H.mkComponent
-  { initialState: \{ currentUser } -> { route: Nothing, currentUser }
+  { initialState: \{currentUser} -> {route: Nothing, currentUser}
   , render
   , eval: H.mkEval $ H.defaultEval
       { handleQuery = handleQuery
@@ -118,16 +118,16 @@ component = Connect.component $ H.mkComponent
       -- then we'll navigate to the new route (also setting the hash)
       navigate $ fromMaybe Home initialRoute
 
-    Receive { currentUser } ->
-      H.modify_ _ { currentUser = currentUser }
+    Receive {currentUser} ->
+      H.modify_ _ {currentUser = currentUser}
 
   handleQuery :: forall a. Query a -> H.HalogenM State Action ChildSlots Void m (Maybe a)
   handleQuery = case _ of
     Navigate dest a -> do
-      { route, currentUser } <- H.get
+      {route, currentUser} <- H.get
       when (route /= Just dest) do
         case isJust currentUser && dest `elem` [ Login, Register ] of
-          false -> H.modify_ _ { route = Just dest }
+          false -> H.modify_ _ {route = Just dest}
           _ -> pure unit
       pure $ Just a
 
@@ -135,12 +135,12 @@ component = Connect.component $ H.mkComponent
   authorize :: Maybe ProfileWithIdAndEmail -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
   authorize mbProfile html = case mbProfile of
     Nothing ->
-      HH.slot (SProxy :: _ "login") unit Login.component { redirect: false, registerSuccess: false } absurd
+      HH.slot (SProxy :: _ "login") unit Login.component {redirect: false, registerSuccess: false} absurd
     Just _ ->
       html
 
   render :: State -> H.ComponentHTML Action ChildSlots m
-  render { route, currentUser } = case route of
+  render {route, currentUser} = case route of
     Just r -> case r of
       -- PUBLIC ----------------------------------------------------------------
       Home ->
@@ -171,13 +171,13 @@ component = Connect.component $ H.mkComponent
 
       -- AUTH ------------------------------------------------------------------
       Login ->
-        HH.slot (SProxy :: _ "login") unit Login.component { redirect: true, registerSuccess: false } absurd
+        HH.slot (SProxy :: _ "login") unit Login.component {redirect: true, registerSuccess: false} absurd
 
       Register ->
         HH.slot (SProxy :: _ "register") unit Register.component unit absurd
 
       VerifyEmailSuccess ->
-        HH.slot (SProxy :: _ "verifySuccess") unit Login.component { redirect: true, registerSuccess: true } absurd
+        HH.slot (SProxy :: _ "verifySuccess") unit Login.component {redirect: true, registerSuccess: true} absurd
 
       VerifyEmailFailure ->
         HH.slot (SProxy :: _ "verifyFailure") unit VerifyFailure.component {} absurd
@@ -199,20 +199,21 @@ component = Connect.component $ H.mkComponent
         HH.slot (SProxy :: _ "createList") unit CreateList.component {} absurd
           # authorize currentUser
 
-      CreateResource { url } ->
-        HH.slot (SProxy :: _ "createResource") unit CreateResource.component { url } absurd
+      CreateResource {url} ->
+        HH.slot (SProxy :: _ "createResource") unit CreateResource.component {url} absurd
           # authorize currentUser
 
       ViewList _ ->
         HH.slot (SProxy :: _ "viewList") unit ViewList.component {} absurd
 
       EditList listSlug ->
-        HH.slot (SProxy :: _ "editList") unit EditList.component { listSlug } absurd
+        HH.slot (SProxy :: _ "editList") unit EditList.component {listSlug} absurd
           # authorize currentUser
 
       IntegrationsList listSlug ->
-        HH.slot (SProxy :: _ "listintegrations") unit ListIntegrations.component { listSlug } absurd
+        HH.slot (SProxy :: _ "listintegrations") unit ListIntegrations.component {listSlug} absurd
           # authorize currentUser
 
     Nothing ->
+      -- TODO: 404 redirect? Or render proper page?
       HH.div_ [ HH.text "Oh no! That page wasn't found." ]

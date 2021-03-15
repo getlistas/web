@@ -43,13 +43,13 @@ main = HA.runHalogenAff do
     readToken >>= traverse_ \token -> do
       liftEffect $ Ref.write (hush $ decodeToken token) currentUser
 
-    pure { currentUser, userBus }
+    pure {currentUser, userBus}
 
   nav <- liftEffect makeInterface
 
   let
     environment :: Env
-    environment = { nav, baseUrl, logLevel, userEnv }
+    environment = {nav, baseUrl, logLevel, userEnv}
 
     rootComponent :: H.Component HH.HTML Router.Query {} Void Aff
     rootComponent = H.hoist (runAppM environment) Router.component
