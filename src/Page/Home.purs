@@ -9,6 +9,7 @@ import Data.Maybe (Maybe(..), maybe)
 import Data.Symbol (SProxy(..))
 import Data.Traversable (for_)
 import Effect.Aff.Class (class MonadAff)
+import Effect.Class.Console (log)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -30,11 +31,19 @@ import Web.Event.Event (Event)
 import Web.UIEvent.MouseEvent as Mouse
 
 data Form
-  = ShowRegister
+  = ShowLoading
+  | ShowRegister
   | ShowLogin
   | ShowUser ProfileWithIdAndEmail
 
 derive instance eqForm :: Eq Form
+
+instance showForm :: Show Form where
+  show = case _ of
+    ShowLoading -> "ShowLoading"
+    ShowLogin -> "ShowLogin"
+    ShowRegister -> "ShowRegister"
+    ShowUser u -> "ShowUser (" <> show u <> ")"
 
 type ChildSlots
   = ( register :: Register.Slot
@@ -75,14 +84,21 @@ component = Connect.component $ H.mkComponent
   initialState {currentUser} =
     { currentUser
     , menuOpen: false
-    , authStatus: maybe ShowRegister ShowUser currentUser
+    , authStatus: maybe ShowLoading ShowUser currentUser
     }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
-    Initialize -> pure unit
+    Initialize -> do
+      {currentUser, authStatus} <- H.get
+      log $ ("Initialize: " <> _) $ show currentUser
+      log $ ("Initialize: " <> _) $ show authStatus
+      pure unit
 
     Receive {currentUser} -> do
+      {authStatus} <- H.get
+      log $ ("Receive: " <> _) $ show currentUser
+      log $ ("Receive: " <> _) $ show authStatus
       H.modify_ _ {currentUser = currentUser}
       for_ currentUser \user ->
         H.modify_ _ {authStatus = ShowUser user}
@@ -255,8 +271,30 @@ component = Connect.component $ H.mkComponent
                 , desktopLink About "About"
                 ]
             ]
-          , case currentUser of
-              Nothing ->
+          , case authStatus of
+              ShowUser {name} ->
+                HH.div
+                  [ HP.classes [ T.hidden, T.mdFlex ] ]
+                  [ HH.a
+                      [ HP.classes
+                          [ T.inlineFlex
+                          , T.itemsCenter
+                          , T.py1
+                          , T.fontBold
+                          , T.textGray300
+                          , T.borderB2
+                          , T.borderKiwi
+                          , T.hoverTextGray400
+                          ]
+                      , safeHref Dashboard
+                      , HE.onClick $ onNavigate Dashboard
+                      ]
+                      [ HH.text $ Username.toString name ]
+                  ]
+
+              ShowLoading -> HH.text ""
+
+              _ ->
                 HH.div
                   [ HP.classes [ T.hidden, T.mdFlex ] ]
                   [ HH.a
@@ -282,25 +320,6 @@ component = Connect.component $ H.mkComponent
                       , HE.onClick $ onNavigate Login
                       ]
                       [ HH.text "Sign in" ]
-                  ]
-              Just {name} ->
-                HH.div
-                  [ HP.classes [ T.hidden, T.mdFlex ] ]
-                  [ HH.a
-                      [ HP.classes
-                          [ T.inlineFlex
-                          , T.itemsCenter
-                          , T.py1
-                          , T.fontBold
-                          , T.textGray300
-                          , T.borderB2
-                          , T.borderKiwi
-                          , T.hoverTextGray400
-                          ]
-                      , safeHref Dashboard
-                      , HE.onClick $ onNavigate Dashboard
-                      ]
-                      [ HH.text $ Username.toString name ]
                   ]
         ]
 
@@ -366,25 +385,8 @@ component = Connect.component $ H.mkComponent
                   , mobileLink Pricing "Pricing"
                   , mobileLink About "About Us"
                   ]
-              , case currentUser of
-                  Nothing ->
-                    HH.a
-                      [ HP.classes
-                          [ T.block
-                          , T.wFull
-                          , T.px5
-                          , T.py3
-                          , T.textCenter
-                          , T.fontMedium
-                          , T.textKiwiDark
-                          , T.bgGray50
-                          , T.hoverBgGray100
-                          ]
-                      , safeHref Login
-                      , HE.onClick $ onNavigate Login
-                      ]
-                      [ HH.text "Sign in" ]
-                  Just {name} ->
+              , case authStatus of
+                  ShowUser {name} ->
                     HH.a
                       [ HP.classes
                           [ T.block
@@ -404,11 +406,33 @@ component = Connect.component $ H.mkComponent
                           [ HP.classes [ T.py1, T.borderB2, T.borderKiwi ] ]
                           [ HH.text $ Username.toString name ]
                       ]
+
+                  ShowLoading -> HH.text ""
+
+                  _ ->
+                    HH.a
+                      [ HP.classes
+                          [ T.block
+                          , T.wFull
+                          , T.px5
+                          , T.py3
+                          , T.textCenter
+                          , T.fontMedium
+                          , T.textKiwiDark
+                          , T.bgGray50
+                          , T.hoverBgGray100
+                          ]
+                      , safeHref Login
+                      , HE.onClick $ onNavigate Login
+                      ]
+                      [ HH.text "Sign in" ]
               ]
           ]
 
     authBlock =
       case authStatus of
+        ShowLoading -> HH.text ""
+
         ShowUser _ ->
           HH.div
             [ HP.classes
