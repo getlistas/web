@@ -16,11 +16,10 @@ import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, logout, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, updateUser)
 import Listasio.Component.HTML.Icons as Icons
-import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Utils (whenElem)
 import Listasio.Data.Lens (_currentUser, _name, _slug)
 import Listasio.Data.Profile (Profile, ProfileWithIdAndEmail)
-import Listasio.Data.Route (Route(..))
+import Listasio.Data.Route (Route)
 import Listasio.Data.Username (Username)
 import Listasio.Data.Username as Username
 import Listasio.Env (UserEnv)
@@ -96,45 +95,42 @@ component = Connect.component $ H.mkComponent
     Navigate route e -> navigate_ e route
 
   render { currentUser } =
-    Layout.dashboard
-      currentUser
-      Navigate
-      (Just Settings)
-      $ HH.div
+    HH.div
+      []
+      [ HH.h1
+          [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
+          [ HH.text "Settings" ]
+      , HH.div
           []
-          [ HH.h1
-              [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-              [ HH.text "Settings" ]
+          [ whenElem false \_ -> HH.slot F._formless unit formComponent unit (Just <<< HandleForm)
           , HH.div
-              []
-              [ whenElem false \_ -> HH.slot F._formless unit formComponent unit (Just <<< HandleForm)
-              , HH.div
-                  [ HP.classes [ T.mt8 ] ]
-                  [ HH.button
-                      [ HE.onClick \_ -> Just LogUserOut
-                      , HP.classes
-                          [ T.cursorPointer
-                          , T.py2
-                          , T.px4
-                          , T.bgGray300
-                          , T.textWhite
-                          , T.fontSemibold
-                          , T.roundedLg
-                          , T.shadowMd
-                          , T.hoverBgKiwi
-                          , T.focusOutlineNone
-                          , T.focusRing2
-                          , T.focusRingPurple600
-                          , T.flex
-                          , T.itemsCenter
-                          ]
+              [ HP.classes [ T.mt8 ] ]
+              [ HH.button
+                  [ HE.onClick \_ -> Just LogUserOut
+                  , HP.classes
+                      [ T.cursorPointer
+                      , T.py2
+                      , T.px4
+                      , T.bgGray300
+                      , T.textWhite
+                      , T.fontSemibold
+                      , T.roundedLg
+                      , T.shadowMd
+                      , T.hoverBgKiwi
+                      , T.focusOutlineNone
+                      , T.focusRing2
+                      , T.focusRingPurple600
+                      , T.flex
+                      , T.itemsCenter
                       ]
-                      [ HH.span [] [ HH.text "Log out" ]
-                      , Icons.logout [ Icons.classes [ T.h5, T.w5, T.ml2 ] ]
-                      ]
+                  ]
+                  [ HH.span [] [ HH.text "Log out" ]
+                  , Icons.logout [ Icons.classes [ T.h5, T.w5, T.ml2 ] ]
                   ]
               ]
           ]
+      ]
+
     where
     formComponent :: forall query slots. F.Component SettingsForm query slots Unit Profile m
     formComponent =

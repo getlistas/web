@@ -18,14 +18,13 @@ import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, discoverLists, forkList, getLists)
 import Listasio.Component.HTML.Icons as Icons
-import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Data.ID (ID)
 import Listasio.Data.Lens (_forkInProgress)
 import Listasio.Data.List (Author(..), ListWithIdAndUser, ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
-import Listasio.Data.Route (Route(..))
+import Listasio.Data.Route (Route)
 import Listasio.Env (UserEnv)
 import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
@@ -151,18 +150,15 @@ component = Connect.component $ H.mkComponent
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render state@{ currentUser, lists, isLast } =
-    Layout.dashboard
-      currentUser
-      Navigate
-      (Just Discover)
-      $ HH.div
-          []
-          [ HH.h1
-              [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-              [ HH.text "Discover" ]
-          , wip
-          , feed
-          ]
+    HH.div
+      []
+      [ HH.h1
+          [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
+          [ HH.text "Discover" ]
+      , wip
+      , feed
+      ]
+
     where
     wip =
       HH.div

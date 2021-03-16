@@ -75,6 +75,7 @@ header currentUser navigate route =
   where
   onNavigate r = Just <<< navigate r <<< toEvent
   isRoute expected = Just expected == route
+
   navLink route' contents =
     HH.a
       [ safeHref route'

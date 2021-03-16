@@ -6,7 +6,6 @@ import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Maybe (Maybe(..))
 import Listasio.Capability.Navigate (class Navigate, navigate_)
-import Listasio.Component.HTML.Header (header)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route)
 import Listasio.Env (UserEnv)
@@ -18,8 +17,7 @@ import Tailwind as T
 import Web.Event.Event (Event)
 
 data Action
-  = Initialize
-  | Receive { currentUser :: Maybe ProfileWithIdAndEmail }
+  = Receive { currentUser :: Maybe ProfileWithIdAndEmail }
   | Navigate Route Event
 
 type State = {currentUser :: Maybe ProfileWithIdAndEmail}
@@ -36,7 +34,6 @@ component = Connect.component $ H.mkComponent
   , eval: H.mkEval $ H.defaultEval
       { handleAction = handleAction
       , receive = Just <<< Receive
-      , initialize = Just Initialize
       }
   }
   where
@@ -44,8 +41,6 @@ component = Connect.component $ H.mkComponent
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
-    Initialize -> pure unit
-
     Receive { currentUser } ->
       H.modify_ _ { currentUser = currentUser }
 
@@ -54,10 +49,5 @@ component = Connect.component $ H.mkComponent
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render { currentUser } =
     HH.div
-      [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.itemsCenter ] ]
-      [ header currentUser Navigate Nothing
-      , HH.div
-          [ HP.classes [ T.container, T.textCenter, T.mt10, T.textRed500 ] ]
-          [ HH.text "Verification failed" ]
-      ]
-
+      [ HP.classes [ T.container, T.textCenter, T.mt10, T.textRed500 ] ]
+      [ HH.text "Verification failed" ]

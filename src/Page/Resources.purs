@@ -23,7 +23,6 @@ import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource, getResources)
-import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Message as Message
 import Listasio.Component.HTML.Resource (resource)
 import Listasio.Component.HTML.ToggleGroup as ToggleGroup
@@ -185,18 +184,15 @@ component = Connect.component $ H.mkComponent
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render { currentUser, resources, lists: mbLists, groupBy, filterByDone } =
-    Layout.dashboard
-      currentUser
-      Navigate
-      (Just Resources)
-      $ HH.div
-          []
-          [ HH.h1
-              [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-              [ HH.text "Resources" ]
-          , settings
-          , feed
-          ]
+    HH.div
+      []
+      [ HH.h1
+          [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
+          [ HH.text "Resources" ]
+      , settings
+      , feed
+      ]
+
     where
     lists = fromMaybe [] mbLists
 

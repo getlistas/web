@@ -10,7 +10,6 @@ import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser)
-import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Login as Login
 import Listasio.Component.HTML.Message as Message
 import Listasio.Component.HTML.Utils (whenElem)
@@ -61,24 +60,20 @@ component =
 
   render :: State -> H.ComponentHTML Action ChildSlots m
   render {redirect, registerSuccess} =
-    Layout.noheader
-      Nothing
-      Navigate
-      (Just Login)
-      $ HH.div
-          [ HP.classes [ T.mt12, T.flex, T.flexCol, T.itemsCenter ] ]
-          [ HH.h1
-              [ HP.classes [ T.textGray400, T.text2xl, T.fontBold, T.mb8 ] ]
-              [ HH.text "Welcome to Listas" ]
-          , whenElem registerSuccess \_ ->
-              Message.message $ Message.props
-                { classes = [ T.mb6 ]
-                , title = Just "Registration succesful!"
-                , text = Just "Login to start using the app"
-                , icon = Just "🎉"
-                }
-          , HH.div
-              [ HP.classes [ T.w96, T.maxWFull ] ]
-              [ HH.slot (SProxy :: _ "login") unit Login.component {redirect} (Just <<< GoToRegister)
-              ]
+    HH.div
+      [ HP.classes [ T.mt12, T.flex, T.flexCol, T.itemsCenter ] ]
+      [ HH.h1
+          [ HP.classes [ T.textGray400, T.text2xl, T.fontBold, T.mb8 ] ]
+          [ HH.text "Welcome to Listas" ]
+      , whenElem registerSuccess \_ ->
+          Message.message $ Message.props
+            { classes = [ T.mb6 ]
+            , title = Just "Registration succesful!"
+            , text = Just "Login to start using the app"
+            , icon = Just "🎉"
+            }
+      , HH.div
+          [ HP.classes [ T.w96, T.maxWFull ] ]
+          [ HH.slot (SProxy :: _ "login") unit Login.component {redirect} (Just <<< GoToRegister)
           ]
+      ]
