@@ -58,7 +58,7 @@ type State
 component
   :: forall q o m r
    . MonadAff m
-  => MonadAsk { userEnv :: UserEnv | r } m
+  => MonadAsk {userEnv :: UserEnv | r} m
   => ManageUser m
   => Navigate m
   => H.Component HH.HTML q {} o m
@@ -92,19 +92,19 @@ component = Connect.component $ H.mkComponent
     GoToSignin Register.GoToSignin -> do
        {authStatus} <- H.get
        when (authStatus == ShowRegister) do
-          H.modify_ _ { authStatus = ShowLogin }
+          H.modify_ _ {authStatus = ShowLogin}
 
     GoToRegister Login.GoToRegister -> do
        {authStatus} <- H.get
        when (authStatus == ShowLogin) do
-          H.modify_ _ { authStatus = ShowRegister }
+          H.modify_ _ {authStatus = ShowRegister}
 
   render :: State -> H.ComponentHTML Action ChildSlots m
   render {currentUser, menuOpen, authStatus} =
     HH.div
       [ HP.classes [ T.bgWhite ] ]
       [ heroAndNav
-      , splitImageAndFeature
+      , if false then splitImageAndFeature else HH.text ""
       , featureCardWithImage
       , featuresList
       , footer Navigate
@@ -155,6 +155,7 @@ component = Connect.component $ H.mkComponent
         [ HP.classes
             [ T.px4
             , T.smPx6
+            , T.lgPx8
             , T.smTextCenter
             , T.mdMaxW2xl
             , T.mdMxAuto
@@ -181,7 +182,7 @@ component = Connect.component $ H.mkComponent
                 ]
                 [ HH.span
                     [ HP.classes [ T.textGray400, T.block ] ]
-                    [ HH.text "Your reading lists" ]
+                    [ HH.text "Your Reading, Watching, and Listening lists" ]
                 , HH.span
                     [ HP.classes [ T.textKiwi, T.block ] ]
                     [ HH.text "Under control" ]
@@ -197,7 +198,7 @@ component = Connect.component $ H.mkComponent
                     , T.xlTextXl
                     ]
                 ]
-                [ HH.text "Manage your reading lists with Listas" ]
+                [ HH.text "Store any digital content, keep the history of what you have consumed, share it with friends, discover trending material and create Learning Paths." ]
             ]
         ]
 
@@ -212,6 +213,7 @@ component = Connect.component $ H.mkComponent
             , T.justifyBetween
             , T.px4
             , T.smPx6
+            , T.lgPx8
             ]
         ]
         [ HH.div
@@ -587,9 +589,9 @@ component = Connect.component $ H.mkComponent
             [ HP.classes
                 [ T.mxAuto
                 , T.maxWMd
-                , T.px4
                 , T.textCenter
                 , T.smMaxW3xl
+                , T.px4
                 , T.smPx6
                 , T.lgPx8
                 , T.lgMaxW7xl
@@ -597,7 +599,7 @@ component = Connect.component $ H.mkComponent
             ]
             [ HH.h2
                 [ HP.classes [ T.textBase, T.fontSemibold, T.trackingWider, T.textDurazno, T.uppercase ] ]
-                [ HH.text "Control your reading lists" ]
+                [ HH.text "Features" ]
             , HH.p
                 [ HP.classes
                     [ T.mt2
@@ -608,43 +610,43 @@ component = Connect.component $ H.mkComponent
                     , T.smText4xl
                     ]
                 ]
-                [ HH.text "All you ever wanted to keep your reading lists tiddy" ]
+                [ HH.text "Enhance the way you consume content" ]
             , HH.p
                 [ HP.classes [ T.mt5, T.maxWProse, T.mxAuto, T.textXl, T.textGray500 ] ]
-                [ HH.text "Phasellus lorem quam molestie id quisque diam aenean nulla in. Accumsan in quis quis nunc, ullamcorper malesuada. Eleifend condimentum id viverra nulla." ]
+                [ HH.text "We are currently working on expanding and improving the Listas feature set. Reach us if you'd like a tailored feature." ]
             , HH.div
                 [ HP.classes [ T.mt12 ] ]
                 [ HH.div
                     [ HP.classes [ T.grid, T.gridCols1, T.gap8, T.smGridCols2, T.lgGridCols3 ] ]
                     [ feature
+                        Icons.calendar
+                        "Up next"
+                        "Save your content to consume it in the order you want"
+                        false
+                    , feature
+                        Icons.duplicate
+                        "Fork lists"
+                        "Copy interesting Lists or share your content with others allowing them to copy your public List"
+                        false
+                    , feature
+                        Icons.userAdd
+                        "Follow lists"
+                        "Follow multiple lists, don't miss anything from the authors you like."
+                        true
+                    , feature
+                        Icons.bookmark
+                        "History"
+                        "Keep track of everything you consumed, you’ll never know when you’ll need it again."
+                        true
+                    , feature
                         Icons.rss
-                        "RSS Subscription"
-                        "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis."
+                        "RSS"
+                        "Bring outside content automatically to Listas using the RSS integration"
                         false
                     , feature
-                        Icons.userGroup
-                        "Follow other lists"
-                        "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis."
-                        false
-                    , feature
-                        Icons.lineChart
-                        "Reading stats"
-                        "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis."
-                        true
-                    , feature
-                        Icons.chat
-                        "Discover other lists"
-                        "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis."
-                        true
-                    , feature
-                        Icons.search
-                        "Find all you read"
-                        "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis."
-                        true
-                    , feature
-                        Icons.beaker
-                        "More ..."
-                        "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis."
+                        Icons.hashtag
+                        "Discover"
+                        "Explore other users' content and make your lists public to let other users check your content"
                         false
                     ]
                 ]
@@ -701,7 +703,10 @@ component = Connect.component $ H.mkComponent
                             ]
                         , HH.p
                             [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textGray400 ] ]
-                            [ HH.text "Ac euismod vel sit maecenas id pellentesque eu sed consectetur. Malesuada adipiscing sagittis vel nulla nec." ]
+                            [ HH.text "Create an account for free (No credit card required) and start exploring Listas. Listas aim to boost your productivity while keeping track of the content you consumed to be able to come back to it in the future, share it or just look at your stats." ]
+                        , HH.p
+                            [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textGray400 ] ]
+                            [ HH.text "Listas also tries to assist content creators or educators by allowing them to create “Learning Paths” lists so users / students can follow and consume content if the right order and get notified when new content arrives." ]
                         ]
                     ]
                 , HH.div
@@ -740,8 +745,9 @@ component = Connect.component $ H.mkComponent
                 ]
             ]
             [ HH.img
-                [ -- TODO: https://unsplash.com/photos/gm2qQPnSJBA
-                  HP.src "https://images.unsplash.com/photo-1545239352-8cf6abca7cfd?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=675&q=80"
+                [ HP.alt "Woman reading on a laptop"
+                  -- TODO: https://unsplash.com/photos/gm2qQPnSJBA
+                , HP.src "https://images.unsplash.com/photo-1545239352-8cf6abca7cfd?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=675&q=80"
                 , HP.classes [ T.wFull, T.hFull, T.objectCover ]
                 ]
             ]
