@@ -10,9 +10,11 @@ import Data.Foldable (length)
 import Data.Lens (firstOf, over, preview, set, traversed)
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
 import Data.Symbol (SProxy(..))
+import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Elements.Keyed as HK
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Clipboard (class Clipboard, writeText)
@@ -24,6 +26,7 @@ import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Utils (cx, maybeElem, safeHref, whenElem)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
+import Listasio.Data.ID as ID
 import Listasio.Data.Lens (_completed_count, _count, _last_completed_at, _list, _markingAsDone, _resource_metadata, _resources)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Resource (ListResource)
@@ -273,7 +276,7 @@ component = H.mkComponent
         [ HP.classes [ T.px4, T.pb2, T.pt4, T.flex, T.h40 ] ]
         [ nextLink next
             $ HH.div
-                [ HP.classes [ T.h32, T.w44, T.mr4 ] ]
+                [ HP.classes [ T.h32, T.w32, T.lgW44, T.mr4 ] ]
                 [ case next.thumbnail of
                     Just url ->
                       HH.img [ HP.classes [ T.hFull, T.wFull, T.objectCover, T.roundedLg ], HP.src url ]
@@ -343,7 +346,7 @@ component = H.mkComponent
 
     header =
       HH.div
-        [ HP.classes [ T.px4, T.py2, T.borderB2, T.borderGray200, T.h16 ] ]
+        [ HP.classes [ T.px4, T.py2, T.borderB, T.borderGray200, T.h16 ] ]
         [ HH.div
             [ HP.classes [ T.flex, T.justifyBetween, T.itemsCenter ] ]
             [ HH.a
@@ -369,7 +372,7 @@ component = H.mkComponent
       HH.div
         [ HP.classes
             [ T.py2
-            , T.borderT2
+            , T.borderT
             , T.borderGray200
             , T.flex
             , T.flexCol
@@ -400,7 +403,7 @@ component = H.mkComponent
                 ]
             ]
         , whenElem (showMore && hasMore) \_ ->
-            HH.div
+            HK.div
               [ HP.classes
                   [ T.wFull
                   , T.pt2
@@ -418,45 +421,47 @@ component = H.mkComponent
       hasMore = isJust $ (_ > 1) <$> length <$> mbRest
       rest = fromMaybe [] mbRest
 
-      nextItem resource@{ url, title } =
-        HH.div
-          [ HP.classes
-              [ T.mb1
-              , T.mr2
-              , T.py1
-              , T.px2
-              , T.hoverTextWhite
-              , T.textGray300
-              , T.hoverBgDurazno
-              , T.roundedMd
-              , T.flex
-              , T.itemsCenter
-              , T.justifyBetween
-              , T.listResource
-              ]
-          ]
-          [ HH.a
-              [ HP.classes [ T.flex, T.itemsCenter, T.truncate ]
-              , HP.target "_blank"
-              , HP.href url
-              ]
-              [ HH.img [ HP.classes [ T.inlineBlock, T.w4, T.h4, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
-              , HH.div [ HP.classes [ T.truncate, T.textSm ] ] [ HH.text title ]
-              ]
-          , HH.div
-              [ HP.classes [ T.listResourceSettings, T.ml4 ] ]
-              [ HH.button
-                  [ HE.onClick \_ -> Just $ CompleteResource resource
-                  , HP.classes [ T.cursorPointer, T.mr4 ]
+      nextItem resource@{url, title, id} =
+        Tuple
+          (ID.toString id)
+          $ HH.div
+              [ HP.classes
+                  [ T.mb1
+                  , T.mr2
+                  , T.py1
+                  , T.px2
+                  , T.hoverTextWhite
+                  , T.textGray300
+                  , T.hoverBgDurazno
+                  , T.roundedMd
+                  , T.flex
+                  , T.itemsCenter
+                  , T.justifyBetween
+                  , T.group
                   ]
-                  [ Icons.check [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
-              , HH.button
-                  [ HE.onClick \_ -> Just $ DeleteResource resource
-                  , HP.classes [ T.cursorPointer ]
-                  ]
-                  [ Icons.trash [ Icons.classes [ T.h5, T.w5, T.textGray400 ] ] ]
               ]
-          ]
+              [ HH.a
+                  [ HP.classes [ T.flex, T.itemsCenter, T.truncate, T.py1 ]
+                  , HP.target "_blank"
+                  , HP.href url
+                  ]
+                  [ HH.img [ HP.classes [ T.inlineBlock, T.w4, T.h4, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
+                  , HH.div [ HP.classes [ T.truncate, T.textSm ] ] [ HH.text title ]
+                  ]
+              , HH.div
+                  [ HP.classes [ T.hidden, T.groupHoverFlex, T.ml4, T.bgWhite, T.roundedMd ] ]
+                  [ HH.button
+                      [ HE.onClick \_ -> Just $ CompleteResource resource
+                      , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd ]
+                      ]
+                      [ Icons.check [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
+                  , HH.button
+                      [ HE.onClick \_ -> Just $ DeleteResource resource
+                      , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd ]
+                      ]
+                      [ Icons.trash [ Icons.classes [ T.h5, T.w5, T.textGray400 ] ] ]
+                  ]
+              ]
 
 filterNotEmpty :: forall t a. Filterable t => t (Array a) -> t (Array a)
 filterNotEmpty = filter (not <<< null)
