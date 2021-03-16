@@ -265,15 +265,38 @@ component = Connect.component $ H.mkComponent
                           , T.itemsCenter
                           , T.py1
                           , T.fontBold
-                          , T.textGray300
-                          , T.borderB2
-                          , T.borderKiwi
-                          , T.hoverTextGray400
+                          , T.flex
+                          , T.itemsCenter
+                          , T.group
                           ]
                       , safeHref Dashboard
                       , HE.onClick $ onNavigate Dashboard
                       ]
-                      [ HH.text $ Username.toString name ]
+                      [ HH.span
+                          [ HP.classes
+                              [ T.textGray300
+                              , T.borderB2
+                              , T.borderKiwi
+                              , T.mr2
+                              , T.groupHoverTextGray400
+                              ]
+                          ]
+                          [ HH.text $ Username.toString name ]
+                      , HH.div
+                          [ HP.classes
+                              [ T.w10
+                              , T.h10
+                              , T.roundedFull
+                              , T.bgGray100
+                              , T.flex
+                              , T.justifyCenter
+                              , T.itemsCenter
+                              ]
+                          ]
+                          [ Icons.userCircle
+                              [ Icons.classes [ T.w8, T.h8, T.textGray300, T.groupHoverTextGray400 ] ]
+                          ]
+                      ]
                   ]
 
               ShowLoading -> HH.text ""

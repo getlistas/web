@@ -115,6 +115,10 @@ border = ClassName "border"
 borderB2 :: ClassName
 borderB2 = ClassName "border-b-2"
 
+-- | borderB
+borderB :: ClassName
+borderB = ClassName "border-b"
+
 -- | borderGray100
 borderGray100 :: ClassName
 borderGray100 = ClassName "border-gray-100"
@@ -355,6 +359,22 @@ gridCols5 = ClassName "grid-cols-5"
 group :: ClassName
 group = ClassName "group"
 
+-- | groupHoverBorderB2
+groupHoverBorderB2 :: ClassName
+groupHoverBorderB2 = ClassName "group-hover:border-b-2"
+
+-- | groupHoverBorderKiwi
+groupHoverBorderKiwi :: ClassName
+groupHoverBorderKiwi = ClassName "group-hover:border-kiwi"
+
+-- | groupHoverFlex
+groupHoverFlex :: ClassName
+groupHoverFlex = ClassName "group-hover:flex"
+
+-- | groupHoverTextGray400
+groupHoverTextGray400 :: ClassName
+groupHoverTextGray400 = ClassName "group-hover:text-gray-400"
+
 -- | groupHoverTextGray700
 groupHoverTextGray700 :: ClassName
 groupHoverTextGray700 = ClassName "group-hover:text-gray-700"
@@ -482,10 +502,6 @@ hoverTextGray10 = ClassName "hover:text-gray-10"
 -- | hoverTextGray300
 hoverTextGray300 :: ClassName
 hoverTextGray300 = ClassName "hover:text-gray-300"
-
--- | hoverTextGray400
-hoverTextGray400 :: ClassName
-hoverTextGray400 = ClassName "hover:text-gray-400"
 
 -- | hoverTextGray700
 hoverTextGray700 :: ClassName
@@ -683,17 +699,13 @@ lgTextLg = ClassName "lg:text-lg"
 lgTranslateY20 :: ClassName
 lgTranslateY20 = ClassName "lg:translate-y-20"
 
+-- | lgW44
+lgW44 :: ClassName
+lgW44 = ClassName "lg:w-44"
+
 -- | lineClamp2
 lineClamp2 :: ClassName
 lineClamp2 = ClassName "line-clamp-2"
-
--- | listResource
-listResource :: ClassName
-listResource = ClassName "list-resource"
-
--- | listResourceSettings
-listResourceSettings :: ClassName
-listResourceSettings = ClassName "list-resource-settings"
 
 -- | m1
 m1 :: ClassName
@@ -1587,13 +1599,13 @@ w11d12 = ClassName "w-11/12"
 w20 :: ClassName
 w20 = ClassName "w-20"
 
+-- | w32
+w32 :: ClassName
+w32 = ClassName "w-32"
+
 -- | w40
 w40 :: ClassName
 w40 = ClassName "w-40"
-
--- | w44
-w44 :: ClassName
-w44 = ClassName "w-44"
 
 -- | w4
 w4 :: ClassName
@@ -1626,6 +1638,10 @@ wScreen = ClassName "w-screen"
 -- | xlFlex
 xlFlex :: ClassName
 xlFlex = ClassName "xl:flex"
+
+-- | xlGridCols3
+xlGridCols3 :: ClassName
+xlGridCols3 = ClassName "xl:grid-cols-3"
 
 -- | xlGridCols4
 xlGridCols4 :: ClassName

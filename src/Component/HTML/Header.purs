@@ -2,11 +2,11 @@ module Listasio.Component.HTML.Header where
 
 import Prelude
 
-import Listasio.Component.HTML.Icons as Icons
 import Data.Maybe (Maybe(..), isJust, isNothing)
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem, cx)
 import Listasio.Data.Profile (ProfileRep)
 import Listasio.Data.Route (Route(..))
@@ -48,6 +48,7 @@ header currentUser navigate route =
               , HP.classes
                   [ T.flex
                   , T.itemsCenter
+                  , T.group
                   ]
               ]
               [ HH.span
@@ -59,13 +60,15 @@ header currentUser navigate route =
                       , T.borderB2
                       , cx T.borderTransparent $ not $ isRoute Settings
                       , cx T.borderKiwi $ isRoute Settings
-                      , T.hoverBorderB2
-                      , T.hoverBorderKiwi
+                      , T.groupHoverBorderB2
+                      , T.groupHoverBorderKiwi
                       , T.mr2
                       ]
                   ]
                   [ HH.text $ Username.toString name ]
-              , HH.img [ HP.classes [ T.w8, T.h8, T.roundedFull ], HP.src "https://avatars2.githubusercontent.com/u/8309423?s=460&u=0f306a70fdcc2359d21b4918efaabf617a396c91&v=4" ]
+              , HH.div
+                  [ HP.classes [ T.w10, T.h10, T.roundedFull, T.bgGray100, T.flex, T.justifyCenter, T.itemsCenter ] ]
+                  [ Icons.userCircle [ Icons.classes [ T.w8, T.h8, T.textGray300 ] ] ]
               ]
         ]
     ]

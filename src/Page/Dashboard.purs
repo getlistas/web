@@ -176,7 +176,7 @@ component = Connect.component $ H.mkComponent
         HH.div
           []
           [ HH.div
-              [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.lgGridCols3, T.gap4, T.itemsStart ] ]
+              [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.xlGridCols3, T.gap4, T.itemsStart ] ]
               $ snoc
                 (map (\list -> HH.slot List._listSlot list.id List.component { list } absurd) lists)
                 listCreate
