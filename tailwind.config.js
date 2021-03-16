@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       animation: {
-        'spin-slow': 'spin 2s linear infinite',
+        "spin-slow": "spin 2s linear infinite",
       },
       colors: {
         gray: {
@@ -15,9 +15,9 @@ module.exports = {
           10: "#FAF9F9",
         },
         kiwi: {
-          light: '#C1D4D3',
+          light: "#C1D4D3",
           DEFAULT: "#89B0AE",
-          dark: '#749593'
+          dark: "#749593",
         },
         durazno: {
           light: "#F8D7BE",
@@ -31,22 +31,23 @@ module.exports = {
   },
   variants: {
     extend: {
+      display: ["group-hover"],
       backgroundColor: ["checked", "disabled"],
       borderColor: ["checked"],
-      borderWidth: ["hover"],
+      borderWidth: ["hover", "group-hover"],
       cursor: ["disabled"],
       opacity: ["disabled"],
-      ringWidth: ['hover'],
-      ringColor: ['hover'],
-      ringOpacity: ['hover'],
-      ringOffsetWidth: ['hover'],
-      ringOffsetColor: ['hover'],
+      ringColor: ["hover"],
+      ringOffsetColor: ["hover"],
+      ringOffsetWidth: ["hover"],
+      ringOpacity: ["hover"],
+      ringWidth: ["hover"],
     },
   },
   plugins: [
     require("@tailwindcss/forms"),
     require("@tailwindcss/line-clamp"),
     require("tailwind-scrollbar"),
-    require('@tailwindcss/aspect-ratio'),
+    require("@tailwindcss/aspect-ratio"),
   ],
 };
