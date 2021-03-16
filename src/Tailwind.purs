@@ -503,6 +503,10 @@ hoverTextGray10 = ClassName "hover:text-gray-10"
 hoverTextGray300 :: ClassName
 hoverTextGray300 = ClassName "hover:text-gray-300"
 
+-- | hoverTextGray400
+hoverTextGray400 :: ClassName
+hoverTextGray400 = ClassName "hover:text-gray-400"
+
 -- | hoverTextGray700
 hoverTextGray700 :: ClassName
 hoverTextGray700 = ClassName "hover:text-gray-700"

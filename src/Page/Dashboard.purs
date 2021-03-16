@@ -21,7 +21,6 @@ import Listasio.Capability.Now (class Now)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Component.HTML.CreateResource as CreateResource
-import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.List as List
 import Listasio.Component.HTML.Modal as Modal
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
@@ -123,17 +122,15 @@ component = Connect.component $ H.mkComponent
   render :: State -> H.ComponentHTML Action ChildSlots m
   render st =
     HH.div
+      -- TODO: do this on the `body` instead
       [ HE.onPaste $ Just <<< PasteUrl ]
-      [ Layout.dashboard
-          st.currentUser
-          Navigate
-          (Just Dashboard)
-          $ HH.div
-              []
-              [ header
-              , HH.div [ HP.classes [ T.container ] ] [ feed ]
-              ]
+      [ HH.div
+          []
+          [ header
+          , HH.div [ HP.classes [ T.container ] ] [ feed ]
+          ]
       ]
+
     where
     header =
       HH.div

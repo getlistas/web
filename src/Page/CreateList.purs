@@ -14,7 +14,6 @@ import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, createList)
 import Listasio.Component.HTML.Icons as Icons
-import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.ListForm as ListForm
 import Listasio.Component.HTML.Utils (safeHref)
 import Listasio.Data.List (CreateListFields)
@@ -27,8 +26,7 @@ import Web.Event.Event as Event
 import Web.UIEvent.MouseEvent (toEvent)
 
 data Action
-  = Initialize
-  | Receive { currentUser :: Maybe ProfileWithIdAndEmail }
+  = Receive { currentUser :: Maybe ProfileWithIdAndEmail }
   | HandleCreateForm CreateListFields
   | Navigate Route Event.Event
 
@@ -50,7 +48,6 @@ component = Connect.component $ H.mkComponent
   , eval: H.mkEval $ H.defaultEval
       { handleAction = handleAction
       , receive = Just <<< Receive
-      , initialize = Just Initialize
       }
   }
   where
@@ -58,8 +55,6 @@ component = Connect.component $ H.mkComponent
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
-    Initialize -> pure unit
-
     Receive { currentUser } ->
       H.modify_ _ { currentUser = currentUser }
 
@@ -79,18 +74,15 @@ component = Connect.component $ H.mkComponent
 
   render :: State -> H.ComponentHTML Action ChildSlots m
   render { currentUser } =
-    Layout.dashboard
-      currentUser
-      Navigate
-      Nothing
-      $ HH.div
-          []
-          [ title
-          , HH.div
-              [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2 ] ]
-              [ HH.slot F._formless unit ListForm.formComponent { list: Nothing } (Just <<< HandleCreateForm)
-              ]
+    HH.div
+      []
+      [ title
+      , HH.div
+          [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2 ] ]
+          [ HH.slot F._formless unit ListForm.formComponent { list: Nothing } (Just <<< HandleCreateForm)
           ]
+      ]
+
     where
     title =
       HH.div

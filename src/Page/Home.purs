@@ -135,7 +135,7 @@ component = Connect.component $ H.mkComponent
             , T.fontMedium
             , T.textGray700
             , T.hoverTextGray900
-            , T.hoverBgGray50
+            , T.hoverBgGray100
             ]
         , safeHref route
         , HE.onClick $ onNavigate route

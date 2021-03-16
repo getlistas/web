@@ -16,7 +16,6 @@ import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Component.HTML.CreateResource as CreateResource
-import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.Utils (safeHref)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
@@ -93,15 +92,12 @@ component = Connect.component $ H.mkComponent
 
   render :: State -> H.ComponentHTML Action ChildSlots m
   render st =
-    Layout.dashboard
-      st.currentUser
-      Navigate
-      Nothing
-      $ HH.div
-          []
-          [ header
-          , HH.div [ HP.classes [ T.container ] ] [ form ]
-          ]
+    HH.div
+      []
+      [ header
+      , HH.div [ HP.classes [ T.container ] ] [ form ]
+      ]
+
     where
     header =
       HH.div

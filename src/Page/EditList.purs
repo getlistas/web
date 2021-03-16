@@ -17,7 +17,6 @@ import Listasio.Capability.Resource.List (class ManageList, deleteList, getListB
 import Listasio.Component.HTML.Button as Button
 import Listasio.Component.HTML.CardsAndSidebar as CardsAndSidebar
 import Listasio.Component.HTML.Icons as Icons
-import Listasio.Component.HTML.Layout as Layout
 import Listasio.Component.HTML.ListForm as ListForm
 import Listasio.Data.Lens (_list)
 import Listasio.Data.List (CreateListFields, ListWithIdAndUser)
@@ -31,8 +30,7 @@ import Tailwind as T
 import Web.Event.Event (Event)
 
 data Action
-  = Initialize
-  | Receive { currentUser :: Maybe ProfileWithIdAndEmail, listSlug :: Slug }
+  = Receive { currentUser :: Maybe ProfileWithIdAndEmail, listSlug :: Slug }
   | HandleListForm CreateListFields
   | Navigate Route Event
   | DeleteList
@@ -58,7 +56,6 @@ component = Connect.component $ H.mkComponent
   , eval: H.mkEval $ H.defaultEval
       { handleAction = handleAction
       , receive = Just <<< Receive
-      , initialize = Just Initialize
       }
   }
   where
@@ -70,8 +67,6 @@ component = Connect.component $ H.mkComponent
 
   handleAction :: Action -> H.HalogenM State Action Slots o m Unit
   handleAction = case _ of
-    Initialize -> pure unit
-
     Receive { currentUser } -> do
       st <- H.get
       H.modify_ _ { currentUser = currentUser }
@@ -112,11 +107,8 @@ component = Connect.component $ H.mkComponent
 
   render :: State -> H.ComponentHTML Action Slots m
   render { currentUser, list: mbList } =
-    Layout.dashboard
-      currentUser
-      Navigate
-      Nothing
-      $ HH.div [] [ header, content ]
+    HH.div [] [ header, content ]
+
     where
     header =
       HH.h1
