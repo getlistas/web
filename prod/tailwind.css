@@ -3606,6 +3606,11 @@ select{
   color: rgba(123, 130, 154, var(--tw-text-opacity));
 }
 
+.hover\:text-gray-400:hover {
+  --tw-text-opacity: 1;
+  color: rgba(86, 91, 108, var(--tw-text-opacity));
+}
+
 .hover\:text-gray-700:hover {
   --tw-text-opacity: 1;
   color: rgba(55, 65, 81, var(--tw-text-opacity));
