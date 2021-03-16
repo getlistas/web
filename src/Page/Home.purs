@@ -697,16 +697,13 @@ component = Connect.component $ H.mkComponent
                             [ HH.span
                                 [ HP.classes [ T.block ] ]
                                 [ HH.text "Ready to dive in?" ]
-                            , HH.span
-                                [ HP.classes [ T.block ] ]
-                                [ HH.text "Start your free trial today." ]
                             ]
                         , HH.p
                             [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textGray400 ] ]
-                            [ HH.text "Create an account for free (No credit card required) and start exploring Listas. Listas aim to boost your productivity while keeping track of the content you consumed to be able to come back to it in the future, share it or just look at your stats." ]
+                            [ HH.text "Create an account for free (No credit card required) and start exploring. Listas aim to boost your productivity while keeping track of the content you consumed to be able to come back to it in the future, share it or just look at your stats." ]
                         , HH.p
                             [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textGray400 ] ]
-                            [ HH.text "Listas also tries to assist content creators or educators by allowing them to create “Learning Paths” lists so users / students can follow and consume content if the right order and get notified when new content arrives." ]
+                            [ HH.text "Listas also tries to assist content creators or educators by allowing them to create “Learning Paths” lists so users / students can follow and consume content in the right order and get notified when new content arrives." ]
                         ]
                     ]
                 , HH.div
