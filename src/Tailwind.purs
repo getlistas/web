@@ -1663,6 +1663,10 @@ xlItemsEnd = ClassName "xl:items-end"
 xlJustifyBetween :: ClassName
 xlJustifyBetween = ClassName "xl:justify-between"
 
+-- | xlPx0
+xlPx0 :: ClassName
+xlPx0 = ClassName "xl:px-0"
+
 -- | xlPx10
 xlPx10 :: ClassName
 xlPx10 = ClassName "xl:px-10"

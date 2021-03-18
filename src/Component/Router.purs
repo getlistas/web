@@ -135,10 +135,12 @@ component = Connect.component $ H.mkComponent
     Navigate dest a -> do
       {route, currentUser} <- H.get
       when (route /= Just dest) do
-        case isJust currentUser && dest `elem` [ Login, Register ] of
+        case isJust currentUser && dest `elem` authRoutes of
           false -> H.modify_ _ {route = Just dest}
           _ -> pure unit
       pure $ Just a
+    where
+    authRoutes = [ Login, Register, VerifyEmailSuccess, VerifyEmailFailure ]
 
   -- Display the login page instead of the expected page if there is no current user
   authorize :: Maybe ProfileWithIdAndEmail -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
@@ -153,89 +155,93 @@ component = Connect.component $ H.mkComponent
     case route of
       Nothing ->
         -- TODO: 404 redirect? Or render proper page?
-        HH.div_ [ HH.text "Oh no! That page wasn't found." ]
+        layout Nothing
+          $ HH.div [ HP.classes [ T.textGray400 ] ] [ HH.text "Oh no! That page wasn't found." ]
 
       Just Home ->
         HH.slot (SProxy :: _ "home") unit Home.component {} absurd
 
-      Just r ->
-        HH.div
-          [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.bgGray10 ] ]
-          [ HH.div
-              [ HP.classes [ T.container, T.mxAuto, T.px2, T.pb20, T.flex1 ] ]
-              [ HH.slot (SProxy :: _ "nav") unit Nav.component {route: r} absurd
-              , case r of
-                  -- PUBLIC ----------------------------------------------------------------
-                  About ->
-                    HH.slot (SProxy :: _ "about") unit About.component {} absurd
+      Just r -> layout (Just r)
+        case r of
+          -- PUBLIC ----------------------------------------------------------------
+          About ->
+            HH.slot (SProxy :: _ "about") unit About.component {} absurd
 
-                  Discover ->
-                    HH.slot (SProxy :: _ "discover") unit Discover.component {} absurd
+          Discover ->
+            HH.slot (SProxy :: _ "discover") unit Discover.component {} absurd
 
-                  Pricing ->
-                    HH.slot (SProxy :: _ "pricing") unit Pricing.component {} absurd
+          Pricing ->
+            HH.slot (SProxy :: _ "pricing") unit Pricing.component {} absurd
 
-                  Changelog ->
-                    HH.slot (SProxy :: _ "changelog") unit Changelog.component {} absurd
+          Changelog ->
+            HH.slot (SProxy :: _ "changelog") unit Changelog.component {} absurd
 
-                  Profile _ ->
-                    HH.slot (SProxy :: _ "profile") unit Profile.component {} absurd
+          Profile _ ->
+            HH.slot (SProxy :: _ "profile") unit Profile.component {} absurd
 
-                  -- LEGAL -----------------------------------------------------------------
+          -- LEGAL -----------------------------------------------------------------
+          Terms ->
+            HH.slot (SProxy :: _ "terms") unit Terms.component {} absurd
 
-                  Terms ->
-                    HH.slot (SProxy :: _ "terms") unit Terms.component {} absurd
+          Policy ->
+            HH.slot (SProxy :: _ "policy") unit Policy.component {} absurd
 
-                  Policy ->
-                    HH.slot (SProxy :: _ "policy") unit Policy.component {} absurd
+          -- AUTH ------------------------------------------------------------------
+          Login ->
+            HH.slot (SProxy :: _ "login") unit Login.component {redirect: true, registerSuccess: false} absurd
 
-                  -- AUTH ------------------------------------------------------------------
-                  Login ->
-                    HH.slot (SProxy :: _ "login") unit Login.component {redirect: true, registerSuccess: false} absurd
+          Register ->
+            HH.slot (SProxy :: _ "register") unit Register.component unit absurd
 
-                  Register ->
-                    HH.slot (SProxy :: _ "register") unit Register.component unit absurd
+          VerifyEmailSuccess ->
+            HH.slot (SProxy :: _ "verifySuccess") unit Login.component {redirect: true, registerSuccess: true} absurd
 
-                  VerifyEmailSuccess ->
-                    HH.slot (SProxy :: _ "verifySuccess") unit Login.component {redirect: true, registerSuccess: true} absurd
+          VerifyEmailFailure ->
+            HH.slot (SProxy :: _ "verifyFailure") unit VerifyFailure.component {} absurd
 
-                  VerifyEmailFailure ->
-                    HH.slot (SProxy :: _ "verifyFailure") unit VerifyFailure.component {} absurd
+          -- PRIVATE ---------------------------------------------------------------
+          Dashboard ->
+            HH.slot (SProxy :: _ "dashboard") unit Dashboard.component {} absurd
+              # authorize currentUser
 
-                  -- PRIVATE ---------------------------------------------------------------
-                  Dashboard ->
-                    HH.slot (SProxy :: _ "dashboard") unit Dashboard.component {} absurd
-                      # authorize currentUser
+          Resources ->
+            HH.slot (SProxy :: _ "resources") unit Resources.component {} absurd
+              # authorize currentUser
 
-                  Resources ->
-                    HH.slot (SProxy :: _ "resources") unit Resources.component {} absurd
-                      # authorize currentUser
+          Settings ->
+            HH.slot (SProxy :: _ "settings") unit Settings.component {} absurd
+              # authorize currentUser
 
-                  Settings ->
-                    HH.slot (SProxy :: _ "settings") unit Settings.component {} absurd
-                      # authorize currentUser
+          CreateList ->
+            HH.slot (SProxy :: _ "createList") unit CreateList.component {} absurd
+              # authorize currentUser
 
-                  CreateList ->
-                    HH.slot (SProxy :: _ "createList") unit CreateList.component {} absurd
-                      # authorize currentUser
+          CreateResource {url} ->
+            HH.slot (SProxy :: _ "createResource") unit CreateResource.component {url} absurd
+              # authorize currentUser
 
-                  CreateResource {url} ->
-                    HH.slot (SProxy :: _ "createResource") unit CreateResource.component {url} absurd
-                      # authorize currentUser
+          ViewList _ ->
+            HH.slot (SProxy :: _ "viewList") unit ViewList.component {} absurd
 
-                  ViewList _ ->
-                    HH.slot (SProxy :: _ "viewList") unit ViewList.component {} absurd
+          EditList listSlug ->
+            HH.slot (SProxy :: _ "editList") unit EditList.component {listSlug} absurd
+              # authorize currentUser
 
-                  EditList listSlug ->
-                    HH.slot (SProxy :: _ "editList") unit EditList.component {listSlug} absurd
-                      # authorize currentUser
+          IntegrationsList listSlug ->
+            HH.slot (SProxy :: _ "listintegrations") unit ListIntegrations.component {listSlug} absurd
+              # authorize currentUser
 
-                  IntegrationsList listSlug ->
-                    HH.slot (SProxy :: _ "listintegrations") unit ListIntegrations.component {listSlug} absurd
-                      # authorize currentUser
+          -- This shouldn't happend, as is already pattern matched above
+          Home -> HH.text ""
 
-                  -- This shouldn't happend, as is already pattern matched above
-                  Home -> HH.text ""
-              ]
-          , footer NavigateAct
-          ]
+    where
+    layout currentRoute content =
+      HH.div
+        [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.bgGray10 ] ]
+        [ HH.div
+            [ HP.classes [ T.container, T.mxAuto, T.px4, T.xlPx0, T.pb20, T.flex1 ] ]
+            [ HH.slot (SProxy :: _ "nav") unit Nav.component {route: currentRoute} absurd
+            , content
+            ]
+        , footer NavigateAct
+        ]

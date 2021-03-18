@@ -39,21 +39,21 @@ footer navigate =
                 "https://www.notion.so/gillchristian/8178e02c59604fc88bb5dc91358c736f"
                 "Roadmap"
             , link Changelog "Changelog"
-            , externalLink "https://collectednotes.com/listas" "Blog"
+            , externalLink "https://collectednotes.com/getlistas" "Blog"
             , link Terms "Terms"
             , link Policy "Data Policy"
             ]
         , HH.div
             [ HP.classes [ T.mt8, T.flex, T.justifyCenter, T.spaceX6 ] ]
             [ HH.a
-                [ HP.classes [ T.textWhite, T.hoverTextGray10 ], HP.href "https://twitter.com/listas" ]
+                [ HP.classes [ T.textWhite, T.hoverTextGray10 ], HP.href "https://twitter.com/getlistas" ]
                 [ HH.span
                     [ HP.classes [ T.srOnly ] ]
                     [ HH.text "Twitter" ]
                 , Icons.twitter [ Icons.classes [ T.h6, T.w6 ] ]
                 ]
             , HH.a
-                [ HP.classes [ T.textWhite, T.hoverTextGray10 ], HP.href "https://github.com/listasio" ]
+                [ HP.classes [ T.textWhite, T.hoverTextGray10 ], HP.href "https://github.com/getlistas" ]
                 [ HH.span
                     [ HP.classes [ T.srOnly ] ]
                     [ HH.text "GitHub" ]

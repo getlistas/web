@@ -222,7 +222,7 @@ component = Connect.component $ H.mkComponent
                 [ HP.classes [ T.flex, T.itemsCenter, T.justifyBetween, T.wFull, T.mdWAuto ] ]
                 [ logo
                 , HH.div
-                    [ HP.classes [ T.negMr2, T.flex, T.itemsCenter, T.mdHidden ] ]
+                    [ HP.classes [ T.flex, T.itemsCenter, T.mdHidden ] ]
                     [ HH.button
                         [ HP.classes
                             [ T.bgKiwi

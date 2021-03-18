@@ -34,7 +34,7 @@ data AuthStatus
 derive instance eqForm :: Eq AuthStatus
 
 data Action
-  = Receive {currentUser :: Maybe ProfileWithIdAndEmail, route :: Route}
+  = Receive {currentUser :: Maybe ProfileWithIdAndEmail, route :: Maybe Route}
   | Navigate Route Event
   | ToggleMenu
   | AndClose Action
@@ -43,7 +43,7 @@ type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
     , menuOpen :: Boolean
     , authStatus :: AuthStatus
-    , route :: Route
+    , currentRoute :: Maybe Route
     }
 
 component
@@ -52,7 +52,7 @@ component
   => MonadAsk {userEnv :: UserEnv | r} m
   => ManageUser m
   => Navigate m
-  => H.Component HH.HTML q {route:: Route} o m
+  => H.Component HH.HTML q {route:: Maybe Route} o m
 component = Connect.component $ H.mkComponent
   { initialState
   , render
@@ -66,7 +66,7 @@ component = Connect.component $ H.mkComponent
     { currentUser
     , menuOpen: false
     , authStatus: maybe ShowLoading ShowUser currentUser
-    , route
+    , currentRoute: route
     }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
@@ -75,7 +75,7 @@ component = Connect.component $ H.mkComponent
      H.modify_ _
        { authStatus = maybe ShowAuth ShowUser currentUser
        , currentUser = currentUser
-       , route = route
+       , currentRoute = route
        }
 
     Navigate route e -> navigate_ e route
@@ -87,7 +87,7 @@ component = Connect.component $ H.mkComponent
       handleAction a
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {currentUser, menuOpen, authStatus, route: currentRoute} =
+  render {currentUser, menuOpen, authStatus, currentRoute} =
     HH.div
       [ HP.classes [ T.relative, T.bgGray10 ] ]
       [ HH.div
@@ -104,7 +104,7 @@ component = Connect.component $ H.mkComponent
 
     onNavigateAndClose route = Just <<< AndClose <<< Navigate route <<< Mouse.toEvent
 
-    isRoute = (_ == currentRoute)
+    isRoute = (_ == currentRoute) <<< Just
 
     logo =
       HH.a
@@ -174,7 +174,7 @@ component = Connect.component $ H.mkComponent
                 [ HP.classes [ T.flex, T.itemsCenter, T.justifyBetween, T.wFull, T.mdWAuto ] ]
                 [ logo
                 , HH.div
-                    [ HP.classes [ T.negMr2, T.flex, T.itemsCenter, T.mdHidden ] ]
+                    [ HP.classes [ T.flex, T.itemsCenter, T.mdHidden ] ]
                     [ HH.button
                         [ HP.classes
                             [ T.bgKiwi
