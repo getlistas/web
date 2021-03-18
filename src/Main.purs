@@ -2,13 +2,11 @@ module Main where
 
 import Prelude
 
-import Listasio.Api.Request (decodeToken, readToken)
-import Listasio.AppM (runAppM)
-import Listasio.Component.Router as Router
-import Listasio.Data.Route (Route, routeCodec)
-import Listasio.Env (Env, LogLevel(..))
+import ConfigProvider as ConfigProvider
+import Data.Argonaut.Encode (encodeJson)
 import Data.Either (hush)
 import Data.Maybe (Maybe(..))
+import Data.Newtype (unwrap)
 import Data.Traversable (traverse_)
 import Effect (Effect)
 import Effect.Aff (Aff, launchAff_)
@@ -21,13 +19,21 @@ import Halogen.Aff as HA
 import Halogen.Aff.Util as HU
 import Halogen.HTML as HH
 import Halogen.VDom.Driver (runUI)
+import Listasio.Api.Request (decodeToken, readToken)
+import Listasio.AppM (runAppM)
+import Listasio.Component.Router as Router
+import Listasio.Data.ID as ID
+import Listasio.Data.Route (Route, routeCodec)
+import Listasio.Env (Env, LogLevel(..))
+import Listasio.Foreign.Splitbee as Splitbee
 import Routing.Duplex (parse)
 import Routing.PushState (makeInterface, matchesWith)
 import Web.DOM.ParentNode (QuerySelector(..))
-import ConfigProvider as ConfigProvider
 
 main :: Effect Unit
-main = HA.runHalogenAff do
+main =
+  HA.runHalogenAff do
+  liftEffect $ Splitbee.init
 
   _ <- HA.awaitBody
 
@@ -41,7 +47,14 @@ main = HA.runHalogenAff do
     userBus <- Bus.make
 
     readToken >>= traverse_ \token -> do
-      liftEffect $ Ref.write (hush $ decodeToken token) currentUser
+      let mbUser = hush $ decodeToken token
+
+      case mbUser of
+        Just {email, id} ->
+          liftEffect $ Splitbee.userSet $ encodeJson {email: unwrap email, id: ID.toString id}
+        Nothing -> pure unit
+
+      liftEffect $ Ref.write mbUser currentUser
 
     pure {currentUser, userBus}
 

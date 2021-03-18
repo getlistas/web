@@ -3,6 +3,7 @@ module Listasio.AppM where
 import Prelude
 
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, ask, asks, runReaderT)
+import Data.Argonaut.Encode (encodeJson)
 import Data.Codec.Argonaut as Codec
 import Data.Codec.Argonaut.Compat as CAC
 import Data.Codec.Argonaut.Record as CAR
@@ -19,6 +20,7 @@ import Listasio.Api.Endpoint (Endpoint(..), SortingResources(..))
 import Listasio.Api.Request (RequestMethod(..))
 import Listasio.Api.Request as Request
 import Listasio.Api.Utils (authenticate, mkAuthRequest, mkRequest)
+import Listasio.Capability.Analytics (class Analytics)
 import Listasio.Capability.Clipboard (class Clipboard)
 import Listasio.Capability.LogMessages (class LogMessages, logError)
 import Listasio.Capability.Navigate (class Navigate, locationState, navigate)
@@ -36,6 +38,7 @@ import Listasio.Data.ResourceMetadata as ResourceMeta
 import Listasio.Data.Route as Route
 import Listasio.Env (Env, LogLevel(..))
 import Listasio.Foreign.Clipboard as ForeignClipboard
+import Listasio.Foreign.Splitbee as Splitbee
 import Routing.Duplex (print)
 import Type.Equality (class TypeEquals, from)
 import Web.Event.Event (preventDefault)
@@ -93,6 +96,15 @@ instance navigateAppM :: Navigate AppM where
     liftAff do
       Bus.write Nothing userBus
     navigate Route.Home
+
+instance analyticsAppM :: Analytics AppM where
+  init = liftEffect Splitbee.init
+
+  userSet = liftEffect <<< Splitbee.userSet <<< encodeJson
+
+  track event = case _ of
+    Nothing -> liftEffect $ Splitbee.track event
+    Just data_ -> liftEffect $ Splitbee.trackWithData event $ encodeJson data_
 
 instance manageUserAppM :: ManageUser AppM where
   loginUser = authenticate Request.login

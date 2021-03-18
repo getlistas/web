@@ -16,6 +16,7 @@ import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
+import Listasio.Capability.Analytics (class Analytics)
 import Listasio.Capability.Clipboard (class Clipboard)
 import Listasio.Capability.LogMessages (class LogMessages)
 import Listasio.Capability.Navigate (class Navigate, locationState, navigate, navigate_)
@@ -105,6 +106,7 @@ component
   => ManageIntegration m
   => ManageList m
   => Clipboard m
+  => Analytics m
   => H.Component HH.HTML Query {} Void m
 component = Connect.component $ H.mkComponent
   { initialState: \{currentUser} -> {route: Nothing, currentUser}
