@@ -8,6 +8,7 @@ import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
+import Listasio.Capability.Analytics (class Analytics)
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser)
 import Listasio.Component.HTML.Login as Login
@@ -39,6 +40,7 @@ component ::
   MonadAff m =>
   Navigate m =>
   ManageUser m =>
+  Analytics m =>
   H.Component HH.HTML q Input o m
 component =
   H.mkComponent

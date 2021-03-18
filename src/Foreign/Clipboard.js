@@ -1,4 +1,4 @@
-exports.writeText_ = (str) =>
+exports.writeText_ = (str) => () =>
   navigator
     .clipboard
     .writeText(str)

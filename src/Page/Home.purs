@@ -12,6 +12,7 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Listasio.Capability.Analytics (class Analytics)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser)
 import Listasio.Component.HTML.Footer (footer)
@@ -61,6 +62,7 @@ component
   => MonadAsk {userEnv :: UserEnv | r} m
   => ManageUser m
   => Navigate m
+  => Analytics m
   => H.Component HH.HTML q {} o m
 component = Connect.component $ H.mkComponent
   { initialState

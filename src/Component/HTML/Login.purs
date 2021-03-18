@@ -2,9 +2,8 @@ module Listasio.Component.HTML.Login where
 
 import Prelude
 
-import Listasio.Component.HTML.Icons as Icons
 import Data.Maybe (Maybe(..))
-import Data.Newtype (class Newtype)
+import Data.Newtype (class Newtype, unwrap)
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
@@ -12,10 +11,13 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Api.Request (LoginFields, initGoogleAuth)
+import Listasio.Capability.Analytics (class Analytics, userSet)
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, googleLoginUser, loginUser)
+import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Utils (safeHref, whenElem)
 import Listasio.Data.Email (Email)
+import Listasio.Data.ID as ID
 import Listasio.Data.Route (Route(..))
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation as V
@@ -53,6 +55,7 @@ component ::
   MonadAff m =>
   Navigate m =>
   ManageUser m =>
+  Analytics m =>
   H.Component HH.HTML q Input Output m
 component =
   H.mkComponent
@@ -82,9 +85,10 @@ component =
         case mbProfile of
           Nothing -> do
              void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Failure "Could not login") unit
-             H.modify_ _ { status = Failure "Could not login" }
+             H.modify_ _ {status = Failure "Could not login"}
 
-          Just profile -> do
+          Just profile@{email, id} -> do
+            userSet {email: unwrap email, id: ID.toString id}
             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Success unit) unit
             H.modify_ _ { status = Success unit }
             st <- H.get
@@ -103,7 +107,8 @@ component =
             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus NotAsked unit
             H.modify_ _ { status = NotAsked }
 
-          Just profile -> do
+          Just profile@{email, id} -> do
+            userSet {email: unwrap email, id: ID.toString id}
             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Success unit) unit
             H.modify_ _ { status = Success unit }
             st <- H.get

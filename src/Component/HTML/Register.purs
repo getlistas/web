@@ -4,7 +4,7 @@ import Prelude
 
 import Data.Either (note)
 import Data.Maybe (Maybe(..))
-import Data.Newtype (class Newtype)
+import Data.Newtype (class Newtype, unwrap)
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
@@ -12,12 +12,14 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Api.Request (RegisterFields, initGoogleAuth)
+import Listasio.Capability.Analytics (class Analytics, userSet)
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, googleLoginUser, registerUser)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Message as Message
 import Listasio.Component.HTML.Utils (safeHref, whenElem)
 import Listasio.Data.Email (Email)
+import Listasio.Data.ID as ID
 import Listasio.Data.Route (Route(..))
 import Listasio.Data.Username (Username)
 import Listasio.Form.Field as Field
@@ -51,6 +53,7 @@ component ::
   MonadAff m =>
   ManageUser m =>
   Navigate m =>
+  Analytics m =>
   H.Component HH.HTML q Unit Output m
 component =
   H.mkComponent
@@ -91,7 +94,9 @@ component =
             void $ H.query F._formless unit $ F.injQuery $ SetRegisterStatus NotAsked unit
             H.modify_ _ { status = NotAsked }
 
-          Just _ -> navigate Dashboard
+          Just {email, id} -> do
+            userSet {email: unwrap email, id: ID.toString id}
+            navigate Dashboard
 
     Navigate route e -> navigate_ e route
 
