@@ -51,7 +51,7 @@ main =
 
       case mbUser of
         Just {email, id} ->
-          liftEffect $ Splitbee.userSet $ encodeJson {email: unwrap email, id: ID.toString id}
+          liftEffect $ Splitbee.userSet $ encodeJson {email: unwrap email, userId: ID.toString id}
         Nothing -> pure unit
 
       liftEffect $ Ref.write mbUser currentUser
