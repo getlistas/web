@@ -95,7 +95,7 @@ component =
             H.modify_ _ { status = NotAsked }
 
           Just {email, id} -> do
-            userSet {email: unwrap email, id: ID.toString id}
+            userSet {email: unwrap email, userId: ID.toString id}
             navigate Dashboard
 
     Navigate route e -> navigate_ e route

@@ -88,7 +88,7 @@ component =
              H.modify_ _ {status = Failure "Could not login"}
 
           Just profile@{email, id} -> do
-            userSet {email: unwrap email, id: ID.toString id}
+            userSet {email: unwrap email, userId: ID.toString id}
             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Success unit) unit
             H.modify_ _ { status = Success unit }
             st <- H.get
@@ -108,7 +108,7 @@ component =
             H.modify_ _ { status = NotAsked }
 
           Just profile@{email, id} -> do
-            userSet {email: unwrap email, id: ID.toString id}
+            userSet {email: unwrap email, userId: ID.toString id}
             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Success unit) unit
             H.modify_ _ { status = Success unit }
             st <- H.get

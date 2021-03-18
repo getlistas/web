@@ -34,6 +34,7 @@
     "parcel": "^2.0.0-beta.1"
   },
   "dependencies": {
+    "@splitbee/web": "^0.2.4",
     "@tailwindcss/aspect-ratio": "^0.2.0",
     "@tailwindcss/forms": "^0.2.1",
     "@tailwindcss/line-clamp": "^0.1.0",
