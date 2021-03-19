@@ -42,6 +42,7 @@ footer navigate =
             , externalLink "https://collectednotes.com/getlistas" "Blog"
             , link Terms "Terms"
             , link Policy "Data Policy"
+            , externalLink "mailto:hi@listas.io" "Contact us"
             ]
         , HH.div
             [ HP.classes [ T.mt8, T.flex, T.justifyCenter, T.spaceX6 ] ]

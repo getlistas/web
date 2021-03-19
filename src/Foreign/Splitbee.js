@@ -1,21 +1,31 @@
 const splitbee = require('@splitbee/web').default;
 
-exports.init = () => { splitbee.init() }
+exports.init = () => {
+  try {
+    splitbee.init()
+  } catch (e) { }
+}
 
 exports.track = eventName => () => {
-  splitbee
-    .track(eventName)
-    .catch(() => {})
+  try {
+    splitbee
+      .track(eventName)
+      .catch(() => {})
+  } catch (e) { }
 }
 
 exports.trackWithData = (eventName) => (data) => () => {
-  splitbee
-    .track(eventName, data)
-    .catch(() => {})
+  try {
+    splitbee
+      .track(eventName, data)
+      .catch(() => {})
+  } catch (e) { }
 }
 
 exports.userSet = (data) => () => {
-  splitbee
-    .user.set(data)
-    .catch(() => {})
+  try {
+    splitbee
+      .user.set(data)
+      .catch(() => {})
+  } catch (e) { }
 }
