@@ -35,6 +35,10 @@ data Form
   | ShowLogin
   | ShowUser ProfileWithIdAndEmail
 
+hasUser :: Form -> Boolean
+hasUser (ShowUser _) = true
+hasUser _ = false
+
 derive instance eqForm :: Eq Form
 
 type ChildSlots
@@ -252,7 +256,11 @@ component = Connect.component $ H.mkComponent
                 ]
             , HH.div
                 [ HP.classes [ T.hidden, T.spaceX10, T.mdFlex, T.mdMl10 ] ]
-                [ desktopLink Discover "Discover"
+                [ whenElem (hasUser authStatus) \_ ->
+                    desktopLink Dashboard "Up next"
+                , whenElem (hasUser authStatus) \_ ->
+                    desktopLink Resources "Resources"
+                , desktopLink Discover "Discover"
                 , desktopLink Pricing "Pricing"
                 , desktopLink About "About"
                 ]
@@ -266,13 +274,13 @@ component = Connect.component $ H.mkComponent
                           [ T.inlineFlex
                           , T.itemsCenter
                           , T.py1
-                          , T.fontBold
+                          , T.fontMedium
                           , T.flex
                           , T.itemsCenter
                           , T.group
                           ]
-                      , safeHref Dashboard
-                      , HE.onClick $ onNavigate Dashboard
+                      , safeHref Settings
+                      , HE.onClick $ onNavigate Settings
                       ]
                       [ HH.span
                           [ HP.classes
@@ -311,7 +319,7 @@ component = Connect.component $ H.mkComponent
                           [ T.inlineFlex
                           , T.itemsCenter
                           , T.px4
-                          , T.py2
+                          , T.py1
                           , T.border
                           , T.borderTransparent
                           , T.textSm
@@ -390,10 +398,45 @@ component = Connect.component $ H.mkComponent
                   ]
               , HH.div
                   [ HP.classes [ T.px2, T.pt2, T.pb3, T.spaceY1 ] ]
-                  [ mobileLink Discover "Discover"
+                  [ whenElem (hasUser authStatus) \_ ->
+                      mobileLink Dashboard "Up next"
+                  , whenElem (hasUser authStatus) \_ ->
+                      mobileLink Resources "Resources"
+                  , mobileLink Discover "Discover"
                   , mobileLink Pricing "Pricing"
                   , mobileLink About "About Us"
                   ]
+              , case authStatus of
+                  ShowUser _ -> HH.text ""
+                  ShowLoading -> HH.text ""
+
+                  _ ->
+                    HH.div
+                      [ HP.classes [ T.py4, T.px5 ] ]
+                      [ HH.a
+                          [ HP.classes
+                              [ T.wFull
+                              , T.flex
+                              , T.itemsCenter
+                              , T.justifyCenter
+                              , T.px4
+                              , T.py2
+                              , T.textCenter
+                              , T.fontMedium
+                              , T.textWhite
+                              , T.bgKiwi
+                              , T.hoverBgKiwiDark
+                              , T.focusOutlineNone
+                              , T.focusRing2
+                              , T.focusRingKiwi
+                              , T.focusRingOffset2
+                              , T.roundedMd
+                              ]
+                          , safeHref Register
+                          , HE.onClick $ onNavigate Register
+                          ]
+                          [ HH.text "Try for free" ]
+                      ]
               , case authStatus of
                   ShowUser {name} ->
                     HH.a
@@ -403,13 +446,13 @@ component = Connect.component $ H.mkComponent
                           , T.px5
                           , T.py3
                           , T.textCenter
-                          , T.fontBold
+                          , T.fontMedium
                           , T.textGray300
                           , T.bgGray50
                           , T.hoverBgGray100
                           ]
-                      , safeHref Dashboard
-                      , HE.onClick $ onNavigate Dashboard
+                      , safeHref Settings
+                      , HE.onClick $ onNavigate Settings
                       ]
                       [ HH.span
                           [ HP.classes [ T.py1, T.borderB2, T.borderKiwi ] ]

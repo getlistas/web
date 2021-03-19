@@ -141,8 +141,7 @@ component = Connect.component $ H.mkComponent
     desktopLink route name =
       HH.a
         [ HP.classes
-            [ cx T.fontMedium $ not isCurrent
-            , cx T.fontBold isCurrent
+            [ T.fontMedium
             , cx T.textGray400 isCurrent
             , cx T.textGray300 $ not isCurrent
             , T.borderB2
@@ -207,6 +206,8 @@ component = Connect.component $ H.mkComponent
                     [ desktopLink Dashboard "Up next"
                     , desktopLink Resources "Resources"
                     , desktopLink Discover "Discover"
+                    , desktopLink Pricing "Pricing"
+                    , desktopLink About "About"
                     ]
 
                   Nothing ->
@@ -226,10 +227,9 @@ component = Connect.component $ H.mkComponent
                           [ T.inlineFlex
                           , T.itemsCenter
                           , T.py1
+                          , T.fontMedium
                           , cx T.textGray300 $ not $ isRoute Settings
                           , cx T.textGray400 $ isRoute Settings
-                          , cx T.fontMedium $ not $ isRoute Settings
-                          , cx T.fontBold $ isRoute Settings
                           , T.flex
                           , T.itemsCenter
                           , T.group
@@ -264,13 +264,14 @@ component = Connect.component $ H.mkComponent
 
               ShowAuth ->
                 HH.div
-                  [ HP.classes [ T.hidden, T.mdFlex ] ]
+                  [ HP.classes [ T.hidden, T.mdFlex, T.itemsCenter ] ]
                   [ HH.a
                       [ HP.classes
                           [ T.inlineFlex
                           , T.itemsCenter
                           , T.px4
-                          , T.py2
+                          , T.py1
+                          , T.mr8
                           , T.border
                           , T.borderTransparent
                           , T.textSm
@@ -284,10 +285,11 @@ component = Connect.component $ H.mkComponent
                           , T.focusRingOffset2
                           , T.focusOutlineNone
                           ]
-                      , safeHref Login
-                      , HE.onClick $ onNavigate Login
+                      , safeHref Register
+                      , HE.onClick $ onNavigate Register
                       ]
-                      [ HH.text "Sign in" ]
+                      [ HH.text "Try for free" ]
+                  , desktopLink Login "Sign in"
                   ]
         ]
 
@@ -354,13 +356,45 @@ component = Connect.component $ H.mkComponent
                       [ mobileLink Dashboard "Up next"
                       , mobileLink Resources "Resources"
                       , mobileLink Discover "Discover"
+                      , mobileLink Pricing "Pricing"
+                      , mobileLink About "About"
                       ]
 
                     Nothing ->
                       [ mobileLink Discover "Discover"
                       , mobileLink Pricing "Pricing"
                       , mobileLink About "About"
-                      , mobileLink Register "Try for free"
+                      ]
+              , case authStatus of
+                  ShowUser _ -> HH.text ""
+                  ShowLoading -> HH.text ""
+
+                  _ ->
+                    HH.div
+                      [ HP.classes [ T.py4, T.px5 ] ]
+                      [ HH.a
+                          [ HP.classes
+                              [ T.wFull
+                              , T.flex
+                              , T.itemsCenter
+                              , T.justifyCenter
+                              , T.px4
+                              , T.py2
+                              , T.textCenter
+                              , T.fontMedium
+                              , T.textWhite
+                              , T.bgKiwi
+                              , T.hoverBgKiwiDark
+                              , T.focusOutlineNone
+                              , T.focusRing2
+                              , T.focusRingKiwi
+                              , T.focusRingOffset2
+                              , T.roundedMd
+                              ]
+                          , safeHref Register
+                          , HE.onClick $ onNavigateAndClose Register
+                          ]
+                          [ HH.text "Try for free" ]
                       ]
               , case authStatus of
                   ShowLoading -> HH.text ""
@@ -373,12 +407,11 @@ component = Connect.component $ H.mkComponent
                           , T.px5
                           , T.py3
                           , T.textCenter
+                          , T.fontMedium
                           , T.bgGray50
                           , T.hoverBgGray100
                           , cx T.textGray300 $ not $ isRoute Settings
                           , cx T.textGray400 $ isRoute Settings
-                          , cx T.fontMedium $ not $ isRoute Settings
-                          , cx T.fontBold $ isRoute Settings
                           ]
                       , safeHref Settings
                       , HE.onClick $ onNavigateAndClose Settings

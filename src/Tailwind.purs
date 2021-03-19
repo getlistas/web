@@ -359,10 +359,6 @@ gridCols5 = ClassName "grid-cols-5"
 group :: ClassName
 group = ClassName "group"
 
--- | groupHoverBorderB2
-groupHoverBorderB2 :: ClassName
-groupHoverBorderB2 = ClassName "group-hover:border-b-2"
-
 -- | groupHoverBorderKiwi
 groupHoverBorderKiwi :: ClassName
 groupHoverBorderKiwi = ClassName "group-hover:border-kiwi"
