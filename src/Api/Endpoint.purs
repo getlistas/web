@@ -10,7 +10,7 @@ import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe)
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
-import Listasio.Data.Integration (IntegrationType(..))
+import Listasio.Data.Integration (IntegrationKind(..))
 import Listasio.Data.Route (slug)
 import Routing.Duplex (RouteDuplex', as, boolean, int, optional, root, segment)
 import Routing.Duplex.Generic (noArgs, sum)
@@ -46,7 +46,7 @@ data Endpoint
   | Resource ID
   | CompleteResource ID
   | ResourceMeta
-  | Integrations { list :: ID, service :: IntegrationType }
+  | Integrations { list :: ID, kind :: IntegrationKind }
   | RssIntegrations
   | RssIntegration ID
 
@@ -74,7 +74,7 @@ endpointCodec =
         , "Resource": "resources" / id segment
         , "CompleteResource": "resources" / id segment / "complete"
         , "ResourceMeta": "resource-metadata" / noArgs
-        , "Integrations": "integrations" ? { list: id, service: integrationType }
+        , "Integrations": "integrations" ? { list: id, kind: integrationKind }
         , "RssIntegrations": "integrations" / "rss" / noArgs
         , "RssIntegration": "integrations" / "rss" / id segment
         }
@@ -82,14 +82,14 @@ endpointCodec =
 id :: RouteDuplex' String -> RouteDuplex' ID
 id = as ID.toString (ID.parse >>> note "Bad ID")
 
-integrationType :: RouteDuplex' String -> RouteDuplex' IntegrationType
-integrationType = as toString parse
+integrationKind :: RouteDuplex' String -> RouteDuplex' IntegrationKind
+integrationKind = as toString parse
   where
-  toString IT_Rss = "rss"
+  toString KindRss = "rss"
 
   parse = case _ of
-    "rss" -> Right IT_Rss
-    s -> Left $ "Bad IntegrationType '" <> s <> "'"
+    "rss" -> Right KindRss
+    s -> Left $ "Bad IntegrationKind '" <> s <> "'"
 
 
 sortingResources :: RouteDuplex' String -> RouteDuplex' SortingResources

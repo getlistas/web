@@ -223,5 +223,5 @@ instance manageIntegrationAppM :: ManageIntegration AppM where
 
   getListIntegrations list =
     hush <$> mkAuthRequest conf codec
-    where conf = {endpoint: Integrations {list, service: Integration.IT_Rss}, method: Get}
+    where conf = {endpoint: Integrations {list, kind: Integration.KindRss}, method: Get}
           codec = CAC.array $ Integration.rssIntegrationCodec

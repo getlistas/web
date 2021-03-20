@@ -14,16 +14,16 @@ import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 
-data IntegrationType
-  = IT_Rss
+data IntegrationKind
+  = KindRss
 
-integrationTypeCodec :: JsonCodec IntegrationType
-integrationTypeCodec = CA.prismaticCodec parse toString CA.string
+integrationKindCodec :: JsonCodec IntegrationKind
+integrationKindCodec = CA.prismaticCodec parse toString CA.string
   where
-  parse "rss" = Just IT_Rss
+  parse "rss" = Just KindRss
   parse _ = Nothing
 
-  toString IT_Rss = "rss"
+  toString KindRss = "rss"
 
 type RssIntegrationFields
   = { url :: String
@@ -91,15 +91,15 @@ integrationCodec = mapCodec to from codec
       , list: ID.codec
       , created_at: DateTime.codec
       , updated_at: DateTime.codec
-      , service: integrationTypeCodec
+      , kind: integrationKindCodec
       , rss: CAC.maybe rssBody
       }
 
-  to :: { | IntegrationRep ( service :: IntegrationType, rss :: Maybe RssBody ) } -> Either JsonDecodeError Integration
-  to {service: IT_Rss, rss: Just rss, id, user, list, created_at, updated_at} =
+  to :: { | IntegrationRep ( kind :: IntegrationKind, rss :: Maybe RssBody ) } -> Either JsonDecodeError Integration
+  to {kind: KindRss, rss: Just rss, id, user, list, created_at, updated_at} =
     Right $ RssIntegration {id, user, list, created_at, updated_at, rss}
   to {rss: Nothing} = Left $ AtKey "rss" MissingValue
 
-  from :: Integration -> { | IntegrationRep ( service :: IntegrationType, rss :: Maybe RssBody ) }
+  from :: Integration -> { | IntegrationRep ( kind :: IntegrationKind, rss :: Maybe RssBody ) }
   from (RssIntegration {id, user, list, created_at, updated_at, rss}) =
-    {id, user, list, created_at, updated_at, service: IT_Rss, rss: Just rss}
+    {id, user, list, created_at, updated_at, kind: KindRss, rss: Just rss}
