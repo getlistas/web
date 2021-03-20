@@ -1,8 +1,8 @@
 const splitbee = require('@splitbee/web').default;
 
-exports.init = () => {
+exports.init = (config) => () => {
   try {
-    splitbee.init()
+    splitbee.init(config)
   } catch (e) { }
 }
 

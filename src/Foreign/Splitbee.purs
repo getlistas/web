@@ -5,7 +5,7 @@ import Prelude
 import Data.Argonaut.Core (Json)
 import Effect (Effect)
 
-foreign import init :: Effect Unit
+foreign import init :: {scriptUrl :: String} -> Effect Unit
 
 foreign import track :: String -> Effect Unit
 

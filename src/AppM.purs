@@ -2,6 +2,7 @@ module Listasio.AppM where
 
 import Prelude
 
+import ConfigProvider as ConfigProvider
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, ask, asks, runReaderT)
 import Data.Argonaut.Encode (encodeJson)
 import Data.Codec.Argonaut as Codec
@@ -98,7 +99,7 @@ instance navigateAppM :: Navigate AppM where
     navigate Route.Home
 
 instance analyticsAppM :: Analytics AppM where
-  init = liftEffect Splitbee.init
+  init = liftEffect $ Splitbee.init {scriptUrl: ConfigProvider.splitbeeUrl}
 
   userSet = liftEffect <<< Splitbee.userSet <<< encodeJson
 

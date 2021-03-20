@@ -33,7 +33,7 @@ import Web.DOM.ParentNode (QuerySelector(..))
 main :: Effect Unit
 main =
   HA.runHalogenAff do
-  liftEffect $ Splitbee.init
+  liftEffect $ Splitbee.init {scriptUrl: ConfigProvider.splitbeeUrl}
 
   _ <- HA.awaitBody
 
