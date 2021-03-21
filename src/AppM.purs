@@ -132,50 +132,39 @@ instance manageUserAppM :: ManageUser AppM where
       Codec.json
 
 instance manageListAppM :: ManageList AppM where
-  createList list = do
-    {currentUser} <- asks _.userEnv
-    mbId <- map _.id <$> (liftEffect $ Ref.read currentUser)
-    hush <$> mkAuthRequest conf (List.listWitIdAndUserCodec mbId)
+  createList list =
+    hush <$> mkAuthRequest conf List.listWitIdAndUserCodec
     where method = Post $ Just $ Codec.encode List.createListFieldsCodec list
           conf = {endpoint: Lists, method}
 
-  getList id = do
-    {userEnv} <- ask
-    mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
-    hush <$> mkAuthRequest conf (List.listWitIdUserAndMetaCodec mbId)
+  getList id =
+    hush <$> mkAuthRequest conf List.listWitIdUserAndMetaCodec
     where conf = {endpoint: List id, method: Get}
 
-  getListBySlug {list, user} = do
-    {userEnv} <- ask
-    mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
-    hush <$> mkAuthRequest conf (List.listWitIdAndUserCodec mbId)
+  getListBySlug {list, user} =
+    hush <$> mkAuthRequest conf List.listWitIdAndUserCodec
     where conf = {endpoint: ListBySlug user list, method: Get}
 
-  getLists = do
-    {userEnv} <- ask
-    mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
-    hush <$> mkAuthRequest conf (CAC.array $ List.listWitIdUserAndMetaCodec mbId)
+  getLists =
+    hush <$> mkAuthRequest conf (CAC.array List.listWitIdUserAndMetaCodec)
     where conf = {endpoint: Lists, method: Get}
 
-  updateList id list = do
-    {currentUser} <- asks _.userEnv
-    mbId <- map _.id <$> (liftEffect $ Ref.read currentUser)
-    hush <$> mkAuthRequest conf (List.listWitIdAndUserCodec mbId)
+  updateList id list =
+    hush <$> mkAuthRequest conf List.listWitIdAndUserCodec
     where method = Put $ Just $ Codec.encode List.createListFieldsCodec list
           conf = {endpoint: List id, method}
 
   deleteList id = void $ mkAuthRequest {endpoint: List id, method: Delete} Codec.json
 
-  forkList id = do
-    {userEnv} <- ask
-    mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
-    hush <$> mkAuthRequest conf (List.listWitIdAndUserCodec mbId)
+  forkList id =
+    hush <$> mkAuthRequest conf List.listWitIdAndUserCodec
     where conf = {endpoint: ListFork id, method: Post Nothing}
 
   discoverLists pagination = do
     {userEnv} <- ask
     mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
-    hush <$> mkRequest conf (CAC.array $ List.listWitIdAndUserCodec mbId)
+    res <- hush <$> mkRequest conf (CAC.array List.publicListCodec)
+    pure $ map (List.publicListUserToAuthor mbId) <$> res
     where conf = {endpoint: Discover pagination, method: Get}
 
 instance manageResourceAppM :: ManageResource AppM where

@@ -6,7 +6,7 @@ import Data.Maybe (Maybe)
 import Halogen (HalogenM, lift)
 import Listasio.Api.Endpoint (Pagination)
 import Listasio.Data.ID (ID)
-import Listasio.Data.List (CreateListFields, ListWithIdAndUser, ListWithIdUserAndMeta)
+import Listasio.Data.List (CreateListFields, ListWithIdAndUser, ListWithIdUserAndMeta, PublicList)
 import Slug (Slug)
 
 class Monad m <= ManageList m where
@@ -16,7 +16,7 @@ class Monad m <= ManageList m where
   getLists :: m (Maybe (Array ListWithIdUserAndMeta))
   updateList :: ID -> CreateListFields -> m (Maybe ListWithIdAndUser)
   deleteList :: ID -> m Unit
-  discoverLists :: Pagination -> m (Maybe (Array ListWithIdAndUser))
+  discoverLists :: Pagination -> m (Maybe (Array PublicList))
   forkList :: ID -> m (Maybe ListWithIdAndUser)
 
 instance manageListHalogenM :: ManageList m => ManageList (HalogenM st act slots msg m) where

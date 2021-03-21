@@ -5,8 +5,6 @@ import Prelude hiding ((/))
 import Data.Either (note)
 import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe)
-import Listasio.Data.Username (Username)
-import Listasio.Data.Username as Username
 import Routing.Duplex (RouteDuplex', as, optional, root, segment, string)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/), (?))
@@ -19,7 +17,7 @@ data Route
   | Discover
   | Pricing
   | Changelog
-  | Profile Username
+  | Profile Slug
     -- Legal
   | Terms
   | Policy
@@ -52,7 +50,7 @@ routeCodec =
         , "Discover": "discover" / noArgs
         , "Pricing": "pricing" / noArgs
         , "Changelog": "changelog" / noArgs
-        , "Profile": "u" / uname segment
+        , "Profile": "u" / slug segment
           -- Legal
         , "Terms": "terms" / noArgs
         , "Policy": "policy" / noArgs
@@ -77,7 +75,3 @@ routeCodec =
 -- | This combinator transforms a codec over `String` into one that operates on the `Slug` type.
 slug :: RouteDuplex' String -> RouteDuplex' Slug
 slug = as Slug.toString (Slug.parse >>> note "Bad slug")
-
--- | This combinator transforms a codec over `String` into one that operates on the `Username` type.
-uname :: RouteDuplex' String -> RouteDuplex' Username
-uname = as Username.toString (Username.parse >>> note "Bad username")
