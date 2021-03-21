@@ -303,7 +303,7 @@ component = H.mkComponent
                 []
                 [ nextLink next $
                     HH.div
-                      [ HP.classes [ T.textBase, T.textGray400, T.leadingRelaxed, T.lineClamp2 ] ]
+                      [ HP.classes [ T.textSm, T.fontMedium, T.textGray400, T.leadingRelaxed, T.lineClamp2 ] ]
                       [ HH.text next.title ]
                 , nextLink next $
                     HH.div [ HP.classes [ T.mt2 ] ] [ shortUrl next.url ]
@@ -350,16 +350,16 @@ component = H.mkComponent
         [ HH.div
             [ HP.classes [ T.flex, T.justifyBetween, T.itemsCenter ] ]
             [ HH.a
-                [ HP.classes [ T.text2xl, T.textGray400, T.fontBold, T.truncate ]
+                [ HP.classes [ T.textXl, T.textGray400, T.fontBold, T.truncate ]
                 , safeHref $ EditList list.slug
                 , HE.onClick (Just <<< Navigate (EditList list.slug) <<< Mouse.toEvent)
                 ]
                 [ HH.text list.title ]
             , HH.div
                 [ HP.classes [ T.ml6 ] ]
-                [ HH.span [ HP.classes [ T.textLg, T.textGray400 ] ] [ HH.text $ show list.resource_metadata.completed_count ]
-                , HH.span [ HP.classes [ T.textLg, T.textGray300, T.mx1 ] ] [ HH.text "/" ]
-                , HH.span [ HP.classes [ T.textLg, T.textGray300 ] ] [ HH.text $ show list.resource_metadata.count ]
+                [ HH.span [ HP.classes [ T.textGray400 ] ] [ HH.text $ show list.resource_metadata.completed_count ]
+                , HH.span [ HP.classes [ T.textGray300, T.mx1 ] ] [ HH.text "/" ]
+                , HH.span [ HP.classes [ T.textGray300 ] ] [ HH.text $ show list.resource_metadata.count ]
                 ]
             ]
         , maybeElem list.resource_metadata.last_completed_at \last_done ->
