@@ -2,29 +2,28 @@ module Listasio.Data.List where
 
 import Prelude
 
-import Data.Codec (mapCodec)
-import Data.Codec.Argonaut (JsonCodec, JsonDecodeError)
+import Data.Codec.Argonaut (JsonCodec)
 import Data.Codec.Argonaut as CA
 import Data.Codec.Argonaut.Compat as CAC
 import Data.Codec.Argonaut.Record as CAR
 import Data.DateTime (DateTime)
-import Data.Either (Either)
 import Data.Maybe (Maybe(..))
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
+import Listasio.Data.Profile (PublicProfile, publicProfileCodec)
 import Listasio.Data.Resource (ListResource, listResourceCodec)
 import Slug (Slug)
 import Slug as Slug
 
 data Author
   = You
-  | Other ID
+  | Other PublicProfile
 
 derive instance authorEq :: Eq Author
 instance authorShow :: Show Author where
   show You = "You"
-  show (Other id) = "Other " <> ID.toString id
+  show (Other user) = "Other (" <> ID.toString user.id <> ")"
 
 type ForkMeta
   = { from :: String
@@ -65,21 +64,56 @@ type ListWithIdAndUserRep row
     | row
     )
 
+-- TODO: doesn't have user now
 type ListWithIdAndUser
   = {
     | ListWithIdAndUserRep
       ( fork :: Maybe ForkMeta
-      , author :: Author
       )
     }
 
+-- TODO: doesn't have user now
 type ListWithIdUserAndMeta
   = {
     | ListWithIdAndUserRep
       ( fork :: Maybe ForkMeta
-      , author :: Author
       , resource_metadata :: ResourceMeta
       )
+    }
+
+type PublicListRep row
+  = ( id :: ID
+    , slug :: Slug
+    , title :: String
+    , description :: Maybe String
+    , tags :: Array String
+    , created_at :: DateTime
+    | row
+    )
+
+type PublicListWithUser
+  = { | PublicListRep (user :: PublicProfile) }
+
+type PublicList
+  = { | PublicListRep (author :: Author) }
+
+publicListUserToAuthor :: Maybe ID -> PublicListWithUser -> PublicList
+publicListUserToAuthor Nothing {id, slug, title, description, tags, created_at, user} =
+  {id, slug, title, description, tags, created_at, author: Other user}
+publicListUserToAuthor (Just currentUser) {id, slug, title, description, tags, created_at, user}
+  | currentUser == user.id = {id, slug, title, description, tags, created_at, author: You}
+  | otherwise = {id, slug, title, description, tags, created_at, author: Other user}
+
+publicListCodec :: JsonCodec PublicListWithUser
+publicListCodec =
+  CAR.object "PublicListWithUser"
+    { id: ID.codec
+    , slug: slugCodec
+    , title: CA.string
+    , description: CAC.maybe CA.string
+    , tags: CAC.array CA.string
+    , created_at: DateTime.codec
+    , user: publicProfileCodec
     }
 
 resourceMetaCodec :: JsonCodec ResourceMeta
@@ -117,64 +151,36 @@ listCodec =
     , fork: CAC.maybe forkMetaCodec
     }
 
-listWitIdAndUserCodec :: Maybe ID -> JsonCodec ListWithIdAndUser
-listWitIdAndUserCodec mbUserId = mapCodec to from codec
-  where
-  codec =
-    CAR.object "List"
-      { id: ID.codec
-      , slug: slugCodec
-      , title: CA.string
-      , description: CAC.maybe CA.string
-      , tags: CAC.array CA.string
-      , user: ID.codec
-      , is_public: CA.boolean
-      , created_at: DateTime.codec
-      , updated_at: DateTime.codec
-      , fork: CAC.maybe forkMetaCodec
-      }
+listWitIdAndUserCodec :: JsonCodec ListWithIdAndUser
+listWitIdAndUserCodec =
+  CAR.object "ListWithIdAndUser"
+    { id: ID.codec
+    , slug: slugCodec
+    , title: CA.string
+    , description: CAC.maybe CA.string
+    , tags: CAC.array CA.string
+    , user: ID.codec
+    , is_public: CA.boolean
+    , created_at: DateTime.codec
+    , updated_at: DateTime.codec
+    , fork: CAC.maybe forkMetaCodec
+    }
 
-  to :: { | ListWithIdAndUserRep ( fork :: Maybe ForkMeta ) } -> Either JsonDecodeError ListWithIdAndUser
-  to {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork} = pure do
-    let mkList = {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork, author: _ }
-
-    mkList case mbUserId of
-      Just userId | user == userId -> You
-      _ -> Other id
-
-  from :: ListWithIdAndUser -> { | ListWithIdAndUserRep ( fork :: Maybe ForkMeta ) }
-  from {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork} = do
-    {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork}
-
-listWitIdUserAndMetaCodec :: Maybe ID -> JsonCodec ListWithIdUserAndMeta
-listWitIdUserAndMetaCodec mbUserId = mapCodec to from codec
-  where
-  codec =
-    CAR.object "List"
-      { id: ID.codec
-      , slug: slugCodec
-      , title: CA.string
-      , description: CAC.maybe CA.string
-      , tags: CAC.array CA.string
-      , user: ID.codec
-      , is_public: CA.boolean
-      , created_at: DateTime.codec
-      , updated_at: DateTime.codec
-      , resource_metadata: resourceMetaCodec
-      , fork: CAC.maybe forkMetaCodec
-      }
-
-  to :: { | ListWithIdAndUserRep ( fork :: Maybe ForkMeta, resource_metadata :: ResourceMeta ) } -> Either JsonDecodeError ListWithIdUserAndMeta
-  to {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork, resource_metadata} = pure do
-    let mkList = {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork, resource_metadata, author: _ }
-
-    mkList case mbUserId of
-      Just userId | user == userId -> You
-      _ -> Other id
-
-  from :: ListWithIdUserAndMeta -> { | ListWithIdAndUserRep ( fork :: Maybe ForkMeta, resource_metadata :: ResourceMeta ) }
-  from {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork, resource_metadata} = do
-    {id, slug, title, description, tags, user, is_public, created_at, updated_at, fork, resource_metadata}
+listWitIdUserAndMetaCodec :: JsonCodec ListWithIdUserAndMeta
+listWitIdUserAndMetaCodec =
+  CAR.object "ListWithIdUserAndMeta"
+    { id: ID.codec
+    , slug: slugCodec
+    , title: CA.string
+    , description: CAC.maybe CA.string
+    , tags: CAC.array CA.string
+    , user: ID.codec
+    , is_public: CA.boolean
+    , created_at: DateTime.codec
+    , updated_at: DateTime.codec
+    , resource_metadata: resourceMetaCodec
+    , fork: CAC.maybe forkMetaCodec
+    }
 
 slugCodec :: JsonCodec Slug
 slugCodec = CA.prismaticCodec Slug.parse Slug.toString CA.string

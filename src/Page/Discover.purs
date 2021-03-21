@@ -19,30 +19,33 @@ import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, discoverLists, forkList, getLists)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Tag as Tag
-import Listasio.Component.HTML.Utils (maybeElem, whenElem)
+import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
+import Listasio.Data.Avatar as Avatar
 import Listasio.Data.ID (ID)
 import Listasio.Data.Lens (_forkInProgress)
-import Listasio.Data.List (Author(..), ListWithIdAndUser, ListWithIdUserAndMeta)
+import Listasio.Data.List (Author(..), ListWithIdUserAndMeta, PublicList)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
-import Listasio.Data.Route (Route)
+import Listasio.Data.Route (Route(..))
+import Listasio.Data.Username as Username
 import Listasio.Env (UserEnv)
 import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
 import Tailwind as T
 import Web.Event.Event (Event)
+import Web.UIEvent.MouseEvent as Mouse
 
 data Action
   = Initialize
-  | Receive { currentUser :: Maybe ProfileWithIdAndEmail }
+  | Receive {currentUser :: Maybe ProfileWithIdAndEmail}
   | Navigate Route Event
   | LoadPublicLists
   | LoadMore
   | LoadOwnLists
-  | ForkList ListWithIdAndUser
+  | ForkList PublicList
 
 type Items
   = { refreshing :: Boolean
-    , items :: Array ListWithIdAndUser
+    , items :: Array PublicList
     }
 
 type State
@@ -63,14 +66,14 @@ perPage = 25
 limit :: Maybe Int
 limit = Just perPage
 
-isForkingThisList :: ListWithIdAndUser -> State -> Boolean
-isForkingThisList { id } =
+isForkingThisList :: PublicList -> State -> Boolean
+isForkingThisList {id} =
   isJust <<< find (_ == id) <<< view _forkInProgress
 
 component
   :: forall q o m r
    . MonadAff m
-  => MonadAsk { userEnv :: UserEnv | r } m
+  => MonadAsk {userEnv :: UserEnv | r} m
   => ManageList m
   => Navigate m
   => H.Component HH.HTML q {} o m
@@ -84,7 +87,7 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState { currentUser } =
+  initialState {currentUser} =
     { currentUser
     , lists: NotAsked
     , page: 1
@@ -99,41 +102,41 @@ component = Connect.component $ H.mkComponent
       void $ H.fork $ handleAction LoadPublicLists
       void $ H.fork $ handleAction LoadOwnLists
 
-    Receive { currentUser } -> H.modify_ _ { currentUser = currentUser }
+    Receive {currentUser} -> H.modify_ _ {currentUser = currentUser}
 
     Navigate route e -> navigate_ e route
 
     LoadPublicLists -> do
-      H.modify_ _ { lists = Loading }
-      mbLists <- discoverLists { limit, skip: Nothing }
+      H.modify_ _ {lists = Loading}
+      mbLists <- discoverLists {limit, skip: Nothing}
 
       let
-        lists = { refreshing: false, items: _ } <$> noteError mbLists
+        lists = {refreshing: false, items: _} <$> noteError mbLists
         isLast = maybe false ((perPage > _) <<< length) mbLists
 
-      H.modify_ _ { lists = RemoteData.fromEither lists, isLast = isLast }
+      H.modify_ _ {lists = RemoteData.fromEither lists, isLast = isLast}
 
     LoadMore -> do
       state <- H.get
-      H.modify_ _ { lists = map (_ { refreshing = true }) state.lists }
+      H.modify_ _ {lists = map (_ {refreshing = true}) state.lists}
 
       let
         prev = fromMaybe [] $ _.items <$> RemoteData.toMaybe state.lists
-        pagination = { limit, skip: Just $ perPage * state.page }
+        pagination = {limit, skip: Just $ perPage * state.page}
 
       mbLists <- discoverLists pagination
 
       let
-        lists = noteError $ { refreshing: false, items: _ } <$> (prev <> _) <$> mbLists
+        lists = noteError $ {refreshing: false, items: _} <$> (prev <> _) <$> mbLists
         isLast = maybe false ((perPage > _) <<< length) mbLists
         newPage = maybe state.page (const (state.page + 1)) mbLists
 
-      H.modify_ _ { lists = RemoteData.fromEither lists, page = newPage, isLast = isLast }
+      H.modify_ _ {lists = RemoteData.fromEither lists, page = newPage, isLast = isLast}
 
     LoadOwnLists -> do
-      H.modify_ _ { ownLists = Loading }
+      H.modify_ _ {ownLists = Loading}
       lists <- RemoteData.fromEither <$> noteError <$> getLists
-      H.modify_ _ { ownLists = lists }
+      H.modify_ _ {ownLists = lists}
 
     ForkList list -> do
       isForkingAlready <- H.gets $ elem list.id <<< view _forkInProgress
@@ -149,7 +152,7 @@ component = Connect.component $ H.mkComponent
             Just _forked -> pure unit
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render state@{ currentUser, lists, isLast } =
+  render state@{currentUser, lists, isLast} =
     HH.div
       []
       [ HH.h1
@@ -178,7 +181,7 @@ component = Connect.component $ H.mkComponent
         ]
 
     feed = case lists of
-      Success { refreshing, items } ->
+      Success {refreshing, items} ->
         HH.div
           [ HP.classes [ T.flex, T.flexCol ] ]
           [ HH.div
@@ -198,8 +201,8 @@ component = Connect.component $ H.mkComponent
 
       _ -> HH.div [ HP.classes [ T.pt4, T.textCenter ] ] [ HH.text "Loading ..." ]
 
-    listInfo :: ListWithIdAndUser -> H.ComponentHTML Action slots m
-    listInfo list@{ title, description, tags, author } =
+    listInfo :: PublicList -> H.ComponentHTML Action slots m
+    listInfo list@{title, description, tags, author} =
       HH.div
         [ HP.classes [ T.p2, T.border2, T.borderKiwi, T.roundedMd ] ]
         [ HH.div [ HP.classes [ T.textLg, T.borderB2, T.borderGray200, T.mb4 ] ] [ HH.text title ]
@@ -208,11 +211,60 @@ component = Connect.component $ H.mkComponent
             HH.div
               [ HP.classes [ T.flex, T.textSm ] ]
               $ map Tag.tag tags
-        , whenElem (author /= You) \_ ->
-            HH.div
-              [ HP.classes [ T.mt4 ] ]
-              [ button "Copy list" (Just $ ForkList list) $ isForkingThisList list state
-              ]
+
+        , case author, currentUser of
+            You, Just me ->
+              HH.a
+                [ HP.classes [ T.mt4, T.flex, T.justifyBetween ]
+                , safeHref $ Profile me.slug
+                , HE.onClick $ Just <<< Navigate (Profile me.slug) <<< Mouse.toEvent
+                ]
+                [ HH.div
+                    [ HP.classes [ T.flex, T.itemsCenter ] ]
+                    [ HH.div
+                        [ HP.classes
+                            [ T.w8
+                            , T.h8
+                            , T.roundedFull
+                            , T.bgGray100
+                            , T.flex
+                            , T.justifyCenter
+                            , T.itemsCenter
+                            ]
+                        ]
+                        [ Icons.userCircle [ Icons.classes [ T.textGray300, T.w6, T.h6 ] ] ]
+                    , HH.div [ HP.classes [ T.textSm, T.textGray300, T.ml2 ] ] [ HH.text $ Username.toString me.name ]
+                    ]
+                ]
+            Other user, Just _ ->
+              HH.a
+                [ HP.classes [ T.mt4, T.flex, T.justifyBetween ]
+                , safeHref $ Profile user.slug
+                , HE.onClick $ Just <<< Navigate (Profile user.slug) <<< Mouse.toEvent
+                ]
+                [ HH.div
+                    [ HP.classes [ T.flex, T.itemsCenter ] ]
+                    [ case user.avatar of
+                        Just avatar -> HH.img [ HP.classes [ T.roundedFull, T.h6, T.w6 ], HP.src $ Avatar.toString avatar ]
+                        -- TODO: replace Avatar.toStringWithDefault with this
+                        Nothing ->
+                          HH.div
+                            [ HP.classes
+                                [ T.w8
+                                , T.h8
+                                , T.roundedFull
+                                , T.bgGray100
+                                , T.flex
+                                , T.justifyCenter
+                                , T.itemsCenter
+                                ]
+                            ]
+                            [ Icons.userCircle [ Icons.classes [ T.textGray300, T.w6, T.h6 ] ] ]
+                    , HH.div [ HP.classes [ T.textSm, T.textGray300, T.ml2 ] ] [ HH.text $ Username.toString user.name ]
+                    ]
+                , button "Copy list" (Just $ ForkList list) $ isForkingThisList list state
+                ]
+            _, _ -> HH.text ""
         ]
 
 button :: forall i p. String -> Maybe p -> Boolean -> HH.HTML i p

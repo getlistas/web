@@ -5,6 +5,8 @@ import Data.Codec.Argonaut as CA
 import Data.Codec.Argonaut.Compat as CAC
 import Data.Codec.Argonaut.Record as CAR
 import Data.Maybe (Maybe)
+import Listasio.Data.Avatar (Avatar)
+import Listasio.Data.Avatar as Avatar
 import Listasio.Data.Email (Email)
 import Listasio.Data.Email as Email
 import Listasio.Data.ID (ID)
@@ -22,6 +24,9 @@ type ProfileRep row
 
 type Profile
   = { | ProfileRep () }
+
+type PublicProfile
+  = { | ProfileRep ( id :: ID, avatar :: Maybe Avatar ) }
 
 type ProfileWithEmail
   = { | ProfileRep ( email :: Email ) }
@@ -49,9 +54,18 @@ profileCodec =
     , slug
     }
 
+publicProfileCodec :: JsonCodec PublicProfile
+publicProfileCodec =
+  CAR.object "PublicProfile"
+    { name: Username.codec
+    , slug
+    , id: ID.codec
+    , avatar: CAC.maybe Avatar.codec
+    }
+
 profileWithIdAndEmailCodec :: JsonCodec ProfileWithIdAndEmail
 profileWithIdAndEmailCodec =
-  CAR.object "Profile"
+  CAR.object "ProfileWithIdAndEmail"
     { email: Email.codec
     , name: Username.codec
     , id: ID.codec
@@ -60,7 +74,7 @@ profileWithIdAndEmailCodec =
 
 profileWithEmailCodec :: JsonCodec ProfileWithEmail
 profileWithEmailCodec =
-  CAR.object "Profile"
+  CAR.object "ProfileWithEmail"
     { email: Email.codec
     , name: Username.codec
     , slug
@@ -68,7 +82,7 @@ profileWithEmailCodec =
 
 profileWithEmailPasswordCodec :: JsonCodec ProfileWithEmailPassword
 profileWithEmailPasswordCodec =
-  CAR.object "Profile"
+  CAR.object "ProfileWithEmailPassword"
     { email: Email.codec
     , password: CAC.maybe CA.string
     , name: Username.codec
