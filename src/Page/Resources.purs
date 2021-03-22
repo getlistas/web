@@ -204,7 +204,7 @@ component = Connect.component $ H.mkComponent
             [ ToggleGroup.toggleGroup
                 false
                 [ { label: "None", action: Just (ToggleGroupBy GroupNone), active: groupBy == GroupNone }
-                , { label: "By Month", action: Just (ToggleGroupBy GroupDate), active: groupBy == GroupDate }
+                , { label: "By Date", action: Just (ToggleGroupBy GroupDate), active: groupBy == GroupDate }
                 , { label: "By List", action: Just (ToggleGroupBy GroupList), active: groupBy == GroupList }
                 ]
             ]

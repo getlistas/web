@@ -15,6 +15,7 @@ import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Utils (cx, safeHref, whenElem)
+import Listasio.Data.Avatar as Avatar
 import Listasio.Data.Lens (_menuOpen)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
@@ -247,18 +248,7 @@ component = Connect.component $ H.mkComponent
                               ]
                           ]
                           [ HH.text $ Username.toString name ]
-                      , HH.div
-                          [ HP.classes
-                              [ T.w10
-                              , T.h10
-                              , T.roundedFull
-                              , T.bgGray100
-                              , T.flex
-                              , T.justifyCenter
-                              , T.itemsCenter
-                              ]
-                          ]
-                          [ Icons.userCircle [ Icons.classes [ T.w8, T.h8 ] ] ]
+                      , Avatar.renderWithDefault Avatar.Sm Nothing
                       ]
                   ]
 

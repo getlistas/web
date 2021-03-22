@@ -11,6 +11,7 @@ import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Component.HTML.Icons as Icons
+import Listasio.Data.Avatar as Avatar
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route)
 import Listasio.Env (UserEnv)
@@ -115,17 +116,9 @@ component = Connect.component $ H.mkComponent
         ]
         [ HH.div
             [ HP.classes [ T.spaceY6, T.xlSpaceY10 ] ]
-            [ HH.img
-                [ HP.src avatar
-                , HP.classes
-                    [ T.mxAuto
-                    , T.h40
-                    , T.w40
-                    , T.roundedFull
-                    , T.xlW56
-                    , T.xlH56
-                    ]
-                ]
+            [ HH.div
+                [ HP.classes [ T.mxAuto, T.h40, T.w40, T.roundedFull, T.xlW56, T.xlH56 ] ]
+                [ Avatar.renderWithDefault Avatar.Full $ Avatar.parse avatar ]
             , HH.div
                 [ HP.classes [ T.spaceY2, T.xlFlex, T.xlItemsEnd, T.xlJustifyBetween ] ]
                 [ HH.div
