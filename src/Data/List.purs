@@ -26,8 +26,8 @@ instance authorShow :: Show Author where
   show (Other user) = "Other (" <> ID.toString user.id <> ")"
 
 type ForkMeta
-  = { from :: String
-    , at :: DateTime
+  = { list :: ID
+    , user :: ID
     }
 
 type ResourceMeta
@@ -128,8 +128,8 @@ resourceMetaCodec =
 forkMetaCodec :: JsonCodec ForkMeta
 forkMetaCodec =
   CAR.object "ForkMeta"
-    { from: CA.string
-    , at: DateTime.codec
+    { list: ID.codec
+    , user: ID.codec
     }
 
 createListFieldsCodec :: JsonCodec CreateListFields
