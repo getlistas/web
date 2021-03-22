@@ -36,6 +36,7 @@ type ProfileWithIdAndEmail
     | ProfileRep
       ( email :: Email
       , id :: ID
+      , avatar :: Maybe Avatar
       )
     }
 
@@ -70,6 +71,7 @@ profileWithIdAndEmailCodec =
     , name: Username.codec
     , id: ID.codec
     , slug
+    , avatar: CAC.maybe Avatar.codec
     }
 
 profileWithEmailCodec :: JsonCodec ProfileWithEmail
@@ -90,5 +92,6 @@ profileWithEmailPasswordCodec =
     }
 
 -- TODO: stop repeating this implementation
+-- TODO: Slug.parse instead of Slug.generate (underscores break it)
 slug :: JsonCodec Slug
-slug = CA.prismaticCodec Slug.parse Slug.toString CA.string
+slug = CA.prismaticCodec Slug.generate Slug.toString CA.string

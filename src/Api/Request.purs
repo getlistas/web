@@ -43,12 +43,14 @@ import Jwt as Jwt
 import Listasio.Api.Endpoint (Endpoint(..), endpointCodec)
 import Listasio.Data.Email (Email)
 import Listasio.Data.Email as Email
-import Listasio.Data.Profile (ProfileWithIdAndEmail)
+import Listasio.Data.ID (ID)
+import Listasio.Data.ID as ID
+import Listasio.Data.Profile (ProfileWithIdAndEmail, ProfileRep)
 import Listasio.Data.Profile as Profile
 import Listasio.Data.Username (Username)
 import Listasio.Data.Username as Username
 import Routing.Duplex (print)
-import Slug (Slug)
+import Slug as Slug
 import Web.HTML (window)
 import Web.HTML.Window (localStorage)
 import Web.Storage.Storage (getItem, removeItem, setItem)
@@ -119,7 +121,6 @@ type RegisterFields
   = { email :: Email
     , password :: String
     , name :: Username
-    , slug :: Slug
     }
 
 registerCodec :: JsonCodec RegisterFields
@@ -128,7 +129,6 @@ registerCodec =
     { email: Email.codec
     , password: CA.string
     , name: Username.codec
-    , slug: Profile.slug
     }
 
 -- | The following data types and functions aren't a natural fit for this module,
@@ -148,10 +148,23 @@ loginCodec =
     , password: CA.string
     }
 
-type User = { user :: ProfileWithIdAndEmail }
+type User
+  = { user :: { | ProfileRep (email :: Email , id :: ID) } }
 
 userCodec ::  JsonCodec User
-userCodec = CAR.object "user" { user: Profile.profileWithIdAndEmailCodec }
+userCodec =
+  CAR.object "TokenUser"
+    { user: CAR.object "TokenUser.user"
+        { email: Email.codec
+        , name: Username.codec
+        , id: ID.codec
+        , slug: CA.prismaticCodec Slug.generate Slug.toString CA.string
+        }
+    }
+
+userToProfile :: User -> ProfileWithIdAndEmail
+userToProfile {user: {email, name, id, slug}} =
+  {email, name, id, slug, avatar: Nothing}
 
 login :: forall m. MonadAff m => BaseURL -> LoginFields -> m (Either String (Tuple Token ProfileWithIdAndEmail))
 login baseUrl fields = do
@@ -198,7 +211,7 @@ printJwtError = case _ of
 decodeAuthProfileFromToken :: Json -> Either (Jwt.JwtError JsonDecodeError) (Tuple Token ProfileWithIdAndEmail)
 decodeAuthProfileFromToken payload = do
   { access_token } <- lmap Jwt.JsonDecodeError $ Codec.decode tokenCodec payload
-  { user } <- Jwt.decodeWith (Codec.decode userCodec) access_token
+  user <- userToProfile <$> Jwt.decodeWith (Codec.decode userCodec) access_token
   pure $ Tuple (Token access_token) user
   where tokenCodec = CAR.object "access_token" { access_token: CA.string }
 
@@ -214,7 +227,7 @@ tokenKey = "token" :: String
 
 decodeToken :: Token -> Either String ProfileWithIdAndEmail
 decodeToken (Token token) =
-   lmap printJwtError $ _.user <$> Jwt.decodeWith (Codec.decode userCodec) token
+   lmap printJwtError $ userToProfile <$> Jwt.decodeWith (Codec.decode userCodec) token
 
 readToken :: Effect (Maybe Token)
 readToken = do

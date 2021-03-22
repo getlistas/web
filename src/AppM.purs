@@ -119,10 +119,8 @@ instance manageUserAppM :: ManageUser AppM where
       Left err -> logError err *> pure Nothing
       Right profile -> pure $ Just profile
 
-  getCurrentUser = do
-    userOrError <- mkAuthRequest {endpoint: User, method: Get} codec
-    pure $ hush $ map _.user userOrError
-    where codec = CAR.object "User" {user: Profile.profileWithIdAndEmailCodec}
+  getCurrentUser =
+    hush <$> mkAuthRequest {endpoint: Me, method: Get} Profile.profileWithIdAndEmailCodec
 
   updateUser fields =
     void $ mkAuthRequest

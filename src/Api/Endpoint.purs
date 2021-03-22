@@ -35,6 +35,7 @@ data Endpoint
   = Login
   | GoogleLogin
   | User
+  | Me
   | Users
   | List ID
   | ListBySlug Slug Slug
@@ -59,6 +60,7 @@ endpointCodec =
         { "Login": "users" / "auth" / noArgs
         , "GoogleLogin": "users" / "google-auth" / noArgs
         , "User": "user" / noArgs
+        , "Me": "users" / "me" / noArgs
         , "Users": "users" / noArgs
         , "List": "lists" / id segment
         , "ListBySlug": "users" / slug segment / "lists" / slug segment
