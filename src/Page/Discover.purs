@@ -20,16 +20,19 @@ import Listasio.Capability.Resource.List (class ManageList, discoverLists, forkL
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
+import Listasio.Data.Avatar (Avatar)
 import Listasio.Data.Avatar as Avatar
 import Listasio.Data.ID (ID)
 import Listasio.Data.Lens (_forkInProgress)
 import Listasio.Data.List (Author(..), ListWithIdUserAndMeta, PublicList)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
+import Listasio.Data.Username (Username)
 import Listasio.Data.Username as Username
 import Listasio.Env (UserEnv)
 import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
+import Slug (Slug)
 import Tailwind as T
 import Web.Event.Event (Event)
 import Web.UIEvent.MouseEvent as Mouse
@@ -141,15 +144,13 @@ component = Connect.component $ H.mkComponent
     ForkList list -> do
       isForkingAlready <- H.gets $ elem list.id <<< view _forkInProgress
 
-      if isForkingAlready
-        then pure unit
-        else do
-          H.modify_ $ over _forkInProgress $ cons list.id
-          mbForkedList <- forkList list.id
-          H.modify_ $ over _forkInProgress $ filter (_ /= list.id)
-          case mbForkedList of
-            Nothing -> pure unit
-            Just _forked -> pure unit
+      unless isForkingAlready do
+        H.modify_ $ over _forkInProgress $ cons list.id
+        mbForkedList <- forkList list.id
+        H.modify_ $ over _forkInProgress $ filter (_ /= list.id)
+        case mbForkedList of
+          Nothing -> pure unit
+          Just _forked -> pure unit
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render state@{currentUser, lists, isLast} =
@@ -201,6 +202,19 @@ component = Connect.component $ H.mkComponent
 
       _ -> HH.div [ HP.classes [ T.pt4, T.textCenter ] ] [ HH.text "Loading ..." ]
 
+    authorEl :: forall row. {slug :: Slug, avatar :: Maybe Avatar, name :: Username | row} -> _
+    authorEl {slug, avatar, name} =
+      HH.a
+        [ safeHref $ Profile slug
+        , HE.onClick $ Just <<< Navigate (Profile slug) <<< Mouse.toEvent
+        ]
+        [ HH.div
+            [ HP.classes [ T.flex, T.itemsCenter ] ]
+            [ Avatar.renderWithDefault Avatar.Xs avatar
+            , HH.div [ HP.classes [ T.textSm, T.textGray300, T.ml2 ] ] [ HH.text $ Username.toString name ]
+            ]
+        ]
+
     listInfo :: PublicList -> H.ComponentHTML Action slots m
     listInfo list@{title, description, tags, author} =
       HH.div
@@ -212,59 +226,17 @@ component = Connect.component $ H.mkComponent
               [ HP.classes [ T.flex, T.textSm ] ]
               $ map Tag.tag tags
 
-        , case author, currentUser of
-            You, Just me ->
-              HH.a
-                [ HP.classes [ T.mt4, T.flex, T.justifyBetween ]
-                , safeHref $ Profile me.slug
-                , HE.onClick $ Just <<< Navigate (Profile me.slug) <<< Mouse.toEvent
-                ]
-                [ HH.div
-                    [ HP.classes [ T.flex, T.itemsCenter ] ]
-                    [ HH.div
-                        [ HP.classes
-                            [ T.w8
-                            , T.h8
-                            , T.roundedFull
-                            , T.bgGray100
-                            , T.flex
-                            , T.justifyCenter
-                            , T.itemsCenter
-                            ]
-                        ]
-                        [ Icons.userCircle [ Icons.classes [ T.textGray300, T.w6, T.h6 ] ] ]
-                    , HH.div [ HP.classes [ T.textSm, T.textGray300, T.ml2 ] ] [ HH.text $ Username.toString me.name ]
-                    ]
-                ]
-            Other user, Just _ ->
-              HH.a
-                [ HP.classes [ T.mt4, T.flex, T.justifyBetween ]
-                , safeHref $ Profile user.slug
-                , HE.onClick $ Just <<< Navigate (Profile user.slug) <<< Mouse.toEvent
-                ]
-                [ HH.div
-                    [ HP.classes [ T.flex, T.itemsCenter ] ]
-                    [ case user.avatar of
-                        Just avatar -> HH.img [ HP.classes [ T.roundedFull, T.h6, T.w6 ], HP.src $ Avatar.toString avatar ]
-                        -- TODO: replace Avatar.toStringWithDefault with this
-                        Nothing ->
-                          HH.div
-                            [ HP.classes
-                                [ T.w8
-                                , T.h8
-                                , T.roundedFull
-                                , T.bgGray100
-                                , T.flex
-                                , T.justifyCenter
-                                , T.itemsCenter
-                                ]
-                            ]
-                            [ Icons.userCircle [ Icons.classes [ T.textGray300, T.w6, T.h6 ] ] ]
-                    , HH.div [ HP.classes [ T.textSm, T.textGray300, T.ml2 ] ] [ HH.text $ Username.toString user.name ]
-                    ]
+        , HH.div
+            [ HP.classes [ T.mt4, T.flex, T.justifyBetween ] ]
+            case author, currentUser of
+              -- TODO: use current user avatar
+              You, Just me -> [ authorEl { slug: me.slug, name: me.name, avatar: Nothing } ]
+              Other user, Just _ ->
+                [ authorEl user
                 , button "Copy list" (Just $ ForkList list) $ isForkingThisList list state
                 ]
-            _, _ -> HH.text ""
+              Other user, Nothing -> [ authorEl user ]
+              _, _ -> [ HH.text "" ]
         ]
 
 button :: forall i p. String -> Maybe p -> Boolean -> HH.HTML i p

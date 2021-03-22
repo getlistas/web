@@ -2,9 +2,10 @@
 -- | value isn't just a string -- it's an avatar
 module Listasio.Data.Avatar
   ( Avatar -- constructor not exported
+  , Size(..)
   , parse
   , toString
-  , toStringWithDefault
+  , renderWithDefault
   , codec
   ) where
 
@@ -13,6 +14,11 @@ import Prelude
 import Data.Codec.Argonaut (JsonCodec)
 import Data.Codec.Argonaut as CA
 import Data.Maybe (Maybe(..))
+import Halogen (ClassName)
+import Halogen.HTML as HH
+import Halogen.HTML.Properties as HP
+import Listasio.Component.HTML.Icons as Icons
+import Tailwind as T
 
 newtype Avatar = Avatar String
 
@@ -29,9 +35,33 @@ parse = case _ of
 toString :: Avatar -> String
 toString (Avatar str) = str
 
--- | Avatars are optional, but we don't want to display broken images on our site.
--- | This function provides a fallback avatar for when a user doesn't have one.
-toStringWithDefault :: Maybe Avatar -> String
-toStringWithDefault (Just av) = toString av
-toStringWithDefault Nothing =
-  "https://static.productionready.io/images/smiley-cyrus.jpg"
+data Size
+  = Xs | Sm | Full
+
+h :: Size -> ClassName
+h Xs = T.h8
+h Sm = T.h10
+h Full = T.hFull
+
+w :: Size -> ClassName
+w Xs = T.w8
+w Sm = T.w10
+w Full = T.wFull
+
+renderWithDefault :: forall i p. Size -> Maybe Avatar -> HH.HTML i p
+renderWithDefault size = case _ of
+  Just (Avatar avatar) ->
+    HH.img [ HP.classes [ T.roundedFull, h size, w size ], HP.src avatar ]
+  Nothing ->
+    HH.div
+      [ HP.classes
+          [ h size
+          , w size
+          , T.roundedFull
+          , T.bgGray100
+          , T.flex
+          , T.justifyCenter
+          , T.itemsCenter
+          ]
+      ]
+      [ Icons.userCircle [ Icons.classes [ T.textGray300, T.w5d6, T.h5d6 ] ] ]

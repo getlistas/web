@@ -411,6 +411,10 @@ h56 = ClassName "h-56"
 h5 :: ClassName
 h5 = ClassName "h-5"
 
+-- | h5d6
+h5d6 :: ClassName
+h5d6 = ClassName "h-5/6"
+
 -- | h6
 h6 :: ClassName
 h6 = ClassName "h-6"
@@ -1614,6 +1618,10 @@ w4 = ClassName "w-4"
 -- | w5
 w5 :: ClassName
 w5 = ClassName "w-5"
+
+-- | w5d6
+w5d6 :: ClassName
+w5d6 = ClassName "w-5/6"
 
 -- | w6
 w6 :: ClassName
