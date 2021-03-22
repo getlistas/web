@@ -230,7 +230,7 @@ component = Connect.component $ H.mkComponent
             [ HP.classes [ T.mt4, T.flex, T.justifyBetween ] ]
             case author, currentUser of
               -- TODO: use current user avatar
-              You, Just me -> [ authorEl { slug: me.slug, name: me.name, avatar: Nothing } ]
+              You, Just me -> [ authorEl { slug: me.slug, name: me.name, avatar: _.avatar =<< currentUser } ]
               Other user, Just _ ->
                 [ authorEl user
                 , button "Copy list" (Just $ ForkList list) $ isForkingThisList list state

@@ -25,7 +25,6 @@ import Listasio.Data.Username (Username)
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation as V
 import Network.RemoteData (RemoteData(..), fromEither, isFailure, isLoading)
-import Slug (Slug)
 import Tailwind as T
 import Web.Event.Event as Event
 import Web.UIEvent.MouseEvent as Mouse
@@ -170,7 +169,6 @@ newtype RegisterForm r f
   = RegisterForm
   ( r
       ( name :: f V.FormError String Username
-      , slug :: f V.FormError String Slug
       , email :: f V.FormError String Email
       , password :: f V.FormError String String
       )
@@ -203,7 +201,6 @@ formComponent =
     { validators:
         RegisterForm
           { name: V.required >>> V.usernameFormat
-          , slug: V.required >>> V.slugFormat
           , email: V.required >>> V.minLength 3 >>> V.emailFormat
           , password: V.required >>> V.minLength 10 >>> V.maxLength 100
           }
@@ -230,12 +227,12 @@ formComponent =
 
   renderForm { form, status, submitting } =
     HH.form
-      [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev ]
+      [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev
+      , HP.classes [ T.wFull ]
+      ]
       [ HH.fieldset
           []
-          [ HH.div
-              [ HP.classes [ T.grid, T.gridCols2, T.gap4 ] ]
-              [ name, slug ]
+          [ HH.div [ HP.classes [] ] [ name ]
           , HH.div [ HP.classes [ T.mt4 ] ] [ email ]
           , HH.div [ HP.classes [ T.mt4 ] ] [ password ]
           ]
@@ -256,14 +253,6 @@ formComponent =
         { label = Just "Name"
         , id = Just "name"
         , placeholder = Just "John Doe"
-        , required = true
-        }
-
-    slug =
-      Field.input proxies.slug form $ Field.defaultProps
-        { label = Just "Slug"
-        , id = Just "slug"
-        , placeholder = Just "john-doe"
         , required = true
         }
 

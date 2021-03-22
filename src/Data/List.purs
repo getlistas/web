@@ -182,5 +182,7 @@ listWitIdUserAndMetaCodec =
     , fork: CAC.maybe forkMetaCodec
     }
 
+-- TODO: stop repeating this implementation
+-- TODO: Slug.parse instead of Slug.generate (underscores break it)
 slugCodec :: JsonCodec Slug
-slugCodec = CA.prismaticCodec Slug.parse Slug.toString CA.string
+slugCodec = CA.prismaticCodec Slug.generate Slug.toString CA.string

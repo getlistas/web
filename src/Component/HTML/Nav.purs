@@ -4,15 +4,18 @@ import Prelude
 
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
+import Control.Monad.Reader.Trans (asks)
 import Data.Lens (over, set)
-import Data.Maybe (Maybe(..), maybe)
+import Data.Maybe (Maybe(..), isJust, isNothing, maybe)
+import Effect.Aff.Bus as Bus
 import Effect.Aff.Class (class MonadAff)
+import Effect.Ref as Ref
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
-import Listasio.Capability.Resource.User (class ManageUser)
+import Listasio.Capability.Resource.User (class ManageUser, getCurrentUser)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Utils (cx, safeHref, whenElem)
 import Listasio.Data.Avatar as Avatar
@@ -35,7 +38,9 @@ data AuthStatus
 derive instance eqForm :: Eq AuthStatus
 
 data Action
-  = Receive {currentUser :: Maybe ProfileWithIdAndEmail, route :: Maybe Route}
+  = Initialize
+  | GetCurrentUser
+  | Receive {currentUser :: Maybe ProfileWithIdAndEmail, route :: Maybe Route}
   | Navigate Route Event
   | ToggleMenu
   | AndClose Action
@@ -60,6 +65,7 @@ component = Connect.component $ H.mkComponent
   , eval: H.mkEval $ H.defaultEval
       { handleAction = handleAction
       , receive = Just <<< Receive
+      , initialize = Just Initialize
       }
   }
   where
@@ -72,12 +78,28 @@ component = Connect.component $ H.mkComponent
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
+    Initialize -> do
+      st <- H.get
+      when (isJust st.currentUser) $
+        void $ H.fork $ handleAction GetCurrentUser
+
+    GetCurrentUser -> do
+      user <- getCurrentUser
+      {currentUser, userBus} <- asks _.userEnv
+      H.liftEffect do Ref.write user currentUser
+      H.liftAff do Bus.write user userBus
+
     Receive {currentUser, route} -> do
-     H.modify_ _
-       { authStatus = maybe ShowAuth ShowUser currentUser
-       , currentUser = currentUser
-       , currentRoute = route
-       }
+      prev <- H.get
+
+      H.modify_ _
+        { authStatus = maybe ShowAuth ShowUser currentUser
+        , currentUser = currentUser
+        , currentRoute = route
+        }
+
+      when (isNothing prev.currentUser && isJust currentUser) $
+        void $ H.fork $ handleAction GetCurrentUser
 
     Navigate route e -> navigate_ e route
 
@@ -248,7 +270,7 @@ component = Connect.component $ H.mkComponent
                               ]
                           ]
                           [ HH.text $ Username.toString name ]
-                      , Avatar.renderWithDefault Avatar.Sm Nothing
+                      , Avatar.renderWithDefault Avatar.Sm $ _.avatar =<< currentUser
                       ]
                   ]
 

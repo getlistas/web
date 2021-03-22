@@ -23,6 +23,7 @@ import Tailwind as T
 newtype Avatar = Avatar String
 
 derive instance eqAvatar :: Eq Avatar
+derive newtype instance showAvatar :: Show Avatar
 
 codec :: JsonCodec Avatar
 codec = CA.prismaticCodec parse toString CA.string

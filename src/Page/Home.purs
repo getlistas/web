@@ -4,17 +4,20 @@ import Prelude
 
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
+import Control.Monad.Reader.Trans (asks)
 import Data.Lens (over)
-import Data.Maybe (Maybe(..), maybe)
+import Data.Maybe (Maybe(..), isJust, isNothing, maybe)
 import Data.Symbol (SProxy(..))
+import Effect.Aff.Bus as Bus
 import Effect.Aff.Class (class MonadAff)
+import Effect.Ref as Ref
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Analytics (class Analytics)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
-import Listasio.Capability.Resource.User (class ManageUser)
+import Listasio.Capability.Resource.User (class ManageUser, getCurrentUser)
 import Listasio.Component.HTML.Footer (footer)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Login as Login
@@ -49,6 +52,7 @@ type ChildSlots
 
 data Action
   = Initialize
+  | GetCurrentUser
   | Receive {currentUser :: Maybe ProfileWithIdAndEmail}
   | Navigate Route Event
   | ToggleMenu
@@ -87,10 +91,24 @@ component = Connect.component $ H.mkComponent
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
-    Initialize -> pure unit
+    Initialize -> do
+      st <- H.get
+      when (isJust st.currentUser) $
+        void $ H.fork $ handleAction GetCurrentUser
+
+    GetCurrentUser -> do
+      user <- getCurrentUser
+      {currentUser, userBus} <- asks _.userEnv
+      H.liftEffect do Ref.write user currentUser
+      H.liftAff do Bus.write user userBus
 
     Receive {currentUser} -> do
-     H.modify_ _ {authStatus = maybe ShowRegister ShowUser currentUser, currentUser = currentUser}
+      prev <- H.get
+
+      H.modify_ _ {authStatus = maybe ShowRegister ShowUser currentUser, currentUser = currentUser}
+
+      when (isNothing prev.currentUser && isJust currentUser) $
+        void $ H.fork $ handleAction GetCurrentUser
 
     Navigate route e -> navigate_ e route
 
@@ -293,7 +311,7 @@ component = Connect.component $ H.mkComponent
                               ]
                           ]
                           [ HH.text $ Username.toString name ]
-                      , Avatar.renderWithDefault Avatar.Sm Nothing
+                      , Avatar.renderWithDefault Avatar.Sm $ _.avatar =<< currentUser
                       ]
                   ]
 
