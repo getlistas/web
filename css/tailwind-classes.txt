@@ -11688,6 +11688,7 @@ hoverViaYellow600;hover:via-yellow-600
 hoverViaYellow700;hover:via-yellow-700
 hoverViaYellow800;hover:via-yellow-800
 hoverViaYellow900;hover:via-yellow-900
+idle;idle
 inline;inline
 inlineBlock;inline-block
 inlineFlex;inline-flex
@@ -36017,6 +36018,7 @@ translateY9;translate-y-9
 translateYFull;translate-y-full
 translateYPx;translate-y-px
 truncate;truncate
+typingCursor;typing-cursor
 underline;underline
 uppercase;uppercase
 viaBlack;via-black

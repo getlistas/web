@@ -5,6 +5,7 @@ import Prelude
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Control.Monad.Reader.Trans (asks)
+import Data.Array.NonEmpty as NEA
 import Data.Lens (over)
 import Data.Maybe (Maybe(..), isJust, isNothing, maybe)
 import Data.Symbol (SProxy(..))
@@ -22,6 +23,7 @@ import Listasio.Component.HTML.Footer (footer)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Login as Login
 import Listasio.Component.HTML.Register as Register
+import Listasio.Component.HTML.Typed as Typed
 import Listasio.Component.HTML.Utils (safeHref, whenElem)
 import Listasio.Data.Avatar as Avatar
 import Listasio.Data.Lens (_menuOpen)
@@ -48,6 +50,7 @@ derive instance eqForm :: Eq Form
 type ChildSlots
   = ( register :: Register.Slot
     , login :: Login.Slot
+    , typed :: Typed.Slot Unit
     )
 
 data Action
@@ -207,7 +210,10 @@ component = Connect.component $ H.mkComponent
                 ]
                 [ HH.span
                     [ HP.classes [ T.textGray400, T.block ] ]
-                    [ HH.text "Your Reading, Watching, and Listening lists" ]
+                    [ HH.text "Your "
+                    , HH.slot (SProxy :: _ "typed") unit Typed.component {words: NEA.cons' "Reading" ["Watching", "Listening"]} absurd
+                    , HH.text " lists"
+                    ]
                 , HH.span
                     [ HP.classes [ T.textKiwi, T.block ] ]
                     [ HH.text "Under control" ]
