@@ -47,6 +47,7 @@ data Endpoint
   | Resource ID
   | CompleteResource ID
   | ResourceMeta
+  | Integration ID
   | Integrations { list :: ID, kind :: IntegrationKind }
   | RssIntegrations
   | RssIntegration ID
@@ -76,6 +77,7 @@ endpointCodec =
         , "Resource": "resources" / id segment
         , "CompleteResource": "resources" / id segment / "complete"
         , "ResourceMeta": "resource-metadata" / noArgs
+        , "Integration": "integrations" / id segment
         , "Integrations": "integrations" ? { list: id, kind: integrationKind }
         , "RssIntegrations": "integrations" / "rss" / noArgs
         , "RssIntegration": "integrations" / "rss" / id segment

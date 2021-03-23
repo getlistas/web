@@ -9,10 +9,10 @@ import Listasio.Data.Integration (RssIntegrationFields, RssIntegration)
 
 class Monad m <= ManageIntegration m where
   createRssIntegration :: RssIntegrationFields -> m (Maybe RssIntegration)
-  deleteRssIntegration :: ID -> m (Maybe Unit)
+  deleteIntegration :: ID -> m (Maybe Unit)
   getListIntegrations :: ID -> m (Maybe (Array RssIntegration))
 
 instance manageIntegrationHalogenM :: ManageIntegration m => ManageIntegration (HalogenM st act slots msg m) where
   createRssIntegration = lift <<< createRssIntegration
-  deleteRssIntegration = lift <<< deleteRssIntegration
+  deleteIntegration = lift <<< deleteIntegration
   getListIntegrations = lift <<< getListIntegrations
