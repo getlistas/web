@@ -3980,6 +3980,39 @@ select{
   --scrollbar-thumb: #A0AEC0;
 }
 
+.typing-cursor::after {
+  content: "|";
+  -webkit-animation: none;
+          animation: none;
+}
+
+.idle.typing-cursor::after {
+  -webkit-animation: blink 1s step-end infinite;
+          animation: blink 1s step-end infinite;
+}
+
+@-webkit-keyframes blink {
+  0%,
+100%{
+    opacity: 1;
+  }
+
+  50%{
+    opacity: 0;
+  }
+}
+
+@keyframes blink {
+  0%,
+100%{
+    opacity: 1;
+  }
+
+  50%{
+    opacity: 0;
+  }
+}
+
 @media (min-width: 640px) {
   .sm\:space-y-0 > :not([hidden]) ~ :not([hidden]) {
     --tw-space-y-reverse: 0;
