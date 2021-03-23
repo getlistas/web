@@ -4,23 +4,23 @@ import Prelude
 
 import Control.Monad.Rec.Class (forever)
 import Data.Array ((:))
+import Data.Array as Array
 import Data.Array.NonEmpty (NonEmptyArray)
 import Data.Array.NonEmpty as NEA
 import Data.Maybe (Maybe(..))
 import Data.String as String
 import Effect.Aff (Milliseconds(..), delay, error, forkAff, killFiber)
 import Effect.Aff.Class (class MonadAff)
-import Listasio.Component.HTML.Utils (cx)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Halogen.Query.EventSource as ES
+import Listasio.Component.HTML.Utils (cx)
 import Tailwind as T
 
 type Slot id = forall query. H.Slot query Void id
 
-data TypedAction
-  = Tick
+data Tick = Tick
 
 data TypeStatus
   = Typing Boolean | Deliting | Waiting Int
@@ -31,15 +31,13 @@ isWaiting _ = false
 
 data Action
   = Initialize
-  | HandleTypedAction TypedAction
+  | OnTick Tick
 
 type State
   = { before :: Array String
     , current :: String
     , after :: Array String
-
     , status :: TypeStatus
-
     , display :: String
     , position :: Int
     }
@@ -47,12 +45,12 @@ type State
 type Input
   = { words :: NonEmptyArray String }
 
-typedEventSource :: forall m. MonadAff m => ES.EventSource m TypedAction
-typedEventSource =
+tickSource :: forall m. MonadAff m => ES.EventSource m Tick
+tickSource =
   ES.affEventSource \emitter -> do
     fiber <- forkAff $ forever do
-      delay $ Milliseconds 60.0
       ES.emit emitter Tick
+      delay $ Milliseconds 60.0
     pure (ES.Finalizer (killFiber (error "Event source closed") fiber))
 
 component
@@ -69,7 +67,7 @@ component = H.mkComponent
   }
   where
   initialState {words} =
-    { before: NEA.tail words
+    { before: Array.reverse $ NEA.tail words
     , current: NEA.head words
     , after: []
     , status: Typing false
@@ -80,10 +78,10 @@ component = H.mkComponent
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
     Initialize -> do
-      _ <- H.subscribe (HandleTypedAction <$> typedEventSource)
+      _ <- H.subscribe (OnTick <$> tickSource)
       pure unit
 
-    HandleTypedAction Tick -> do
+    OnTick Tick -> do
       {display, position, status, before, current, after} <- H.get
 
       case status of
@@ -98,7 +96,11 @@ component = H.mkComponent
 
           unless (display == current) do
             let newPosition = position + 1
-            H.modify_ _ {position = newPosition, display = String.take newPosition current, status = Typing false }
+            H.modify_ _
+              { position = newPosition
+              , display = String.take newPosition current
+              , status = Typing false
+              }
 
         Deliting ->
           case display of
@@ -106,14 +108,26 @@ component = H.mkComponent
               case NEA.fromArray before of
                 -- [a, b] c [d]    ==> [a] b [c, d]
                 Just more ->
-                  H.modify_ _ {before = NEA.init more, current = NEA.last more, after = current : after, position = 0, status = Typing false}
+                  H.modify_ _
+                    { before = NEA.init more
+                    , current = NEA.last more
+                    , after = current : after
+                    , position = 0
+                    , status = Typing false
+                    }
 
                 -- [] a, [b, c, d] ==> [a, b, c] d []
                 Nothing -> do
                   let all = NEA.cons' current after -- [a, b, c, d]
-                  H.modify_ _ {before = NEA.init all, current = NEA.last all, after = [], position = 0, status = Typing false}
+                  H.modify_ _
+                    { before = NEA.init all
+                    , current = NEA.last all
+                    , after = []
+                    , position = 0
+                    , status = Typing false
+                    }
 
-            _ -> H.modify_ _ { display = String.take (String.length display - 1) display }
+            _ -> H.modify_ _ {display = String.take (String.length display - 1) display}
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render {display, current, status} =
