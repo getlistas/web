@@ -531,6 +531,10 @@ hoverTextWhite = ClassName "hover:text-white"
 hoverUnderline :: ClassName
 hoverUnderline = ClassName "hover:underline"
 
+-- | idle
+idle :: ClassName
+idle = ClassName "idle"
+
 -- | inlineBlock
 inlineBlock :: ClassName
 inlineBlock = ClassName "inline-block"
@@ -1586,6 +1590,10 @@ translateY6 = ClassName "translate-y-6"
 -- | truncate
 truncate :: ClassName
 truncate = ClassName "truncate"
+
+-- | typingCursor
+typingCursor :: ClassName
+typingCursor = ClassName "typing-cursor"
 
 -- | uppercase
 uppercase :: ClassName

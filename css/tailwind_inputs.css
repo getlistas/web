@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.typing-cursor::after {
+  content: "|";
+  animation: none;
+}
+
+.idle.typing-cursor::after {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% {opacity: 1;}
+  50% {opacity: 0;}
+}
