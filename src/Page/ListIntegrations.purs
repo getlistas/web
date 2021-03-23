@@ -16,7 +16,7 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
-import Listasio.Capability.Resource.Integration (class ManageIntegration, createRssIntegration, deleteRssIntegration, getListIntegrations)
+import Listasio.Capability.Resource.Integration (class ManageIntegration, createRssIntegration, deleteIntegration, getListIntegrations)
 import Listasio.Capability.Resource.List (class ManageList, getListBySlug)
 import Listasio.Component.HTML.Button as Button
 import Listasio.Component.HTML.CardsAndSidebar as CardsAndSidebar
@@ -132,7 +132,7 @@ component = Connect.component $ H.mkComponent
           toDelete = Array.find shouldDelete =<< mbRss
       for_ ({rss: _, deleted: _} <$> mbRss <*> toDelete) $ \{rss, deleted} -> do
         H.modify_ $ over (_rss <<< _Success) (Array.filter (not <<< shouldDelete))
-        result <- deleteRssIntegration id
+        result <- deleteIntegration id
         case result of
           Nothing -> H.modify_ $ over (_rss <<< _Success) (_ `Array.snoc` deleted)
           Just _ -> pure unit

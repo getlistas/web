@@ -204,9 +204,9 @@ instance manageIntegrationAppM :: ManageIntegration AppM where
           conf = {endpoint: RssIntegrations, method: Post $ Just body}
           codec = Integration.rssIntegrationCodec
 
-  deleteRssIntegration id =
+  deleteIntegration id =
     map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
-    where conf = {endpoint: RssIntegration id, method: Delete}
+    where conf = {endpoint: Integration id, method: Delete}
 
   getListIntegrations list =
     hush <$> mkAuthRequest conf codec
