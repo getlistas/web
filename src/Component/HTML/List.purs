@@ -413,6 +413,8 @@ component = H.mkComponent
                   , T.mt2
                   , T.borderT2
                   , T.borderGray200
+                  , T.maxH44
+                  , T.overflowYAuto
                   ]
               ]
               $ map nextItem rest
