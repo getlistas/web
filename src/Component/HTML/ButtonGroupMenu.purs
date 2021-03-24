@@ -44,97 +44,83 @@ buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
             [ T.relative
             , T.inlineFlex
             , T.itemsCenter
-            , T.p2
-            , T.roundedLMd
-            , T.border
-            , T.borderGray400
-            , T.bgWhite
+            , T.py1
+            , T.px2
             , T.textXs
-            , T.fontMedium
-            , T.textGray400
-            , T.leadingNone
-            , T.hoverBgGray100
+            , T.textWhite
+            , T.roundedLMd
+            , T.bgKiwi
+            , T.hoverBgKiwiDark
             , T.focusZ10
             , T.focusOutlineNone
             , T.focusRing1
-            , T.focusRingKiwi
-            , T.focusBorderKiwi
+            , T.focusRingKiwiDark
+            , T.focusRingOffset1
             ]
         ]
         [ label ]
-    , HH.span
-        [ HP.classes [ T.negMlPx, T.relative, T.block ] ]
-        [ HH.button
-            [ HP.type_ HP.ButtonButton
-            , HE.onClick \_ -> toggleMenu
-            , HP.classes
-                [ T.relative
-                , T.inlineFlex
-                , T.itemsCenter
-                , T.p2
-                , T.roundedRMd
-                , T.border
-                , T.borderGray400
-                , T.bgWhite
-                , T.textGray400
-                , T.hoverBgGray100
-                , T.focusZ10
-                , T.focusOutlineNone
-                , T.focusRing1
-                , T.focusRingKiwi
-                , T.focusBorderKiwi
-                ]
+    , HH.button
+        [ HP.type_ HP.ButtonButton
+        , HE.onClick \_ -> toggleMenu
+        , HP.classes
+            [ T.relative
+            , T.inlineFlex
+            , T.itemsCenter
+            , T.py1
+            , T.px2
+            , T.textXs
+            , T.textWhite
+            , T.roundedRMd
+            , T.bgKiwi
+            , T.hoverBgKiwiDark
+            , T.focusZ10
+            , T.focusOutlineNone
+            , T.focusRing1
+            , T.focusRingKiwiDark
+            , T.focusRingOffset1
             ]
-            [ HH.span [ HP.classes [ T.srOnly] ] [ HH.text "Open options" ]
-            , Icons.dotsVertical [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
-            ]
-        -- TODO: transitions
-        --
-        -- Dropdown panel, show/hide based on dropdown state.
-        --
-        -- Entering: "transition ease-out duration-100"
-        --   From: "transform opacity-0 scale-95"
-        --   To: "transform opacity-100 scale-100"
-        -- Leaving: "transition ease-in duration-75"
-        --   From: "transform opacity-100 scale-100"
-        --   To: "transform opacity-0 scale-95"
-        , whenElem isOpen \_ ->
-            HH.div
-              [ HP.classes
-                  [ T.originTopRight
-                  , T.absolute
-                  , T.right0
-                  , T.mt2
-                  , T.negMr1
-                  , T.w40
-                  , T.roundedMd
-                  , T.shadowLg
-                  , T.bgWhite
-                  , T.ring1
-                  , T.ringBlack
-                  , T.ringOpacity5
-                ]
-              ]
-              [ HH.div
-                  [ HP.classes [ T.py1 ] ]
-                  $ map
-                      (\i ->
-                        HH.a
-                          [ HP.classes
-                              [ T.block
-                              , T.px4
-                              , T.py2
-                              , T.textSm
-                              , T.textGray700
-                              , T.hoverBgGray100
-                              , T.hoverTextGray900
-                              , T.cursorPointer
-                              ]
-                          , HE.onClick \_ -> i.action
-                          ]
-                          [ i.label ]
-                      )
-                  $ toArray menuItems
-              ]
         ]
+        [ HH.span [ HP.classes [ T.srOnly] ] [ HH.text "Open options" ]
+        , Icons.dotsVertical [ Icons.classes [ T.h4, T.w4 ] ]
+        ]
+    , whenElem isOpen \_ ->
+        HH.div
+          [ HP.classes
+              [ T.originTopRight
+              , T.absolute
+              , T.right0
+              , T.top1
+              , T.mt6
+              , T.w40
+              , T.roundedMd
+              , T.shadowLg
+              , T.bgWhite
+              , T.ring1
+              , T.ringBlack
+              , T.ringOpacity5
+              , T.z20
+            ]
+          ]
+          [ HH.div
+              [ HP.classes [ T.py1 ] ]
+              $ map
+                  (\i ->
+                    HH.button
+                      [ HP.classes
+                          [ T.block
+                          , T.px4
+                          , T.py2
+                          , T.textSm
+                          , T.textGray700
+                          , T.hoverBgGray100
+                          , T.hoverTextGray900
+                          , T.cursorPointer
+                          ]
+                      , HP.type_ HP.ButtonButton
+                      , HE.onClick \_ -> i.action
+                      ]
+                      [ i.label ]
+                  )
+              $ toArray menuItems
+          ]
     ]
