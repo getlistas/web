@@ -119,7 +119,9 @@ formComponent =
 
   render { dirty, form, status, submitting, isNew, initialList } =
     HH.form
-      [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev ]
+      [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev
+      , HP.noValidate true
+      ]
       [ HH.fieldset_
           [ title
           , HH.div

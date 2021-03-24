@@ -29,6 +29,7 @@ import Slug (Slug)
 import Slug as Slug
 import Tailwind as T
 import Web.Event.Event (Event)
+import Web.Event.Event as Event
 
 newtype SettingsForm r f
   = SettingsForm
@@ -131,48 +132,66 @@ component = Connect.component $ H.mkComponent
           ]
       ]
 
+data FormAction
+  = Submit Event.Event
+
+formComponent :: forall m query slots.
+  MonadAff m =>
+  F.Component SettingsForm query slots Unit Profile m
+formComponent =
+  F.component formInput
+    $ F.defaultSpec
+        { render = renderForm
+        , handleEvent = handleEvent
+        , handleAction = handleAction
+        }
+  where
+  formInput :: Unit -> F.Input' SettingsForm m
+  formInput _ =
+    { validators:
+        SettingsForm
+          { name: V.required >>> V.minLength 3 >>> V.maxLength 20 >>> V.usernameFormat
+          , slug: V.required >>> V.minLength 3 >>> V.maxLength 20 >>> V.slugFormat
+          }
+    , initialInputs: Nothing
+    }
+
+  handleEvent = F.raiseResult
+
+  handleAction = case _ of
+    Submit event -> do
+      H.liftEffect $ Event.preventDefault event
+      eval F.submit
+
     where
-    formComponent :: forall query slots. F.Component SettingsForm query slots Unit Profile m
-    formComponent =
-      F.component formInput
-        $ F.defaultSpec
-            { render = renderForm
-            , handleEvent = F.raiseResult
-            }
-      where
-      formInput :: Unit -> F.Input' SettingsForm m
-      formInput _ =
-        { validators:
-            SettingsForm
-              { name: V.required >>> V.minLength 3 >>> V.maxLength 20 >>> V.usernameFormat
-              , slug: V.required >>> V.minLength 3 >>> V.maxLength 20 >>> V.slugFormat
-              }
-        , initialInputs: Nothing
+    eval act = F.handleAction handleAction handleEvent act
+
+  renderForm { form, submitting } =
+    HH.form
+      [ HE.onSubmit $ Just <<< F.injAction <<< Submit
+      , HP.noValidate true
+      ]
+      [ HH.fieldset_
+          [ name
+          , HH.div [ HP.classes [ T.mt4 ] ] [ slug ]
+          , HH.div
+              [ HP.classes [ T.mt4 ] ]
+              [ Field.submit "Update settings" submitting ]
+          ]
+      ]
+    where
+    proxies = F.mkSProxies (F.FormProxy :: _ SettingsForm)
+
+    name =
+      Field.input proxies.name form $ Field.defaultProps
+        { label = Just "Your name"
+        , id = Just "name"
+        , placeholder = Just "John Doe"
         }
 
-      renderForm { form, submitting } =
-        HH.form_
-          [ HH.fieldset_
-              [ name
-              , HH.div [ HP.classes [ T.mt4 ] ] [ slug ]
-              , HH.div
-                  [ HP.classes [ T.mt4 ] ]
-                  [ Field.submit "Update settings" submitting ]
-              ]
-          ]
-        where
-        proxies = F.mkSProxies (F.FormProxy :: _ SettingsForm)
-
-        name =
-          Field.input proxies.name form $ Field.defaultProps
-            { label = Just "Your name"
-            , id = Just "name"
-            , placeholder = Just "John Doe"
-            }
-
-        slug =
-          Field.input proxies.slug form $ Field.defaultProps
-            { label = Just "Your slug"
-            , id = Just "slug"
-            , placeholder = Just "john-doe"
-            }
+    slug =
+      Field.input proxies.slug form $ Field.defaultProps
+        { label = Just "Your slug"
+        , id = Just "slug"
+        , placeholder = Just "john-doe"
+        }

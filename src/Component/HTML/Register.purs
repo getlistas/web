@@ -212,10 +212,10 @@ formComponent =
 
   handleAction = case _ of
     Submit event -> do
+      H.liftEffect $ Event.preventDefault event
       { status } <- H.get
-      when (not $ isLoading status) do
-        H.liftEffect $ Event.preventDefault event
-        eval F.submit
+      when (not $ isLoading status) do eval F.submit
+
     where
     eval act = F.handleAction handleAction handleEvent act
 
@@ -228,6 +228,7 @@ formComponent =
   renderForm { form, status, submitting } =
     HH.form
       [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev
+      , HP.noValidate true
       , HP.classes [ T.wFull ]
       ]
       [ HH.fieldset
