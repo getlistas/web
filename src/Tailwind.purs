@@ -291,6 +291,10 @@ focusRingKiwiDark = ClassName "focus:ring-kiwi-dark"
 focusRingManzana :: ClassName
 focusRingManzana = ClassName "focus:ring-manzana"
 
+-- | focusRingOffset1
+focusRingOffset1 :: ClassName
+focusRingOffset1 = ClassName "focus:ring-offset-1"
+
 -- | focusRingOffset2
 focusRingOffset2 :: ClassName
 focusRingOffset2 = ClassName "focus:ring-offset-2"
@@ -983,6 +987,10 @@ overflowHidden = ClassName "overflow-hidden"
 overflowYAuto :: ClassName
 overflowYAuto = ClassName "overflow-y-auto"
 
+-- | p1
+p1 :: ClassName
+p1 = ClassName "p-1"
+
 -- | p2
 p2 :: ClassName
 p2 = ClassName "p-2"
@@ -1555,6 +1563,10 @@ textXs = ClassName "text-xs"
 top0 :: ClassName
 top0 = ClassName "top-0"
 
+-- | top1
+top1 :: ClassName
+top1 = ClassName "top-1"
+
 -- | trackingTight
 trackingTight :: ClassName
 trackingTight = ClassName "tracking-tight"
@@ -1718,4 +1730,8 @@ z0 = ClassName "z-0"
 -- | z10
 z10 :: ClassName
 z10 = ClassName "z-10"
+
+-- | z20
+z20 :: ClassName
+z20 = ClassName "z-20"
 
