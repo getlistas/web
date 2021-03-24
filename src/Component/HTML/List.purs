@@ -308,37 +308,39 @@ component = H.mkComponent
                 , nextLink next $
                     HH.div [ HP.classes [ T.mt2 ] ] [ shortUrl next.url ]
                 ]
-            , HH.div
+            , HK.div
                 [ HP.classes [ T.mt2, T.flex, T.justifyEnd ] ]
-                [ ButtonGroupMenu.buttonGroupMenu
-                    { mainAction: Just $ CompleteResource next
-                    , label: HH.text "Done"
-                    , toggleMenu: Just ToggleShowNextMenu
-                    , isOpen: showNextMenu
-                    }
-                    $ cons'
-                        { action: Just $ AndCloseNextMenu $ CopyResourceURL next
-                        , label: HH.div
-                                  [ HP.classes [ T.flex, T.itemsCenter ] ]
-                                  [ Icons.clipboardCopy [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
-                                  , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy link" ]
-                                  ]
+                [ Tuple
+                    (ID.toString next.id)
+                    $ ButtonGroupMenu.buttonGroupMenu
+                        { mainAction: Just $ CompleteResource next
+                        , label: HH.text "Done"
+                        , toggleMenu: Just ToggleShowNextMenu
+                        , isOpen: showNextMenu
                         }
-                        [ { action: Just $ AndCloseNextMenu $ CopyToShare next
-                          , label: HH.div
-                                    [ HP.classes [ T.flex, T.itemsCenter ] ]
-                                    [ Icons.share [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
-                                    , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy share link" ]
-                                    ]
-                          }
-                        , { action: Just $ AndCloseNextMenu $ DeleteResource next
-                          , label: HH.div
-                                    [ HP.classes [ T.flex, T.itemsCenter ] ]
-                                    [ Icons.trash [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
-                                    , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Remove" ]
-                                    ]
-                          }
-                        ]
+                        $ cons'
+                            { action: Just $ AndCloseNextMenu $ CopyResourceURL next
+                            , label: HH.div
+                                      [ HP.classes [ T.flex, T.itemsCenter ] ]
+                                      [ Icons.clipboardCopy [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
+                                      , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy link" ]
+                                      ]
+                            }
+                            [ { action: Just $ AndCloseNextMenu $ CopyToShare next
+                              , label: HH.div
+                                        [ HP.classes [ T.flex, T.itemsCenter ] ]
+                                        [ Icons.share [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
+                                        , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy share link" ]
+                                        ]
+                              }
+                            , { action: Just $ AndCloseNextMenu $ DeleteResource next
+                              , label: HH.div
+                                        [ HP.classes [ T.flex, T.itemsCenter ] ]
+                                        [ Icons.trash [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
+                                        , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Remove" ]
+                                        ]
+                              }
+                            ]
                 ]
             ]
 
