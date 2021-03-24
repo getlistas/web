@@ -223,10 +223,9 @@ formComponent = F.component formInput $ F.defaultSpec
           H.modify_ _ { meta = Failure "Couldn't gett suggestions" }
 
     Submit event -> do
+      H.liftEffect $ Event.preventDefault event
       { status } <- H.get
-      when (not $ isLoading status) do
-        H.liftEffect $ Event.preventDefault event
-        eval F.submit
+      when (not $ isLoading status) do eval F.submit
 
     HandleDropdown (DD.Selected (DDItem { value })) ->
       eval $ F.setValidate proxies.list (Just value)
@@ -253,7 +252,9 @@ formComponent = F.component formInput $ F.defaultSpec
 
   renderCreateResource { form, status, lists, submitting, dirty, meta } =
     HH.form
-      [ HE.onSubmit $ Just <<< F.injAction <<< Submit ]
+      [ HE.onSubmit $ Just <<< F.injAction <<< Submit
+      , HP.noValidate true
+      ]
       [ whenElem (isFailure status) \_ ->
           HH.div
             []
