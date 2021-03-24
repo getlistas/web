@@ -153,9 +153,6 @@ menu st =
       , T.right0
       , T.left0
       , T.overflowYAuto
-      , T.scrollbarThin
-      , T.scrollbarThumbGray200
-      , T.scrollbarTrackWhite
       , T.z10
       ]
   ]
