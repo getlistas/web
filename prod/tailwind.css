@@ -2506,10 +2506,6 @@ select{
   margin-top: 6rem;
 }
 
-.-mr-1 {
-  margin-right: -0.25rem;
-}
-
 .-ml-1 {
   margin-left: -0.25rem;
 }
@@ -2520,10 +2516,6 @@ select{
 
 .-mt-6 {
   margin-top: -1.5rem;
-}
-
-.-ml-px {
-  margin-left: -1px;
 }
 
 .max-h-44 {
@@ -2887,6 +2879,10 @@ select{
   left: 0px;
 }
 
+.top-1 {
+  top: 0.25rem;
+}
+
 *{
   --tw-shadow: 0 0 #0000;
 }
@@ -3005,6 +3001,10 @@ select{
 
 .hover\:ring-offset-2:hover {
   --tw-ring-offset-width: 2px;
+}
+
+.focus\:ring-offset-1:focus {
+  --tw-ring-offset-width: 1px;
 }
 
 .focus\:ring-offset-2:focus {
@@ -3793,6 +3793,10 @@ select{
   z-index: 10;
 }
 
+.z-20 {
+  z-index: 20;
+}
+
 .focus\:z-10:focus {
   z-index: 10;
 }
@@ -3946,38 +3950,6 @@ select{
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-}
-
-.scrollbar-thin {
-  --scrollbar-track: initial;
-  --scrollbar-thumb: initial;
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-  overflow: overlay;
-}
-
-.scrollbar-thin::-webkit-scrollbar-track {
-  background-color: var(--scrollbar-track);
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb);
-}
-
-.scrollbar-thin {
-  scrollbar-width: thin;
-}
-
-.scrollbar-thin::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.scrollbar-track-white {
-  --scrollbar-track: #fff;
-}
-
-.scrollbar-thumb-gray-200 {
-  --scrollbar-thumb: #A0AEC0;
 }
 
 .typing-cursor::after {
