@@ -22,6 +22,7 @@ import Listasio.Capability.Resource.User (class ManageUser, getCurrentUser)
 import Listasio.Component.HTML.Footer (footer)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Login as Login
+import Listasio.Component.HTML.Nav as Nav
 import Listasio.Component.HTML.Register as Register
 import Listasio.Component.HTML.Typed as Typed
 import Listasio.Component.HTML.Utils (safeHref, whenElem)
@@ -51,6 +52,7 @@ type ChildSlots
   = ( register :: Register.Slot
     , login :: Login.Slot
     , typed :: Typed.Slot Unit
+    , nav :: Nav.Slot
     )
 
 data Action
@@ -287,7 +289,6 @@ component = Connect.component $ H.mkComponent
                     desktopLink Resources "Resources"
                 , desktopLink Discover "Discover"
                 , desktopLink Pricing "Pricing"
-                , desktopLink About "About"
                 ]
             ]
           , case authStatus of
@@ -364,6 +365,7 @@ component = Connect.component $ H.mkComponent
               , T.transform
               , T.originTopRight
               , T.mdHidden
+              , T.z10
               ]
           ]
           [ HH.div
@@ -416,7 +418,6 @@ component = Connect.component $ H.mkComponent
                       mobileLink Resources "Resources"
                   , mobileLink Discover "Discover"
                   , mobileLink Pricing "Pricing"
-                  , mobileLink About "About Us"
                   ]
               , case authStatus of
                   ShowUser _ -> HH.text ""
@@ -601,6 +602,7 @@ component = Connect.component $ H.mkComponent
             [ HP.classes [ T.relative, T.pt6, T.pb16, T.smPb24 ] ]
             [ nav
             , mobileNav
+            -- [ HH.slot (SProxy :: _ "nav") unit Nav.component {route: Just Home} absurd
             , HH.main
                 [ HP.classes [ T.mt16, T.smMt24 ] ]
                 [ HH.div

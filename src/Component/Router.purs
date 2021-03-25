@@ -241,9 +241,12 @@ component = Connect.component $ H.mkComponent
       HH.div
         [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.bgGray10 ] ]
         [ HH.div
-            [ HP.classes [ T.container, T.mxAuto, T.px4, T.xlPx0, T.pb20, T.flex1 ] ]
+            [ HP.classes [ T.container, T.mxAuto, T.mdPx4, T.xlPx0 ] ]
             [ HH.slot (SProxy :: _ "nav") unit Nav.component {route: currentRoute} absurd
-            , content
+            ]
+        , HH.div
+            [ HP.classes [ T.container, T.mxAuto, T.px4, T.xlPx0, T.pb20, T.flex1 ] ]
+            [ content
             ]
         , footer NavigateAct
         ]

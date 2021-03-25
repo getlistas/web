@@ -198,9 +198,9 @@ component = H.mkComponent
     shortUrl url =
       maybeElem (takeDomain url) \short ->
         HH.div
-          [ HP.classes [ T.textGray300, T.textSm, T.mb1, T.mr2, T.flex, T.itemsCenter, T.truncate ] ]
+          [ HP.classes [ T.textGray300, T.textSm, T.mb1, T.mr2, T.flex, T.itemsCenter ] ]
           [ HH.img [ HP.classes [ T.inlineBlock, T.w4, T.h4, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
-          , HH.text short
+          , HH.span [ HP.classes [ T.truncate ] ] [ HH.text short ]
           ]
 
     toRead = case list.resource_metadata, firstOf (_resources <<< _Success <<< traversed) state of
@@ -298,6 +298,7 @@ component = H.mkComponent
                         [ Icons.photo [ Icons.classes [ T.h20, T.w20 ] ] ]
                 ]
         , HH.div
+            -- [ HP.classes [ T.flex, T.flexCol, T.justifyBetween, T.wFull, T.overflowXHidden ] ]
             [ HP.classes [ T.flex, T.flexCol, T.justifyBetween, T.wFull ] ]
             [ HH.div
                 []

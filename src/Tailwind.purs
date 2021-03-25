@@ -171,6 +171,10 @@ borderWhite = ClassName "border-white"
 checkedBgKiwi :: ClassName
 checkedBgKiwi = ClassName "checked:bg-kiwi"
 
+-- | colSpan1
+colSpan1 :: ClassName
+colSpan1 = ClassName "col-span-1"
+
 -- | colSpan2
 colSpan2 :: ClassName
 colSpan2 = ClassName "col-span-2"
@@ -823,6 +827,14 @@ mdMxAuto = ClassName "md:mx-auto"
 mdPl10 :: ClassName
 mdPl10 = ClassName "md:pl-10"
 
+-- | mdPx0
+mdPx0 :: ClassName
+mdPx0 = ClassName "md:px-0"
+
+-- | mdPx4
+mdPx4 :: ClassName
+mdPx4 = ClassName "md:px-4"
+
 -- | mdW1d2
 mdW1d2 :: ClassName
 mdW1d2 = ClassName "md:w-1/2"
@@ -887,10 +899,6 @@ mt16 = ClassName "mt-16"
 mt1 :: ClassName
 mt1 = ClassName "mt-1"
 
--- | mt24
-mt24 :: ClassName
-mt24 = ClassName "mt-24"
-
 -- | mt2
 mt2 :: ClassName
 mt2 = ClassName "mt-2"
@@ -939,14 +947,6 @@ my6 = ClassName "my-6"
 negMl1 :: ClassName
 negMl1 = ClassName "-ml-1"
 
--- | negMlPx
-negMlPx :: ClassName
-negMlPx = ClassName "-ml-px"
-
--- | negMr1
-negMr1 :: ClassName
-negMr1 = ClassName "-mr-1"
-
 -- | negMr2
 negMr2 :: ClassName
 negMr2 = ClassName "-mr-2"
@@ -983,13 +983,13 @@ originTopRight = ClassName "origin-top-right"
 overflowHidden :: ClassName
 overflowHidden = ClassName "overflow-hidden"
 
+-- | overflowXHidden
+overflowXHidden :: ClassName
+overflowXHidden = ClassName "overflow-x-hidden"
+
 -- | overflowYAuto
 overflowYAuto :: ClassName
 overflowYAuto = ClassName "overflow-y-auto"
-
--- | p1
-p1 :: ClassName
-p1 = ClassName "p-1"
 
 -- | p2
 p2 :: ClassName
@@ -1006,6 +1006,10 @@ p4 = ClassName "p-4"
 -- | p8
 p8 :: ClassName
 p8 = ClassName "p-8"
+
+-- | pb10
+pb10 :: ClassName
+pb10 = ClassName "pb-10"
 
 -- | pb12
 pb12 :: ClassName
@@ -1199,18 +1203,6 @@ roundedSm = ClassName "rounded-sm"
 roundedTMd :: ClassName
 roundedTMd = ClassName "rounded-t-md"
 
--- | scrollbarThin
-scrollbarThin :: ClassName
-scrollbarThin = ClassName "scrollbar-thin"
-
--- | scrollbarThumbGray200
-scrollbarThumbGray200 :: ClassName
-scrollbarThumbGray200 = ClassName "scrollbar-thumb-gray-200"
-
--- | scrollbarTrackWhite
-scrollbarTrackWhite :: ClassName
-scrollbarTrackWhite = ClassName "scrollbar-track-white"
-
 -- | shadow
 shadow :: ClassName
 shadow = ClassName "shadow"
@@ -1239,6 +1231,10 @@ smAlignMiddle = ClassName "sm:align-middle"
 smBlock :: ClassName
 smBlock = ClassName "sm:block"
 
+-- | smColSpan3
+smColSpan3 :: ClassName
+smColSpan3 = ClassName "sm:col-span-3"
+
 -- | smFlex
 smFlex :: ClassName
 smFlex = ClassName "sm:flex"
@@ -1258,6 +1254,10 @@ smGrid = ClassName "sm:grid"
 -- | smGridCols2
 smGridCols2 :: ClassName
 smGridCols2 = ClassName "sm:grid-cols-2"
+
+-- | smGridCols5
+smGridCols5 :: ClassName
+smGridCols5 = ClassName "sm:grid-cols-5"
 
 -- | smH72
 smH72 :: ClassName
@@ -1314,10 +1314,6 @@ smMl6 = ClassName "sm:ml-6"
 -- | smMt0
 smMt0 :: ClassName
 smMt0 = ClassName "sm:mt-0"
-
--- | smMt12
-smMt12 :: ClassName
-smMt12 = ClassName "sm:mt-12"
 
 -- | smMt24
 smMt24 :: ClassName
