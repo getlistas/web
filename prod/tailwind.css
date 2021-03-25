@@ -2637,10 +2637,6 @@ select{
   overflow-y: auto;
 }
 
-.overflow-x-hidden {
-  overflow-x: hidden;
-}
-
 .p-2 {
   padding: 0.5rem;
 }
