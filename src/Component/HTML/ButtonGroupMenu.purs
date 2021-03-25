@@ -124,6 +124,7 @@ buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
                           , T.hoverBgGray100
                           , T.hoverTextGray900
                           , T.cursorPointer
+                          , T.wFull
                           ]
                       , HP.type_ HP.ButtonButton
                       , HE.onClick \_ -> i.action

@@ -11,6 +11,7 @@ import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, deleteList, getListBySlug, updateList)
@@ -34,11 +35,14 @@ data Action
   | HandleListForm CreateListFields
   | Navigate Route Event
   | DeleteList
+  | DeleteListCancel
+  | DeleteListConfirm
 
 type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
     , list :: RemoteData String ListWithIdAndUser
     , slug :: Slug
+    , confirmDelete :: Boolean
     }
 
 type Slots = ( formless :: ListForm.Slot )
@@ -63,6 +67,7 @@ component = Connect.component $ H.mkComponent
     { currentUser
     , list: NotAsked
     , slug: listSlug
+    , confirmDelete: false
     }
 
   handleAction :: Action -> H.HalogenM State Action Slots o m Unit
@@ -95,7 +100,13 @@ component = Connect.component $ H.mkComponent
             Nothing ->
               void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Failure "Could not create list") unit
 
-    DeleteList -> do
+    DeleteList ->
+      H.modify_ _ { confirmDelete = true }
+
+    DeleteListCancel ->
+      H.modify_ _ { confirmDelete = false }
+
+    DeleteListConfirm -> do
       mbList <- H.gets $ preview (_list <<< _Success)
       case mbList of
         Nothing -> pure unit
@@ -106,7 +117,7 @@ component = Connect.component $ H.mkComponent
           navigate Dashboard
 
   render :: State -> H.ComponentHTML Action Slots m
-  render { currentUser, list: mbList } =
+  render {currentUser, list: mbList, confirmDelete} =
     HH.div [] [ header, content ]
 
     where
@@ -204,7 +215,7 @@ component = Connect.component $ H.mkComponent
                     [ HP.classes [ T.mt2, T.maxWXl, T.textSm, T.textGray300 ] ]
                     [ HH.p
                         []
-                        [ HH.text "Once you delete a list, all it's resources are deleted as well and cannot be recovered." ]
+                        [ HH.text "Deleting a list also deletes its resources. Cannot be reverted." ]
                     ]
                 ]
             , HH.div
@@ -215,8 +226,19 @@ component = Connect.component $ H.mkComponent
                     , T.smFlexShrink0
                     , T.smFlex
                     , T.smItemsCenter
+                    , T.flex
+                    , T.justifyCenter
+                    , T.z20
                     ]
                 ]
-                [ Button.danger  (HH.text "Delete list") false $ Just DeleteList ]
+                [ case confirmDelete of
+                    false ->  Button.danger_ (HH.text "Delete list") false $ Just DeleteList
+                    true ->
+                      Button.danger
+                        (HH.text "Confirm")
+                        false
+                        (Just DeleteListConfirm)
+                        [ HE.onFocusOut \_ -> Just DeleteListCancel ]
+                ]
             ]
         ]
