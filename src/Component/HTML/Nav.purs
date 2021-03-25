@@ -114,7 +114,7 @@ component = Connect.component $ H.mkComponent
     HH.div
       [ HP.classes [ T.relative, T.bgGray10 ] ]
       [ HH.div
-          [ HP.classes [ T.relative, T.pt6, T.pb16 ] ]
+          [ HP.classes [ T.relative, T.pt6, T.pb10 ] ]
           [ nav
           , mobileNav
           ]
@@ -188,6 +188,8 @@ component = Connect.component $ H.mkComponent
             , T.flex
             , T.itemsCenter
             , T.justifyBetween
+            , T.px4
+            , T.mdPx0
             ]
         ]
         [ HH.div
@@ -230,13 +232,11 @@ component = Connect.component $ H.mkComponent
                     , desktopLink Resources "Resources"
                     , desktopLink Discover "Discover"
                     , desktopLink Pricing "Pricing"
-                    , desktopLink About "About"
                     ]
 
                   Nothing ->
                     [ desktopLink Discover "Discover"
                     , desktopLink Pricing "Pricing"
-                    , desktopLink About "About"
                     ]
             ]
           , case authStatus of
@@ -369,13 +369,11 @@ component = Connect.component $ H.mkComponent
                       , mobileLink Resources "Resources"
                       , mobileLink Discover "Discover"
                       , mobileLink Pricing "Pricing"
-                      , mobileLink About "About"
                       ]
 
                     Nothing ->
                       [ mobileLink Discover "Discover"
                       , mobileLink Pricing "Pricing"
-                      , mobileLink About "About"
                       ]
               , case authStatus of
                   ShowUser _ -> HH.text ""

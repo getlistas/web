@@ -83,6 +83,15 @@ buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
         [ HH.span [ HP.classes [ T.srOnly] ] [ HH.text "Open options" ]
         , Icons.dotsVertical [ Icons.classes [ T.h4, T.w4 ] ]
         ]
+
+      -- Invisible overlay to close on outside click
+    , whenElem isOpen \_ ->
+        HH.div
+          [ HE.onClick \_ -> toggleMenu
+          , HP.classes [ T.fixed, T.inset0 ]
+          ]
+          [ HH.div [ HP.classes [ T.absolute, T.inset0 ] ] [] ]
+
     , whenElem isOpen \_ ->
         HH.div
           [ HP.classes

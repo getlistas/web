@@ -16,7 +16,7 @@ import Web.UIEvent.MouseEvent as Mouse
 footer :: forall i p. (Route -> Event -> p) -> HH.HTML i p
 footer navigate =
   HH.footer
-    [ HP.classes [ T.mt24, T.bgKiwiDark, T.smMt12 ] ]
+    [ HP.classes [ T.bgKiwiDark, T.mt12 ] ]
     [
       HH.div
         [ HP.classes

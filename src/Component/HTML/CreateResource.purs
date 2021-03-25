@@ -293,9 +293,9 @@ formComponent = F.component formInput $ F.defaultSpec
               ]
 
           , HH.div
-              [ HP.classes [ T.grid, T.gridCols5, T.gap4, T.mt4 ] ]
+              [ HP.classes [ T.grid, T.gridCols1, T.smGridCols5, T.gap4, T.mt4 ] ]
               [ HH.div
-                  [ HP.classes[ T.wFull, T.hFull, T.colSpan2 ] ]
+                  [ HP.classes[ T.wFull, T.hFull, T.hidden, T.smBlock, T.colSpan2 ] ]
                   [ case meta of
                       Success {thumbnail: Just thumbnail} ->
                         HH.img
@@ -336,7 +336,7 @@ formComponent = F.component formInput $ F.defaultSpec
                           [ Icons.photo [ Icons.classes [ T.h20, T.w20 ] ] ]
                   ]
               , HH.div
-                  [ HP.classes [ T.colSpan3 ] ]
+                  [ HP.classes [ T.colSpan1, T.smColSpan3 ] ]
                   [ HH.div [] [ titleField ]
                   , HH.div [ HP.classes [ T.mt4 ] ] [ description ]
                   ]
