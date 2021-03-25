@@ -298,7 +298,6 @@ component = H.mkComponent
                         [ Icons.photo [ Icons.classes [ T.h20, T.w20 ] ] ]
                 ]
         , HH.div
-            -- [ HP.classes [ T.flex, T.flexCol, T.justifyBetween, T.wFull, T.overflowXHidden ] ]
             [ HP.classes [ T.flex, T.flexCol, T.justifyBetween, T.wFull ] ]
             [ HH.div
                 []
