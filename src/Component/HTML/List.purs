@@ -358,10 +358,18 @@ component = H.mkComponent
                 ]
                 [ HH.text list.title ]
             , HH.div
-                [ HP.classes [ T.ml6 ] ]
-                [ HH.span [ HP.classes [ T.textGray400 ] ] [ HH.text $ show list.resource_metadata.completed_count ]
-                , HH.span [ HP.classes [ T.textGray300, T.mx1 ] ] [ HH.text "/" ]
-                , HH.span [ HP.classes [ T.textGray300 ] ] [ HH.text $ show list.resource_metadata.count ]
+                [ HP.classes [ T.ml6, T.flex, T.itemsCenter ] ]
+                [ HH.div
+                    []
+                    [ HH.span [ HP.classes [ T.textGray400 ] ] [ HH.text $ show list.resource_metadata.completed_count ]
+                    , HH.span [ HP.classes [ T.textGray300, T.mx1 ] ] [ HH.text "/" ]
+                    , HH.span [ HP.classes [ T.textGray300 ] ] [ HH.text $ show list.resource_metadata.count ]
+                    ]
+                , HH.a
+                    [ safeHref $ EditList list.slug
+                    , HE.onClick (Just <<< Navigate (EditList list.slug) <<< Mouse.toEvent)
+                    ]
+                    [ Icons.cog [ Icons.classes [ T.ml4, T.h5, T.w5, T.textGray300, T.hoverTextGray400 ] ] ]
                 ]
             ]
         , maybeElem list.resource_metadata.last_completed_at \last_done ->
