@@ -3844,8 +3844,16 @@ select{
   --tw-translate-x: 1.5rem;
 }
 
+.-translate-x-6 {
+  --tw-translate-x: -1.5rem;
+}
+
 .translate-y-6 {
   --tw-translate-y: 1.5rem;
+}
+
+.-translate-y-6 {
+  --tw-translate-y: -1.5rem;
 }
 
 .transition-all {
@@ -3952,6 +3960,8 @@ select{
   content: "|";
   -webkit-animation: none;
           animation: none;
+  --tw-text-opacity: 1;
+  color: rgba(160, 174, 192, var(--tw-text-opacity));
 }
 
 .idle.typing-cursor::after {
@@ -6006,6 +6016,10 @@ select{
 
   .sm\:translate-x-16 {
     --tw-translate-x: 4rem;
+  }
+
+  .sm\:-translate-x-6 {
+    --tw-translate-x: -1.5rem;
   }
 }
 
@@ -9284,6 +9298,14 @@ select{
     padding-right: 0px;
   }
 
+  .lg\:pl-6 {
+    padding-left: 1.5rem;
+  }
+
+  .lg\:pr-16 {
+    padding-right: 4rem;
+  }
+
   .group:hover .lg\:group-hover\:shadow-sm {
     --tw-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
@@ -9896,6 +9918,10 @@ select{
 
   .lg\:translate-y-20 {
     --tw-translate-y: 5rem;
+  }
+
+  .lg\:-translate-y-20 {
+    --tw-translate-y: -5rem;
   }
 }
 
@@ -11211,6 +11237,14 @@ select{
 
   .xl\:px-20 {
     padding-left: 5rem;
+    padding-right: 5rem;
+  }
+
+  .xl\:pl-10 {
+    padding-left: 2.5rem;
+  }
+
+  .xl\:pr-20 {
     padding-right: 5rem;
   }
 
