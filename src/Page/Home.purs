@@ -133,7 +133,8 @@ component = Connect.component $ H.mkComponent
       [ HP.classes [ T.bgWhite ] ]
       [ heroAndNav
       , if false then splitImageAndFeature else HH.text ""
-      , featureCardWithImage
+      , featureCardWithImageLeft
+      , featureCardWithImageRight
       , featuresList
       , footer Navigate
       ]
@@ -210,13 +211,12 @@ component = Connect.component $ H.mkComponent
                 ]
                 [ HH.span
                     [ HP.classes [ T.textGray400, T.block ] ]
-                    [ HH.text "Your "
-                    , HH.slot (SProxy :: _ "typed") unit Typed.component {words: NEA.cons' "Reading" ["Watching", "Listening"]} absurd
-                    , HH.text " lists"
+                    [ HH.slot (SProxy :: _ "typed") unit Typed.component {words: NEA.cons' "Create" ["Manage", "Share"]} absurd
+                    , HH.text " your"
                     ]
                 , HH.span
                     [ HP.classes [ T.textKiwi, T.block ] ]
-                    [ HH.text "Under control" ]
+                    [ HH.text " Reading lists" ]
                 ]
             , HH.p
                 [ HP.classes
@@ -229,7 +229,7 @@ component = Connect.component $ H.mkComponent
                     , T.xlTextXl
                     ]
                 ]
-                [ HH.text "Store any digital content, keep the history of what you have consumed, share it with friends, discover trending material and create Learning Paths." ]
+                [ HH.text "Create reading lists and learning paths for yourself and to share with the world. Keep a reference to any article, podcast, and video you consumed. Discover what others are reading and learn." ]
             ]
         ]
 
@@ -689,29 +689,29 @@ component = Connect.component $ H.mkComponent
                     , T.smText4xl
                     ]
                 ]
-                [ HH.text "Enhance the way you consume content" ]
+                [ HH.text "Enhance the way you consume and share content" ]
             , HH.p
                 [ HP.classes [ T.mt5, T.maxWProse, T.mxAuto, T.textXl, T.textGray500 ] ]
-                [ HH.text "We are currently working on expanding and improving the Listas feature set. Reach us if you'd like a tailored feature." ]
+                [ HH.text "Optimize your experience with our following features." ]
             , HH.div
                 [ HP.classes [ T.mt12 ] ]
                 [ HH.div
                     [ HP.classes [ T.grid, T.gridCols1, T.gap8, T.smGridCols2, T.lgGridCols3 ] ]
                     [ feature
-                        Icons.calendar
-                        "Up next"
-                        "Save your content to consume it in the order you want"
-                        false
-                    , feature
                         Icons.duplicate
-                        "Fork lists"
-                        "Copy interesting Lists or share your content with others allowing them to copy your public List"
+                        "Copy lists"
+                        "Copy interesting Lists or share your content with others allowing them to copy your public List."
                         false
                     , feature
                         Icons.userAdd
                         "Follow lists"
                         "Follow multiple lists, don't miss anything from the authors you like."
                         true
+                    , feature
+                        Icons.calendar
+                        "Up next"
+                        "Save your content to consume it in the order you want."
+                        false
                     , feature
                         Icons.bookmark
                         "History"
@@ -720,19 +720,19 @@ component = Connect.component $ H.mkComponent
                     , feature
                         Icons.rss
                         "RSS"
-                        "Bring outside content automatically to Listas using the RSS integration"
+                        "Bring outside content automatically to Listas using the RSS integration."
                         false
                     , feature
                         Icons.hashtag
                         "Discover"
-                        "Explore other users' content and make your lists public to let other users check your content"
+                        "Explore other users' content and make your lists public to let other users check your content."
                         false
                     ]
                 ]
             ]
         ]
 
-    featureCardWithImage =
+    featureCardWithImageRight =
       HH.div
         [ HP.classes [ T.bgWhite ] ]
         [ HH.div
@@ -800,6 +800,82 @@ component = Connect.component $ H.mkComponent
                             , T.smTranslateX16
                             , T.lgTranslateY20
                             ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+
+    featureCardWithImageLeft =
+      HH.div
+        [ HP.classes [ T.bgWhite ] ]
+        [ HH.div
+            [ HP.classes
+                [ T.maxW7xl
+                , T.mxAuto
+                , T.py16
+                , T.px4
+                , T.smPx6
+                , T.lgPx8
+                ]
+            ]
+            [ HH.div
+                [ HP.classes
+                    [ T.bgKiwi
+                    , T.roundedLg
+                    , T.shadowXl
+                    , T.overflowHidden
+                    , T.lgGrid
+                    , T.lgGridCols2
+                    , T.lgGap4
+                    ]
+                ]
+                [ HH.div
+                    [ HP.classes [ T.negMt6, T.aspectW5, T.aspectH3, T.mdAspectW2, T.mdAspectH1 ] ]
+                    [ HH.img
+                        [ HP.alt "App screenshot"
+                        , HP.src "https://i.imgur.com/2UGt2Ko.png"
+                        , HP.classes
+                            [ T.transform
+                            , T.roundedMd
+                            , T.objectCover
+                            , T.objectLeftTop
+                            , T.negTranslateX6
+                            , T.negTranslateY6
+                            , T.smNegTranslateX6
+                            , T.lgNegTranslateY20
+                            ]
+                        ]
+                    ]
+                , HH.div
+                    [ HP.classes
+                        [ T.pt10
+                        , T.pb12
+                        , T.px6
+                        , T.smPt16
+                        , T.smPx16
+                        , T.lgPy16
+                        , T.lgPr16
+                        , T.lgPl6
+                        , T.xlPy20
+                        , T.xlPr20
+                        , T.xlPl10
+                        ]
+                    ]
+                    [ HH.div
+                        [ HP.classes [ T.lgSelfCenter ] ]
+                        [ HH.h2
+                            [ HP.classes [ T.text3xl, T.fontExtrabold, T.textWhite, T.smText4xl ] ]
+                            [ HH.span
+                                [ HP.classes [ T.block ] ]
+                                [ HH.text "Ready to dive in?" ]
+                            ]
+                        , HH.p
+                            [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textGray400 ] ]
+                            [ HH.text "Create an account for free (No credit card required) and start exploring. Listas aims to boost your productivity while keeping track of the content you consumed to be able to come back to it in the future, share it or just look at your stats." ]
+                        , HH.p
+                            [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textGray400 ] ]
+                            [ HH.text "Listas also tries to assist content creators or educators by allowing them to create “Learning Paths” lists so users / students can follow and consume content in the right order and get notified when new content arrives." ]
                         ]
                     ]
                 ]
