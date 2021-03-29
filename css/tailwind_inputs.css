@@ -5,6 +5,7 @@
 .typing-cursor::after {
   content: "|";
   animation: none;
+  @apply text-gray-200;
 }
 
 .idle.typing-cursor::after {

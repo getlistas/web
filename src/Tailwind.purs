@@ -179,10 +179,6 @@ colSpan1 = ClassName "col-span-1"
 colSpan2 :: ClassName
 colSpan2 = ClassName "col-span-2"
 
--- | colSpan3
-colSpan3 :: ClassName
-colSpan3 = ClassName "col-span-3"
-
 -- | container
 container :: ClassName
 container = ClassName "container"
@@ -358,10 +354,6 @@ gridCols1 = ClassName "grid-cols-1"
 -- | gridCols2
 gridCols2 :: ClassName
 gridCols2 = ClassName "grid-cols-2"
-
--- | gridCols5
-gridCols5 :: ClassName
-gridCols5 = ClassName "grid-cols-5"
 
 -- | group
 group :: ClassName
@@ -671,9 +663,21 @@ lgMt0 = ClassName "lg:mt-0"
 lgMt6 :: ClassName
 lgMt6 = ClassName "lg:mt-6"
 
+-- | lgNegTranslateY20
+lgNegTranslateY20 :: ClassName
+lgNegTranslateY20 = ClassName "lg:-translate-y-20"
+
+-- | lgPl6
+lgPl6 :: ClassName
+lgPl6 = ClassName "lg:pl-6"
+
 -- | lgPr0
 lgPr0 :: ClassName
 lgPr0 = ClassName "lg:pr-0"
+
+-- | lgPr16
+lgPr16 :: ClassName
+lgPr16 = ClassName "lg:pr-16"
 
 -- | lgPx0
 lgPx0 :: ClassName
@@ -963,6 +967,14 @@ negMx5 = ClassName "-mx-5"
 negMy2 :: ClassName
 negMy2 = ClassName "-my-2"
 
+-- | negTranslateX6
+negTranslateX6 :: ClassName
+negTranslateX6 = ClassName "-translate-x-6"
+
+-- | negTranslateY6
+negTranslateY6 :: ClassName
+negTranslateY6 = ClassName "-translate-y-6"
+
 -- | objectCover
 objectCover :: ClassName
 objectCover = ClassName "object-cover"
@@ -982,10 +994,6 @@ originTopRight = ClassName "origin-top-right"
 -- | overflowHidden
 overflowHidden :: ClassName
 overflowHidden = ClassName "overflow-hidden"
-
--- | overflowXHidden
-overflowXHidden :: ClassName
-overflowXHidden = ClassName "overflow-x-hidden"
 
 -- | overflowYAuto
 overflowYAuto :: ClassName
@@ -1330,6 +1338,14 @@ smMxAuto = ClassName "sm:mx-auto"
 -- | smMy8
 smMy8 :: ClassName
 smMy8 = ClassName "sm:my-8"
+
+-- | smNegTranslateX16
+smNegTranslateX16 :: ClassName
+smNegTranslateX16 = ClassName "sm:-translate-x-16"
+
+-- | smNegTranslateX6
+smNegTranslateX6 :: ClassName
+smNegTranslateX6 = ClassName "sm:-translate-x-6"
 
 -- | smOverflowHidden
 smOverflowHidden :: ClassName
@@ -1682,6 +1698,14 @@ xlItemsEnd = ClassName "xl:items-end"
 -- | xlJustifyBetween
 xlJustifyBetween :: ClassName
 xlJustifyBetween = ClassName "xl:justify-between"
+
+-- | xlPl10
+xlPl10 :: ClassName
+xlPl10 = ClassName "xl:pl-10"
+
+-- | xlPr20
+xlPr20 :: ClassName
+xlPr20 = ClassName "xl:pr-20"
 
 -- | xlPx0
 xlPx0 :: ClassName
