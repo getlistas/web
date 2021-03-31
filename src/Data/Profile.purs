@@ -52,14 +52,14 @@ profileCodec :: JsonCodec Profile
 profileCodec =
   CAR.object "Profile"
     { name: Username.codec
-    , slug
+    , slug: Slug.codec
     }
 
 publicProfileCodec :: JsonCodec PublicProfile
 publicProfileCodec =
   CAR.object "PublicProfile"
     { name: Username.codec
-    , slug
+    , slug: Slug.codec
     , id: ID.codec
     , avatar: CAC.maybe Avatar.codec
     }
@@ -70,7 +70,7 @@ profileWithIdAndEmailCodec =
     { email: Email.codec
     , name: Username.codec
     , id: ID.codec
-    , slug
+    , slug: Slug.codec
     , avatar: CAC.maybe Avatar.codec
     }
 
@@ -79,7 +79,7 @@ profileWithEmailCodec =
   CAR.object "ProfileWithEmail"
     { email: Email.codec
     , name: Username.codec
-    , slug
+    , slug: Slug.codec
     }
 
 profileWithEmailPasswordCodec :: JsonCodec ProfileWithEmailPassword
@@ -88,10 +88,5 @@ profileWithEmailPasswordCodec =
     { email: Email.codec
     , password: CAC.maybe CA.string
     , name: Username.codec
-    , slug
+    , slug: Slug.codec
     }
-
--- TODO: stop repeating this implementation
--- TODO: Slug.parse instead of Slug.generate (underscores break it)
-slug :: JsonCodec Slug
-slug = CA.prismaticCodec Slug.generate Slug.toString CA.string

@@ -2,10 +2,9 @@ module Listasio.Data.Route where
 
 import Prelude hiding ((/))
 
-import Data.Either (note)
 import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe)
-import Routing.Duplex (RouteDuplex', as, optional, root, segment, string)
+import Routing.Duplex (RouteDuplex', optional, root, segment, string)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/), (?))
 import Slug (Slug)
@@ -50,7 +49,7 @@ routeCodec =
         , "Discover": "discover" / noArgs
         , "Pricing": "pricing" / noArgs
         , "Changelog": "changelog" / noArgs
-        , "Profile": "u" / slug segment
+        , "Profile": "u" / Slug.term segment
           -- Legal
         , "Terms": "terms" / noArgs
         , "Policy": "policy" / noArgs
@@ -65,13 +64,8 @@ routeCodec =
         , "Settings": "settings" / noArgs
         , "CreateList": "list" / "create" / noArgs
         , "CreateResource": "resources" / "create" ? { url: optional <<< string }
-        , "ViewList": "list" / slug segment
-        , "EditList": "list" / slug segment / "edit"
-        , "IntegrationsList": "list" / slug segment / "integrations"
+        , "ViewList": "list" / Slug.term segment
+        , "EditList": "list" / Slug.term segment / "edit"
+        , "IntegrationsList": "list" / Slug.term segment / "integrations"
 
         }
-
--- TODO: Data.Slug with codecs
--- | This combinator transforms a codec over `String` into one that operates on the `Slug` type.
-slug :: RouteDuplex' String -> RouteDuplex' Slug
-slug = as Slug.toString (Slug.parse >>> note "Bad slug")

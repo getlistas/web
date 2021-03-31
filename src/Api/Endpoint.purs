@@ -11,11 +11,11 @@ import Data.Maybe (Maybe)
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 import Listasio.Data.Integration (IntegrationKind(..))
-import Listasio.Data.Route (slug)
 import Routing.Duplex (RouteDuplex', as, boolean, int, optional, root, segment)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/), (?))
 import Slug (Slug)
+import Slug as Slug
 
 type PaginationRep
   = ( limit :: Maybe Int
@@ -64,7 +64,7 @@ endpointCodec =
         , "Me": "users" / "me" / noArgs
         , "Users": "users" / noArgs
         , "List": "lists" / id segment
-        , "ListBySlug": "users" / slug segment / "lists" / slug segment
+        , "ListBySlug": "users" / Slug.term segment / "lists" / Slug.term segment
         , "ListFork": "lists" / id segment / "fork"
         , "Lists": "lists" / noArgs
         , "Discover": "discover" ?
