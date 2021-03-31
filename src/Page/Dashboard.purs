@@ -9,7 +9,7 @@ import Data.Either (Either, note)
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..))
 import Data.MediaType.Common as MediaType
-import Data.Traversable (traverse)
+import Data.Traversable (for_, traverse)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -24,6 +24,7 @@ import Listasio.Component.HTML.CreateResource as CreateResource
 import Listasio.Component.HTML.List as List
 import Listasio.Component.HTML.Modal as Modal
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
+import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
@@ -45,12 +46,14 @@ data Action
   | PasteUrl Clipboard.ClipboardEvent
   | ToggleCreateResource
   | HandleCreateResource CreateResource.Output
+  | HandleCreateResourceForList List.Output
 
 type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
     , lists :: RemoteData String (Array ListWithIdUserAndMeta)
     , showCreateResource :: Boolean
     , pastedUrl :: Maybe String
+    , createResourceForThisList :: Maybe ID
     }
 
 type ChildSlots
@@ -86,38 +89,41 @@ component = Connect.component $ H.mkComponent
     , lists: NotAsked
     , showCreateResource: false
     , pastedUrl: Nothing
+    , createResourceForThisList: Nothing
     }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
     Initialize -> void $ H.fork $ handleAction LoadLists
 
-    Receive { currentUser } -> H.modify_ _ { currentUser = currentUser }
+    Receive {currentUser} -> H.modify_ _ {currentUser = currentUser}
 
     Navigate route e -> navigate_ e route
 
     LoadLists -> do
-      H.modify_ _ { lists = Loading }
+      H.modify_ _ {lists = Loading}
       lists <- RemoteData.fromEither <$> noteError <$> getLists
-      H.modify_ _ { lists = lists }
+      H.modify_ _ {lists = lists}
 
     HandleCreateResource (CreateResource.Created resource) -> do
       void $ H.query List._listSlot resource.list $ H.tell $ List.ResourceAdded resource
-      H.modify_ _ { showCreateResource = false, pastedUrl = Nothing }
+      H.modify_ _ {showCreateResource = false, pastedUrl = Nothing}
+
+    HandleCreateResourceForList (List.CreateResourceForThisList id) -> do
+      H.modify_ _ {createResourceForThisList = Just id, showCreateResource = true}
 
     ToggleCreateResource ->
       H.modify_ \s -> s
         { showCreateResource = not s.showCreateResource
         , pastedUrl = filter (const s.showCreateResource) s.pastedUrl
+        , createResourceForThisList = Nothing
         }
 
     PasteUrl event -> do
-      { showCreateResource, lists } <- H.get
+      {showCreateResource, lists} <- H.get
       when (not showCreateResource && RemoteData.isSuccess lists) do
         mbUrl <- H.liftEffect $ filter Util.isUrl <$> traverse (DataTransfer.getData MediaType.textPlain) (Clipboard.clipboardData event)
-        case mbUrl of
-          Just url -> H.modify_ _ { showCreateResource = true, pastedUrl = Just url }
-          Nothing -> pure unit
+        for_ mbUrl \url -> H.modify_ _ {showCreateResource = true, pastedUrl = Just url}
 
   render :: State -> H.ComponentHTML Action ChildSlots m
   render st =
@@ -175,7 +181,7 @@ component = Connect.component $ H.mkComponent
           [ HH.div
               [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.xlGridCols3, T.gap4, T.itemsStart ] ]
               $ snoc
-                (map (\list -> HH.slot List._listSlot list.id List.component { list } absurd) lists)
+                (map (\list -> HH.slot List._listSlot list.id List.component { list } (Just <<< HandleCreateResourceForList)) lists)
                 listCreate
           , Modal.modal st.showCreateResource (Just ToggleCreateResource) $
               HH.div
@@ -184,7 +190,7 @@ component = Connect.component $ H.mkComponent
                     [ HP.classes [ T.textCenter, T.textGray400, T.text2xl, T.fontBold, T.mb4 ] ]
                     [ HH.text "Add new resource" ]
                 , whenElem st.showCreateResource \_ ->
-                    let input = { lists, url: st.pastedUrl }
+                    let input = { lists, url: st.pastedUrl, selectedList: st.createResourceForThisList }
                         queryHandler = Just <<< HandleCreateResource
                       in HH.slot CreateResource._createResource unit CreateResource.component input queryHandler
                 ]

@@ -519,6 +519,10 @@ hoverTextGray900 = ClassName "hover:text-gray-900"
 hoverTextKiwi :: ClassName
 hoverTextKiwi = ClassName "hover:text-kiwi"
 
+-- | hoverTextKiwiDark
+hoverTextKiwiDark :: ClassName
+hoverTextKiwiDark = ClassName "hover:text-kiwi-dark"
+
 -- | hoverTextManzana
 hoverTextManzana :: ClassName
 hoverTextManzana = ClassName "hover:text-manzana"
@@ -1103,6 +1107,10 @@ pt5 = ClassName "pt-5"
 pt6 :: ClassName
 pt6 = ClassName "pt-6"
 
+-- | px1
+px1 :: ClassName
+px1 = ClassName "px-1"
+
 -- | px2
 px2 :: ClassName
 px2 = ClassName "px-2"
@@ -1614,6 +1622,10 @@ truncate = ClassName "truncate"
 -- | typingCursor
 typingCursor :: ClassName
 typingCursor = ClassName "typing-cursor"
+
+-- | underline
+underline :: ClassName
+underline = ClassName "underline"
 
 -- | uppercase
 uppercase :: ClassName
