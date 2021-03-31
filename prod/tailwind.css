@@ -11155,11 +11155,6 @@ select{
     line-height: 1.75rem;
   }
 
-  .xl\:text-6xl {
-    font-size: 3.75rem;
-    line-height: 1;
-  }
-
   .group:hover .xl\:group-hover\:opacity-0 {
     opacity: 0;
   }
