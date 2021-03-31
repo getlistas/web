@@ -158,7 +158,7 @@ createdProfileCodec =
     { email: Email.codec
     , name: Username.codec
     , id: ID.codec
-    , slug: CA.prismaticCodec Slug.generate Slug.toString CA.string
+    , slug: Slug.codec
     }
 
 userCodec ::  JsonCodec User

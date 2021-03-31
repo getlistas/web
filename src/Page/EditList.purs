@@ -8,6 +8,7 @@ import Data.Either (note)
 import Data.Lens (preview)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
+import Effect.Class.Console (log)
 import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
@@ -78,6 +79,7 @@ component = Connect.component $ H.mkComponent
       case st.currentUser, currentUser of
         Nothing, Just { slug } -> do
           H.modify_ _ { list = Loading }
+          log $ show { list: st.slug, user: slug }
           list <- RemoteData.fromEither <$> note "Could not get list" <$> getListBySlug { list: st.slug, user: slug }
           H.modify_ _ { list = list }
         _, _ -> pure unit

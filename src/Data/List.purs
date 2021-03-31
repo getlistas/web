@@ -108,7 +108,7 @@ publicListCodec :: JsonCodec PublicListWithUser
 publicListCodec =
   CAR.object "PublicListWithUser"
     { id: ID.codec
-    , slug: slugCodec
+    , slug: Slug.codec
     , title: CA.string
     , description: CAC.maybe CA.string
     , tags: CAC.array CA.string
@@ -155,7 +155,7 @@ listWitIdAndUserCodec :: JsonCodec ListWithIdAndUser
 listWitIdAndUserCodec =
   CAR.object "ListWithIdAndUser"
     { id: ID.codec
-    , slug: slugCodec
+    , slug: Slug.codec
     , title: CA.string
     , description: CAC.maybe CA.string
     , tags: CAC.array CA.string
@@ -170,7 +170,7 @@ listWitIdUserAndMetaCodec :: JsonCodec ListWithIdUserAndMeta
 listWitIdUserAndMetaCodec =
   CAR.object "ListWithIdUserAndMeta"
     { id: ID.codec
-    , slug: slugCodec
+    , slug: Slug.codec
     , title: CA.string
     , description: CAC.maybe CA.string
     , tags: CAC.array CA.string
@@ -181,8 +181,3 @@ listWitIdUserAndMetaCodec =
     , resource_metadata: resourceMetaCodec
     , fork: CAC.maybe forkMetaCodec
     }
-
--- TODO: stop repeating this implementation
--- TODO: Slug.parse instead of Slug.generate (underscores break it)
-slugCodec :: JsonCodec Slug
-slugCodec = CA.prismaticCodec Slug.generate Slug.toString CA.string
