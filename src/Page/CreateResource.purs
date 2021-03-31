@@ -2,7 +2,6 @@ module Listasio.Page.CreateResource where
 
 import Prelude
 
-import Listasio.Component.HTML.Icons as Icons
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Either (Either, note)
@@ -16,6 +15,7 @@ import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Component.HTML.CreateResource as CreateResource
+import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Utils (safeHref)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
@@ -115,7 +115,7 @@ component = Connect.component $ H.mkComponent
       Success lists ->
         HH.div
           [ HP.classes [ T.wFull, T.maxWLg ] ]
-          [ let input = { lists, url: st.url }
+          [ let input = {lists, url: st.url, selectedList: Nothing}
                 queryHandler = Just <<< HandleCreateResource
              in HH.slot CreateResource._createResource unit CreateResource.component input queryHandler
           ]

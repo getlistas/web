@@ -2,7 +2,7 @@ module Listasio.Component.HTML.CreateResource where
 
 import Prelude
 
-import Data.Array (sortWith)
+import Data.Array (sortWith, find)
 import Data.Char.Unicode as Char
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), fromMaybe)
@@ -10,7 +10,7 @@ import Data.MediaType.Common as MediaType
 import Data.Newtype (class Newtype, unwrap)
 import Data.String.CodeUnits as String
 import Data.Symbol (SProxy(..))
-import Data.Traversable (traverse)
+import Data.Traversable (for_, traverse)
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
@@ -46,11 +46,13 @@ data Action
 
 type State
   = { lists :: Array ListWithIdUserAndMeta
+    , selectedList :: Maybe ID
     , url :: Maybe String
     }
 
 type Input
   = { lists :: Array ListWithIdUserAndMeta
+    , selectedList :: Maybe ID
     , url :: Maybe String
     }
 
@@ -76,8 +78,9 @@ component = H.mkComponent
       }
   }
   where
-  initialState { lists, url } =
+  initialState {lists, selectedList, url} =
     { lists: sortWith (filterNonAlphanum <<< _.title) lists
+    , selectedList
     , url
     }
 
@@ -97,12 +100,12 @@ component = H.mkComponent
           void $ H.query F._formless unit $ F.injQuery $ SetCreateStatus (Failure "Could not create resource") unit
 
   render :: State -> HH.ComponentHTML Action ChildSlots m
-  render { lists, url } =
+  render state =
     HH.div
       []
-      [ HH.slot F._formless unit formComponent { lists, url } (Just <<< HandleFormMessage) ]
+      [ HH.slot F._formless unit formComponent state (Just <<< HandleFormMessage) ]
 
-newtype DDItem = DDItem { label :: String, value :: ID }
+newtype DDItem = DDItem {label :: String, value :: ID}
 
 derive instance eqDDItem :: Eq DDItem
 derive instance newtypeDDItem :: Newtype DDItem _
@@ -140,6 +143,7 @@ data FormAction
 
 type FormInput
   = { lists :: Array ListWithIdUserAndMeta
+    , selectedList :: Maybe ID
     , url :: Maybe String
     }
 
@@ -150,6 +154,7 @@ type FormState =
   , meta :: RemoteData String ResourceMeta
   , pastedUrl :: Maybe String
   , lists :: Array ListWithIdUserAndMeta
+  , selectedList :: Maybe ID
   )
 
 formComponent ::
@@ -166,7 +171,7 @@ formComponent = F.component formInput $ F.defaultSpec
   }
   where
   formInput :: FormInput -> F.Input CreateResourceForm FormState m
-  formInput { lists, url } =
+  formInput {lists, url, selectedList} =
     { validators:
         CreateResourceForm
           { title: V.required >>> V.maxLength 150
@@ -181,6 +186,7 @@ formComponent = F.component formInput $ F.defaultSpec
     , meta: NotAsked
     , lists
     , pastedUrl: url
+    , selectedList
     }
 
   initialInputs url = F.wrapInputFields
@@ -195,10 +201,15 @@ formComponent = F.component formInput $ F.defaultSpec
 
   handleAction = case _ of
     FormInitialize -> do
-      { pastedUrl } <- H.get
-      case pastedUrl of
-        Just url -> handleAction $ FetchMeta url
-        Nothing -> pure unit
+      {pastedUrl, form, selectedList, lists} <- H.get
+
+      let mbSelectedItem = listToItem <$> ((\id -> find ((id == _) <<< _.id) lists) =<< selectedList)
+
+      for_ mbSelectedItem \item ->
+        void $ H.query DD._dropdown unit (DD.select item)
+
+      -- TODO fork
+      for_ pastedUrl \url -> handleAction $ FetchMeta url
 
     PasteUrl event -> do
       mbUrl <- H.liftEffect $ filter Util.isUrl <$> traverse (DataTransfer.getData MediaType.textPlain) (Clipboard.clipboardData event)
@@ -207,11 +218,11 @@ formComponent = F.component formInput $ F.defaultSpec
         Nothing -> pure unit
 
     FetchMeta url -> do
-      H.modify_ _ { meta = Loading }
+      H.modify_ _ {meta = Loading}
       mbMeta <- getMeta url
       case mbMeta of
         Just meta -> do
-          H.modify_ _ { meta = Success meta }
+          H.modify_ _ {meta = Success meta}
           eval $ F.setValidate proxies.thumbnail meta.thumbnail
           case meta.title of
             Just title -> eval $ F.setValidate proxies.title title
@@ -220,14 +231,14 @@ formComponent = F.component formInput $ F.defaultSpec
             Just description -> eval $ F.setValidate proxies.description description
             Nothing -> pure unit
         Nothing ->
-          H.modify_ _ { meta = Failure "Couldn't gett suggestions" }
+          H.modify_ _ {meta = Failure "Couldn't gett suggestions"}
 
     Submit event -> do
       H.liftEffect $ Event.preventDefault event
-      { status } <- H.get
+      {status} <- H.get
       when (not $ isLoading status) do eval F.submit
 
-    HandleDropdown (DD.Selected (DDItem { value })) ->
+    HandleDropdown (DD.Selected (DDItem {value})) ->
       eval $ F.setValidate proxies.list (Just value)
 
     HandleDropdown DD.Cleared ->
@@ -239,7 +250,7 @@ formComponent = F.component formInput $ F.defaultSpec
   handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
     SetCreateStatus status a -> do
-      H.modify_ _ { status = status }
+      H.modify_ _ {status = status}
       when (isSuccess status) do
         eval F.resetAll
         void $ H.query DD._dropdown unit DD.clear
@@ -250,7 +261,7 @@ formComponent = F.component formInput $ F.defaultSpec
 
   proxies = F.mkSProxies (F.FormProxy :: _ CreateResourceForm)
 
-  renderCreateResource { form, status, lists, submitting, dirty, meta } =
+  renderCreateResource {form, status, lists, submitting, dirty, meta} =
     HH.form
       [ HE.onSubmit $ Just <<< F.injAction <<< Submit
       , HP.noValidate true
@@ -284,7 +295,9 @@ formComponent = F.component formInput $ F.defaultSpec
                       [ HP.classes [ T.block, T.textSm, T.fontMedium, T.textGray400 ] ]
                       [ HH.text "List" ]
                   ]
+
               , HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput handler
+
               , let mbError = filter (const $ F.getTouched proxies.list form) $ F.getError proxies.list form
                  in maybeElem mbError \err ->
                       HH.div
@@ -354,8 +367,7 @@ formComponent = F.component formInput $ F.defaultSpec
       ]
     where
     handler = Just <<< F.injAction <<< HandleDropdown
-    listToItem { id, title } = DDItem { value: id, label: title }
-    ddInput = { placeholder: "Choose a list", items: map listToItem lists }
+    ddInput = {placeholder: "Choose a list", items: map listToItem lists}
 
     url =
       Field.input proxies.url form $ Field.defaultProps
@@ -386,3 +398,5 @@ formComponent = F.component formInput $ F.defaultSpec
         , placeholder = Just "Such description. Much wow."
         , props = [HP.rows 3]
         }
+
+  listToItem {id, title} = DDItem {value: id, label: title}

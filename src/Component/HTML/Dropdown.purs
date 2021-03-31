@@ -18,15 +18,19 @@ import Select.Setters as Setters
 import Tailwind as T
 
 type Slot item =
-  H.Slot (Select.Query Query ()) (Message item)
+  H.Slot (Select.Query (Query item) ()) (Message item)
 
 _dropdown = SProxy :: SProxy "dropdown"
 
-data Query a
+data Query item a
   = Clear a
+  | Select item a
 
-clear :: Select.Query Query () Unit
+clear :: forall item. Select.Query (Query item) () Unit
 clear = Select.Query (H.tell Clear)
+
+select :: forall item. item -> Select.Query (Query item) () Unit
+select item = Select.Query (H.tell $ Select item)
 
 type State item =
   ( selected :: Maybe item
@@ -61,7 +65,7 @@ spec
    . MonadAff m
   => ToText item
   => Eq item
-  => Select.Spec (State item) Query Void () i (Message item) m
+  => Select.Spec (State item) (Query item) Void () i (Message item) m
 spec = Select.defaultSpec
   { render = render
   , handleQuery = handleQuery
@@ -81,11 +85,16 @@ spec = Select.defaultSpec
       , menu st
       ]
 
-  handleQuery :: forall a. Query a -> H.HalogenM _ _ _ _ _ (Maybe a)
+  handleQuery :: forall a. Query item a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
     Clear a -> do
       H.modify_ \st -> st { selected = Nothing, available = st.items }
       H.raise Cleared
+      pure (Just a)
+
+    Select item a -> do
+      H.modify_ \st -> st { selected = Just item, available = difference st.items [ item ] }
+      H.raise $ Selected item
       pure (Just a)
 
   handleEvent = case _ of
@@ -98,6 +107,7 @@ spec = Select.defaultSpec
           , visibility = Select.Off
           }
         H.raise (Selected item)
+
     _ -> pure unit
 
 toggle

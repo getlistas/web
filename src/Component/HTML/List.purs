@@ -42,7 +42,7 @@ import Web.HTML.Location as Location
 import Web.HTML.Window (location) as Window
 import Web.UIEvent.MouseEvent as Mouse
 
-type Slot = H.Slot Query Void ID
+type Slot = H.Slot Query Output ID
 
 _listSlot = SProxy :: SProxy "list"
 
@@ -56,12 +56,16 @@ data Action
   | CompleteResource ListResource
   | DeleteResource ListResource
   | Navigate Route Event
+  | RaiseCreateResource ID
 
 type Input
   = { list :: ListWithIdUserAndMeta }
 
 data Query a
   = ResourceAdded ListResource a
+
+data Output
+  = CreateResourceForThisList ID
 
 insertResourceAt :: Int -> ListResource -> State -> State
 insertResourceAt i resource =
@@ -81,13 +85,13 @@ type State
     , showNextMenu :: Boolean
     }
 
-component :: forall o m.
+component :: forall m.
      MonadAff m
   => ManageResource m
   => Clipboard m
   => Now m
   => Navigate m
-  => H.Component HH.HTML Query Input o m
+  => H.Component HH.HTML Query Input Output m
 component = H.mkComponent
   { initialState
   , render
@@ -106,7 +110,7 @@ component = H.mkComponent
     , showNextMenu: false
     }
 
-  handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
+  handleAction :: forall slots. Action -> H.HalogenM State Action slots Output m Unit
   handleAction = case _ of
     Initialize -> do
       H.modify_ $ over _resources $ \rs -> if RemoteData.isSuccess rs then rs else Loading
@@ -170,9 +174,11 @@ component = H.mkComponent
           H.modify_ $ set _markingAsDone true
         Nothing -> pure unit
 
+    RaiseCreateResource id -> H.raise $ CreateResourceForThisList id
+
     Navigate route e -> navigate_ e route
 
-  handleQuery :: forall slots a. Query a -> H.HalogenM State Action slots o m (Maybe a)
+  handleQuery :: forall slots a. Query a -> H.HalogenM State Action slots Output m (Maybe a)
   handleQuery = case _ of
     ResourceAdded resource a -> do
       H.modify_
@@ -216,13 +222,30 @@ component = H.mkComponent
               , T.flexCol
               , T.itemsCenter
               , T.justifyCenter
-              , T.textGray200
-              , T.fontSemibold
               , T.h40
               ]
           ]
-          [ HH.div [] [ HH.text "This list is empty" ]
-          , HH.div [] [ HH.text "Add items!" ]
+          [ HH.div
+              []
+              [ HH.span
+                  [ HP.classes [ T.textGray300, T.fontSemibold ] ]
+                  [ HH.text "This list is empty, " ]
+              , HH.button
+                  [ HP.classes
+                      [ T.px1
+                      , T.textKiwi
+                      , T.hoverTextKiwiDark
+                      , T.underline
+                      , T.fontSemibold
+                      , T.focusRing1
+                      , T.focusRingKiwi
+                      , T.focusOutlineNone
+                      ]
+                  , HP.type_ HP.ButtonButton
+                  , HE.onClick $ \_ -> Just $ RaiseCreateResource list.id
+                  ]
+                  [ HH.text "add resource" ]
+              ]
           ]
 
       { count, completed_count }, _ | count == completed_count ->
@@ -240,8 +263,8 @@ component = H.mkComponent
               , T.h40
               ]
           ]
-          [ HH.div [] [ HH.text "All items completed" ]
-          , HH.div [] [ HH.text "Add more items!" ]
+          [ HH.div [] [ HH.text "All done" ]
+          , Icons.celebrate []
           ]
 
       _, _ ->
