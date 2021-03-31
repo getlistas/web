@@ -133,8 +133,8 @@ component = Connect.component $ H.mkComponent
       [ HP.classes [ T.bgWhite ] ]
       [ heroAndNav
       , if false then splitImageAndFeature else HH.text ""
-      , featureCardWithImageLeft
-      , featureCardWithImageRight
+      , readingListsFeatureCard
+      , discoveryFeatureCard
       , featuresList
       , footer Navigate
       ]
@@ -199,24 +199,25 @@ component = Connect.component $ H.mkComponent
             [ HH.h1
                 [ HP.classes
                     [ T.mt4
-                    , T.text4xl
                     , T.trackingTight
                     , T.fontExtrabold
                     , T.smMt5
                     , T.smLeadingNone
                     , T.lgMt6
+                    , T.text4xl
                     , T.lgText5xl
-                    , T.xlText6xl
                     ]
                 ]
                 [ HH.span
                     [ HP.classes [ T.textGray400, T.block ] ]
-                    [ HH.slot (SProxy :: _ "typed") unit Typed.component {words: NEA.cons' "Create" ["Manage", "Share"]} absurd
-                    , HH.text " your"
+                    [ HH.text "Create, manage, share"
                     ]
                 , HH.span
                     [ HP.classes [ T.textKiwi, T.block ] ]
-                    [ HH.text " Reading lists" ]
+                    [ HH.text " your "
+                    , HH.slot (SProxy :: _ "typed") unit Typed.component {words: NEA.cons' "reading" ["watching", "listening"]} absurd
+                    , HH.text " lists"
+                    ]
                 ]
             , HH.p
                 [ HP.classes
@@ -229,7 +230,7 @@ component = Connect.component $ H.mkComponent
                     , T.xlTextXl
                     ]
                 ]
-                [ HH.text "Create reading lists and learning paths for yourself and to share with the world. Keep a reference to any article, podcast, and video you consumed. Discover what others are reading and learn." ]
+                [ HH.text "Your reading lists and learning paths under control. Keep a reference and stats of any article, podcast, and video you have consumed. Discover, copy and follow what other people are reading." ]
             ]
         ]
 
@@ -684,34 +685,29 @@ component = Connect.component $ H.mkComponent
                     [ T.mt2
                     , T.text3xl
                     , T.fontExtrabold
-                    , T.textGray900
+                    , T.textGray400
                     , T.trackingTight
                     , T.smText4xl
                     ]
                 ]
                 [ HH.text "Enhance the way you consume and share content" ]
-            , HH.p
-                [ HP.classes [ T.mt5, T.maxWProse, T.mxAuto, T.textXl, T.textGray500 ] ]
-                [ HH.text "Optimize your experience with our following features." ]
+            -- , HH.p
+            --     [ HP.classes [ T.mt5, T.maxWProse, T.mxAuto, T.textXl, T.textGray500 ] ]
+            --     [ HH.text "Optimize your experience with our following features." ]
             , HH.div
                 [ HP.classes [ T.mt12 ] ]
                 [ HH.div
                     [ HP.classes [ T.grid, T.gridCols1, T.gap8, T.smGridCols2, T.lgGridCols3 ] ]
                     [ feature
                         Icons.duplicate
-                        "Copy lists"
-                        "Copy interesting Lists or share your content with others allowing them to copy your public List."
+                        "Copy"
+                        "Copy public lists content to read it yourself."
                         false
                     , feature
                         Icons.userAdd
-                        "Follow lists"
-                        "Follow multiple lists, don't miss anything from the authors you like."
+                        "Subscribe"
+                        "Subscribe to a list and get up to date content from the list author."
                         true
-                    , feature
-                        Icons.calendar
-                        "Up next"
-                        "Save your content to consume it in the order you want."
-                        false
                     , feature
                         Icons.bookmark
                         "History"
@@ -725,14 +721,14 @@ component = Connect.component $ H.mkComponent
                     , feature
                         Icons.hashtag
                         "Discover"
-                        "Explore other users' content and make your lists public to let other users check your content."
+                        "Explore and discover lists and learning paths from others."
                         false
                     ]
                 ]
             ]
         ]
 
-    featureCardWithImageRight =
+    discoveryFeatureCard =
       HH.div
         [ HP.classes [ T.bgWhite ] ]
         [ HH.div
@@ -775,14 +771,14 @@ component = Connect.component $ H.mkComponent
                             [ HP.classes [ T.text3xl, T.fontExtrabold, T.textWhite, T.smText4xl ] ]
                             [ HH.span
                                 [ HP.classes [ T.block ] ]
-                                [ HH.text "Ready to dive in?" ]
+                                [ HH.text "Discover and learning paths" ]
                             ]
                         , HH.p
                             [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textGray400 ] ]
-                            [ HH.text "Create an account for free (No credit card required) and start exploring. Listas aims to boost your productivity while keeping track of the content you consumed to be able to come back to it in the future, share it or just look at your stats." ]
+                            [ HH.text "Want to put together a list that helped you grow in a specific area and share it with friends? Listas can help! Want to subscribe interesting reading Lists? Listas discover section might have what you need!" ]
                         , HH.p
                             [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textGray400 ] ]
-                            [ HH.text "Listas also tries to assist content creators or educators by allowing them to create “Learning Paths” lists so users / students can follow and consume content in the right order and get notified when new content arrives." ]
+                            [ HH.text "Learning paths allow users to create and copy or follow lists designed to be consumed in a specific sequential order laid-out by the author." ]
                         ]
                     ]
                 , HH.div
@@ -806,7 +802,7 @@ component = Connect.component $ H.mkComponent
             ]
         ]
 
-    featureCardWithImageLeft =
+    readingListsFeatureCard =
       HH.div
         [ HP.classes [ T.bgWhite ] ]
         [ HH.div
@@ -868,14 +864,14 @@ component = Connect.component $ H.mkComponent
                             [ HP.classes [ T.text3xl, T.fontExtrabold, T.textWhite, T.smText4xl ] ]
                             [ HH.span
                                 [ HP.classes [ T.block ] ]
-                                [ HH.text "Ready to dive in?" ]
+                                [ HH.text "Manage your reading lists" ]
                             ]
                         , HH.p
                             [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textGray400 ] ]
-                            [ HH.text "Create an account for free (No credit card required) and start exploring. Listas aims to boost your productivity while keeping track of the content you consumed to be able to come back to it in the future, share it or just look at your stats." ]
+                            [ HH.text "Listas lets you organize your reading material on different lists and focus only on what to read next." ]
                         , HH.p
                             [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textGray400 ] ]
-                            [ HH.text "Listas also tries to assist content creators or educators by allowing them to create “Learning Paths” lists so users / students can follow and consume content in the right order and get notified when new content arrives." ]
+                            [ HH.text "You'll have access to everything you read. Having trouble remembering that article you read last year? Find it on Listas. Want to measure how much you read every week? Listas shows you stats of your reading progress and habits." ]
                         ]
                     ]
                 ]
