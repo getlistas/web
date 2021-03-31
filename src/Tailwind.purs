@@ -1339,10 +1339,6 @@ smMxAuto = ClassName "sm:mx-auto"
 smMy8 :: ClassName
 smMy8 = ClassName "sm:my-8"
 
--- | smNegTranslateX16
-smNegTranslateX16 :: ClassName
-smNegTranslateX16 = ClassName "sm:-translate-x-16"
-
 -- | smNegTranslateX6
 smNegTranslateX6 :: ClassName
 smNegTranslateX6 = ClassName "sm:-translate-x-6"
@@ -1726,10 +1722,6 @@ xlPy20 = ClassName "xl:py-20"
 -- | xlSpaceY10
 xlSpaceY10 :: ClassName
 xlSpaceY10 = ClassName "xl:space-y-10"
-
--- | xlText6xl
-xlText6xl :: ClassName
-xlText6xl = ClassName "xl:text-6xl"
 
 -- | xlTextLeft
 xlTextLeft :: ClassName
