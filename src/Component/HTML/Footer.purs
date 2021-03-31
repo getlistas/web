@@ -34,7 +34,6 @@ footer navigate =
         [ HH.nav
             [ HP.classes [ T.negMx5, T.negMy2, T.flex, T.flexWrap, T.justifyCenter ] ]
             [ link About "About"
-            , link Pricing "Pricing"
             , externalLink
                 "https://www.notion.so/gillchristian/8178e02c59604fc88bb5dc91358c736f"
                 "Roadmap"
