@@ -11,7 +11,6 @@ import Data.Maybe (Maybe(..))
 import Data.MediaType.Common as MediaType
 import Data.Traversable (for_, traverse)
 import Effect.Aff.Class (class MonadAff)
-import Effect.Class.Console (log)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
