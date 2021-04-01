@@ -392,7 +392,7 @@ component = H.mkComponent
                     [ safeHref $ EditList list.slug
                     , HE.onClick (Just <<< Navigate (EditList list.slug) <<< Mouse.toEvent)
                     ]
-                    [ Icons.cog [ Icons.classes [ T.ml4, T.h5, T.w5, T.textGray300, T.hoverTextGray400 ] ] ]
+                    [ Icons.cog [ Icons.classes [ T.ml2, T.h5, T.w5, T.textGray300, T.hoverTextGray400 ] ] ]
                 ]
             ]
         , maybeElem list.resource_metadata.last_completed_at \last_done ->
