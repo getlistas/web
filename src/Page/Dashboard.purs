@@ -11,10 +11,12 @@ import Data.Maybe (Maybe(..))
 import Data.MediaType.Common as MediaType
 import Data.Traversable (for_, traverse)
 import Effect.Aff.Class (class MonadAff)
+import Effect.Class.Console (log)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Query.EventSource as HES
 import Listasio.Capability.Clipboard (class Clipboard)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Now (class Now)
@@ -32,10 +34,15 @@ import Listasio.Env (UserEnv)
 import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
 import Tailwind as T
+import Unsafe.Coerce (unsafeCoerce)
 import Util as Util
-import Web.Clipboard.ClipboardEvent as Clipboard
+import Web.Clipboard.ClipboardEvent (ClipboardEvent, clipboardData) as Clipboard
+import Web.Clipboard.ClipboardEvent.EventTypes (paste) as Clipboard
 import Web.Event.Event (Event)
+import Web.HTML (window) as Web
 import Web.HTML.Event.DataTransfer as DataTransfer
+import Web.HTML.HTMLDocument as HTMLDocument
+import Web.HTML.Window (document) as Web
 import Web.UIEvent.MouseEvent as Mouse
 
 data Action
@@ -94,7 +101,14 @@ component = Connect.component $ H.mkComponent
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
-    Initialize -> void $ H.fork $ handleAction LoadLists
+    Initialize -> do
+      void $ H.fork $ handleAction LoadLists
+      document <- H.liftEffect $ HTMLDocument.toEventTarget <$> (Web.document =<< Web.window)
+      -- unsafeCoerce is fine here, we are only listening to clipboard paste events :)
+      -- Halogen does the same ;)
+      -- https://github.com/purescript-halogen/purescript-halogen/blob/2f8531168207cda5256dc64da60f791afe3855dc/src/Halogen/HTML/Events.purs#L271-L272
+      -- https://github.com/purescript-halogen/purescript-halogen/blob/2f8531168207cda5256dc64da60f791afe3855dc/src/Halogen/HTML/Events.purs#L151-L152
+      void $ H.subscribe $ HES.eventListenerEventSource Clipboard.paste document (Just <<< PasteUrl <<< unsafeCoerce)
 
     Receive {currentUser} -> H.modify_ _ {currentUser = currentUser}
 
@@ -115,7 +129,7 @@ component = Connect.component $ H.mkComponent
     ToggleCreateResource ->
       H.modify_ \s -> s
         { showCreateResource = not s.showCreateResource
-        , pastedUrl = filter (const s.showCreateResource) s.pastedUrl
+        , pastedUrl = filter (const $ not s.showCreateResource) s.pastedUrl
         , createResourceForThisList = Nothing
         }
 
@@ -128,13 +142,9 @@ component = Connect.component $ H.mkComponent
   render :: State -> H.ComponentHTML Action ChildSlots m
   render st =
     HH.div
-      -- TODO: do this on the `body` instead
-      [ HE.onPaste $ Just <<< PasteUrl ]
-      [ HH.div
-          []
-          [ header
-          , HH.div [ HP.classes [ T.container ] ] [ feed ]
-          ]
+      []
+      [ header
+      , HH.div [ HP.classes [ T.container ] ] [ feed ]
       ]
 
     where
