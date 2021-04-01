@@ -2406,6 +2406,10 @@ select{
   margin-right: -1.25rem;
 }
 
+.mr-0 {
+  margin-right: 0px;
+}
+
 .mt-1 {
   margin-top: 0.25rem;
 }
@@ -3797,10 +3801,6 @@ select{
 
 .w-screen {
   width: 100vw;
-}
-
-.z-0 {
-  z-index: 0;
 }
 
 .z-10 {
@@ -5299,6 +5299,10 @@ select{
     margin-top: 0px;
   }
 
+  .sm\:mr-4 {
+    margin-right: 1rem;
+  }
+
   .sm\:ml-4 {
     margin-left: 1rem;
   }
@@ -6006,6 +6010,10 @@ select{
 
   .sm\:align-middle {
     vertical-align: middle;
+  }
+
+  .sm\:w-auto {
+    width: auto;
   }
 
   .sm\:w-full {
