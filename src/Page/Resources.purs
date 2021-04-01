@@ -200,7 +200,7 @@ component = Connect.component $ H.mkComponent
       HH.div
         [ HP.classes [ T.flex, T.itemsStart, T.flexWrap, T.my6 ] ]
         [ HH.div
-            [ HP.classes [ T.mb4, T.mr4 ] ]
+            [ HP.classes [ T.mb4, T.mr0, T.smMr4, T.wFull , T.smWAuto ] ]
             [ ToggleGroup.toggleGroup
                 false
                 [ { label: "None", action: Just (ToggleGroupBy GroupNone), active: groupBy == GroupNone }
@@ -209,7 +209,7 @@ component = Connect.component $ H.mkComponent
                 ]
             ]
         , HH.div
-            []
+            [ HP.classes [ T.wFull , T.smWAuto ] ]
             [ ToggleGroup.toggleGroup
                 (groupBy == GroupDate)
                 [ { label: "All", action: Just (ToggleFilterByDone ShowAll), active: filterByDone == ShowAll && groupBy /= GroupDate }
