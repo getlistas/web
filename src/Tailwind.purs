@@ -871,6 +871,10 @@ ml4 = ClassName "ml-4"
 ml6 :: ClassName
 ml6 = ClassName "ml-6"
 
+-- | mr0
+mr0 :: ClassName
+mr0 = ClassName "mr-0"
+
 -- | mr1
 mr1 :: ClassName
 mr1 = ClassName "mr-1"
@@ -1327,6 +1331,10 @@ smMl4 = ClassName "sm:ml-4"
 smMl6 :: ClassName
 smMl6 = ClassName "sm:ml-6"
 
+-- | smMr4
+smMr4 :: ClassName
+smMr4 = ClassName "sm:mr-4"
+
 -- | smMt0
 smMt0 :: ClassName
 smMt0 = ClassName "sm:mt-0"
@@ -1426,6 +1434,10 @@ smTextXl = ClassName "sm:text-xl"
 -- | smTranslateX16
 smTranslateX16 :: ClassName
 smTranslateX16 = ClassName "sm:translate-x-16"
+
+-- | smWAuto
+smWAuto :: ClassName
+smWAuto = ClassName "sm:w-auto"
 
 -- | smWFull
 smWFull :: ClassName
@@ -1746,10 +1758,6 @@ xlTextXl = ClassName "xl:text-xl"
 -- | xlW56
 xlW56 :: ClassName
 xlW56 = ClassName "xl:w-56"
-
--- | z0
-z0 :: ClassName
-z0 = ClassName "z-0"
 
 -- | z10
 z10 :: ClassName

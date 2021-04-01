@@ -23,10 +23,13 @@ toggleGroup disabled btns =
         , T.bgGray100
         , T.py1
         , T.flex
+        , T.justifyBetween
         , T.divideX2
         , T.divideWhite
         , T.textSm
         , cx T.cursorNotAllowed disabled
+        , T.wFull
+        , T.smWAuto
         ]
     ]
     $ map (toggleGroupBtn disabled) btns
@@ -34,7 +37,7 @@ toggleGroup disabled btns =
 toggleGroupBtn :: forall i p. Boolean -> ButtonSpec p -> HH.HTML i p
 toggleGroupBtn disabled { action, label, active } =
   HH.div
-    [ HP.classes [ T.px2 ] ]
+    [ HP.classes [ T.px2, T.wFull, T.smWAuto ] ]
     [ HH.button
         [ HP.type_ HP.ButtonButton
         , HE.onClick \_ -> action
@@ -44,6 +47,7 @@ toggleGroupBtn disabled { action, label, active } =
             , T.px4
             , T.py1
             , T.wFull
+            , T.textCenter
             , cx T.bgKiwi active
             , cx T.textWhite active
             , cx T.bgTransparent $ not active
