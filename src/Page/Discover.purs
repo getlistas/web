@@ -156,9 +156,12 @@ component = Connect.component $ H.mkComponent
   render state@{currentUser, lists, isLast} =
     HH.div
       []
-      [ HH.h1
-          [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-          [ HH.text "Discover" ]
+      [ HH.div
+          [ HP.classes [ T.pt2 ] ]
+          [ HH.h1
+              [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
+              [ HH.text "Discover" ]
+          ]
       , wip
       , feed
       ]

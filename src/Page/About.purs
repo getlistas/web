@@ -52,9 +52,12 @@ component = Connect.component $ H.mkComponent
   render { currentUser } =
     HH.div
       []
-      [ HH.h1
-          [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-          [ HH.text "About" ]
+      [ HH.div
+          [ HP.classes [ T.pt2 ] ]
+          [ HH.h1
+              [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
+              [ HH.text "About" ]
+          ]
       , team
           [ { avatar: "https://avatars.githubusercontent.com/u/6719053?s=460&u=67beac88e53b8a83a0327eb03d0554547f4373e6&v=4"
             , name: "Nicolas"

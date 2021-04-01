@@ -86,7 +86,7 @@ component = Connect.component $ H.mkComponent
     where
     title =
       HH.div
-        [ HP.classes [ T.flex, T.itemsCenter, T.textGray400, T.mb6, T.text4xl, T.fontBold  ] ]
+        [ HP.classes [ T.flex, T.itemsCenter, T.textGray400, T.mb6, T.text4xl, T.fontBold, T.pt2  ] ]
         [ HH.a
             [ safeHref Dashboard
             , HE.onClick \e -> Just $ Navigate Dashboard $ toEvent e
