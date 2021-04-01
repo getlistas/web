@@ -98,9 +98,12 @@ component = Connect.component $ H.mkComponent
   render { currentUser } =
     HH.div
       []
-      [ HH.h1
-          [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-          [ HH.text "Settings" ]
+      [ HH.div
+          [ HP.classes [ T.pt2 ] ]
+          [ HH.h1
+              [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
+              [ HH.text "Settings" ]
+          ]
       , HH.div
           []
           [ whenElem false \_ -> HH.slot F._formless unit formComponent unit (Just <<< HandleForm)

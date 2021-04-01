@@ -149,7 +149,7 @@ component = Connect.component $ H.mkComponent
     where
     header =
       HH.div
-        [ HP.classes [ T.flex, T.justifyBetween, T.wFull ] ]
+        [ HP.classes [ T.flex, T.justifyBetween, T.wFull, T.pt2 ] ]
         [ HH.h1
             [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
             [ HH.text "Up next" ]

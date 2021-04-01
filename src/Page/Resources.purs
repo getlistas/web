@@ -187,9 +187,12 @@ component = Connect.component $ H.mkComponent
   render { currentUser, resources, lists: mbLists, groupBy, filterByDone } =
     HH.div
       []
-      [ HH.h1
-          [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-          [ HH.text "Resources" ]
+      [ HH.div
+          [ HP.classes [ T.pt2 ] ]
+          [ HH.h1
+              [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
+              [ HH.text "Resources" ]
+          ]
       , settings
       , feed
       ]
