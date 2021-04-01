@@ -31,7 +31,7 @@ buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
   HH.span
     [ HP.classes
         [ T.relative
-        , T.z0
+        , T.z10
         , T.inlineFlex
         , T.shadowSm
         , T.roundedMd

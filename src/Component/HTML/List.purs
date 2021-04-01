@@ -419,8 +419,7 @@ component = H.mkComponent
                 [ HE.onClick \_ -> Just ToggleShowMore
                 , HP.disabled $ not hasMore
                 , HP.classes
-                    [ T.focusOutlineNone
-                    , T.flex
+                    [ T.flex
                     , T.flexCol
                     , T.itemsCenter
                     , T.disabledCursorNotAllowed
