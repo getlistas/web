@@ -382,12 +382,13 @@ component = H.mkComponent
                 [ HH.text list.title ]
             , HH.div
                 [ HP.classes [ T.ml6, T.flex, T.itemsCenter ] ]
-                [ HH.div
-                    []
-                    [ HH.span [ HP.classes [ T.textGray400 ] ] [ HH.text $ show list.resource_metadata.completed_count ]
-                    , HH.span [ HP.classes [ T.textGray300, T.mx1 ] ] [ HH.text "/" ]
-                    , HH.span [ HP.classes [ T.textGray300 ] ] [ HH.text $ show list.resource_metadata.count ]
-                    ]
+                [ whenElem (list.resource_metadata.count > 0) \_ ->
+                    HH.div
+                      []
+                      [ HH.span [ HP.classes [ T.textGray400 ] ] [ HH.text $ show list.resource_metadata.completed_count ]
+                      , HH.span [ HP.classes [ T.textGray300, T.mx1 ] ] [ HH.text "/" ]
+                      , HH.span [ HP.classes [ T.textGray300 ] ] [ HH.text $ show list.resource_metadata.count ]
+                      ]
                 , HH.a
                     [ safeHref $ EditList list.slug
                     , HE.onClick (Just <<< Navigate (EditList list.slug) <<< Mouse.toEvent)
