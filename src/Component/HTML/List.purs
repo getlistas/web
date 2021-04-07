@@ -124,7 +124,7 @@ component = H.mkComponent
 
     CopyToShare { url } -> do
       host <- H.liftEffect $ Location.host =<< Window.location =<< Window.window
-      void $ writeText $ host <> print routeCodec (CreateResource { url: Just url })
+      void $ writeText $ host <> print routeCodec (CreateResource {url: Just url, text: Nothing, title: Nothing})
 
     CopyResourceURL { url } -> void $ writeText url
 

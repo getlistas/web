@@ -218,8 +218,8 @@ component = Connect.component $ H.mkComponent
             HH.slot (SProxy :: _ "createList") unit CreateList.component {} absurd
               # authorize currentUser
 
-          CreateResource {url} ->
-            HH.slot (SProxy :: _ "createResource") unit CreateResource.component {url} absurd
+          CreateResource args ->
+            HH.slot (SProxy :: _ "createResource") unit CreateResource.component args absurd
               # authorize currentUser
 
           ViewList _ ->
