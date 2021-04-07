@@ -2,13 +2,15 @@ module Listasio.Component.HTML.CreateResource where
 
 import Prelude
 
+import Control.Alt ((<|>))
 import Data.Array (sortWith, find)
 import Data.Char.Unicode as Char
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.MediaType.Common as MediaType
 import Data.Newtype (class Newtype, unwrap)
-import Data.String.CodeUnits as String
+import Data.String (null, take) as String
+import Data.String.CodeUnits (fromCharArray, toCharArray) as String
 import Data.Symbol (SProxy(..))
 import Data.Traversable (for_, traverse)
 import Effect.Aff.Class (class MonadAff)
@@ -48,12 +50,16 @@ type State
   = { lists :: Array ListWithIdUserAndMeta
     , selectedList :: Maybe ID
     , url :: Maybe String
+    , title :: Maybe String
+    , text :: Maybe String
     }
 
 type Input
   = { lists :: Array ListWithIdUserAndMeta
     , selectedList :: Maybe ID
     , url :: Maybe String
+    , title :: Maybe String
+    , text :: Maybe String
     }
 
 data Output
@@ -78,10 +84,12 @@ component = H.mkComponent
       }
   }
   where
-  initialState {lists, selectedList, url} =
+  initialState {lists, selectedList, url, title, text} =
     { lists: sortWith (filterNonAlphanum <<< _.title) lists
     , selectedList
     , url
+    , title
+    , text
     }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots Output m Unit
@@ -145,6 +153,8 @@ type FormInput
   = { lists :: Array ListWithIdUserAndMeta
     , selectedList :: Maybe ID
     , url :: Maybe String
+    , title :: Maybe String
+    , text :: Maybe String
     }
 
 type FormChildSlots = ( dropdown :: DD.Slot DDItem Unit )
@@ -171,7 +181,7 @@ formComponent = F.component formInput $ F.defaultSpec
   }
   where
   formInput :: FormInput -> F.Input CreateResourceForm FormState m
-  formInput {lists, url, selectedList} =
+  formInput {lists, url, title, text, selectedList} =
     { validators:
         CreateResourceForm
           { title: V.required >>> V.maxLength 150
@@ -181,18 +191,18 @@ formComponent = F.component formInput $ F.defaultSpec
           , list: V.requiredFromOptional F.noValidation
                    <?> V.WithMsg "Please select a list"
           }
-    , initialInputs: Just $ initialInputs url
+    , initialInputs: Just $ initialInputs {url, title, text}
     , status: NotAsked
     , meta: NotAsked
     , lists
-    , pastedUrl: url
+    , pastedUrl: url <|> (filter Util.isUrl text)
     , selectedList
     }
 
-  initialInputs url = F.wrapInputFields
-    { url: fromMaybe "" url
-    , title: ""
-    , description: ""
+  initialInputs  {url, title, text} = F.wrapInputFields
+    { url: fromMaybe "" $ url <|> (filter Util.isUrl text)
+    , title: fromMaybe "" $ String.take 500 <$> title
+    , description: fromMaybe "" $ filter (not <<< Util.isUrl) text
     , thumbnail: Nothing
     , list: Nothing
     }
@@ -208,8 +218,7 @@ formComponent = F.component formInput $ F.defaultSpec
       for_ mbSelectedItem \item ->
         void $ H.query DD._dropdown unit (DD.select item)
 
-      -- TODO fork
-      for_ pastedUrl \url -> handleAction $ FetchMeta url
+      void $ H.fork $ for_ pastedUrl \url -> handleAction $ FetchMeta url
 
     PasteUrl event -> do
       mbUrl <- H.liftEffect $ filter Util.isUrl <$> traverse (DataTransfer.getData MediaType.textPlain) (Clipboard.clipboardData event)
@@ -224,14 +233,15 @@ formComponent = F.component formInput $ F.defaultSpec
         Just meta -> do
           H.modify_ _ {meta = Success meta}
           eval $ F.setValidate proxies.thumbnail meta.thumbnail
-          case meta.title of
-            Just title -> eval $ F.setValidate proxies.title title
-            Nothing -> pure unit
-          case meta.description of
-            Just description -> eval $ F.setValidate proxies.description description
-            Nothing -> pure unit
+          {form} <- H.get
+          for_
+            (filter (const $ String.null $ F.getInput proxies.title form) meta.title)
+            (eval <<< F.setValidate proxies.title)
+          for_
+            (filter (const $ String.null $ F.getInput proxies.description form) meta.description)
+            (eval <<< F.setValidate proxies.description)
         Nothing ->
-          H.modify_ _ {meta = Failure "Couldn't gett suggestions"}
+          H.modify_ _ {meta = Failure "Couldn't get suggestions"}
 
     Submit event -> do
       H.liftEffect $ Event.preventDefault event

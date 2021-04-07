@@ -29,18 +29,20 @@ import Web.UIEvent.MouseEvent (toEvent)
 
 data Action
   = Initialize
-  | Receive { currentUser :: Maybe ProfileWithIdAndEmail, url :: Maybe String }
+  | Receive {currentUser :: Maybe ProfileWithIdAndEmail, url :: Maybe String, title :: Maybe String, text :: Maybe String}
   | Navigate Route Event
   | LoadLists
   | HandleCreateResource CreateResource.Output
 
 type Input
-  = { url :: Maybe String }
+  = {url :: Maybe String, title :: Maybe String, text :: Maybe String}
 
 type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
     , lists :: RemoteData String (Array ListWithIdUserAndMeta)
     , url :: Maybe String
+    , title :: Maybe String
+    , text :: Maybe String
     }
 
 type ChildSlots
@@ -68,11 +70,8 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState { currentUser, url } =
-    { currentUser
-    , lists: NotAsked
-    , url
-    }
+  initialState {currentUser, url, title, text} =
+    {currentUser, lists: NotAsked, url, title, text}
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
@@ -115,7 +114,7 @@ component = Connect.component $ H.mkComponent
       Success lists ->
         HH.div
           [ HP.classes [ T.wFull, T.maxWLg ] ]
-          [ let input = {lists, url: st.url, selectedList: Nothing}
+          [ let input = {lists, url: st.url, title: st.title, text: st.text, selectedList: Nothing}
                 queryHandler = Just <<< HandleCreateResource
              in HH.slot CreateResource._createResource unit CreateResource.component input queryHandler
           ]

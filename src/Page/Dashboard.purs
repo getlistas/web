@@ -199,7 +199,7 @@ component = Connect.component $ H.mkComponent
                     [ HP.classes [ T.textCenter, T.textGray400, T.text2xl, T.fontBold, T.mb4 ] ]
                     [ HH.text "Add new resource" ]
                 , whenElem st.showCreateResource \_ ->
-                    let input = { lists, url: st.pastedUrl, selectedList: st.createResourceForThisList }
+                    let input = {lists, url: st.pastedUrl, selectedList: st.createResourceForThisList, text: Nothing, title: Nothing}
                         queryHandler = Just <<< HandleCreateResource
                       in HH.slot CreateResource._createResource unit CreateResource.component input queryHandler
                 ]

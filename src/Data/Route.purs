@@ -30,7 +30,7 @@ data Route
   | Resources
   | Settings
   | CreateList
-  | CreateResource { url :: Maybe String }
+  | CreateResource {url :: Maybe String, title :: Maybe String, text :: Maybe String}
   | ViewList Slug
   | EditList Slug
   | IntegrationsList Slug
@@ -63,7 +63,11 @@ routeCodec =
         , "Resources": "dashboard" / "resources" / noArgs
         , "Settings": "settings" / noArgs
         , "CreateList": "list" / "create" / noArgs
-        , "CreateResource": "resources" / "create" ? { url: optional <<< string }
+        , "CreateResource": "resources" / "create"
+            ? { url: optional <<< string
+              , title: optional <<< string
+              , text: optional <<< string
+              }
         , "ViewList": "list" / Slug.term segment
         , "EditList": "list" / Slug.term segment / "edit"
         , "IntegrationsList": "list" / Slug.term segment / "integrations"
