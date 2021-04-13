@@ -25,6 +25,9 @@ _id = prop (SProxy :: SProxy "id")
 _items :: forall a r. Lens' { items :: a | r } a
 _items = prop (SProxy :: SProxy "items")
 
+_isProcessingAction :: forall a r. Lens' { isProcessingAction :: a | r } a
+_isProcessingAction = prop (SProxy :: SProxy "isProcessingAction")
+
 _is_public :: forall a r. Lens' { is_public :: a | r } a
 _is_public = prop (SProxy :: SProxy "is_public")
 
@@ -36,9 +39,6 @@ _last_completed_at = prop (SProxy :: SProxy "last_completed_at")
 
 _list :: forall a r. Lens' { list :: a | r } a
 _list = prop (SProxy :: SProxy "list")
-
-_markingAsDone :: forall a r. Lens' { markingAsDone :: a | r } a
-_markingAsDone = prop (SProxy :: SProxy "markingAsDone")
 
 _menuOpen :: forall a r. Lens' { menuOpen :: a | r } a
 _menuOpen = prop (SProxy :: SProxy "menuOpen")
