@@ -31,17 +31,18 @@ module.exports = {
   },
   variants: {
     extend: {
-      display: ["group-hover"],
       backgroundColor: ["checked", "disabled"],
       borderColor: ["checked"],
       borderWidth: ["hover", "group-hover"],
       cursor: ["disabled"],
+      display: ["group-hover"],
       opacity: ["disabled"],
       ringColor: ["hover"],
       ringOffsetColor: ["hover"],
       ringOffsetWidth: ["hover"],
       ringOpacity: ["hover"],
       ringWidth: ["hover"],
+      textColor: ["disabled"],
     },
   },
   plugins: [
