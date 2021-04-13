@@ -46,6 +46,7 @@ data Endpoint
   | ResourcesByList { list :: ID, sort :: SortingResources, completed :: Boolean }
   | Resource ID
   | CompleteResource ID
+  | PositionResource ID
   | ResourceMeta
   | Integration ID
   | Integrations { list :: ID, kind :: IntegrationKind }
@@ -76,6 +77,7 @@ endpointCodec =
             ? { list: id, sort: sortingResources, completed: boolean }
         , "Resource": "resources" / id segment
         , "CompleteResource": "resources" / id segment / "complete"
+        , "PositionResource": "resources" / id segment / "position"
         , "ResourceMeta": "resource-metadata" / noArgs
         , "Integration": "integrations" / id segment
         , "Integrations": "integrations" ? { list: id, kind: integrationKind }

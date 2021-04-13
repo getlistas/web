@@ -16,6 +16,7 @@ type Props i p
     , label :: HH.HTML i p
     , toggleMenu :: Maybe p
     , isOpen :: Boolean
+    , disabled :: Boolean
     }
 
 props :: forall i p. Props i p
@@ -24,10 +25,17 @@ props =
   , label: HH.text ""
   , toggleMenu: Nothing
   , isOpen: false
+  , disabled: false
   }
 
-buttonGroupMenu :: forall i p. Props i p -> NonEmptyArray { action :: Maybe p, label :: HH.HTML i p } -> HH.HTML i p
-buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
+type MenuItem i p
+  = { action :: Maybe p
+    , label :: HH.HTML i p
+    , disabled :: Boolean
+    }
+
+buttonGroupMenu :: forall i p. Props i p -> NonEmptyArray (MenuItem i p) -> HH.HTML i p
+buttonGroupMenu {mainAction, label, toggleMenu, isOpen, disabled} menuItems =
   HH.span
     [ HP.classes
         [ T.relative
@@ -56,7 +64,10 @@ buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
             , T.focusRing1
             , T.focusRingKiwiDark
             , T.focusRingOffset1
+            , T.disabledCursorNotAllowed
+            , T.disabledOpacity50
             ]
+        , HP.disabled disabled
         ]
         [ label ]
     , HH.button
@@ -125,9 +136,12 @@ buttonGroupMenu { mainAction, label, toggleMenu, isOpen } menuItems =
                           , T.hoverTextGray900
                           , T.cursorPointer
                           , T.wFull
+                          , T.disabledTextGray200
+                          , T.disabledCursorNotAllowed
                           ]
                       , HP.type_ HP.ButtonButton
                       , HE.onClick \_ -> i.action
+                      , HP.disabled i.disabled
                       ]
                       [ i.label ]
                   )

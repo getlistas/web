@@ -197,6 +197,11 @@ instance manageResourceAppM :: ManageResource AppM where
     map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
     where conf = {endpoint: Resource id, method: Delete}
 
+  changePosition {id, list} {previus} =
+    map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
+    where body = Codec.encode Resource.positionChangeBodyCodec {list, previus}
+          conf = {endpoint: PositionResource id, method: Put $ Just body}
+
 instance manageIntegrationAppM :: ManageIntegration AppM where
   createRssIntegration fields = do
     hush <$> mkAuthRequest conf codec

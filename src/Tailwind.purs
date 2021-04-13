@@ -207,6 +207,10 @@ disabledCursorNotAllowed = ClassName "disabled:cursor-not-allowed"
 disabledOpacity50 :: ClassName
 disabledOpacity50 = ClassName "disabled:opacity-50"
 
+-- | disabledTextGray200
+disabledTextGray200 :: ClassName
+disabledTextGray200 = ClassName "disabled:text-gray-200"
+
 -- | divideWhite
 divideWhite :: ClassName
 divideWhite = ClassName "divide-white"

@@ -59,3 +59,15 @@ listResourceCodec =
     , updated_at: DateTime.codec
     , completed_at: CAC.maybe DateTime.codec
     }
+
+type PositionChangeBody
+  = { list :: ID
+    , previus :: Maybe ID
+    }
+
+positionChangeBodyCodec :: JsonCodec PositionChangeBody
+positionChangeBodyCodec =
+  CAR.object "PositionChangeBody"
+    { list: ID.codec
+    , previus: CAC.maybe ID.codec
+    }
