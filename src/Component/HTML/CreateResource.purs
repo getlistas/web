@@ -9,7 +9,8 @@ import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.MediaType.Common as MediaType
 import Data.Newtype (class Newtype, unwrap)
-import Data.String (null, take) as String
+import Data.String (null, take, replace) as String
+import Data.String (Pattern(..), Replacement(..))
 import Data.String.CodeUnits (fromCharArray, toCharArray) as String
 import Data.Symbol (SProxy(..))
 import Data.Traversable (for_, traverse)
@@ -201,7 +202,8 @@ formComponent = F.component formInput $ F.defaultSpec
 
   initialInputs  {url, title, text} = F.wrapInputFields
     { url: fromMaybe "" $ url <|> (filter Util.isUrl text)
-    , title: fromMaybe "" $ String.take 500 <$> title
+      -- On Android PWA share the title sometimes has `+` instead of spaces
+    , title: fromMaybe "" $ String.replace (Pattern "+") (Replacement " ") <$> String.take 500 <$> title
     , description: fromMaybe "" $ filter (not <<< Util.isUrl) text
     , thumbnail: Nothing
     , list: Nothing
