@@ -251,6 +251,10 @@ flexWrap = ClassName "flex-wrap"
 flowRoot :: ClassName
 flowRoot = ClassName "flow-root"
 
+-- | focusBgKiwiDark
+focusBgKiwiDark :: ClassName
+focusBgKiwiDark = ClassName "focus:bg-kiwi-dark"
+
 -- | focusBorderKiwi
 focusBorderKiwi :: ClassName
 focusBorderKiwi = ClassName "focus:border-kiwi"
@@ -487,17 +491,9 @@ hoverBorderKiwi = ClassName "hover:border-kiwi"
 hoverRing1 :: ClassName
 hoverRing1 = ClassName "hover:ring-1"
 
--- | hoverRing2
-hoverRing2 :: ClassName
-hoverRing2 = ClassName "hover:ring-2"
-
 -- | hoverRingKiwi
 hoverRingKiwi :: ClassName
 hoverRingKiwi = ClassName "hover:ring-kiwi"
-
--- | hoverRingOffset2
-hoverRingOffset2 :: ClassName
-hoverRingOffset2 = ClassName "hover:ring-offset-2"
 
 -- | hoverTextGray10
 hoverTextGray10 :: ClassName

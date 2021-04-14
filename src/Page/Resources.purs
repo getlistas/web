@@ -152,7 +152,7 @@ component = Connect.component $ H.mkComponent
     { currentUser
     , resources: NotAsked
     , lists: Nothing
-    , groupBy: GroupNone
+    , groupBy: GroupDate
     , filterByDone: ShowDone
     }
 

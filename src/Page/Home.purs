@@ -287,7 +287,7 @@ component = Connect.component $ H.mkComponent
                 , whenElem (hasUser authStatus) \_ ->
                     desktopLink Resources "Resources"
                 , desktopLink Discover "Discover"
-                , desktopLink Pricing "Pricing"
+                -- , desktopLink Pricing "Pricing"
                 ]
             ]
           , case authStatus of
@@ -416,7 +416,7 @@ component = Connect.component $ H.mkComponent
                   , whenElem (hasUser authStatus) \_ ->
                       mobileLink Resources "Resources"
                   , mobileLink Discover "Discover"
-                  , mobileLink Pricing "Pricing"
+                  -- , mobileLink Pricing "Pricing"
                   ]
               , case authStatus of
                   ShowUser _ -> HH.text ""

@@ -107,7 +107,7 @@ component = Connect.component $ H.mkComponent
             , HP.classes [ T.textGray200, T.mr8, T.flexShrink0 ]
             ]
             [ Icons.chevronLeft [ Icons.classes [ T.h10, T.w10 ] ] ]
-        , HH.text "Add new resource"
+        , HH.text "Add resource"
         ]
 
     form = case st.lists of

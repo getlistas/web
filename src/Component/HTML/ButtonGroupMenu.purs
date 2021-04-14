@@ -138,6 +138,9 @@ buttonGroupMenu {mainAction, label, toggleMenu, isOpen, disabled} menuItems =
                           , T.wFull
                           , T.disabledTextGray200
                           , T.disabledCursorNotAllowed
+                          , T.focusOutlineNone
+                          , T.focusRing2
+                          , T.focusRingGray300
                           ]
                       , HP.type_ HP.ButtonButton
                       , HE.onClick \_ -> i.action
