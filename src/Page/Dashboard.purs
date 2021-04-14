@@ -170,16 +170,15 @@ component = Connect.component $ H.mkComponent
                       , T.textWhite
                       , T.roundedMd
                       , T.bgKiwi
-                      , T.hoverRing2
-                      , T.hoverRingKiwi
-                      , T.hoverRingOffset2
-                      , T.focusOutlineNone
+                      , T.hoverBgKiwiDark
+                      , T.focusBgKiwiDark
                       , T.focusRing2
-                      , T.focusRingKiwi
+                      , T.focusRingKiwiDark
                       , T.focusRingOffset2
+                      , T.focusOutlineNone
                       ]
                   ]
-                  [ HH.text "Create Resource" ]
+                  [ HH.text "Add Resource" ]
               ]
         ]
 
@@ -230,6 +229,6 @@ component = Connect.component $ H.mkComponent
                 ]
             ]
             [ HH.span [ HP.classes [ T.text7xl, T.textKiwi, T.leadingNone ] ] [ HH.text "+" ]
-            , HH.span [ HP.classes [ T.textGray400 ] ] [ HH.text "Create new list" ]
+            , HH.span [ HP.classes [ T.textGray300 ] ] [ HH.text "Create new list" ]
             ]
         ]

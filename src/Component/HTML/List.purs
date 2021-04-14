@@ -8,8 +8,9 @@ import Data.Either (note)
 import Data.Filterable (class Filterable, filter)
 import Data.Foldable (length)
 import Data.Lens (firstOf, lastOf, lengthOf, over, preview, set, traversed)
-import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
+import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing, maybe)
 import Data.Symbol (SProxy(..))
+import Data.Traversable (for_)
 import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -27,7 +28,7 @@ import Listasio.Component.HTML.Utils (cx, maybeElem, safeHref, whenElem)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
-import Listasio.Data.Lens (_completed_count, _count, _last_completed_at, _list, _isProcessingAction, _resource_metadata, _resources)
+import Listasio.Data.Lens (_completed_count, _confirmDelete, _count, _isProcessingAction, _last_completed_at, _list, _resource_metadata, _resources, _showMore, _showNextMenu)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Resource (ListResource)
 import Listasio.Data.Route (Route(..), routeCodec)
@@ -54,7 +55,9 @@ data Action
   | CopyResourceURL ListResource
   | CompleteResource ListResource
   | SkipResource Int ListResource
-  | DeleteResource ListResource
+  | DeleteResource Boolean ListResource
+  | ConfirmDeleteResource ListResource
+  | CancelDeleteResource
   | Navigate Route Event
   | RaiseCreateResource ID
     -- meta actions
@@ -85,6 +88,7 @@ type State
     , resources :: RemoteData String (Array ListResource)
     , showMore :: Boolean
     , isProcessingAction :: Boolean
+    , confirmDelete :: Maybe ID
     , showNextMenu :: Boolean
     }
 
@@ -111,6 +115,7 @@ component = H.mkComponent
     , showMore: false
     , isProcessingAction: false
     , showNextMenu: false
+    , confirmDelete: Nothing
     }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots Output m Unit
@@ -121,9 +126,9 @@ component = H.mkComponent
       resources <- RemoteData.fromEither <$> note "Failed to load list resources" <$> getListResources list.id
       H.modify_ _ { resources = resources }
 
-    ToggleShowMore -> H.modify_ \s -> s { showMore = not s.showMore }
+    ToggleShowMore -> H.modify_ $ over _showMore not
 
-    ToggleShowNextMenu -> H.modify_ \s -> s { showNextMenu = not s.showNextMenu }
+    ToggleShowNextMenu -> H.modify_ $ over _showNextMenu not <<< set _confirmDelete Nothing
 
     CopyToShare { url } -> do
       host <- H.liftEffect $ Location.host =<< Window.location =<< Window.window
@@ -133,7 +138,7 @@ component = H.mkComponent
 
     AndCloseNextMenu action -> do
       void $ H.fork $ handleAction action
-      H.modify_ _ {showNextMenu = false}
+      H.modify_ _ {showNextMenu = false, confirmDelete = Nothing}
 
     WhenNotProcessingAction action -> do
       {isProcessingAction} <- H.get
@@ -170,17 +175,26 @@ component = H.mkComponent
             <<< over (_resources <<< _Success) (flip snoc toSkip)
             <<< removeResourceById id
 
-      result <- changePosition toSkip { previus: lastId }
+      result <- changePosition toSkip {previus: lastId}
 
       when (isNothing result) $ H.modify_ $ insertResourceAt i toSkip <<< removeResourceById id
 
       H.modify_ $ set _isProcessingAction false
 
-    DeleteResource toDelete@{ id } -> do
+    DeleteResource confirmed toDelete@{id} -> do
+      H.modify_ _ {confirmDelete = Just id}
+      when confirmed $ void $ H.fork $ handleAction $ ConfirmDeleteResource toDelete
+
+    CancelDeleteResource ->
+      H.modify_ _ {confirmDelete = Nothing}
+
+    ConfirmDeleteResource toDelete@{id} -> do
+      {confirmDelete} <- H.get
+
       mbItems <- H.gets $ preview (_resources <<< _Success)
 
-      case findIndex ((id == _) <<< _.id) =<< mbItems of
-        Just i -> do
+      when (Just id == confirmDelete) $
+        for_ (findIndex ((id == _) <<< _.id) =<< mbItems) \i -> do
           H.modify_
             $ removeResourceById id
                 <<< set _isProcessingAction true
@@ -193,7 +207,8 @@ component = H.mkComponent
                 <<< insertResourceAt i toDelete
 
           H.modify_ $ set _isProcessingAction false
-        Nothing -> pure unit
+
+      H.modify_ _ {confirmDelete = Nothing}
 
     RaiseCreateResource id -> H.raise $ CreateResourceForThisList id
 
@@ -209,7 +224,7 @@ component = H.mkComponent
       pure $ Just a
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render state@{list, resources, showMore, showNextMenu, isProcessingAction} =
+  render state@{list, resources, showMore, showNextMenu, isProcessingAction, confirmDelete} =
     HH.div
       [ HP.classes
           [ T.border2
@@ -250,15 +265,14 @@ component = H.mkComponent
           [ HH.div
               []
               [ HH.span
-                  [ HP.classes [ T.textGray300, T.fontSemibold ] ]
-                  [ HH.text "This list is empty, " ]
+                  [ HP.classes [ T.textGray300 ] ]
+                  [ HH.text "This list is empty," ]
               , HH.button
                   [ HP.classes
                       [ T.px1
                       , T.textKiwi
                       , T.hoverTextKiwiDark
                       , T.underline
-                      , T.fontSemibold
                       , T.focusRing1
                       , T.focusRingKiwi
                       , T.focusOutlineNone
@@ -280,8 +294,7 @@ component = H.mkComponent
               , T.flexCol
               , T.itemsCenter
               , T.justifyCenter
-              , T.textGray200
-              , T.fontSemibold
+              , T.textGray300
               , T.h40
               ]
           ]
@@ -367,35 +380,38 @@ component = H.mkComponent
                         $ cons'
                             { action: Just $ AndCloseNextMenu $ CopyResourceURL next
                             , label: HH.div
-                                      [ HP.classes [ T.flex, T.itemsCenter ] ]
-                                      [ Icons.clipboardCopy [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
-                                      , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy link" ]
-                                      ]
+                                       [ HP.classes [ T.flex, T.itemsCenter ] ]
+                                       [ Icons.clipboardCopy [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
+                                       , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy link" ]
+                                       ]
                             , disabled: false
                             }
                             [ { action: Just $ AndCloseNextMenu $ CopyToShare next
                               , label: HH.div
-                                        [ HP.classes [ T.flex, T.itemsCenter ] ]
-                                        [ Icons.share [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
-                                        , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy share link" ]
-                                        ]
+                                         [ HP.classes [ T.flex, T.itemsCenter ] ]
+                                         [ Icons.share [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
+                                         , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy share link" ]
+                                         ]
                               , disabled: false
-                              }
-                            , { action: Just $ WhenNotProcessingAction $ AndCloseNextMenu $ DeleteResource next
-                              , label: HH.div
-                                        [ HP.classes [ T.flex, T.itemsCenter ] ]
-                                        [ Icons.trash [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
-                                        , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Remove" ]
-                                        ]
-                              , disabled: isProcessingAction
                               }
                             , { action: Just $ WhenNotProcessingAction $ AndCloseNextMenu $ SkipResource 0 next
                               , label: HH.div
-                                        [ HP.classes [ T.flex, T.itemsCenter ] ]
-                                        [ Icons.sortDescending [ Icons.classes [ T.flexShrink0, T.h5, T.w5 ] ]
-                                        , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "To last" ]
-                                        ]
+                                         [ HP.classes [ T.flex, T.itemsCenter ] ]
+                                         [ Icons.sortDescending [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
+                                         , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Move to last" ]
+                                         ]
                               , disabled: isLast || isProcessingAction
+                              }
+                            , { action: Just $ WhenNotProcessingAction $ maybe
+                                          (DeleteResource false next)
+                                          (const $ AndCloseNextMenu $ ConfirmDeleteResource next)
+                                          confirmDelete
+                              , label: HH.div
+                                         [ HP.classes [ T.flex, T.itemsCenter ] ]
+                                         [ Icons.trash [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
+                                         , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text $ maybe "Remove" (const "Confirm") confirmDelete ]
+                                         ]
+                              , disabled: isProcessingAction
                               }
                             ]
                 ]
@@ -423,11 +439,17 @@ component = H.mkComponent
                       , HH.span [ HP.classes [ T.textGray300, T.mx1 ] ] [ HH.text "/" ]
                       , HH.span [ HP.classes [ T.textGray300 ] ] [ HH.text $ show list.resource_metadata.count ]
                       ]
+                , HH.button
+                    [ HE.onClick $ \_ -> Just $ RaiseCreateResource list.id
+                    , HP.classes [ T.ml2 ]
+                    ]
+                    [ Icons.plus [ Icons.classes [ T.h5, T.w5, T.textGray300, T.hoverTextGray400 ] ] ]
                 , HH.a
                     [ safeHref $ EditList list.slug
+                    , HP.classes [ T.ml2 ]
                     , HE.onClick (Just <<< Navigate (EditList list.slug) <<< Mouse.toEvent)
                     ]
-                    [ Icons.cog [ Icons.classes [ T.ml2, T.h5, T.w5, T.textGray300, T.hoverTextGray400 ] ] ]
+                    [ Icons.cog [ Icons.classes [ T.h5, T.w5, T.textGray300, T.hoverTextGray400 ] ] ]
                 ]
             ]
         , maybeElem list.resource_metadata.last_completed_at \last_done ->
@@ -459,11 +481,15 @@ component = H.mkComponent
                     , T.itemsCenter
                     , T.disabledCursorNotAllowed
                     , T.disabledOpacity50
+                    , T.focusOutlineNone
+                    , T.focusRing2
+                    , T.focusRingGray300
+                    , T.px2
                     ]
                 ]
                 [ HH.span
                     [ HP.classes [ T.textSm, T.textGray200 ] ]
-                    [ HH.text "Next in queue" ]
+                    [ HH.text "Next" ]
                 , if showMore && hasMore
                     then Icons.chevronUp [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ]
                     else Icons.chevronDown [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ]
@@ -536,7 +562,7 @@ component = H.mkComponent
                       ]
                       [ Icons.sortDescending [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
                   , HH.button
-                      [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ DeleteResource resource
+                      [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ DeleteResource true resource
                       , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
                       , HP.disabled isProcessingAction
                       ]

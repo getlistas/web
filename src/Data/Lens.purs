@@ -7,6 +7,9 @@ import Data.Symbol (SProxy(..))
 _completed_count :: forall a r. Lens' { completed_count :: a | r } a
 _completed_count = prop (SProxy :: SProxy "completed_count")
 
+_confirmDelete :: forall a r. Lens' { confirmDelete :: a | r } a
+_confirmDelete = prop (SProxy :: SProxy "confirmDelete")
+
 _count :: forall a r. Lens' { count :: a | r } a
 _count = prop (SProxy :: SProxy "count")
 
@@ -57,6 +60,12 @@ _resource_metadata = prop (SProxy :: SProxy "resource_metadata")
 
 _resources :: forall a r. Lens' { resources :: a | r } a
 _resources = prop (SProxy :: SProxy "resources")
+
+_showMore :: forall a r. Lens' { showMore :: a | r } a
+_showMore = prop (SProxy :: SProxy "showMore")
+
+_showNextMenu :: forall a r. Lens' { showNextMenu :: a | r } a
+_showNextMenu = prop (SProxy :: SProxy "showNextMenu")
 
 _rss :: forall a r. Lens' { rss :: a | r } a
 _rss = prop (SProxy :: SProxy "rss")

@@ -231,12 +231,12 @@ component = Connect.component $ H.mkComponent
                     [ desktopLink Dashboard "Up next"
                     , desktopLink Resources "Resources"
                     , desktopLink Discover "Discover"
-                    , desktopLink Pricing "Pricing"
+                    -- , desktopLink Pricing "Pricing"
                     ]
 
                   Nothing ->
                     [ desktopLink Discover "Discover"
-                    , desktopLink Pricing "Pricing"
+                    -- , desktopLink Pricing "Pricing"
                     ]
             ]
           , case authStatus of
@@ -368,12 +368,12 @@ component = Connect.component $ H.mkComponent
                       [ mobileLink Dashboard "Up next"
                       , mobileLink Resources "Resources"
                       , mobileLink Discover "Discover"
-                      , mobileLink Pricing "Pricing"
+                      -- , mobileLink Pricing "Pricing"
                       ]
 
                     Nothing ->
                       [ mobileLink Discover "Discover"
-                      , mobileLink Pricing "Pricing"
+                      -- , mobileLink Pricing "Pricing"
                       ]
               , case authStatus of
                   ShowUser _ -> HH.text ""

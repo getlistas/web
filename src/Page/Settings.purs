@@ -123,7 +123,8 @@ component = Connect.component $ H.mkComponent
                       , T.hoverBgKiwi
                       , T.focusOutlineNone
                       , T.focusRing2
-                      , T.focusRingPurple600
+                      , T.focusRingOffset2
+                      , T.focusRingKiwiDark
                       , T.flex
                       , T.itemsCenter
                       ]
