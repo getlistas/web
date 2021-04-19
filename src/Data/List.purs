@@ -25,9 +25,19 @@ instance authorShow :: Show Author where
   show You = "You"
   show (Other user) = "Other (" <> ID.toString user.id <> ")"
 
+type ForkedList =
+  { id :: ID
+  , slug :: Slug
+  , user :: ID
+  , title :: String
+  , description :: Maybe String
+  , tags :: Array String
+  , created_at :: DateTime
+  }
+
 type ForkMeta
-  = { list :: ID
-    , user :: ID
+  = { list :: ForkedList
+    , user :: PublicProfile
     }
 
 type ResourceMeta
@@ -125,11 +135,23 @@ resourceMetaCodec =
     , next: CAC.maybe listResourceCodec
     }
 
+forkedListCodec :: JsonCodec ForkedList
+forkedListCodec =
+  CAR.object "ForkedList"
+    { id: ID.codec
+    , slug: Slug.codec
+    , title: CA.string
+    , description: CAC.maybe CA.string
+    , tags: CAC.array CA.string
+    , created_at: DateTime.codec
+    , user: ID.codec
+    }
+
 forkMetaCodec :: JsonCodec ForkMeta
 forkMetaCodec =
   CAR.object "ForkMeta"
-    { list: ID.codec
-    , user: ID.codec
+    { list: forkedListCodec
+    , user: publicProfileCodec
     }
 
 createListFieldsCodec :: JsonCodec CreateListFields
