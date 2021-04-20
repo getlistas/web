@@ -154,7 +154,7 @@ component = Connect.component $ H.mkComponent
       CardsAndSidebar.layout
         [ { active: false
           , icon: Icons.userCircle
-          , label: "List settings"
+          , label: "Settings"
           , link:
               map
                 ( \{slug} ->

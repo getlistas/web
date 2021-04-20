@@ -133,7 +133,7 @@ component = Connect.component $ H.mkComponent
       CardsAndSidebar.layout
         [ { active: true
           , icon: Icons.userCircle
-          , label: "List settings"
+          , label: "Settings"
           , link: Nothing
           }
         , { active: false
