@@ -79,7 +79,7 @@ component = Connect.component $ H.mkComponent
                 ]
             }
           , { avatar: "https://pbs.twimg.com/profile_images/1194743088373219330/10-3KEsy_400x400.jpg"
-            , name: "Hahuel"
+            , name: "Nahuel"
             , role: "Design"
             , icon: Icons.photo
             , links:
