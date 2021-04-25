@@ -49,9 +49,9 @@ data Endpoint
   | PositionResource ID
   | ResourceMeta
   | Integration ID
-  | Integrations { list :: ID, kind :: IntegrationKind }
+  | Integrations { list :: ID, kind :: Maybe IntegrationKind }
   | RssIntegrations
-  | RssIntegration ID
+  | ListSubscriptionIntegrations
 
 derive instance genericEndpoint :: Generic Endpoint _
 
@@ -80,9 +80,10 @@ endpointCodec =
         , "PositionResource": "resources" / id segment / "position"
         , "ResourceMeta": "resource-metadata" / noArgs
         , "Integration": "integrations" / id segment
-        , "Integrations": "integrations" ? { list: id, kind: integrationKind }
+        , "Integrations": "integrations"
+            ? { list: id, kind: optional <<< integrationKind }
         , "RssIntegrations": "integrations" / "rss" / noArgs
-        , "RssIntegration": "integrations" / "rss" / id segment
+        , "ListSubscriptionIntegrations": "integrations" / "listas-subscription" / noArgs
         }
 
 id :: RouteDuplex' String -> RouteDuplex' ID
@@ -92,9 +93,11 @@ integrationKind :: RouteDuplex' String -> RouteDuplex' IntegrationKind
 integrationKind = as toString parse
   where
   toString KindRss = "rss"
+  toString KindListSubscription = "listas-subscription"
 
   parse = case _ of
     "rss" -> Right KindRss
+    "listas-subscription" -> Right KindListSubscription
     s -> Left $ "Bad IntegrationKind '" <> s <> "'"
 
 

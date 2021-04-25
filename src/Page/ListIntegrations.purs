@@ -23,10 +23,12 @@ import Listasio.Component.HTML.CardsAndSidebar as CardsAndSidebar
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Input as Input
 import Listasio.Component.HTML.ListForm as ListForm
+import Listasio.Component.HTML.Utils (safeHref)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
-import Listasio.Data.Integration (RssIntegration)
-import Listasio.Data.Lens (_id, _newRss, _rss, _rssResult)
+import Listasio.Data.ID as ID
+import Listasio.Data.Integration (Integration(..), ListSubscription, RssIntegration)
+import Listasio.Data.Lens (_id, _newRss, _rss, _rssResult, _subscriptions)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
@@ -39,24 +41,35 @@ import Tailwind as T
 import Unsafe.Coerce (unsafeCoerce)
 import Util (fromPredicate)
 import Web.Event.Event (Event)
+import Web.UIEvent.MouseEvent as Mouse
 
 data Action
   = Receive { currentUser :: Maybe ProfileWithIdAndEmail, listSlug :: Slug }
   | OnNewChange String
   | SaveRss
   | Navigate Route Event
-  | DeleteIntegration ID
+  | DeleteRssIntegration ID
+  | DeleteSubscription ID
 
 type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
     , list :: RemoteData String ListWithIdAndUser
     , rss :: RemoteData String (Array RssIntegration)
+    , subscriptions :: RemoteData String (Array ListSubscription)
     , rssResult :: RemoteData String Unit
     , newRss :: String
     , slug :: Slug
     }
 
 type Slots = ( formless :: ListForm.Slot )
+
+getRss :: Integration -> Maybe RssIntegration
+getRss (RssIntegration a) = Just a
+getRss _ = Nothing
+
+getSubscription :: Integration -> Maybe ListSubscription
+getSubscription (ListSubscription a) = Just a
+getSubscription _ = Nothing
 
 component
   :: forall q o m r
@@ -80,6 +93,7 @@ component = Connect.component $ H.mkComponent
     , slug: listSlug
     , list: NotAsked
     , rss: NotAsked
+    , subscriptions: NotAsked
     , rssResult: NotAsked
     , newRss: ""
     }
@@ -97,8 +111,8 @@ component = Connect.component $ H.mkComponent
 
           case preview (_Success <<< _id) list of
             Just listId -> do
-              rss <- RemoteData.fromEither <$> note "Could not get RSS integrations" <$> getListIntegrations listId
-              H.modify_ _ { rss = rss }
+              res <- RemoteData.fromEither <$> note "Could not get RSS integrations" <$> getListIntegrations listId
+              H.modify_ _ { rss = Array.mapMaybe getRss <$> res, subscriptions = Array.mapMaybe getSubscription <$> res }
             Nothing -> pure unit
 
         _, _ -> pure unit
@@ -126,7 +140,7 @@ component = Connect.component $ H.mkComponent
                   <<< set _newRss ""
           r -> H.modify_ $ set _rssResult $ map (const unit) r
 
-    DeleteIntegration id -> do
+    DeleteRssIntegration id -> do
       mbRss <- H.gets $ preview (_rss <<< _Success)
       let shouldDelete = (_ == id) <<< _.id
           toDelete = Array.find shouldDelete =<< mbRss
@@ -137,8 +151,19 @@ component = Connect.component $ H.mkComponent
           Nothing -> H.modify_ $ over (_rss <<< _Success) (_ `Array.snoc` deleted)
           Just _ -> pure unit
 
+    DeleteSubscription id -> do
+      mbSubscriptions <- H.gets $ preview (_subscriptions <<< _Success)
+      let shouldDelete = (_ == id) <<< _.id
+          toDelete = Array.find shouldDelete =<< mbSubscriptions
+      for_ ({subscriptions: _, deleted: _} <$> mbSubscriptions <*> toDelete) $ \{subscriptions, deleted} -> do
+        H.modify_ $ over (_subscriptions <<< _Success) (Array.filter (not <<< shouldDelete))
+        result <- deleteIntegration id
+        case result of
+          Nothing -> H.modify_ $ over (_subscriptions <<< _Success) (_ `Array.snoc` deleted)
+          Just _ -> pure unit
+
   render :: State -> H.ComponentHTML Action Slots m
-  render { newRss, rss, rssResult, currentUser, list: mbList } =
+  render {subscriptions, newRss, rss, rssResult, currentUser, list: mbList} =
     HH.div [] [ header, content ]
 
     where
@@ -199,11 +224,41 @@ component = Connect.component $ H.mkComponent
                         , Button.primary (HH.text "Save") (String.null newRss || not (RemoteData.isNotAsked rssResult)) $ Just SaveRss
                         ]
                     , case rss of
-                        Success [] -> HH.text ""
                         Success items ->
                           HH.ul
                             [ HP.classes [ T.spaceY4, T.mt8 ] ]
                             $ map rssIntegrationEl items
+
+                        Failure msg -> HH.div [ HP.classes [ T.textManzana ] ] [ HH.text msg ]
+                        _ -> HH.text ""
+                    ]
+              }
+            , { cta: Nothing
+              , title: "Following lists"
+              , description: Nothing
+              , content:
+                  HH.div
+                    []
+                    [ case subscriptions of
+                        Success [] ->
+                          HH.div
+                            [ HP.classes
+                                [ T.textGray300
+                                , T.textSm
+                                ]
+                            ]
+                            [ HH.text "Find lists to follow on "
+                            , HH.a
+                                [ HE.onClick $ Just <<< Navigate Discover <<< Mouse.toEvent
+                                , safeHref Discover
+                                , HP.classes [ T.textKiwi ]
+                                ]
+                                [ HH.text "Discover" ]
+                            ]
+                        Success items ->
+                          HH.ul
+                            [ HP.classes [ T.spaceY4, T.mt8 ] ]
+                            $ map subscriptionIntegrationEl items
 
                         Failure msg -> HH.div [ HP.classes [ T.textManzana ] ] [ HH.text msg ]
                         _ -> HH.text ""
@@ -217,7 +272,12 @@ component = Connect.component $ H.mkComponent
             Nothing
             [ { cta: Nothing
               , content: HH.div [ HP.classes [ T.textManzana ] ] [ HH.text msg ]
-              , title: "RSS feed"
+              , title: "RSS feed subscriptions"
+              , description: Nothing
+              }
+            , { cta: Nothing
+              , content: HH.div [ HP.classes [ T.textManzana ] ] [ HH.text msg ]
+              , title: "Following lists"
               , description: Nothing
               }
             ]
@@ -228,7 +288,12 @@ component = Connect.component $ H.mkComponent
             Nothing
             [ { cta: Nothing
               , content: HH.div [ HP.classes [ T.textGray400 ] ] [ HH.text "Loading ..." ]
-              , title: "RSS feed"
+              , title: "RSS feed subscriptions"
+              , description: Nothing
+              }
+            , { cta: Nothing
+              , content: HH.div [ HP.classes [ T.textGray400 ] ] [ HH.text "Loading ..." ]
+              , title: "Following lists"
               , description: Nothing
               }
             ]
@@ -265,7 +330,7 @@ component = Connect.component $ H.mkComponent
                 [ HH.div
                     [ HP.classes [ T.textSm ] ]
                     [ HH.p
-                        [ HP.classes [ T.fontMedium, T.textGray900 ] ]
+                        [ HP.classes [ T.fontMedium, T.textGray400 ] ]
                         [ i.rss.url
                             # String.replace (String.Pattern "https://") (String.Replacement "")
                             # String.replace (String.Pattern "http://") (String.Replacement "")
@@ -276,7 +341,7 @@ component = Connect.component $ H.mkComponent
                         [ HP.classes [ T.textGray500 ] ]
                         [ HH.p
                             [ HP.classes [ T.smInline ] ]
-                            [ HH.text $ "Created " <> DateTime.toDisplayMonthDayYear i.created_at ]
+                            [ HH.text $ "Subscribed " <> DateTime.toDisplayMonthDayYear i.created_at ]
                         ]
                     ]
                 ]
@@ -294,7 +359,74 @@ component = Connect.component $ H.mkComponent
                 [ HH.div
                     [ HP.classes [ T.flex ] ]
                     [ HH.button
-                        [ HE.onClick \_ -> Just $ DeleteIntegration i.id
+                        [ HE.onClick \_ -> Just $ DeleteRssIntegration i.id
+                        , HP.classes [ T.cursorPointer ]
+                        , HP.type_ HP.ButtonButton
+                        ]
+                        [ Icons.trash [ Icons.classes [ T.w6, T.h6, T.textGray400, T.hoverTextManzana ] ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+
+    subscriptionIntegrationEl :: ListSubscription -> _
+    subscriptionIntegrationEl i =
+      HH.li
+        [ HP.classes
+            [ T.group
+            , T.relative
+            , T.bgWhite
+            , T.roundedLg
+            , T.shadowSm
+            , T.hoverRing1
+            , T.hoverRingKiwi
+            ]
+        ]
+        [ HH.div
+            [ HP.classes
+                [ T.roundedLg
+                , T.border
+                , T.borderGray300
+                , T.hoverBorderKiwi
+                , T.bgWhite
+                , T.px6
+                , T.py4
+                , T.hoverBorderGray400
+                , T.smFlex
+                , T.smJustifyBetween
+                ]
+            ]
+            [ HH.div
+                [ HP.classes [ T.flex, T.itemsCenter ] ]
+                [ HH.div
+                    [ HP.classes [ T.textSm ] ]
+                    [ HH.p
+                        [ HP.classes [ T.fontMedium, T.textGray400 ] ]
+                        [ HH.text $ "List " <> ID.toString i.listas_subscription.list ]
+                    , HH.div
+                        [ HP.classes [ T.textGray500 ] ]
+                        [ HH.p
+                            [ HP.classes [ T.smInline ] ]
+                            [ HH.text $ "Followed " <> DateTime.toDisplayMonthDayYear i.created_at ]
+                        ]
+                    ]
+                ]
+            , HH.div
+                [ HP.classes
+                    [ T.mt2
+                    , T.flex
+                    , T.textSm
+                    , T.smMt0
+                    , T.smBlock
+                    , T.smMl4
+                    , T.smTextRight
+                    ]
+                ]
+                [ HH.div
+                    [ HP.classes [ T.flex ] ]
+                    [ HH.button
+                        [ HE.onClick \_ -> Just $ DeleteSubscription i.id
                         , HP.classes [ T.cursorPointer ]
                         , HP.type_ HP.ButtonButton
                         ]
