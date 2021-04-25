@@ -209,11 +209,17 @@ instance manageIntegrationAppM :: ManageIntegration AppM where
           conf = {endpoint: RssIntegrations, method: Post $ Just body}
           codec = Integration.rssIntegrationCodec
 
+  subscribeToList fields = do
+    hush <$> mkAuthRequest conf codec
+    where body = Codec.encode Integration.listSubscriptionFieldsCodec fields
+          conf = {endpoint: ListSubscriptionIntegrations, method: Post $ Just body}
+          codec = Integration.listSubscriptionCodec
+
   deleteIntegration id =
     map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
     where conf = {endpoint: Integration id, method: Delete}
 
   getListIntegrations list =
     hush <$> mkAuthRequest conf codec
-    where conf = {endpoint: Integrations {list, kind: Integration.KindRss}, method: Get}
-          codec = CAC.array $ Integration.rssIntegrationCodec
+    where conf = {endpoint: Integrations {list, kind: Nothing}, method: Get}
+          codec = CAC.array $ Integration.integrationCodec

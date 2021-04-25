@@ -4,26 +4,27 @@ import Prelude
 
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
-import Data.Array (cons, find, length, null)
+import Data.Array (cons, length, null)
 import Data.Either (Either, note)
 import Data.Filterable (filter)
-import Data.Foldable (elem)
-import Data.Lens (over, view)
-import Data.Maybe (Maybe(..), fromMaybe, isJust, maybe)
+import Data.Lens (anyOf, over, traversed)
+import Data.Maybe (Maybe(..), fromMaybe, maybe)
+import Data.Traversable (for_)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
-import Listasio.Capability.Resource.List (class ManageList, discoverLists, forkList, getLists)
+import Listasio.Capability.Resource.Integration (class ManageIntegration, subscribeToList)
+import Listasio.Capability.Resource.List (class ManageList, createList, discoverLists, forkList, getLists)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
 import Listasio.Data.Avatar (Avatar)
 import Listasio.Data.Avatar as Avatar
 import Listasio.Data.ID (ID)
-import Listasio.Data.Lens (_forkInProgress)
+import Listasio.Data.Lens (_actionInProgress)
 import Listasio.Data.List (Author(..), ListWithIdUserAndMeta, PublicList)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
@@ -45,6 +46,7 @@ data Action
   | LoadMore
   | LoadOwnLists
   | ForkList PublicList
+  | SubscribeToList PublicList
 
 type Items
   = { refreshing :: Boolean
@@ -55,7 +57,7 @@ type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
     , lists :: RemoteData String Items
     , ownLists :: RemoteData String (Array ListWithIdUserAndMeta)
-    , forkInProgress :: Array ID
+    , actionInProgress :: Array ID
     , page :: Int
     , isLast :: Boolean
     }
@@ -69,15 +71,16 @@ perPage = 25
 limit :: Maybe Int
 limit = Just perPage
 
-isForkingThisList :: PublicList -> State -> Boolean
-isForkingThisList {id} =
-  isJust <<< find (_ == id) <<< view _forkInProgress
+hasActionInProgress :: PublicList -> State -> Boolean
+hasActionInProgress {id} =
+  anyOf (_actionInProgress <<< traversed) (_ == id)
 
 component
   :: forall q o m r
    . MonadAff m
   => MonadAsk {userEnv :: UserEnv | r} m
   => ManageList m
+  => ManageIntegration m
   => Navigate m
   => H.Component HH.HTML q {} o m
 component = Connect.component $ H.mkComponent
@@ -96,7 +99,7 @@ component = Connect.component $ H.mkComponent
     , page: 1
     , isLast: false
     , ownLists: NotAsked
-    , forkInProgress: []
+    , actionInProgress: []
     }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
@@ -142,15 +145,33 @@ component = Connect.component $ H.mkComponent
       H.modify_ _ {ownLists = lists}
 
     ForkList list -> do
-      isForkingAlready <- H.gets $ elem list.id <<< view _forkInProgress
+      isInProgress <- H.gets $ hasActionInProgress list
 
-      unless isForkingAlready do
-        H.modify_ $ over _forkInProgress $ cons list.id
+      when (not isInProgress) do
+        H.modify_ $ over _actionInProgress $ cons list.id
         mbForkedList <- forkList list.id
-        H.modify_ $ over _forkInProgress $ filter (_ /= list.id)
+        H.modify_ $ over _actionInProgress $ filter (_ /= list.id)
         case mbForkedList of
+          -- TODO: show error ?
           Nothing -> pure unit
           Just _forked -> pure unit
+
+    -- TODO: MaybeT / EitherT !!!
+    SubscribeToList list@{id, title, tags, description} -> do
+      isInProgress <- H.gets $ hasActionInProgress list
+
+      when (not isInProgress) do
+        H.modify_ $ over _actionInProgress $ cons id
+        mbList <- createList {title, tags, description, is_public: false}
+
+        for_ mbList \newList -> do
+          mbFollowIntegration <- subscribeToList {subscribe_from: newList.id, subscribe_to: id}
+          case mbFollowIntegration of
+            -- TODO: show error ?
+            Nothing -> pure unit
+            Just _followIntegration -> pure unit
+
+        H.modify_ $ over _actionInProgress $ filter (_ /= list.id)
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render state@{currentUser, lists, isLast} =
@@ -232,11 +253,18 @@ component = Connect.component $ H.mkComponent
         , HH.div
             [ HP.classes [ T.mt4, T.flex, T.justifyBetween ] ]
             case author, currentUser of
-              -- TODO: use current user avatar
               You, Just me -> [ authorEl { slug: me.slug, name: me.name, avatar: _.avatar =<< currentUser } ]
               Other user, Just _ ->
                 [ authorEl user
-                , button "Copy list" (Just $ ForkList list) $ isForkingThisList list state
+                , HH.div
+                    [ HP.classes [ T.flex ] ]
+                    [ HH.div
+                        [ HP.classes [ T.mr2 ] ]
+                        [ button "Copy" (Just $ ForkList list) $ hasActionInProgress list state ]
+                    , HH.div
+                        []
+                        [ button "Follow" (Just $ SubscribeToList list) $ hasActionInProgress list state ]
+                    ]
                 ]
               Other user, Nothing -> [ authorEl user ]
               _, _ -> [ HH.text "" ]
@@ -248,12 +276,11 @@ button text action disabled =
     [ HP.type_ HP.ButtonButton
     , HP.classes
         [ T.cursorPointer
-        , T.py2
-        , T.px4
+        , T.py1
+        , T.px2
         , T.bgKiwi
         , T.textWhite
-        , T.fontSemibold
-        , T.textSm
+        , T.textXs
         , T.roundedLg
         , T.hoverBgKiwiDark
         , T.focusOutlineNone

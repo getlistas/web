@@ -4,6 +4,9 @@ import Data.Lens (Lens')
 import Data.Lens.Record (prop)
 import Data.Symbol (SProxy(..))
 
+_actionInProgress :: forall a r. Lens' { actionInProgress :: a | r } a
+_actionInProgress = prop (SProxy :: SProxy "actionInProgress")
+
 _completed_count :: forall a r. Lens' { completed_count :: a | r } a
 _completed_count = prop (SProxy :: SProxy "completed_count")
 
@@ -18,9 +21,6 @@ _currentUser = prop (SProxy :: SProxy "currentUser")
 
 _description :: forall a r. Lens' { description :: a | r } a
 _description = prop (SProxy :: SProxy "description")
-
-_forkInProgress :: forall a r. Lens' { forkInProgress :: a | r } a
-_forkInProgress = prop (SProxy :: SProxy "forkInProgress")
 
 _id :: forall a r. Lens' { id :: a | r } a
 _id = prop (SProxy :: SProxy "id")
@@ -66,6 +66,9 @@ _showMore = prop (SProxy :: SProxy "showMore")
 
 _showNextMenu :: forall a r. Lens' { showNextMenu :: a | r } a
 _showNextMenu = prop (SProxy :: SProxy "showNextMenu")
+
+_subscriptions :: forall a r. Lens' { subscriptions :: a | r } a
+_subscriptions = prop (SProxy :: SProxy "subscriptions")
 
 _rss :: forall a r. Lens' { rss :: a | r } a
 _rss = prop (SProxy :: SProxy "rss")
