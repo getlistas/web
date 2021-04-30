@@ -6,6 +6,7 @@ module Listasio.Data.Avatar
   , parse
   , toString
   , renderWithDefault
+  , profile
   , codec
   ) where
 
@@ -61,6 +62,39 @@ renderWithDefault size = case _ of
           , T.roundedFull
           , T.bgGray100
           , T.flex
+          , T.justifyCenter
+          , T.itemsCenter
+          ]
+      ]
+      [ Icons.userCircle [ Icons.classes [ T.textGray300, T.w5d6, T.h5d6 ] ] ]
+
+profile :: forall i p. Maybe Avatar -> HH.HTML i p
+profile = case _ of
+  Just (Avatar avatar) ->
+    HH.img
+      [ HP.classes
+          [ T.h24
+          , T.w24
+          , T.smH32
+          , T.smW32
+          , T.roundedFull
+          , T.ring4
+          , T.ringWhite
+          , T.justifyCenter
+          , T.itemsCenter
+          ]
+      , HP.src avatar
+      ]
+  Nothing ->
+    HH.div
+      [ HP.classes
+          [ T.h24
+          , T.w24
+          , T.smH32
+          , T.smW32
+          , T.roundedFull
+          , T.ring4
+          , T.ringWhite
           , T.justifyCenter
           , T.itemsCenter
           ]
