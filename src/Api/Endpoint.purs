@@ -36,6 +36,7 @@ data Endpoint
   | GoogleLogin
   | User
   | Me
+  | MyMetrics
   | Users
   | UserBySlug Slug
   | List ID
@@ -64,6 +65,7 @@ endpointCodec =
         , "GoogleLogin": "users" / "google-auth" / noArgs
         , "User": "user" / noArgs
         , "Me": "users" / "me" / noArgs
+        , "MyMetrics": "users" / "me" / "metrics" / noArgs
         , "Users": "users" / noArgs
         , "UserBySlug": "users" / Slug.term segment
         , "List": "lists" / id segment

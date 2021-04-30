@@ -5,6 +5,7 @@ import Prelude
 import Data.Maybe (Maybe)
 import Halogen (HalogenM, lift)
 import Listasio.Api.Request (LoginFields, RegisterFields)
+import Listasio.Data.Metrics (Metric)
 import Listasio.Data.Profile (Profile, ProfileWithIdAndEmail, PublicProfile)
 import Slug (Slug)
 
@@ -15,6 +16,7 @@ class Monad m <= ManageUser m where
   getCurrentUser :: m (Maybe ProfileWithIdAndEmail)
   updateUser :: Profile -> m Unit
   userBySlug :: Slug -> m (Maybe PublicProfile)
+  myMetrics :: m (Maybe (Array Metric))
 
 instance manageUserHalogenM :: ManageUser m => ManageUser (HalogenM st act slots msg m) where
   loginUser = lift <<< loginUser
@@ -23,3 +25,4 @@ instance manageUserHalogenM :: ManageUser m => ManageUser (HalogenM st act slots
   getCurrentUser = lift getCurrentUser
   updateUser = lift <<< updateUser
   userBySlug = lift <<< userBySlug
+  myMetrics = lift myMetrics

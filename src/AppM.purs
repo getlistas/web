@@ -33,6 +33,7 @@ import Listasio.Capability.Resource.User (class ManageUser)
 import Listasio.Data.Integration as Integration
 import Listasio.Data.List as List
 import Listasio.Data.Log as Log
+import Listasio.Data.Metrics as Metrics
 import Listasio.Data.Profile as Profile
 import Listasio.Data.Resource as Resource
 import Listasio.Data.ResourceMetadata as ResourceMeta
@@ -132,6 +133,10 @@ instance manageUserAppM :: ManageUser AppM where
   userBySlug slug =
     hush <$> mkRequest conf Profile.publicProfileCodec
     where conf = {endpoint: UserBySlug slug, method: Get}
+
+  myMetrics =
+    hush <$> mkAuthRequest conf (CAC.array Metrics.metricCodec)
+    where conf = {endpoint: MyMetrics, method: Get}
 
 instance manageListAppM :: ManageList AppM where
   createList list =
