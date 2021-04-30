@@ -55,6 +55,9 @@ _newRss = prop (SProxy :: SProxy "newRss")
 _next :: forall a r. Lens' { next :: a | r } a
 _next = prop (SProxy :: SProxy "next")
 
+_profile :: forall a r. Lens' { profile :: a | r } a
+_profile = prop (SProxy :: SProxy "profile")
+
 _resource_metadata :: forall a r. Lens' { resource_metadata :: a | r } a
 _resource_metadata = prop (SProxy :: SProxy "resource_metadata")
 

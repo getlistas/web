@@ -5,20 +5,25 @@ import Prelude
 import Component.HOC.Connect as Connect
 import Control.Error.Util (note)
 import Control.Monad.Reader (class MonadAsk)
-import Data.Maybe (Maybe(..))
+import Data.Array (reverse)
+import Data.Lens (_Just, preview)
+import Data.Maybe (Maybe(..), isJust)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
-import Listasio.Capability.Resource.User (class ManageUser, userBySlug)
+import Listasio.Capability.Resource.User (class ManageUser, myMetrics, userBySlug)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Data.Avatar as Avatar
+import Listasio.Data.DateTime as DateTime
+import Listasio.Data.Lens (_currentUser, _id, _profile)
+import Listasio.Data.Metrics (Metric)
 import Listasio.Data.Profile (ProfileWithIdAndEmail, PublicProfile)
 import Listasio.Data.Route (Route)
 import Listasio.Data.Username as Username
 import Listasio.Env (UserEnv)
-import Network.RemoteData (RemoteData(..))
+import Network.RemoteData (RemoteData(..), _Success)
 import Network.RemoteData as RemoteData
 import Slug (Slug)
 import Tailwind as T
@@ -27,12 +32,14 @@ import Web.Event.Event (Event)
 data Action
   = Initialize
   | Receive {slug :: Slug, currentUser :: Maybe ProfileWithIdAndEmail}
+  | LoadMetrics
   | Navigate Route Event
 
 type State
   = { slug :: Slug
     , currentUser :: Maybe ProfileWithIdAndEmail
     , profile :: RemoteData String PublicProfile
+    , metrics :: RemoteData String (Array Metric)
     }
 
 component
@@ -56,22 +63,39 @@ component = Connect.component $ H.mkComponent
     { slug
     , currentUser
     , profile: NotAsked
+    , metrics: NotAsked
     }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
     Initialize -> do
       {slug} <- H.get
+      H.modify_ _ {profile = Loading}
       profile <- RemoteData.fromEither <$> note "Could not fetch user profile" <$> userBySlug slug
       H.modify_ _ {profile = profile}
+      {currentUser} <- H.get
+      when (RemoteData.isSuccess profile && isJust currentUser) do
+        void $ H.fork $ handleAction LoadMetrics
 
-    Receive {currentUser} ->
+    Receive {currentUser} -> do
       H.modify_ _ {currentUser = currentUser}
+      {profile, metrics} <- H.get
+      when (RemoteData.isSuccess profile && isJust currentUser && RemoteData.isNotAsked metrics) do
+        void $ H.fork $ handleAction LoadMetrics
+
+    LoadMetrics -> do
+      mbUser <- H.gets $ preview (_currentUser <<< _Just <<< _id)
+      mbProfile <- H.gets $ preview (_profile <<< _Success <<< _id)
+
+      when (mbUser == mbProfile) do
+        H.modify_ _ {metrics = Loading}
+        metrics <- RemoteData.fromEither <$> note "Could not fetch user metrics" <$> myMetrics
+        H.modify_ _ {metrics = reverse <$> metrics}
 
     Navigate route e -> navigate_ e route
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {currentUser, profile} =
+  render {currentUser, profile, metrics} =
     HH.div
       []
       [ wip
@@ -82,6 +106,19 @@ component = Connect.component $ H.mkComponent
           Failure _ -> HH.text "User Profile"
 
           _ -> HH.text "..."
+
+      , case metrics of
+          Success ms ->
+            HH.div
+              [ HP.classes [ T.maxW5xl, T.mxAuto, T.px4, T.smPx6, T.lgPx8, T.mt12 ] ]
+              [ HH.div
+                  [ HP.classes [ T.textLg, T.textGray400, T.fontSemibold, T.mb2, T.borderB, T.borderGray200, T.w96 ] ]
+                  [ HH.text "Activity" ]
+              , HH.div
+                  [ HP.classes [ T.w96 ] ]
+                  $ map metricEl ms
+              ]
+          _ -> HH.text ""
       ]
 
     where
@@ -100,6 +137,17 @@ component = Connect.component $ H.mkComponent
                 [ HH.text "Work in progress"
                 ]
             ]
+        ]
+
+    metricEl {date, completed_count} =
+      HH.div
+        [ HP.classes [ T.flex, T.justifyBetween, T.mb2 ] ]
+        [ HH.p
+            [ HP.classes [ T.fontSemibold, T.textGray400 ] ]
+            [ HH.text $ DateTime.toDisplayMonthDayYear date ]
+        , HH.p
+            [ HP.classes [ T.textGray300 ] ]
+            [ HH.text $ show completed_count ]
         ]
 
     profileHeader {name, avatar} =
