@@ -129,6 +129,10 @@ instance manageUserAppM :: ManageUser AppM where
       }
       Codec.json
 
+  userBySlug slug =
+    hush <$> mkRequest conf Profile.publicProfileCodec
+    where conf = {endpoint: UserBySlug slug, method: Get}
+
 instance manageListAppM :: ManageList AppM where
   createList list =
     hush <$> mkAuthRequest conf List.listWitIdAndUserCodec

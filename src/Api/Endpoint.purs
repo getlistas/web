@@ -37,6 +37,7 @@ data Endpoint
   | User
   | Me
   | Users
+  | UserBySlug Slug
   | List ID
   | ListBySlug Slug Slug
   | ListFork ID
@@ -64,6 +65,7 @@ endpointCodec =
         , "User": "user" / noArgs
         , "Me": "users" / "me" / noArgs
         , "Users": "users" / noArgs
+        , "UserBySlug": "users" / Slug.term segment
         , "List": "lists" / id segment
         , "ListBySlug": "users" / Slug.term segment / "lists" / Slug.term segment
         , "ListFork": "lists" / id segment / "fork"

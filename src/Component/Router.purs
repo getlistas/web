@@ -178,8 +178,8 @@ component = Connect.component $ H.mkComponent
           Changelog ->
             HH.slot (SProxy :: _ "changelog") unit Changelog.component {} absurd
 
-          Profile _ ->
-            HH.slot (SProxy :: _ "profile") unit Profile.component {} absurd
+          Profile slug ->
+            HH.slot (SProxy :: _ "profile") unit Profile.component {slug} absurd
 
           -- LEGAL -----------------------------------------------------------------
           Terms ->
