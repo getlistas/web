@@ -36,8 +36,8 @@ type ForkedList
     }
 
 type ForkMeta
-  = { list :: Maybe ForkedList
-    , user :: Maybe PublicProfile
+  = { list :: ID
+    , user :: ID
     }
 
 type ResourceMeta
@@ -150,8 +150,8 @@ forkedListCodec =
 forkMetaCodec :: JsonCodec ForkMeta
 forkMetaCodec =
   CAR.object "ForkMeta"
-    { list: CAC.maybe forkedListCodec
-    , user: CAC.maybe publicProfileCodec
+    { list: ID.codec
+    , user: ID.codec
     }
 
 createListFieldsCodec :: JsonCodec CreateListFields
