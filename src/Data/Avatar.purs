@@ -80,6 +80,7 @@ profile = case _ of
           , T.roundedFull
           , T.ring4
           , T.ringWhite
+          , T.flex
           , T.justifyCenter
           , T.itemsCenter
           ]
@@ -95,8 +96,10 @@ profile = case _ of
           , T.roundedFull
           , T.ring4
           , T.ringWhite
+          , T.flex
           , T.justifyCenter
           , T.itemsCenter
+          , T.bgGray100
           ]
       ]
       [ Icons.userCircle [ Icons.classes [ T.textGray300, T.w5d6, T.h5d6 ] ] ]
