@@ -17,6 +17,7 @@
   , "halogen"
   , "halogen-formless"
   , "halogen-select"
+  , "integers"
   , "jwt"
   , "nonempty"
   , "now"

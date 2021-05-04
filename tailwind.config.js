@@ -3,6 +3,12 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      gridTemplateRows: {
+        '7': 'repeat(7, minmax(0, 1fr))'
+      },
+      gridTemplateColumns: {
+        '52': 'repeat(52, minmax(0, 1fr))'
+      },
       animation: {
         "spin-slow": "spin 2s linear infinite",
       },
