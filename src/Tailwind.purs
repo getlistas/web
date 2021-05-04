@@ -171,6 +171,10 @@ borderTransparent = ClassName "border-transparent"
 borderWhite :: ClassName
 borderWhite = ClassName "border-white"
 
+-- | bottom4
+bottom4 :: ClassName
+bottom4 = ClassName "bottom-4"
+
 -- | checkedBgKiwi
 checkedBgKiwi :: ClassName
 checkedBgKiwi = ClassName "checked:bg-kiwi"
@@ -315,10 +319,6 @@ focusRingOffset2 = ClassName "focus:ring-offset-2"
 focusRingOffsetGray10 :: ClassName
 focusRingOffsetGray10 = ClassName "focus:ring-offset-gray-10"
 
--- | focusRingPink500
-focusRingPink500 :: ClassName
-focusRingPink500 = ClassName "focus:ring-pink-500"
-
 -- | focusRingWhite
 focusRingWhite :: ClassName
 focusRingWhite = ClassName "focus:ring-white"
@@ -351,6 +351,10 @@ fontSemibold = ClassName "font-semibold"
 fromDurazno :: ClassName
 fromDurazno = ClassName "from-durazno"
 
+-- | gap1
+gap1 :: ClassName
+gap1 = ClassName "gap-1"
+
 -- | gap4
 gap4 :: ClassName
 gap4 = ClassName "gap-4"
@@ -371,9 +375,25 @@ gridCols1 = ClassName "grid-cols-1"
 gridCols2 :: ClassName
 gridCols2 = ClassName "grid-cols-2"
 
+-- | gridCols52
+gridCols52 :: ClassName
+gridCols52 = ClassName "grid-cols-52"
+
+-- | gridFlowCol
+gridFlowCol :: ClassName
+gridFlowCol = ClassName "grid-flow-col"
+
+-- | gridRows7
+gridRows7 :: ClassName
+gridRows7 = ClassName "grid-rows-7"
+
 -- | group
 group :: ClassName
 group = ClassName "group"
+
+-- | groupHoverBlock
+groupHoverBlock :: ClassName
+groupHoverBlock = ClassName "group-hover:block"
 
 -- | groupHoverBorderKiwi
 groupHoverBorderKiwi :: ClassName
@@ -410,6 +430,10 @@ h20 = ClassName "h-20"
 -- | h24
 h24 :: ClassName
 h24 = ClassName "h-24"
+
+-- | h2
+h2 :: ClassName
+h2 = ClassName "h-2"
 
 -- | h32
 h32 :: ClassName
@@ -983,6 +1007,10 @@ my4 = ClassName "my-4"
 my6 :: ClassName
 my6 = ClassName "my-6"
 
+-- | negInsetX24
+negInsetX24 :: ClassName
+negInsetX24 = ClassName "-inset-x-24"
+
 -- | negMl1
 negMl1 :: ClassName
 negMl1 = ClassName "-ml-1"
@@ -1303,10 +1331,6 @@ smFlex1 = ClassName "sm:flex-1"
 smFlex :: ClassName
 smFlex = ClassName "sm:flex"
 
--- | smFlexRow
-smFlexRow :: ClassName
-smFlexRow = ClassName "sm:flex-row"
-
 -- | smFlexShrink0
 smFlexShrink0 :: ClassName
 smFlexShrink0 = ClassName "sm:flex-shrink-0"
@@ -1483,10 +1507,6 @@ smRoundedLg = ClassName "sm:rounded-lg"
 smRoundedMd :: ClassName
 smRoundedMd = ClassName "sm:rounded-md"
 
--- | smSpaceX4
-smSpaceX4 :: ClassName
-smSpaceX4 = ClassName "sm:space-x-4"
-
 -- | smSpaceX5
 smSpaceX5 :: ClassName
 smSpaceX5 = ClassName "sm:space-x-5"
@@ -1558,10 +1578,6 @@ spaceY1 = ClassName "space-y-1"
 -- | spaceY2
 spaceY2 :: ClassName
 spaceY2 = ClassName "space-y-2"
-
--- | spaceY3
-spaceY3 :: ClassName
-spaceY3 = ClassName "space-y-3"
 
 -- | spaceY4
 spaceY4 :: ClassName
@@ -1763,6 +1779,10 @@ w20 = ClassName "w-20"
 w24 :: ClassName
 w24 = ClassName "w-24"
 
+-- | w2
+w2 :: ClassName
+w2 = ClassName "w-2"
+
 -- | w32
 w32 :: ClassName
 w32 = ClassName "w-32"
@@ -1774,6 +1794,10 @@ w40 = ClassName "w-40"
 -- | w4
 w4 :: ClassName
 w4 = ClassName "w-4"
+
+-- | w56
+w56 :: ClassName
+w56 = ClassName "w-56"
 
 -- | w5
 w5 :: ClassName

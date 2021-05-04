@@ -5,16 +5,28 @@ import Prelude
 import Component.HOC.Connect as Connect
 import Control.Error.Util (note)
 import Control.Monad.Reader (class MonadAsk)
-import Data.Array (reverse)
+import Data.Array (cons, range)
+import Data.Date (Date, adjust)
+import Data.DateTime (DateTime(..), date)
+import Data.Int (toNumber)
 import Data.Lens (_Just, preview)
-import Data.Maybe (Maybe(..), isJust)
+import Data.Map (Map)
+import Data.Map as Map
+import Data.Maybe (Maybe(..), isJust, maybe)
+import Data.Time (Time)
+import Data.Time.Duration (Days(..), negateDuration)
+import Data.Traversable (sequence, traverse)
+import Data.Tuple (Tuple(..))
+import Data.Tuple as Tuple
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Capability.Now (class Now, nowDate, nowTime)
 import Listasio.Capability.Resource.User (class ManageUser, myMetrics, userBySlug)
 import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Utils (cx)
 import Listasio.Data.Avatar as Avatar
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.Lens (_currentUser, _id, _profile)
@@ -39,8 +51,19 @@ type State
   = { slug :: Slug
     , currentUser :: Maybe ProfileWithIdAndEmail
     , profile :: RemoteData String PublicProfile
-    , metrics :: RemoteData String (Array Metric)
+    , metrics :: RemoteData String (Map Date Int)
+    , time :: Maybe Time
     }
+
+metricToTuple :: Metric -> Tuple Date Int
+metricToTuple m = Tuple (date m.date) m.completed_count
+
+allDaysPastYear :: Date -> Map Date Int
+allDaysPastYear date =
+  Map.fromFoldable
+    $ maybe [] (cons $ Tuple date 0)
+    $ traverse (map Tuple.swap <<< sequence <<< Tuple 0 <<< flip adjust date <<< negateDuration <<< Days <<< toNumber)
+    $ range 1 363
 
 component
   :: forall q o m r
@@ -48,6 +71,7 @@ component
   => MonadAsk { userEnv :: UserEnv | r } m
   => ManageUser m
   => Navigate m
+  => Now m
   => H.Component HH.HTML q {slug :: Slug} o m
 component = Connect.component $ H.mkComponent
   { initialState
@@ -64,11 +88,15 @@ component = Connect.component $ H.mkComponent
     , currentUser
     , profile: NotAsked
     , metrics: NotAsked
+    , time: Nothing
     }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
     Initialize -> do
+      time <- nowTime
+      H.modify_ _ {time = Just time}
+
       {slug} <- H.get
       H.modify_ _ {profile = Loading}
       profile <- RemoteData.fromEither <$> note "Could not fetch user profile" <$> userBySlug slug
@@ -89,13 +117,18 @@ component = Connect.component $ H.mkComponent
 
       when (mbUser == mbProfile) do
         H.modify_ _ {metrics = Loading}
+
         metrics <- RemoteData.fromEither <$> note "Could not fetch user metrics" <$> myMetrics
-        H.modify_ _ {metrics = reverse <$> metrics}
+
+        year <- allDaysPastYear <$> nowDate
+
+        H.modify_ _
+          {metrics = flip Map.union year <<< Map.fromFoldable <<< map metricToTuple  <$> metrics}
 
     Navigate route e -> navigate_ e route
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {currentUser, profile, metrics} =
+  render {currentUser, profile, metrics, time} =
     HH.div
       []
       [ wip
@@ -107,18 +140,26 @@ component = Connect.component $ H.mkComponent
 
           _ -> HH.text "..."
 
-      , case metrics of
-          Success ms ->
+      , case metrics, time of
+          Success ms, Just t ->
             HH.div
               [ HP.classes [ T.maxW5xl, T.mxAuto, T.px4, T.smPx6, T.lgPx8, T.mt12 ] ]
               [ HH.div
-                  [ HP.classes [ T.textLg, T.textGray400, T.fontSemibold, T.mb2, T.borderB, T.borderGray200, T.w96 ] ]
+                  [ HP.classes [ T.textLg, T.textGray400, T.fontSemibold, T.mb2, T.borderB, T.borderGray200 ] ]
                   [ HH.text "Activity" ]
               , HH.div
-                  [ HP.classes [ T.w96 ] ]
-                  $ map metricEl ms
+                  [ HP.classes
+                      [ T.grid
+                      , T.gridRows7
+                      , T.gridCols52
+                      , T.gridFlowCol
+                      , T.gap1
+                      ]
+                  ]
+                  $ map (metricEl t)
+                  $ Map.toUnfoldable ms
               ]
-          _ -> HH.text ""
+          _, _ -> HH.text ""
       ]
 
     where
@@ -139,15 +180,45 @@ component = Connect.component $ H.mkComponent
             ]
         ]
 
-    metricEl {date, completed_count} =
+    metricEl :: Time -> Tuple Date Int -> _
+    metricEl t (Tuple date count) =
       HH.div
-        [ HP.classes [ T.flex, T.justifyBetween, T.mb2 ] ]
-        [ HH.p
-            [ HP.classes [ T.fontSemibold, T.textGray400 ] ]
-            [ HH.text $ DateTime.toDisplayMonthDayYear date ]
-        , HH.p
-            [ HP.classes [ T.textGray300 ] ]
-            [ HH.text $ show completed_count ]
+        [ HP.classes
+            [ T.relative
+            , T.h2
+            , T.w2
+            , T.group
+              -- TODO
+              -- 100% max
+              -- >75% less dark
+              -- >50% mid
+              -- >25% light
+              -- <25% lighter
+            , cx T.bgKiwiDark $ count > 1
+            , cx T.bgKiwi $ count == 1
+            , cx T.bgGray100 $ count < 1
+            ]
+        ]
+        [ HH.div
+            [ HP.classes
+                [ T.hidden
+                , T.groupHoverBlock
+                , T.absolute
+                , T.z10
+                , T.bottom4
+                , T.negInsetX24
+                , T.p2
+                , T.bgGray300
+                , T.textWhite
+                , T.textXs
+                , T.w56
+                , T.textCenter
+                , T.roundedMd
+                ]
+            ]
+            [ HH.span [ HP.classes [ T.fontSemibold ] ] [ HH.text $ show count <> " completed" ]
+            , HH.span [] [ HH.text $ " on " <> DateTime.toDisplayMonthDayYear (DateTime date t) ]
+            ]
         ]
 
     profileHeader {name, avatar} =
