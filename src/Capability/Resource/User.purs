@@ -16,7 +16,7 @@ class Monad m <= ManageUser m where
   getCurrentUser :: m (Maybe ProfileWithIdAndEmail)
   updateUser :: Profile -> m Unit
   userBySlug :: Slug -> m (Maybe PublicProfile)
-  myMetrics :: m (Maybe (Array Metric))
+  userMetrics :: Slug -> m (Maybe (Array Metric))
 
 instance manageUserHalogenM :: ManageUser m => ManageUser (HalogenM st act slots msg m) where
   loginUser = lift <<< loginUser
@@ -25,4 +25,4 @@ instance manageUserHalogenM :: ManageUser m => ManageUser (HalogenM st act slots
   getCurrentUser = lift getCurrentUser
   updateUser = lift <<< updateUser
   userBySlug = lift <<< userBySlug
-  myMetrics = lift myMetrics
+  userMetrics = lift <<< userMetrics

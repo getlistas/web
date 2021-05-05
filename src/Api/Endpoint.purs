@@ -36,9 +36,9 @@ data Endpoint
   | GoogleLogin
   | User
   | Me
-  | MyMetrics
   | Users
   | UserBySlug Slug
+  | UserMetrics Slug
   | List ID
   | ListBySlug Slug Slug
   | ListFork ID
@@ -65,9 +65,9 @@ endpointCodec =
         , "GoogleLogin": "users" / "google-auth" / noArgs
         , "User": "user" / noArgs
         , "Me": "users" / "me" / noArgs
-        , "MyMetrics": "users" / "me" / "metrics" / noArgs
         , "Users": "users" / noArgs
         , "UserBySlug": "users" / Slug.term segment
+        , "UserMetrics": "users" / Slug.term segment / "metrics"
         , "List": "lists" / id segment
         , "ListBySlug": "users" / Slug.term segment / "lists" / Slug.term segment
         , "ListFork": "lists" / id segment / "fork"
