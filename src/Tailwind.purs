@@ -63,6 +63,26 @@ bgGray50 = ClassName "bg-gray-50"
 bgGray800 :: ClassName
 bgGray800 = ClassName "bg-gray-800"
 
+-- | bgGreen200
+bgGreen200 :: ClassName
+bgGreen200 = ClassName "bg-green-200"
+
+-- | bgGreen300
+bgGreen300 :: ClassName
+bgGreen300 = ClassName "bg-green-300"
+
+-- | bgGreen500
+bgGreen500 :: ClassName
+bgGreen500 = ClassName "bg-green-500"
+
+-- | bgGreen700
+bgGreen700 :: ClassName
+bgGreen700 = ClassName "bg-green-700"
+
+-- | bgGreen800
+bgGreen800 :: ClassName
+bgGreen800 = ClassName "bg-green-800"
+
 -- | bgIndigo600
 bgIndigo600 :: ClassName
 bgIndigo600 = ClassName "bg-indigo-600"
@@ -431,13 +451,13 @@ h20 = ClassName "h-20"
 h24 :: ClassName
 h24 = ClassName "h-24"
 
--- | h2
-h2 :: ClassName
-h2 = ClassName "h-2"
-
 -- | h32
 h32 :: ClassName
 h32 = ClassName "h-32"
+
+-- | h3
+h3 :: ClassName
+h3 = ClassName "h-3"
 
 -- | h40
 h40 :: ClassName
@@ -642,6 +662,10 @@ leadingRelaxed = ClassName "leading-relaxed"
 -- | left0
 left0 :: ClassName
 left0 = ClassName "left-0"
+
+-- | left1d2
+left1d2 :: ClassName
+left1d2 = ClassName "left-1/2"
 
 -- | lgColSpan3
 lgColSpan3 :: ClassName
@@ -1007,10 +1031,6 @@ my4 = ClassName "my-4"
 my6 :: ClassName
 my6 = ClassName "my-6"
 
--- | negInsetX24
-negInsetX24 :: ClassName
-negInsetX24 = ClassName "-inset-x-24"
-
 -- | negMl1
 negMl1 :: ClassName
 negMl1 = ClassName "-ml-1"
@@ -1034,6 +1054,10 @@ negMx5 = ClassName "-mx-5"
 -- | negMy2
 negMy2 :: ClassName
 negMy2 = ClassName "-my-2"
+
+-- | negTranslateX1d2
+negTranslateX1d2 :: ClassName
+negTranslateX1d2 = ClassName "-translate-x-1/2"
 
 -- | negTranslateX6
 negTranslateX6 :: ClassName
@@ -1170,6 +1194,10 @@ pt5 = ClassName "pt-5"
 -- | pt6
 pt6 :: ClassName
 pt6 = ClassName "pt-6"
+
+-- | px10
+px10 :: ClassName
+px10 = ClassName "px-10"
 
 -- | px1
 px1 :: ClassName
@@ -1779,13 +1807,13 @@ w20 = ClassName "w-20"
 w24 :: ClassName
 w24 = ClassName "w-24"
 
--- | w2
-w2 :: ClassName
-w2 = ClassName "w-2"
-
 -- | w32
 w32 :: ClassName
 w32 = ClassName "w-32"
+
+-- | w3
+w3 :: ClassName
+w3 = ClassName "w-3"
 
 -- | w40
 w40 :: ClassName
