@@ -716,6 +716,31 @@ select{
   background-color: rgba(254, 202, 202, var(--tw-bg-opacity));
 }
 
+.bg-green-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(167, 243, 208, var(--tw-bg-opacity));
+}
+
+.bg-green-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(110, 231, 183, var(--tw-bg-opacity));
+}
+
+.bg-green-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(16, 185, 129, var(--tw-bg-opacity));
+}
+
+.bg-green-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(4, 120, 87, var(--tw-bg-opacity));
+}
+
+.bg-green-800 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(6, 95, 70, var(--tw-bg-opacity));
+}
+
 .bg-indigo-600 {
   --tw-bg-opacity: 1;
   background-color: rgba(79, 70, 229, var(--tw-bg-opacity));
@@ -2267,8 +2292,8 @@ select{
   height: 0px;
 }
 
-.h-2 {
-  height: 0.5rem;
+.h-3 {
+  height: 0.75rem;
 }
 
 .h-4 {
@@ -2769,6 +2794,11 @@ select{
   padding-bottom: 2.5rem;
 }
 
+.px-10 {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
+
 .py-12 {
   padding-top: 3rem;
   padding-bottom: 3rem;
@@ -2918,11 +2948,6 @@ select{
   left: 0px;
 }
 
-.-inset-x-24 {
-  right: -6rem;
-  left: -6rem;
-}
-
 .top-0 {
   top: 0px;
 }
@@ -2941,6 +2966,10 @@ select{
 
 .bottom-4 {
   bottom: 1rem;
+}
+
+.left-1\/2 {
+  left: 50%;
 }
 
 *{
@@ -3803,8 +3832,8 @@ select{
   vertical-align: bottom;
 }
 
-.w-2 {
-  width: 0.5rem;
+.w-3 {
+  width: 0.75rem;
 }
 
 .w-4 {
@@ -3940,6 +3969,10 @@ select{
 
 .-translate-x-6 {
   --tw-translate-x: -1.5rem;
+}
+
+.-translate-x-1\/2 {
+  --tw-translate-x: -50%;
 }
 
 .translate-y-6 {
