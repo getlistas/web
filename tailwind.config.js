@@ -7,6 +7,7 @@ module.exports = {
         '7': 'repeat(7, minmax(0, 1fr))'
       },
       gridTemplateColumns: {
+        '26': 'repeat(26, minmax(0, 1fr))',
         '52': 'repeat(52, minmax(0, 1fr))'
       },
       animation: {

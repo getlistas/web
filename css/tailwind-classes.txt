@@ -2954,6 +2954,7 @@ _32xlGridCols10;32xl:grid-cols-10
 _32xlGridCols11;32xl:grid-cols-11
 _32xlGridCols12;32xl:grid-cols-12
 _32xlGridCols1;32xl:grid-cols-1
+_32xlGridCols26;32xl:grid-cols-26
 _32xlGridCols2;32xl:grid-cols-2
 _32xlGridCols3;32xl:grid-cols-3
 _32xlGridCols4;32xl:grid-cols-4
@@ -10230,6 +10231,7 @@ gridCols10;grid-cols-10
 gridCols11;grid-cols-11
 gridCols12;grid-cols-12
 gridCols1;grid-cols-1
+gridCols26;grid-cols-26
 gridCols2;grid-cols-2
 gridCols3;grid-cols-3
 gridCols4;grid-cols-4
@@ -15044,6 +15046,7 @@ lgGridCols10;lg:grid-cols-10
 lgGridCols11;lg:grid-cols-11
 lgGridCols12;lg:grid-cols-12
 lgGridCols1;lg:grid-cols-1
+lgGridCols26;lg:grid-cols-26
 lgGridCols2;lg:grid-cols-2
 lgGridCols3;lg:grid-cols-3
 lgGridCols4;lg:grid-cols-4
@@ -22466,6 +22469,7 @@ mdGridCols10;md:grid-cols-10
 mdGridCols11;md:grid-cols-11
 mdGridCols12;md:grid-cols-12
 mdGridCols1;md:grid-cols-1
+mdGridCols26;md:grid-cols-26
 mdGridCols2;md:grid-cols-2
 mdGridCols3;md:grid-cols-3
 mdGridCols4;md:grid-cols-4
@@ -31712,6 +31716,7 @@ smGridCols10;sm:grid-cols-10
 smGridCols11;sm:grid-cols-11
 smGridCols12;sm:grid-cols-12
 smGridCols1;sm:grid-cols-1
+smGridCols26;sm:grid-cols-26
 smGridCols2;sm:grid-cols-2
 smGridCols3;sm:grid-cols-3
 smGridCols4;sm:grid-cols-4
@@ -39605,6 +39610,7 @@ xlGridCols10;xl:grid-cols-10
 xlGridCols11;xl:grid-cols-11
 xlGridCols12;xl:grid-cols-12
 xlGridCols1;xl:grid-cols-1
+xlGridCols26;xl:grid-cols-26
 xlGridCols2;xl:grid-cols-2
 xlGridCols3;xl:grid-cols-3
 xlGridCols4;xl:grid-cols-4
