@@ -2794,11 +2794,6 @@ select{
   padding-bottom: 2.5rem;
 }
 
-.px-10 {
-  padding-left: 2.5rem;
-  padding-right: 2.5rem;
-}
-
 .py-12 {
   padding-top: 3rem;
   padding-bottom: 3rem;
@@ -2811,6 +2806,10 @@ select{
 
 .pt-1 {
   padding-top: 0.25rem;
+}
+
+.pr-1 {
+  padding-right: 0.25rem;
 }
 
 .pt-2 {
@@ -3896,6 +3895,12 @@ select{
   width: 100vw;
 }
 
+.w-max {
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+}
+
 .z-10 {
   z-index: 10;
 }
@@ -3932,6 +3937,14 @@ select{
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.grid-cols-12 {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.grid-cols-26 {
+  grid-template-columns: repeat(26, minmax(0, 1fr));
+}
+
 .grid-cols-52 {
   grid-template-columns: repeat(52, minmax(0, 1fr));
 }
@@ -3946,6 +3959,18 @@ select{
 
 .grid-rows-7 {
   grid-template-rows: repeat(7, minmax(0, 1fr));
+}
+
+.row-start-2 {
+  grid-row-start: 2;
+}
+
+.row-start-4 {
+  grid-row-start: 4;
+}
+
+.row-start-6 {
+  grid-row-start: 6;
 }
 
 .transform {
@@ -9288,6 +9313,10 @@ select{
 
   .lg\:grid {
     display: grid;
+  }
+
+  .lg\:hidden {
+    display: none;
   }
 
   .group:hover .lg\:group-hover\:block {
