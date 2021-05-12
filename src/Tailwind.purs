@@ -387,9 +387,17 @@ gap8 = ClassName "gap-8"
 grid :: ClassName
 grid = ClassName "grid"
 
+-- | gridCols12
+gridCols12 :: ClassName
+gridCols12 = ClassName "grid-cols-12"
+
 -- | gridCols1
 gridCols1 :: ClassName
 gridCols1 = ClassName "grid-cols-1"
+
+-- | gridCols26
+gridCols26 :: ClassName
+gridCols26 = ClassName "grid-cols-26"
 
 -- | gridCols2
 gridCols2 :: ClassName
@@ -714,6 +722,10 @@ lgGridCols3 = ClassName "lg:grid-cols-3"
 -- | lgH48
 lgH48 :: ClassName
 lgH48 = ClassName "lg:h-48"
+
+-- | lgHidden
+lgHidden :: ClassName
+lgHidden = ClassName "lg:hidden"
 
 -- | lgItemsCenter
 lgItemsCenter :: ClassName
@@ -1163,6 +1175,10 @@ pointerEventsNone = ClassName "pointer-events-none"
 pr10 :: ClassName
 pr10 = ClassName "pr-10"
 
+-- | pr1
+pr1 :: ClassName
+pr1 = ClassName "pr-1"
+
 -- | pr3
 pr3 :: ClassName
 pr3 = ClassName "pr-3"
@@ -1194,10 +1210,6 @@ pt5 = ClassName "pt-5"
 -- | pt6
 pt6 :: ClassName
 pt6 = ClassName "pt-6"
-
--- | px10
-px10 :: ClassName
-px10 = ClassName "px-10"
 
 -- | px1
 px1 :: ClassName
@@ -1318,6 +1330,18 @@ roundedSm = ClassName "rounded-sm"
 -- | roundedTMd
 roundedTMd :: ClassName
 roundedTMd = ClassName "rounded-t-md"
+
+-- | rowStart2
+rowStart2 :: ClassName
+rowStart2 = ClassName "row-start-2"
+
+-- | rowStart4
+rowStart4 :: ClassName
+rowStart4 = ClassName "row-start-4"
+
+-- | rowStart6
+rowStart6 :: ClassName
+rowStart6 = ClassName "row-start-6"
 
 -- | shadow
 shadow :: ClassName
@@ -1850,6 +1874,10 @@ w96 = ClassName "w-96"
 -- | wFull
 wFull :: ClassName
 wFull = ClassName "w-full"
+
+-- | wMax
+wMax :: ClassName
+wMax = ClassName "w-max"
 
 -- | wScreen
 wScreen :: ClassName

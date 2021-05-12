@@ -5,8 +5,8 @@ import Prelude
 import Component.HOC.Connect as Connect
 import Control.Error.Util (note)
 import Control.Monad.Reader (class MonadAsk)
-import Data.Array (cons, range)
-import Data.Date (Date, adjust)
+import Data.Array (cons, drop, range)
+import Data.Date (Date, Weekday(..), adjust, weekday)
 import Data.DateTime (DateTime(..), date)
 import Data.Int (toNumber)
 import Data.Map (Map)
@@ -60,41 +60,57 @@ data Scale
   | Low
   | Lowest
 
-data CountScale
-  = None
-  | Some Scale Int
+type CountScale
+  = Maybe {color :: Scale, count :: Int}
 
 scaleColor :: CountScale -> H.ClassName
-scaleColor None = T.bgGray100
-scaleColor (Some Highest _) = T.bgGreen800
-scaleColor (Some High _) = T.bgGreen700
-scaleColor (Some Mid _) = T.bgGreen500
-scaleColor (Some Low _) = T.bgGreen300
-scaleColor (Some Lowest _) = T.bgGreen200
-
-scaleCount :: CountScale -> Int
-scaleCount None = 0
-scaleCount (Some _ n) = n
+scaleColor Nothing = T.bgGray100
+scaleColor (Just {color: Highest}) = T.bgGreen800
+scaleColor (Just {color: High}) = T.bgGreen700
+scaleColor (Just {color: Mid}) = T.bgGreen500
+scaleColor (Just {color: Low}) = T.bgGreen300
+scaleColor (Just {color: Lowest}) = T.bgGreen200
 
 toScale :: Int -> Int -> CountScale
-toScale _ 0 = None
+toScale _ 0 = Nothing
 toScale max n =
   case toNumber n / toNumber max of
-    r | r == 1.0 -> Some Highest n
-    r | r > 0.75 -> Some High n
-    r | r > 0.5 -> Some Mid n
-    r | r > 0.25 -> Some Low n
-    _ -> Some Lowest n
+    r | r == 1.0 -> Just {color: Highest, count: n}
+    r | r > 0.75 -> Just {color: High, count: n}
+    r | r > 0.5 -> Just {color: Mid, count: n}
+    r | r > 0.25 -> Just {color: Low, count: n}
+    _ -> Just {color: Lowest, count: n}
 
 metricToTuple :: Int -> Metric -> Tuple Date CountScale
 metricToTuple max m = Tuple (date m.date) $ toScale max m.completed_count
 
+yearDays :: Int
+yearDays = 364 -- 52 * 7
+
+halfYear :: Int
+halfYear = 182
+
+threeMonths :: Int
+threeMonths = 84
+
+yearOffset :: Weekday -> Int
+yearOffset Sunday = yearDays - 6
+yearOffset Monday = yearDays - 5
+yearOffset Tuesday = yearDays - 4
+yearOffset Wednesday = yearDays - 3
+yearOffset Thursday = yearDays - 2
+yearOffset Friday = yearDays - 1
+yearOffset Saturday = yearDays
+
 allDaysPastYear :: Date -> Map Date CountScale
 allDaysPastYear date =
   Map.fromFoldable
-    $ maybe [] (cons $ Tuple date None)
-    $ traverse (map Tuple.swap <<< sequence <<< Tuple None <<< flip adjust date <<< negateDuration <<< Days <<< toNumber)
-    $ range 1 363
+    $ maybe [] (cons $ Tuple date Nothing)
+    $ traverse (map Tuple.swap <<< sequence <<< Tuple Nothing <<< flip adjust date <<< negateDuration <<< Days <<< toNumber)
+    $ range 1
+    $ (_ - 1)
+    $ yearOffset
+    $ weekday date
 
 component
   :: forall q o m r
@@ -173,20 +189,91 @@ component = Connect.component $ H.mkComponent
             HH.div
               [ HP.classes [ T.maxW5xl, T.mxAuto, T.px4, T.smPx6, T.lgPx8, T.mt12 ] ]
               [ HH.div
-                  [ HP.classes [ T.textLg, T.textGray400, T.fontSemibold, T.mb2, T.borderB, T.borderGray200 ] ]
+                  [ HP.classes [ T.textLg, T.textGray400, T.fontSemibold, T.mb4, T.borderB, T.borderGray200 ] ]
                   [ HH.text "Activity" ]
               , HH.div
-                  [ HP.classes
-                      [ T.grid
-                      , T.gridRows7
-                      , T.gridCols52
-                      , T.gridFlowCol
-                      , T.gap1
-                      , T.px10
+                  [ HP.classes [ T.mxAuto, T.wMax, T.flex, T.smHidden ] ]
+                  [ HH.div
+                      [ HP.classes
+                          [ T.grid
+                          , T.gridRows7
+                          , T.gridFlowCol
+                          , T.gap1
+                          , T.pr1
+                          ]
                       ]
+                      [ gridDay "Mon" T.rowStart2
+                      , gridDay "Wed" T.rowStart4
+                      , gridDay "Fri" T.rowStart6
+                      ]
+                  , HH.div
+                      [ HP.classes
+                          [ T.grid
+                          , T.gridRows7
+                          , T.gridCols12
+                          , T.gridFlowCol
+                          , T.gap1
+                          ]
+                      ]
+                      $ map (metricEl t)
+                      $ drop (yearDays - threeMonths)
+                      $ Map.toUnfoldable ms
                   ]
-                  $ map (metricEl t)
-                  $ Map.toUnfoldable ms
+              , HH.div
+                  [ HP.classes [ T.mxAuto, T.wMax, T.hidden, T.smFlex, T.lgHidden ] ]
+                  [ HH.div
+                      [ HP.classes
+                          [ T.grid
+                          , T.gridRows7
+                          , T.gridFlowCol
+                          , T.gap1
+                          , T.pr1
+                          ]
+                      ]
+                      [ gridDay "Mon" T.rowStart2
+                      , gridDay "Wed" T.rowStart4
+                      , gridDay "Fri" T.rowStart6
+                      ]
+                  , HH.div
+                      [ HP.classes
+                          [ T.grid
+                          , T.gridRows7
+                          , T.gridCols26
+                          , T.gridFlowCol
+                          , T.gap1
+                          ]
+                      ]
+                      $ map (metricEl t)
+                      $ drop (yearDays - halfYear)
+                      $ Map.toUnfoldable ms
+                  ]
+              , HH.div
+                  [ HP.classes [ T.mxAuto, T.wMax, T.hidden, T.lgFlex ] ]
+                  [ HH.div
+                      [ HP.classes
+                          [ T.grid
+                          , T.gridRows7
+                          , T.gridFlowCol
+                          , T.gap1
+                          , T.pr1
+                          ]
+                      ]
+                      [ gridDay "Mon" T.rowStart2
+                      , gridDay "Wed" T.rowStart4
+                      , gridDay "Fri" T.rowStart6
+                      ]
+                  , HH.div
+                      [ HP.classes
+                          [ T.grid
+                          , T.gridRows7
+                          , T.gridCols52
+                          , T.gridFlowCol
+                          , T.gap1
+                          ]
+                      ]
+                      $ map (metricEl t)
+                      $ Map.toUnfoldable ms
+                  ]
               ]
           _, _ -> HH.text ""
       ]
@@ -208,6 +295,20 @@ component = Connect.component $ H.mkComponent
                 ]
             ]
         ]
+
+    gridDay day rowCx =
+      HH.div
+        [ HP.classes
+            [ T.flex
+            , T.justifyCenter
+            , T.flexCol
+            , T.textXs
+            , T.h3
+            , T.textGray300
+            , rowCx
+            ]
+        ]
+        [ HH.text day ]
 
     metricEl :: Time -> Tuple Date CountScale -> _
     metricEl t (Tuple date count) =
@@ -240,7 +341,7 @@ component = Connect.component $ H.mkComponent
                 , T.roundedMd
                 ]
             ]
-            [ HH.span [ HP.classes [ T.fontSemibold ] ] [ HH.text $ show (scaleCount count) <> " completed" ]
+            [ HH.span [ HP.classes [ T.fontSemibold ] ] [ HH.text $ show (maybe 0 _.count count) <> " completed" ]
             , HH.span [] [ HH.text $ " on " <> DateTime.toDisplayMonthDayYear (DateTime date t) ]
             ]
         ]
