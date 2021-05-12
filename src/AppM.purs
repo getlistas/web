@@ -135,7 +135,7 @@ instance manageUserAppM :: ManageUser AppM where
     where conf = {endpoint: UserBySlug slug, method: Get}
 
   userMetrics slug =
-    hush <$> mkAuthRequest conf (CAC.array Metrics.metricCodec)
+    hush <$> mkRequest conf (CAC.array Metrics.metricCodec)
     where conf = {endpoint: UserMetrics slug, method: Get}
 
 instance manageListAppM :: ManageList AppM where
