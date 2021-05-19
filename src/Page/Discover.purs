@@ -25,7 +25,7 @@ import Listasio.Data.Avatar (Avatar)
 import Listasio.Data.Avatar as Avatar
 import Listasio.Data.ID (ID)
 import Listasio.Data.Lens (_actionInProgress)
-import Listasio.Data.List (Author(..), ListWithIdUserAndMeta, PublicList)
+import Listasio.Data.List (Author(..), ListWithIdUserAndMeta, PublicList, authorSlug)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
 import Listasio.Data.Username (Username)
@@ -243,7 +243,22 @@ component = Connect.component $ H.mkComponent
     listInfo list@{title, description, tags, author} =
       HH.div
         [ HP.classes [ T.p2, T.border2, T.borderKiwi, T.roundedMd ] ]
-        [ HH.div [ HP.classes [ T.textLg, T.borderB2, T.borderGray200, T.mb4 ] ] [ HH.text title ]
+        [ case authorSlug currentUser author of
+            Just slug ->
+              HH.a
+                  [ HP.classes [ T.cursorPointer ]
+                  , safeHref $ PublicList slug list.slug
+                  , HE.onClick $ Just <<< Navigate (PublicList slug list.slug) <<< Mouse.toEvent
+                  ]
+                  [ HH.div
+                      [ HP.classes [ T.textLg, T.borderB2, T.borderGray200, T.textGray400, T.mb4 ] ]
+                      [ HH.text title ]
+                  ]
+            Nothing ->
+              HH.div
+                [ HP.classes [ T.textLg, T.borderB2, T.borderGray200, T.textGray400, T.mb4 ] ]
+                [ HH.text title ]
+
         , maybeElem description \des -> HH.div [ HP.classes [ T.textSm, T.mb4 ] ] [ HH.text des ]
         , whenElem (not $ null tags) \_ ->
             HH.div

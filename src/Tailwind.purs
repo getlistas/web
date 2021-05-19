@@ -675,6 +675,10 @@ left0 = ClassName "left-0"
 left1d2 :: ClassName
 left1d2 = ClassName "left-1/2"
 
+-- | lgColSpan1
+lgColSpan1 :: ClassName
+lgColSpan1 = ClassName "lg:col-span-1"
+
 -- | lgColSpan3
 lgColSpan3 :: ClassName
 lgColSpan3 = ClassName "lg:col-span-3"
@@ -1370,6 +1374,10 @@ smAlignMiddle = ClassName "sm:align-middle"
 -- | smBlock
 smBlock :: ClassName
 smBlock = ClassName "sm:block"
+
+-- | smColSpan2
+smColSpan2 :: ClassName
+smColSpan2 = ClassName "sm:col-span-2"
 
 -- | smColSpan3
 smColSpan3 :: ClassName
