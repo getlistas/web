@@ -11,7 +11,7 @@ import Data.Maybe (Maybe(..))
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
-import Listasio.Data.Profile (PublicProfile, publicProfileCodec)
+import Listasio.Data.Profile (PublicProfile, ProfileWithIdAndEmail, publicProfileCodec)
 import Listasio.Data.Resource (ListResource, listResourceCodec)
 import Slug (Slug)
 import Slug as Slug
@@ -19,6 +19,12 @@ import Slug as Slug
 data Author
   = You
   | Other PublicProfile
+
+authorSlug :: Maybe ProfileWithIdAndEmail -> Author -> Maybe Slug
+authorSlug = case _, _ of
+  Just me, You -> Just me.slug
+  _, Other other -> Just other.slug
+  Nothing, _ -> Nothing
 
 derive instance authorEq :: Eq Author
 instance authorShow :: Show Author where

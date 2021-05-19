@@ -41,6 +41,7 @@ import Listasio.Page.EditList as EditList
 import Listasio.Page.Home as Home
 import Listasio.Page.ListIntegrations as ListIntegrations
 import Listasio.Page.Login as Login
+import Listasio.Page.PublicList as PublicList
 import Listasio.Page.Policy as Policy
 import Listasio.Page.Pricing as Pricing
 import Listasio.Page.Profile as Profile
@@ -74,6 +75,7 @@ type ChildSlots =
   , discover :: OpaqueSlot Unit
   , pricing :: OpaqueSlot Unit
   , profile :: OpaqueSlot Unit
+  , publicList :: OpaqueSlot Unit
   , changelog :: OpaqueSlot Unit
     -- Legal
   , terms :: OpaqueSlot Unit
@@ -180,6 +182,9 @@ component = Connect.component $ H.mkComponent
 
           Profile slug ->
             HH.slot (SProxy :: _ "profile") unit Profile.component {slug} absurd
+
+          PublicList user list ->
+            HH.slot (SProxy :: _ "publicList") unit PublicList.component {user, list} absurd
 
           -- LEGAL -----------------------------------------------------------------
           Terms ->

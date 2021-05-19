@@ -17,6 +17,7 @@ data Route
   | Pricing
   | Changelog
   | Profile Slug
+  | PublicList Slug Slug
     -- Legal
   | Terms
   | Policy
@@ -50,6 +51,7 @@ routeCodec =
         , "Pricing": "pricing" / noArgs
         , "Changelog": "changelog" / noArgs
         , "Profile": "u" / Slug.term segment
+        , "PublicList": "l" / Slug.term segment / Slug.term segment
           -- Legal
         , "Terms": "terms" / noArgs
         , "Policy": "policy" / noArgs
@@ -71,5 +73,4 @@ routeCodec =
         , "ViewList": "list" / Slug.term segment
         , "EditList": "list" / Slug.term segment / "edit"
         , "IntegrationsList": "list" / Slug.term segment / "integrations"
-
         }

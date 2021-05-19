@@ -152,6 +152,10 @@ instance manageListAppM :: ManageList AppM where
     hush <$> mkAuthRequest conf List.listWitIdAndUserCodec
     where conf = {endpoint: ListBySlug user list, method: Get}
 
+  getPublicListBySlug {list, user} =
+    hush <$> mkRequest conf List.listWitIdUserAndMetaCodec
+    where conf = {endpoint: ListBySlug user list, method: Get}
+
   getLists =
     hush <$> mkAuthRequest conf (CAC.array List.listWitIdUserAndMetaCodec)
     where conf = {endpoint: Lists, method: Get}

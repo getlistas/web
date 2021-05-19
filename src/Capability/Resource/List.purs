@@ -13,6 +13,7 @@ class Monad m <= ManageList m where
   createList :: CreateListFields -> m (Maybe ListWithIdAndUser)
   getList :: ID -> m (Maybe ListWithIdUserAndMeta)
   getListBySlug :: { user :: Slug, list :: Slug } -> m (Maybe ListWithIdAndUser)
+  getPublicListBySlug :: { user :: Slug, list :: Slug } -> m (Maybe ListWithIdUserAndMeta)
   getLists :: m (Maybe (Array ListWithIdUserAndMeta))
   updateList :: ID -> CreateListFields -> m (Maybe ListWithIdAndUser)
   deleteList :: ID -> m Unit
@@ -23,6 +24,7 @@ instance manageListHalogenM :: ManageList m => ManageList (HalogenM st act slots
   createList = lift <<< createList
   getList = lift <<< getList
   getListBySlug = lift <<< getListBySlug
+  getPublicListBySlug = lift <<< getPublicListBySlug
   getLists = lift getLists
   updateList id list = lift $ updateList id list
   deleteList = lift <<< deleteList
