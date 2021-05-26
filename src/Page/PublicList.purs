@@ -6,6 +6,7 @@ import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Array.NonEmpty as NEA
 import Data.Either (note)
+import Data.Filterable (filter)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -55,7 +56,7 @@ type State
 component
   :: forall q o m r
    . MonadAff m
-  => MonadAsk { userEnv :: UserEnv | r } m
+  => MonadAsk {userEnv :: UserEnv | r} m
   => ManageUser m
   => ManageList m
   => Navigate m
@@ -99,12 +100,12 @@ component = Connect.component $ H.mkComponent
       H.modify_ _ {author = author}
 
     Receive {currentUser} ->
-      H.modify_ _ { currentUser = currentUser }
+      H.modify_ _ {currentUser = currentUser}
 
     Navigate route e -> navigate_ e route
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {list, author} =
+  render {list, author, authorSlug, currentUser} =
     HH.div
       []
       [ wip
@@ -126,22 +127,34 @@ component = Connect.component $ H.mkComponent
       HH.div
         []
         [ HH.div
-            [ HP.classes [ T.flex, T.itemsCenter, T.mb8 ] ]
-            [ HH.a
-                (case author of
-                  Success {slug} ->
-                    [ safeHref $ Profile slug
-                    , HE.onClick $ Just <<< Navigate (Profile slug) <<< Mouse.toEvent
+            [ HP.classes [ T.flex, T.justifyBetween, T.itemsCenter, T.mb8 ] ]
+            [ HH.div
+                [ HP.classes [ T.flex, T.itemsCenter ] ]
+                [ HH.a
+                    (case author of
+                      Success {slug} ->
+                        [ safeHref $ Profile slug
+                        , HE.onClick $ Just <<< Navigate (Profile slug) <<< Mouse.toEvent
+                        ]
+                      _ -> []
+                    )
+                    [ Avatar.renderWithDefault Avatar.Sm
+                      $ _.avatar =<< RemoteData.toMaybe author
                     ]
-                  _ -> []
-                )
-                [ Avatar.renderWithDefault Avatar.Sm
-                  $ _.avatar =<< RemoteData.toMaybe author
-                ]
 
-            , HH.h1
-                [ HP.classes [ T.text3xl, T.fontBold, T.textGray400, T.ml4 ] ]
-                [ HH.text title ]
+                , HH.h1
+                    [ HP.classes [ T.text3xl, T.fontBold, T.textGray400, T.ml4 ] ]
+                    [ HH.text title ]
+                ]
+            , maybeElem (filter ((_ == authorSlug) <<< _.slug) currentUser) \_ ->
+                HH.a
+                  [ safeHref $ EditList authorSlug l.slug
+                  , HE.onClick $ Just <<< Navigate (EditList authorSlug l.slug) <<< Mouse.toEvent
+                  , HP.classes [ T.flex, T.itemsCenter, T.textGray300, T.hoverTextGray400  ]
+                  ]
+                  [ HH.text "Settings"
+                  , Icons.cog [ Icons.classes [ T.h6, T.w6, T.ml2 ] ]
+                  ]
             ]
         , HH.div
             [ HP.classes

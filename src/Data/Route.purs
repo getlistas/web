@@ -33,8 +33,8 @@ data Route
   | CreateList
   | CreateResource {url :: Maybe String, title :: Maybe String, text :: Maybe String}
   | ViewList Slug
-  | EditList Slug
-  | IntegrationsList Slug
+  | EditList Slug Slug
+  | IntegrationsList Slug Slug
 
 derive instance genericRoute :: Generic Route _
 derive instance eqRoute :: Eq Route
@@ -70,7 +70,9 @@ routeCodec =
               , title: optional <<< string
               , text: optional <<< string
               }
+
+          -- TODO remove this route
         , "ViewList": "list" / Slug.term segment
-        , "EditList": "list" / Slug.term segment / "edit"
-        , "IntegrationsList": "list" / Slug.term segment / "integrations"
+        , "EditList": "l" / Slug.term segment / Slug.term segment / "edit"
+        , "IntegrationsList": "l" / Slug.term segment / Slug.term segment / "integrations"
         }

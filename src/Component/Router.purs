@@ -230,12 +230,14 @@ component = Connect.component $ H.mkComponent
           ViewList _ ->
             HH.slot (SProxy :: _ "viewList") unit ViewList.component {} absurd
 
-          EditList listSlug ->
-            HH.slot (SProxy :: _ "editList") unit EditList.component {listSlug} absurd
+          -- TODO: validate that the current user is accessing this list
+          EditList user list ->
+            HH.slot (SProxy :: _ "editList") unit EditList.component {user, list} absurd
               # authorize currentUser
 
-          IntegrationsList listSlug ->
-            HH.slot (SProxy :: _ "listintegrations") unit ListIntegrations.component {listSlug} absurd
+          -- TODO: validate that the current user is accessing this list
+          IntegrationsList user list ->
+            HH.slot (SProxy :: _ "listintegrations") unit ListIntegrations.component {user, list} absurd
               # authorize currentUser
 
           -- This shouldn't happend, as is already pattern matched above
