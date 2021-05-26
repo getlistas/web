@@ -2,6 +2,8 @@ module Listasio.Component.HTML.List where
 
 import Prelude
 
+import Component.HOC.Connect as Connect
+import Control.Monad.Reader (class MonadAsk)
 import Data.Array (findIndex, insertAt, mapWithIndex, null, singleton, snoc, tail)
 import Data.Array.NonEmpty (cons')
 import Data.Either (note)
@@ -30,8 +32,10 @@ import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 import Listasio.Data.Lens (_completed_count, _confirmDelete, _count, _isProcessingAction, _last_completed_at, _list, _resource_metadata, _resources, _showMore, _showNextMenu)
 import Listasio.Data.List (ListWithIdUserAndMeta)
+import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Resource (ListResource)
 import Listasio.Data.Route (Route(..), routeCodec)
+import Listasio.Env (UserEnv)
 import Network.RemoteData (RemoteData(..), _Success)
 import Network.RemoteData as RemoteData
 import Routing.Duplex (print)
@@ -60,12 +64,10 @@ data Action
   | CancelDeleteResource
   | Navigate Route Event
   | RaiseCreateResource ID
+  | Receive {currentUser :: Maybe ProfileWithIdAndEmail, list :: ListWithIdUserAndMeta}
     -- meta actions
   | AndCloseNextMenu Action
   | WhenNotProcessingAction Action
-
-type Input
-  = { list :: ListWithIdUserAndMeta }
 
 data Query a
   = ResourceAdded ListResource a
@@ -90,51 +92,58 @@ type State
     , isProcessingAction :: Boolean
     , confirmDelete :: Maybe ID
     , showNextMenu :: Boolean
+    , currentUser :: Maybe ProfileWithIdAndEmail
     }
 
-component :: forall m.
+component :: forall m r.
      MonadAff m
+  => MonadAsk {userEnv :: UserEnv | r} m
   => ManageResource m
   => Clipboard m
   => Now m
   => Navigate m
-  => H.Component HH.HTML Query Input Output m
-component = H.mkComponent
+  => H.Component HH.HTML Query {list :: ListWithIdUserAndMeta} Output m
+component = Connect.component $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
       { handleAction = handleAction
       , handleQuery = handleQuery
       , initialize = Just Initialize
+      , receive = Just <<< Receive
       }
   }
   where
-  initialState { list } =
+  initialState {currentUser, list} =
     { list
     , resources: singleton <$> RemoteData.fromMaybe list.resource_metadata.next
     , showMore: false
     , isProcessingAction: false
     , showNextMenu: false
     , confirmDelete: Nothing
+    , currentUser
     }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots Output m Unit
   handleAction = case _ of
     Initialize -> do
       H.modify_ $ over _resources $ \rs -> if RemoteData.isSuccess rs then rs else Loading
-      { list } <- H.get
+      {list} <- H.get
       resources <- RemoteData.fromEither <$> note "Failed to load list resources" <$> getListResources list.id
-      H.modify_ _ { resources = resources }
+      H.modify_ _ {resources = resources}
+
+    Receive {currentUser} ->
+      H.modify_ _ {currentUser = currentUser}
 
     ToggleShowMore -> H.modify_ $ over _showMore not
 
     ToggleShowNextMenu -> H.modify_ $ over _showNextMenu not <<< set _confirmDelete Nothing
 
-    CopyToShare { url } -> do
+    CopyToShare {url} -> do
       host <- H.liftEffect $ Location.host =<< Window.location =<< Window.window
       void $ writeText $ host <> print routeCodec (CreateResource {url: Just url, text: Nothing, title: Nothing})
 
-    CopyResourceURL { url } -> void $ writeText url
+    CopyResourceURL {url} -> void $ writeText url
 
     AndCloseNextMenu action -> do
       void $ H.fork $ handleAction action
@@ -224,7 +233,7 @@ component = H.mkComponent
       pure $ Just a
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render state@{list, resources, showMore, showNextMenu, isProcessingAction, confirmDelete} =
+  render state@{list, resources, showMore, showNextMenu, isProcessingAction, confirmDelete, currentUser} =
     HH.div
       [ HP.classes
           [ T.border2
@@ -419,16 +428,22 @@ component = H.mkComponent
 
         ]
 
+    listLinkProps route rest =
+      case currentUser of
+        Just {slug} ->
+          [ safeHref $ route slug
+          , HE.onClick (Just <<< Navigate (route slug) <<< Mouse.toEvent)
+          ]
+            <> rest
+        Nothing -> rest
+
     header =
       HH.div
         [ HP.classes [ T.px4, T.py2, T.borderB, T.borderGray200, T.h16 ] ]
         [ HH.div
             [ HP.classes [ T.flex, T.justifyBetween, T.itemsCenter ] ]
             [ HH.a
-                [ HP.classes [ T.textXl, T.textGray400, T.fontBold, T.truncate ]
-                , safeHref $ EditList list.slug
-                , HE.onClick (Just <<< Navigate (EditList list.slug) <<< Mouse.toEvent)
-                ]
+                ( listLinkProps (flip PublicList list.slug)  [ HP.classes [ T.textXl, T.textGray400, T.fontBold, T.truncate ] ] )
                 [ HH.text list.title ]
             , HH.div
                 [ HP.classes [ T.ml6, T.flex, T.itemsCenter ] ]
@@ -445,10 +460,7 @@ component = H.mkComponent
                     ]
                     [ Icons.plus [ Icons.classes [ T.h5, T.w5, T.textGray300, T.hoverTextGray400 ] ] ]
                 , HH.a
-                    [ safeHref $ EditList list.slug
-                    , HP.classes [ T.ml2 ]
-                    , HE.onClick (Just <<< Navigate (EditList list.slug) <<< Mouse.toEvent)
-                    ]
+                    ( listLinkProps (flip EditList list.slug) [ HP.classes [ T.ml2 ] ] )
                     [ Icons.cog [ Icons.classes [ T.h5, T.w5, T.textGray300, T.hoverTextGray400 ] ] ]
                 ]
             ]

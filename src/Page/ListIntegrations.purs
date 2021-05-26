@@ -44,7 +44,7 @@ import Web.Event.Event (Event)
 import Web.UIEvent.MouseEvent as Mouse
 
 data Action
-  = Receive { currentUser :: Maybe ProfileWithIdAndEmail, listSlug :: Slug }
+  = Receive {currentUser :: Maybe ProfileWithIdAndEmail, user :: Slug, list :: Slug}
   | OnNewChange String
   | SaveRss
   | Navigate Route Event
@@ -58,10 +58,11 @@ type State
     , subscriptions :: RemoteData String (Array ListSubscription)
     , rssResult :: RemoteData String Unit
     , newRss :: String
-    , slug :: Slug
+    , listSlug :: Slug
+    , userSlug :: Slug
     }
 
-type Slots = ( formless :: ListForm.Slot )
+type Slots = (formless :: ListForm.Slot)
 
 getRss :: Integration -> Maybe RssIntegration
 getRss (RssIntegration a) = Just a
@@ -74,11 +75,11 @@ getSubscription _ = Nothing
 component
   :: forall q o m r
    . MonadAff m
-  => MonadAsk { userEnv :: UserEnv | r } m
+  => MonadAsk {userEnv :: UserEnv | r} m
   => Navigate m
   => ManageList m
   => ManageIntegration m
-  => H.Component HH.HTML q { listSlug :: Slug } o m
+  => H.Component HH.HTML q {user :: Slug, list :: Slug} o m
 component = Connect.component $ H.mkComponent
   { initialState
   , render
@@ -88,9 +89,10 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState { currentUser, listSlug } =
+  initialState {currentUser, list, user} =
     { currentUser
-    , slug: listSlug
+    , userSlug: user
+    , listSlug: list
     , list: NotAsked
     , rss: NotAsked
     , subscriptions: NotAsked
@@ -100,14 +102,14 @@ component = Connect.component $ H.mkComponent
 
   handleAction :: Action -> H.HalogenM State Action Slots o m Unit
   handleAction = case _ of
-    Receive { currentUser } -> do
+    Receive {currentUser} -> do
       st <- H.get
-      H.modify_ _ { currentUser = currentUser }
+      H.modify_ _ {currentUser = currentUser}
       case st.currentUser, currentUser of
-        Nothing, Just { slug } -> do
-          H.modify_ _ { list = Loading }
-          list <- RemoteData.fromEither <$> note "Could not get list" <$> getListBySlug { list: st.slug, user: slug }
-          H.modify_ _ { list = list }
+        Nothing, Just {slug} -> do
+          H.modify_ _ {list = Loading}
+          list <- RemoteData.fromEither <$> note "Could not get list" <$> getListBySlug { list: st.listSlug, user: st.userSlug }
+          H.modify_ _ {list = list}
 
           case preview (_Success <<< _id) list of
             Just listId -> do
@@ -121,7 +123,7 @@ component = Connect.component $ H.mkComponent
 
     OnNewChange url -> do
       loading <- H.gets $ RemoteData.isLoading <<< _.rssResult
-      unless loading do H.modify_ _ { newRss = url, rssResult = NotAsked }
+      unless loading do H.modify_ _ {newRss = url, rssResult = NotAsked}
 
     SaveRss -> do
       {newRss, rssResult, list} <- H.get
@@ -129,9 +131,9 @@ component = Connect.component $ H.mkComponent
             fromPredicate (not <<< String.null) newRss
               *> preview _NotAsked rssResult
               *> preview _Success list
-      for_ mbList \{ id } -> do
-        H.modify_ _ { rssResult = Loading }
-        result <- RemoteData.fromEither <$> note "Failed to create RSS integration" <$> createRssIntegration { url: newRss, list: id }
+      for_ mbList \{id} -> do
+        H.modify_ _ {rssResult = Loading}
+        result <- RemoteData.fromEither <$> note "Failed to create RSS integration" <$> createRssIntegration {url: newRss, list: id}
         case result of
           Success newIntegration ->
             H.modify_
@@ -163,7 +165,7 @@ component = Connect.component $ H.mkComponent
           Just _ -> pure unit
 
   render :: State -> H.ComponentHTML Action Slots m
-  render {subscriptions, newRss, rss, rssResult, currentUser, list: mbList} =
+  render {subscriptions, newRss, rss, rssResult, currentUser, list: mbList, listSlug, userSlug} =
     HH.div [] [ header, content ]
 
     where
@@ -178,16 +180,22 @@ component = Connect.component $ H.mkComponent
     mkLayout list cards =
       CardsAndSidebar.layout
         [ { active: false
+          , icon: Icons.eye
+          , label: "Public"
+          , link:
+              Just
+                { action: Just <<< Navigate (PublicList userSlug listSlug)
+                , route: PublicList userSlug listSlug
+                }
+          }
+        , { active: false
           , icon: Icons.userCircle
           , label: "Settings"
           , link:
-              map
-                ( \{slug} ->
-                    { action: Just <<< Navigate (EditList slug)
-                    , route: EditList slug
-                    }
-                )
-                list
+              Just
+                { action: Just <<< Navigate (EditList userSlug listSlug)
+                , route: EditList userSlug listSlug
+                }
           }
         , { active: true
           , icon: Icons.gridAdd

@@ -43,7 +43,7 @@ import Web.UIEvent.MouseEvent as Mouse
 
 data Action
   = Initialize
-  | Receive { currentUser :: Maybe ProfileWithIdAndEmail }
+  | Receive {currentUser :: Maybe ProfileWithIdAndEmail}
   | LoadResources
   | LoadLists
   | Navigate Route Event
@@ -86,13 +86,13 @@ type GroupedResources
     }
 
 byCompletedAt :: ListResource -> ListResource -> Ordering
-byCompletedAt { completed_at: Nothing } { completed_at: Just _ } = LT
-byCompletedAt { completed_at: Just _ } { completed_at: Nothing } = GT
-byCompletedAt { completed_at: Just a } { completed_at: Just b } = compare a b
-byCompletedAt { created_at: a } { created_at: b } = compare a b
+byCompletedAt {completed_at: Nothing} {completed_at: Just _} = LT
+byCompletedAt {completed_at: Just _} {completed_at: Nothing} = GT
+byCompletedAt {completed_at: Just a} {completed_at: Just b} = compare a b
+byCompletedAt {created_at: a} {created_at: b} = compare a b
 
 groupResources :: Array ListResource -> GroupedResources
-groupResources items = { byList, byDate, all }
+groupResources items = {byList, byDate, all}
   where
   all = sortBy byCompletedAt items
   byList =
@@ -112,7 +112,7 @@ groupResources items = { byList, byDate, all }
       # map (NEA.sortBy byCompletedAt)
 
 completedOnSameMonth :: ListResource -> ListResource -> Boolean
-completedOnSameMonth { completed_at: a } { completed_at: b } =
+completedOnSameMonth {completed_at: a} {completed_at: b} =
   map YearMonth.fromDateTime a == map YearMonth.fromDateTime b
 
 monthItemsPair :: NonEmptyArray ListResource -> Maybe (Tuple (Down YearMonth) (NonEmptyArray ListResource))
@@ -133,7 +133,7 @@ noteError = note "Failed to load resources"
 component
   :: forall q o m r
    . MonadAff m
-  => MonadAsk { userEnv :: UserEnv | r } m
+  => MonadAsk {userEnv :: UserEnv | r} m
   => ManageResource m
   => ManageList m
   => Navigate m
@@ -148,7 +148,7 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState { currentUser } =
+  initialState {currentUser} =
     { currentUser
     , resources: NotAsked
     , lists: Nothing
@@ -163,28 +163,28 @@ component = Connect.component $ H.mkComponent
       void $ H.fork $ handleAction LoadResources
 
     LoadResources -> do
-      H.modify_ _ { resources = Loading }
+      H.modify_ _ {resources = Loading}
       resources <- map groupResources <$> fromEither <$> noteError <$> getResources
-      H.modify_ _ { resources = resources }
+      H.modify_ _ {resources = resources}
 
     LoadLists -> do
-      H.modify_ _ { lists = Nothing }
+      H.modify_ _ {lists = Nothing}
       lists <- getLists
-      H.modify_ _ { lists = lists }
+      H.modify_ _ {lists = lists}
 
-    Receive { currentUser } ->
-      H.modify_ _ { currentUser = currentUser }
+    Receive {currentUser} ->
+      H.modify_ _ {currentUser = currentUser}
 
     Navigate route e -> navigate_ e route
 
     ToggleGroupBy groupBy ->
-      H.modify_ _ { groupBy = groupBy }
+      H.modify_ _ {groupBy = groupBy}
 
     ToggleFilterByDone filterByDone ->
-      H.modify_ _ { filterByDone = filterByDone }
+      H.modify_ _ {filterByDone = filterByDone}
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render { currentUser, resources, lists: mbLists, groupBy, filterByDone } =
+  render {currentUser, resources, lists: mbLists, groupBy, filterByDone} =
     HH.div
       []
       [ HH.div
@@ -207,18 +207,18 @@ component = Connect.component $ H.mkComponent
             [ HP.classes [ T.mb4, T.mr0, T.smMr4, T.wFull , T.smWAuto ] ]
             [ ToggleGroup.toggleGroup
                 false
-                [ { label: "None", action: Just (ToggleGroupBy GroupNone), active: groupBy == GroupNone }
-                , { label: "By Date", action: Just (ToggleGroupBy GroupDate), active: groupBy == GroupDate }
-                , { label: "By List", action: Just (ToggleGroupBy GroupList), active: groupBy == GroupList }
+                [ {label: "None", action: Just (ToggleGroupBy GroupNone), active: groupBy == GroupNone}
+                , {label: "By Date", action: Just (ToggleGroupBy GroupDate), active: groupBy == GroupDate}
+                , {label: "By List", action: Just (ToggleGroupBy GroupList), active: groupBy == GroupList}
                 ]
             ]
         , HH.div
             [ HP.classes [ T.wFull , T.smWAuto ] ]
             [ ToggleGroup.toggleGroup
                 (groupBy == GroupDate)
-                [ { label: "All", action: Just (ToggleFilterByDone ShowAll), active: filterByDone == ShowAll && groupBy /= GroupDate }
-                , { label: "Done", action: Just (ToggleFilterByDone ShowDone), active: filterByDone == ShowDone || groupBy == GroupDate }
-                , { label: "Pending", action: Just (ToggleFilterByDone ShowPending), active: filterByDone == ShowPending && groupBy /= GroupDate }
+                [ {label: "All", action: Just (ToggleFilterByDone ShowAll), active: filterByDone == ShowAll && groupBy /= GroupDate}
+                , {label: "Done", action: Just (ToggleFilterByDone ShowDone), active: filterByDone == ShowDone || groupBy == GroupDate}
+                , {label: "Pending", action: Just (ToggleFilterByDone ShowPending), active: filterByDone == ShowPending && groupBy /= GroupDate}
                 ]
             ]
         ]
@@ -335,10 +335,7 @@ component = Connect.component $ H.mkComponent
                 HH.div
                   []
                   [ HH.a
-                      [ HP.classes [ T.textXl, T.textGray400, T.mt6, T.mb4, T.block, T.flex, T.itemsCenter ]
-                      , safeHref $ EditList l.slug
-                      , HE.onClick (Just <<< Navigate (EditList l.slug) <<< Mouse.toEvent)
-                      ]
+                      ( editLinkProps l [ HP.classes [ T.textXl, T.textGray400, T.mt6, T.mb4, T.block, T.flex, T.itemsCenter ] ] )
                       [ HH.span [] [ HH.text l.title ]
                       , Icons.cog [ Icons.classes [ T.ml2, T.h5, T.w5, T.textGray300, T.hoverTextGray400 ] ]
                       ]
@@ -348,7 +345,17 @@ component = Connect.component $ H.mkComponent
                       $ filteredItems
                   ]
               )
-      where filteredItems = filterByDoneFn $ NEA.toArray items
+      where
+        filteredItems = filterByDoneFn $ NEA.toArray items
+
+        editLinkProps l rest =
+          case currentUser of
+            Just {slug} ->
+              [ safeHref $ EditList slug l.slug
+              , HE.onClick (Just <<< Navigate (EditList slug l.slug) <<< Mouse.toEvent)
+              ]
+                <> rest
+            Nothing -> rest
 
     dateFeed (Down yearMonth) items =
       HH.div

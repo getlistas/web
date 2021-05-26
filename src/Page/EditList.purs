@@ -31,7 +31,7 @@ import Tailwind as T
 import Web.Event.Event (Event)
 
 data Action
-  = Receive { currentUser :: Maybe ProfileWithIdAndEmail, listSlug :: Slug }
+  = Receive {currentUser :: Maybe ProfileWithIdAndEmail, user :: Slug, list :: Slug}
   | HandleListForm CreateListFields
   | Navigate Route Event
   | DeleteList
@@ -41,19 +41,20 @@ data Action
 type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
     , list :: RemoteData String ListWithIdAndUser
-    , slug :: Slug
+    , listSlug :: Slug
+    , userSlug :: Slug
     , confirmDelete :: Boolean
     }
 
-type Slots = ( formless :: ListForm.Slot )
+type Slots = (formless :: ListForm.Slot)
 
 component
   :: forall q o m r
    . MonadAff m
-  => MonadAsk { userEnv :: UserEnv | r } m
+  => MonadAsk {userEnv :: UserEnv | r} m
   => Navigate m
   => ManageList m
-  => H.Component HH.HTML q { listSlug :: Slug } o m
+  => H.Component HH.HTML q {user :: Slug, list :: Slug} o m
 component = Connect.component $ H.mkComponent
   { initialState
   , render
@@ -63,23 +64,24 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState { currentUser, listSlug } =
+  initialState {currentUser, list, user} =
     { currentUser
     , list: NotAsked
-    , slug: listSlug
+    , listSlug: list
+    , userSlug: user
     , confirmDelete: false
     }
 
   handleAction :: Action -> H.HalogenM State Action Slots o m Unit
   handleAction = case _ of
-    Receive { currentUser } -> do
+    Receive {currentUser} -> do
       st <- H.get
-      H.modify_ _ { currentUser = currentUser }
+      H.modify_ _ {currentUser = currentUser}
       case st.currentUser, currentUser of
-        Nothing, Just { slug } -> do
-          H.modify_ _ { list = Loading }
-          list <- RemoteData.fromEither <$> note "Could not get list" <$> getListBySlug { list: st.slug, user: slug }
-          H.modify_ _ { list = list }
+        Nothing, Just {slug} -> do
+          H.modify_ _ {list = Loading}
+          list <- RemoteData.fromEither <$> note "Could not get list" <$> getListBySlug {list: st.listSlug, user: st.userSlug}
+          H.modify_ _ {list = list}
         _, _ -> pure unit
 
     Navigate route e -> navigate_ e route
@@ -101,10 +103,10 @@ component = Connect.component $ H.mkComponent
               void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Failure "Could not create list") unit
 
     DeleteList ->
-      H.modify_ _ { confirmDelete = true }
+      H.modify_ _ {confirmDelete = true}
 
     DeleteListCancel ->
-      H.modify_ _ { confirmDelete = false }
+      H.modify_ _ {confirmDelete = false}
 
     DeleteListConfirm -> do
       mbList <- H.gets $ preview (_list <<< _Success)
@@ -117,7 +119,7 @@ component = Connect.component $ H.mkComponent
           navigate Dashboard
 
   render :: State -> H.ComponentHTML Action Slots m
-  render {currentUser, list: mbList, confirmDelete} =
+  render {currentUser, list: mbList, confirmDelete, listSlug, userSlug} =
     HH.div [] [ header, content ]
 
     where
@@ -131,7 +133,16 @@ component = Connect.component $ H.mkComponent
 
     mkLayout list cards =
       CardsAndSidebar.layout
-        [ { active: true
+        [ { active: false
+          , icon: Icons.eye
+          , label: "Public"
+          , link:
+              Just
+                { action: Just <<< Navigate (PublicList userSlug listSlug)
+                , route: PublicList userSlug listSlug
+                }
+          }
+        , { active: true
           , icon: Icons.userCircle
           , label: "Settings"
           , link: Nothing
@@ -140,13 +151,10 @@ component = Connect.component $ H.mkComponent
           , icon: Icons.gridAdd
           , label: "Integrations"
           , link:
-              map
-                ( \{ slug } ->
-                    { action: Just <<< Navigate (IntegrationsList slug)
-                    , route: EditList slug
-                    }
-                )
-                list
+              Just
+                { action: Just <<< Navigate (IntegrationsList userSlug listSlug)
+                , route: IntegrationsList userSlug listSlug
+                }
           }
         ]
         cards
