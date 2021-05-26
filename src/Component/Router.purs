@@ -41,10 +41,10 @@ import Listasio.Page.EditList as EditList
 import Listasio.Page.Home as Home
 import Listasio.Page.ListIntegrations as ListIntegrations
 import Listasio.Page.Login as Login
-import Listasio.Page.PublicList as PublicList
 import Listasio.Page.Policy as Policy
 import Listasio.Page.Pricing as Pricing
 import Listasio.Page.Profile as Profile
+import Listasio.Page.PublicList as PublicList
 import Listasio.Page.Register as Register
 import Listasio.Page.Resources as Resources
 import Listasio.Page.Settings as Settings
@@ -52,6 +52,7 @@ import Listasio.Page.Terms as Terms
 import Listasio.Page.VerifyFailure as VerifyFailure
 import Listasio.Page.ViewList as ViewList
 import Routing.Duplex as RD
+import Slug (Slug)
 import Tailwind as T
 import Web.Event.Event (Event)
 
@@ -154,6 +155,31 @@ component = Connect.component $ H.mkComponent
     Just _ ->
       html
 
+  authorizeList :: Maybe ProfileWithIdAndEmail -> Slug -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
+  authorizeList mbProfile pathSlug html = case mbProfile of
+    Nothing ->
+      HH.slot (SProxy :: _ "login") unit Login.component {redirect: false, registerSuccess: false} absurd
+    Just {slug} | slug == pathSlug ->
+      html
+    Just _ ->
+      layout Nothing
+        $ HH.div [ HP.classes [ T.textGray400 ] ] [ HH.text "Oh no! That page wasn't found." ]
+
+  layout :: Maybe Route -> _ -> _
+  layout currentRoute content =
+    HH.div
+      [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.bgGray10 ] ]
+      [ HH.div
+          [ HP.classes [ T.container, T.mxAuto, T.mdPx4, T.xlPx0 ] ]
+          [ HH.slot (SProxy :: _ "nav") unit Nav.component {route: currentRoute} absurd
+          ]
+      , HH.div
+          [ HP.classes [ T.container, T.mxAuto, T.px4, T.xlPx0, T.pb20, T.flex1 ] ]
+          [ content
+          ]
+      , footer NavigateAct
+      ]
+
   render :: State -> H.ComponentHTML Action ChildSlots m
   render {route, currentUser} =
     case route of
@@ -230,30 +256,14 @@ component = Connect.component $ H.mkComponent
           ViewList _ ->
             HH.slot (SProxy :: _ "viewList") unit ViewList.component {} absurd
 
-          -- TODO: validate that the current user is accessing this list
           EditList user list ->
             HH.slot (SProxy :: _ "editList") unit EditList.component {user, list} absurd
-              # authorize currentUser
+              # authorizeList currentUser user
 
           -- TODO: validate that the current user is accessing this list
           IntegrationsList user list ->
             HH.slot (SProxy :: _ "listintegrations") unit ListIntegrations.component {user, list} absurd
-              # authorize currentUser
+              # authorizeList currentUser user
 
           -- This shouldn't happend, as is already pattern matched above
           Home -> HH.text ""
-
-    where
-    layout currentRoute content =
-      HH.div
-        [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.bgGray10 ] ]
-        [ HH.div
-            [ HP.classes [ T.container, T.mxAuto, T.mdPx4, T.xlPx0 ] ]
-            [ HH.slot (SProxy :: _ "nav") unit Nav.component {route: currentRoute} absurd
-            ]
-        , HH.div
-            [ HP.classes [ T.container, T.mxAuto, T.px4, T.xlPx0, T.pb20, T.flex1 ] ]
-            [ content
-            ]
-        , footer NavigateAct
-        ]
