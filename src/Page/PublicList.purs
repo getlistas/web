@@ -128,7 +128,7 @@ component = Connect.component $ H.mkComponent
       HH.div
         []
         [ HH.div
-            [ HP.classes [ T.flex, T.justifyBetween, T.itemsCenter, T.mb8 ] ]
+            [ HP.classes [ T.flex, T.itemsCenter, T.mb8 ] ]
             [ HH.div
                 [ HP.classes [ T.flex, T.itemsCenter ] ]
                 [ HH.a
@@ -142,24 +142,14 @@ component = Connect.component $ H.mkComponent
                     [ Avatar.renderWithDefault Avatar.Sm
                       $ _.avatar =<< RemoteData.toMaybe author
                     ]
-
                 , HH.h1
                     [ HP.classes [ T.text3xl, T.fontBold, T.textGray400, T.ml4 ] ]
                     [ HH.text title ]
-                , whenElem (not is_public) \_ ->
-                    HH.div
-                      [ HP.classes [ T.ml4, T.px1, T.border, T.borderGray200, T.roundedSm, T.textSm, T.textGray300 ] ]
-                      [ HH.text "Private" ]
                 ]
-            , maybeElem (filter ((_ == authorSlug) <<< _.slug) currentUser) \_ ->
-                HH.a
-                  [ safeHref $ EditList authorSlug l.slug
-                  , HE.onClick $ Just <<< Navigate (EditList authorSlug l.slug) <<< Mouse.toEvent
-                  , HP.classes [ T.flex, T.itemsCenter, T.textGray300, T.hoverTextGray400  ]
-                  ]
-                  [ HH.text "Settings"
-                  , Icons.cog [ Icons.classes [ T.h6, T.w6, T.ml2 ] ]
-                  ]
+            , whenElem (not is_public) \_ ->
+                HH.div
+                  [ HP.classes [ T.ml4, T.px1, T.border, T.borderGray200, T.roundedSm, T.textSm, T.textGray300 ] ]
+                  [ HH.text "Private" ]
             ]
         , HH.div
             [ HP.classes
@@ -189,7 +179,7 @@ component = Connect.component $ H.mkComponent
         ]
 
     listDetails :: ListWithIdUserAndMeta -> _
-    listDetails {description, resource_metadata, tags, updated_at} =
+    listDetails {slug, description, resource_metadata, tags, updated_at, forks_count, likes_count, subscriptions_count} =
       HH.div
         [ HP.classes
             [ T.bgWhite
@@ -199,16 +189,10 @@ component = Connect.component $ H.mkComponent
         ]
         [ maybeElem description \d ->
             HH.div [ HP.classes [ T.textSm, T.textGray400, T.mb4 ] ] [ HH.text d ]
-        , HH.div
-            [ HP.classes [ T.flex, T.itemsCenter, T.mb4 ] ]
-            [ Icons.document
-                [ Icons.classes [ T.h4, T.w4, T.textGray300, T.mr2 ] ]
-            , HH.div
-                [ HP.classes [ T.textGray400, T.textSm ] ]
-                [ HH.span [ HP.classes [ T.fontBold ] ] [ HH.text $ show resource_metadata.count ]
-                , HH.text $ if resource_metadata.count > 1 then " Resources" else " Resource"
-                ]
-            ]
+        , stat {count: resource_metadata.count, icon: Icons.document, one: "Resource", many: "Resources"}
+        , stat {count: likes_count, icon: Icons.star, one: "Like", many: "Likes"}
+        , stat {count: forks_count, icon: Icons.duplicate, one: "Copy", many: "Copies"}
+        , stat {count: subscriptions_count, icon: Icons.userAdd, one: "Follow", many: "Follows"}
         , HH.div
             [ HP.classes [ T.flex, T.itemsCenter, T.mb4 ] ]
             [ Icons.clock
@@ -236,7 +220,45 @@ component = Connect.component $ H.mkComponent
                   $ NEA.toArray ts
 
               ]
+        , maybeElem (filter ((_ == authorSlug) <<< _.slug) currentUser) \_ ->
+            HH.a
+              [ safeHref $ EditList authorSlug slug
+              , HE.onClick $ Just <<< Navigate (EditList authorSlug slug) <<< Mouse.toEvent
+              , HP.classes
+                  [ T.flex
+                  , T.itemsCenter
+                  , T.justifyCenter
+                  , T.textWhite
+                  , T.wFull
+                  , T.py2
+                  , T.bgKiwi
+                  , T.hoverBgKiwiDark
+                  , T.focusOutlineNone
+                  , T.focusRing2
+                  , T.focusRingKiwiDark
+                  , T.focusRingOffset2
+                  , T.roundedMd
+                  , T.mt8
+                  ]
+              ]
+              [ Icons.cog [ Icons.classes [ T.h6, T.w6, T.mr2 ] ]
+              , HH.text "Settings"
+              ]
         ]
+
+
+    stat {count, icon, one, many} =
+      whenElem (count > 0) \_ ->
+        HH.div
+          [ HP.classes [ T.flex, T.itemsCenter, T.mb4 ] ]
+          [ icon
+              [ Icons.classes [ T.h4, T.w4, T.textGray300, T.mr2 ] ]
+          , HH.div
+              [ HP.classes [ T.textGray400, T.textSm ] ]
+              [ HH.span [ HP.classes [ T.fontBold ] ] [ HH.text $ show count ]
+              , HH.text $ " " <> if count > 1 then many else one
+              ]
+          ]
 
     sectionTitle title =
       HH.h3 [ HP.classes [ T.textXl, T.fontBold, T.textGray400, T.mb4 ] ] [ HH.text title ]

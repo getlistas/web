@@ -77,24 +77,20 @@ type ListWithIdAndUserRep row
     , user :: ID
     , created_at :: DateTime
     , updated_at :: DateTime
+    , fork :: Maybe ForkMeta
+    , forks_count :: Int
+    , likes_count :: Int
+    , subscriptions_count :: Int
     | row
     )
 
--- TODO: doesn't have user now
 type ListWithIdAndUser
-  = {
-    | ListWithIdAndUserRep
-      ( fork :: Maybe ForkMeta
-      )
-    }
+  = { | ListWithIdAndUserRep () }
 
--- TODO: doesn't have user now
 type ListWithIdUserAndMeta
   = {
     | ListWithIdAndUserRep
-      ( fork :: Maybe ForkMeta
-      , resource_metadata :: ResourceMeta
-      )
+      ( resource_metadata :: ResourceMeta )
     }
 
 type PublicListRep row
@@ -192,6 +188,9 @@ listWitIdAndUserCodec =
     , created_at: DateTime.codec
     , updated_at: DateTime.codec
     , fork: CAC.maybe forkMetaCodec
+    , forks_count: CA.int
+    , likes_count: CA.int
+    , subscriptions_count: CA.int
     }
 
 listWitIdUserAndMetaCodec :: JsonCodec ListWithIdUserAndMeta
@@ -206,6 +205,9 @@ listWitIdUserAndMetaCodec =
     , is_public: CA.boolean
     , created_at: DateTime.codec
     , updated_at: DateTime.codec
-    , resource_metadata: resourceMetaCodec
     , fork: CAC.maybe forkMetaCodec
+    , forks_count: CA.int
+    , likes_count: CA.int
+    , subscriptions_count: CA.int
+    , resource_metadata: resourceMetaCodec
     }
