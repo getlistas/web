@@ -18,7 +18,7 @@ import Listasio.Capability.Resource.List (class ManageList, getPublicListBySlug)
 import Listasio.Capability.Resource.User (class ManageUser, userBySlug)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Tag as Tag
-import Listasio.Component.HTML.Utils (maybeElem, safeHref)
+import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
 import Listasio.Component.HTML.Wip as Wip
 import Listasio.Data.Avatar as Avatar
 import Listasio.Data.DateTime (toDisplayMonthDayYear)
@@ -124,7 +124,7 @@ component = Connect.component $ H.mkComponent
     where
 
     listCols :: ListWithIdUserAndMeta -> _
-    listCols l@{title} =
+    listCols l@{title, is_public} =
       HH.div
         []
         [ HH.div
@@ -146,6 +146,10 @@ component = Connect.component $ H.mkComponent
                 , HH.h1
                     [ HP.classes [ T.text3xl, T.fontBold, T.textGray400, T.ml4 ] ]
                     [ HH.text title ]
+                , whenElem (not is_public) \_ ->
+                    HH.div
+                      [ HP.classes [ T.ml4, T.px1, T.border, T.borderGray200, T.roundedSm, T.textSm, T.textGray300 ] ]
+                      [ HH.text "Private" ]
                 ]
             , maybeElem (filter ((_ == authorSlug) <<< _.slug) currentUser) \_ ->
                 HH.a
