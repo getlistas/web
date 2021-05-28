@@ -22,6 +22,7 @@ import Listasio.Capability.Resource.User (class ManageUser, getCurrentUser)
 import Listasio.Component.HTML.Footer (footer)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Login as Login
+import Listasio.Component.HTML.Logo as Logo
 import Listasio.Component.HTML.Register as Register
 import Listasio.Component.HTML.Typed as Typed
 import Listasio.Component.HTML.Utils (safeHref, whenElem)
@@ -142,16 +143,7 @@ component = Connect.component $ H.mkComponent
     where
     onNavigate route = Just <<< Navigate route <<< Mouse.toEvent
 
-    logo =
-      HH.a
-        [ HP.classes [ T.border2, T.py3, T.px2, T.borderKiwi, T.block ]
-        , safeHref Home
-        , HE.onClick $ onNavigate Home
-        ]
-        [ HH.h1
-            [ HP.classes [ T.text2xl, T.leadingNone, T.textGray400 ] ]
-            [ HH.text "Listas" ]
-        ]
+    logo = HH.a [ safeHref Home, HE.onClick $ onNavigate Home ] [ Logo.elem ]
 
     mobileLink route name =
       HH.a

@@ -951,6 +951,10 @@ minHScreen = ClassName "min-h-screen"
 minW0 :: ClassName
 minW0 = ClassName "min-w-0"
 
+-- | ml1
+ml1 :: ClassName
+ml1 = ClassName "ml-1"
+
 -- | ml2
 ml2 :: ClassName
 ml2 = ClassName "ml-2"
@@ -1834,6 +1838,10 @@ w10 = ClassName "w-10"
 -- | w11d12
 w11d12 :: ClassName
 w11d12 = ClassName "w-11/12"
+
+-- | w16
+w16 :: ClassName
+w16 = ClassName "w-16"
 
 -- | w20
 w20 :: ClassName

@@ -17,6 +17,7 @@ import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, getCurrentUser)
 import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Logo as Logo
 import Listasio.Component.HTML.Utils (cx, safeHref, whenElem)
 import Listasio.Data.Avatar as Avatar
 import Listasio.Data.Lens (_menuOpen)
@@ -129,16 +130,7 @@ component = Connect.component $ H.mkComponent
 
     isRoute = (_ == currentRoute) <<< Just
 
-    logo =
-      HH.a
-        [ HP.classes [ T.border2, T.py3, T.px2, T.borderKiwi, T.block ]
-        , safeHref Home
-        , HE.onClick $ onNavigate Home
-        ]
-        [ HH.h1
-            [ HP.classes [ T.text2xl, T.leadingNone, T.textGray400 ] ]
-            [ HH.text "Listas" ]
-        ]
+    logo = HH.a [ safeHref Home, HE.onClick $ onNavigate Home ] [ Logo.elem ]
 
     mobileLink route name =
       HH.a
