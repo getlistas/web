@@ -10,8 +10,9 @@ import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Either (hush)
 import Data.Foldable (elem)
-import Data.Maybe (Maybe(..), fromMaybe, isJust)
+import Data.Maybe (Maybe(..), isJust)
 import Data.Symbol (SProxy(..))
+import Data.Traversable (for_)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -27,6 +28,7 @@ import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Capability.Resource.User (class ManageUser)
 import Listasio.Component.HTML.Footer (footer)
 import Listasio.Component.HTML.Nav as Nav
+import Listasio.Component.HTML.NotFound as NotFound
 import Listasio.Component.Utils (OpaqueSlot)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..), routeCodec)
@@ -128,7 +130,7 @@ component = Connect.component $ H.mkComponent
       -- first we'll get the route the user landed on
       initialRoute <- hush <<< (RD.parse routeCodec) <$> _.path <$> locationState
       -- then we'll navigate to the new route (also setting the hash)
-      navigate $ fromMaybe Home initialRoute
+      for_ initialRoute navigate
 
     NavigateAct route e -> navigate_ e route
 
@@ -162,8 +164,7 @@ component = Connect.component $ H.mkComponent
     Just {slug} | slug == pathSlug ->
       html
     Just _ ->
-      layout Nothing
-        $ HH.div [ HP.classes [ T.textGray400 ] ] [ HH.text "Oh no! That page wasn't found." ]
+      NotFound.elem
 
   layout :: Maybe Route -> _ -> _
   layout currentRoute content =
@@ -184,9 +185,7 @@ component = Connect.component $ H.mkComponent
   render {route, currentUser} =
     case route of
       Nothing ->
-        -- TODO: 404 redirect? Or render proper page?
-        layout Nothing
-          $ HH.div [ HP.classes [ T.textGray400 ] ] [ HH.text "Oh no! That page wasn't found." ]
+        layout Nothing NotFound.elem
 
       Just Home ->
         HH.slot (SProxy :: _ "home") unit Home.component {} absurd

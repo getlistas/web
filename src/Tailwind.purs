@@ -359,6 +359,10 @@ fontExtrabold = ClassName "font-extrabold"
 fontMedium :: ClassName
 fontMedium = ClassName "font-medium"
 
+-- | fontMono
+fontMono :: ClassName
+fontMono = ClassName "font-mono"
+
 -- | fontNormal
 fontNormal :: ClassName
 fontNormal = ClassName "font-normal"
