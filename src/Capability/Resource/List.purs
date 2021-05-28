@@ -12,8 +12,13 @@ import Slug (Slug)
 class Monad m <= ManageList m where
   createList :: CreateListFields -> m (Maybe ListWithIdAndUser)
   getList :: ID -> m (Maybe ListWithIdUserAndMeta)
+
+  -- TODO: these two endpoints should return a different type (ie. the private
+  --       list has information that the public one should not). But is not yet
+  --       supported by the backend
   getListBySlug :: { user :: Slug, list :: Slug } -> m (Maybe ListWithIdAndUser)
   getPublicListBySlug :: { user :: Slug, list :: Slug } -> m (Maybe ListWithIdUserAndMeta)
+
   getLists :: m (Maybe (Array ListWithIdUserAndMeta))
   updateList :: ID -> CreateListFields -> m (Maybe ListWithIdAndUser)
   deleteList :: ID -> m Unit
