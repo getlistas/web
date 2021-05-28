@@ -19,6 +19,7 @@ import Listasio.Capability.Resource.User (class ManageUser, userBySlug)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (maybeElem, safeHref)
+import Listasio.Component.HTML.Wip as Wip
 import Listasio.Data.Avatar as Avatar
 import Listasio.Data.DateTime (toDisplayMonthDayYear)
 import Listasio.Data.List (ListWithIdUserAndMeta)
@@ -108,7 +109,7 @@ component = Connect.component $ H.mkComponent
   render {list, author, authorSlug, currentUser} =
     HH.div
       []
-      [ wip
+      [ Wip.elem
       , case list of
           NotAsked -> HH.text ""
 
@@ -235,20 +236,3 @@ component = Connect.component $ H.mkComponent
 
     sectionTitle title =
       HH.h3 [ HP.classes [ T.textXl, T.fontBold, T.textGray400, T.mb4 ] ] [ HH.text title ]
-
-    wip =
-      HH.div
-        [ HP.classes [ T.p2, T.roundedLg, T.bgDurazno, T.smP3, T.mb8 ] ]
-        [ HH.div
-            [ HP.classes [ T.flex, T.itemsCenter ] ]
-            [ HH.span
-                [ HP.classes [ T.flex, T.p2, T.roundedLg, T.bgManzana ] ]
-                [ Icons.code
-                    [ Icons.classes [ T.h6, T.w6, T.textWhite ] ]
-                ]
-            , HH.p
-                [ HP.classes [ T.ml3, T.fontMedium, T.textWhite ] ]
-                [ HH.text "Work in progress"
-                ]
-            ]
-        ]

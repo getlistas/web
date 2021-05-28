@@ -24,7 +24,7 @@ import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Now (class Now, nowDate, nowTime)
 import Listasio.Capability.Resource.User (class ManageUser, userMetrics, userBySlug)
-import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Wip as Wip
 import Listasio.Data.Avatar as Avatar
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.Metrics (Metric)
@@ -174,7 +174,7 @@ component = Connect.component $ H.mkComponent
   render {currentUser, profile, metrics, time} =
     HH.div
       []
-      [ wip
+      [ Wip.elem
       , case profile of
           Success {name, avatar} ->
             profileHeader {name: Username.toString name, avatar}
@@ -279,23 +279,6 @@ component = Connect.component $ H.mkComponent
       ]
 
     where
-    wip =
-      HH.div
-        [ HP.classes [ T.p2, T.roundedLg, T.bgDurazno, T.smP3, T.mb8 ] ]
-        [ HH.div
-            [ HP.classes [ T.flex, T.itemsCenter ] ]
-            [ HH.span
-                [ HP.classes [ T.flex, T.p2, T.roundedLg, T.bgManzana ] ]
-                [ Icons.code
-                    [ Icons.classes [ T.h6, T.w6, T.textWhite ] ]
-                ]
-            , HH.p
-                [ HP.classes [ T.ml3, T.fontMedium, T.textWhite ] ]
-                [ HH.text "Work in progress"
-                ]
-            ]
-        ]
-
     gridDay day rowCx =
       HH.div
         [ HP.classes

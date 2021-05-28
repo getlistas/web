@@ -18,9 +18,9 @@ import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.Integration (class ManageIntegration, subscribeToList)
 import Listasio.Capability.Resource.List (class ManageList, createList, discoverLists, forkList, getLists)
-import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
+import Listasio.Component.HTML.Wip as Wip
 import Listasio.Data.Avatar (Avatar)
 import Listasio.Data.Avatar as Avatar
 import Listasio.Data.ID (ID)
@@ -183,28 +183,11 @@ component = Connect.component $ H.mkComponent
               [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
               [ HH.text "Discover" ]
           ]
-      , wip
+      , Wip.elem
       , feed
       ]
 
     where
-    wip =
-      HH.div
-        [ HP.classes [ T.p2, T.roundedLg, T.bgDurazno, T.smP3, T.mb8 ] ]
-        [ HH.div
-            [ HP.classes [ T.flex, T.itemsCenter ] ]
-            [ HH.span
-                [ HP.classes [ T.flex, T.p2, T.roundedLg, T.bgManzana ] ]
-                [ Icons.code
-                    [ Icons.classes [ T.h6, T.w6, T.textWhite ] ]
-                ]
-            , HH.p
-                [ HP.classes [ T.ml3, T.fontMedium, T.textWhite ] ]
-                [ HH.text "Work in progress"
-                ]
-            ]
-        ]
-
     feed = case lists of
       Success {refreshing, items} ->
         HH.div

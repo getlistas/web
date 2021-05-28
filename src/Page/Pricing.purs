@@ -2,7 +2,6 @@ module Listasio.Page.Pricing where
 
 import Prelude
 
-import Listasio.Component.HTML.Icons as Icons
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
 import Data.Maybe (Maybe(..))
@@ -11,6 +10,7 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Component.HTML.Wip as Wip
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route)
 import Listasio.Env (UserEnv)
@@ -57,23 +57,5 @@ component = Connect.component $ H.mkComponent
               [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
               [ HH.text "Pricing" ]
           ]
-      , wip
+      , Wip.elem
       ]
-
-    where
-    wip =
-      HH.div
-        [ HP.classes [ T.p2, T.roundedLg, T.bgDurazno, T.smP3, T.mb8 ] ]
-        [ HH.div
-            [ HP.classes [ T.flex, T.itemsCenter ] ]
-            [ HH.span
-                [ HP.classes [ T.flex, T.p2, T.roundedLg, T.bgManzana ] ]
-                [ Icons.code
-                    [ Icons.classes [ T.h6, T.w6, T.textWhite ] ]
-                ]
-            , HH.p
-                [ HP.classes [ T.ml3, T.fontMedium, T.textWhite ] ]
-                [ HH.text "Work in progress"
-                ]
-            ]
-        ]
