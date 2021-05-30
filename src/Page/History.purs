@@ -1,4 +1,4 @@
-module Listasio.Page.Resources where
+module Listasio.Page.History where
 
 import Prelude
 
@@ -128,7 +128,7 @@ type State
     }
 
 noteError :: forall a. Maybe a -> Either String a
-noteError = note "Failed to load resources"
+noteError = note "Failed to load history"
 
 component
   :: forall q o m r
@@ -191,7 +191,7 @@ component = Connect.component $ H.mkComponent
           [ HP.classes [ T.pt2 ] ]
           [ HH.h1
               [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-              [ HH.text "Resources" ]
+              [ HH.text "History" ]
           ]
       , settings
       , feed

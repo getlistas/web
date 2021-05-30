@@ -277,7 +277,7 @@ component = Connect.component $ H.mkComponent
                 [ whenElem (hasUser authStatus) \_ ->
                     desktopLink Dashboard "Up next"
                 , whenElem (hasUser authStatus) \_ ->
-                    desktopLink Resources "Resources"
+                    desktopLink History "History"
                 , desktopLink Discover "Discover"
                 -- , desktopLink Pricing "Pricing"
                 ]
@@ -406,7 +406,7 @@ component = Connect.component $ H.mkComponent
                   [ whenElem (hasUser authStatus) \_ ->
                       mobileLink Dashboard "Up next"
                   , whenElem (hasUser authStatus) \_ ->
-                      mobileLink Resources "Resources"
+                      mobileLink History "History"
                   , mobileLink Discover "Discover"
                   -- , mobileLink Pricing "Pricing"
                   ]
