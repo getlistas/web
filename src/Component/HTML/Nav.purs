@@ -221,7 +221,7 @@ component = Connect.component $ H.mkComponent
                 case currentUser of
                   Just _ ->
                     [ desktopLink Dashboard "Up next"
-                    , desktopLink Resources "Resources"
+                    , desktopLink History "History"
                     , desktopLink Discover "Discover"
                     -- , desktopLink Pricing "Pricing"
                     ]
@@ -358,7 +358,7 @@ component = Connect.component $ H.mkComponent
                   case currentUser of
                     Just _ ->
                       [ mobileLink Dashboard "Up next"
-                      , mobileLink Resources "Resources"
+                      , mobileLink History "History"
                       , mobileLink Discover "Discover"
                       -- , mobileLink Pricing "Pricing"
                       ]

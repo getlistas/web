@@ -48,7 +48,7 @@ import Listasio.Page.Pricing as Pricing
 import Listasio.Page.Profile as Profile
 import Listasio.Page.PublicList as PublicList
 import Listasio.Page.Register as Register
-import Listasio.Page.Resources as Resources
+import Listasio.Page.History as History
 import Listasio.Page.Settings as Settings
 import Listasio.Page.Terms as Terms
 import Listasio.Page.VerifyFailure as VerifyFailure
@@ -90,7 +90,7 @@ type ChildSlots =
   , verifyFailure :: OpaqueSlot Unit
     -- Private
   , dashboard :: OpaqueSlot Unit
-  , resources :: OpaqueSlot Unit
+  , history :: OpaqueSlot Unit
   , settings :: OpaqueSlot Unit
   , createList :: OpaqueSlot Unit
   , createResource :: OpaqueSlot Unit
@@ -236,8 +236,8 @@ component = Connect.component $ H.mkComponent
             HH.slot (SProxy :: _ "dashboard") unit Dashboard.component {} absurd
               # authorize currentUser
 
-          Resources ->
-            HH.slot (SProxy :: _ "resources") unit Resources.component {} absurd
+          History ->
+            HH.slot (SProxy :: _ "history") unit History.component {} absurd
               # authorize currentUser
 
           Settings ->
