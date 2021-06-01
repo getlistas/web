@@ -69,9 +69,10 @@ resource lists { url, title, list, completed_at } =
               ]
         ]
     ]
-  where
-  shortUrl u =
-    maybeElem (takeDomain u) \short ->
-      HH.div
-        [ HP.classes [ T.textGray300, T.textXs, T.mt2, T.ml6 ] ]
-        [ HH.text short ]
+
+shortUrl :: forall i p. String -> HH.HTML i p
+shortUrl u =
+  maybeElem (takeDomain u) \short ->
+    HH.div
+      [ HP.classes [ T.textGray300, T.textXs, T.mt2, T.ml6 ] ]
+      [ HH.text short ]

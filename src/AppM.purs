@@ -185,15 +185,21 @@ instance manageResourceAppM :: ManageResource AppM where
           conf = {endpoint: ResourceMeta, method}
           codec = ResourceMeta.metaCodec
 
-  getListResources list = do
-    hush <$> mkAuthRequest conf codec
-    where conf = {endpoint, method: Get}
-          endpoint = ResourcesByList {list, sort: PositionAsc, completed: false}
-          codec = CAC.array Resource.listResourceCodec
-
   getResources = do
     hush <$> mkAuthRequest conf codec
     where conf = {endpoint: Resources, method: Get}
+          codec = CAC.array Resource.listResourceCodec
+
+  getListResources {list, completed} = do
+    hush <$> mkAuthRequest conf codec
+    where conf = {endpoint, method: Get}
+          endpoint = ResourcesByList {list, sort: PositionAsc, completed}
+          codec = CAC.array Resource.listResourceCodec
+
+  getPublicListResources {user, list} = do
+    hush <$> mkAuthRequest conf codec
+    where conf = {endpoint, method: Get}
+          endpoint = ListResourcesBySlug user list
           codec = CAC.array Resource.listResourceCodec
 
   createResource newResource =
