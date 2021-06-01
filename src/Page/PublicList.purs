@@ -15,8 +15,10 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getPublicListBySlug)
+import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Capability.Resource.User (class ManageUser, userBySlug)
 import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.PublicResources as PublicResources
 import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
 import Listasio.Component.HTML.Wip as Wip
@@ -54,12 +56,16 @@ type State
     , author :: RemoteData String PublicProfile
     }
 
+type ChildSlots
+  = ( publicResources :: PublicResources.Slot Unit )
+
 component
   :: forall q o m r
    . MonadAff m
   => MonadAsk {userEnv :: UserEnv | r} m
   => ManageUser m
   => ManageList m
+  => ManageResource m
   => Navigate m
   => H.Component HH.HTML q {list :: Slug, user :: Slug} o m
 component = Connect.component $ H.mkComponent
@@ -80,7 +86,7 @@ component = Connect.component $ H.mkComponent
     , author: NotAsked
     }
 
-  handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
+  handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
     Initialize -> do
       void $ H.fork $ handleAction LoadList
@@ -105,15 +111,15 @@ component = Connect.component $ H.mkComponent
 
     Navigate route e -> navigate_ e route
 
-  render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {list, author, authorSlug, currentUser} =
+  render :: State -> H.ComponentHTML Action ChildSlots m
+  render {list, author, listSlug, authorSlug, currentUser} =
     HH.div
       []
       [ Wip.elem
       , case list of
           NotAsked -> HH.text ""
 
-          -- TODO: loading skeleton?
+          -- TODO: loading skeleton
           Loading -> HH.text "Loading ..."
 
           Success l -> listCols l
@@ -122,7 +128,6 @@ component = Connect.component $ H.mkComponent
       ]
 
     where
-
     listCols :: ListWithIdUserAndMeta -> _
     listCols l@{title, is_public} =
       HH.div
@@ -168,7 +173,7 @@ component = Connect.component $ H.mkComponent
             , HH.div
                 []
                 [ sectionTitle "Resources"
-                , HH.div [ HP.classes [ T.textGray200, T.textLg ] ] [ HH.text "..." ]
+                , HH.slot PublicResources._publicResources unit PublicResources.component {listSlug, authorSlug} absurd
                 ]
             , HH.div
                 [ HP.classes [ T.smColSpan2, T.lgColSpan1 ] ]

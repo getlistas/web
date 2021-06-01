@@ -129,7 +129,7 @@ component = Connect.component $ H.mkComponent
     Initialize -> do
       H.modify_ $ over _resources $ \rs -> if RemoteData.isSuccess rs then rs else Loading
       {list} <- H.get
-      resources <- RemoteData.fromEither <$> note "Failed to load list resources" <$> getListResources list.id
+      resources <- RemoteData.fromEither <$> note "Failed to load list resources" <$> getListResources {list: list.id, completed: Just false}
       H.modify_ _ {resources = resources}
 
     Receive {currentUser} ->

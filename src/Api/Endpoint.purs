@@ -41,11 +41,12 @@ data Endpoint
   | UserMetrics Slug
   | List ID
   | ListBySlug Slug Slug
+  | ListResourcesBySlug Slug Slug
   | ListFork ID
   | Lists
   | Discover Pagination
   | Resources
-  | ResourcesByList { list :: ID, sort :: SortingResources, completed :: Boolean }
+  | ResourcesByList { list :: ID, sort :: SortingResources, completed :: Maybe Boolean }
   | Resource ID
   | CompleteResource ID
   | PositionResource ID
@@ -70,6 +71,7 @@ endpointCodec =
         , "UserMetrics": "users" / Slug.term segment / "metrics"
         , "List": "lists" / id segment
         , "ListBySlug": "users" / Slug.term segment / "lists" / Slug.term segment
+        , "ListResourcesBySlug": "users" / Slug.term segment / "lists" / Slug.term segment / "resources"
         , "ListFork": "lists" / id segment / "fork"
         , "Lists": "lists" / noArgs
         , "Discover": "discover" ?
@@ -78,7 +80,7 @@ endpointCodec =
             }
         , "Resources": "resources" / noArgs
         , "ResourcesByList": "resources"
-            ? { list: id, sort: sortingResources, completed: boolean }
+            ? { list: id, sort: sortingResources, completed: optional <<< boolean }
         , "Resource": "resources" / id segment
         , "CompleteResource": "resources" / id segment / "complete"
         , "PositionResource": "resources" / id segment / "position"

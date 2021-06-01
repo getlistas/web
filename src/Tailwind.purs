@@ -1319,6 +1319,10 @@ ringWhite = ClassName "ring-white"
 roundedFull :: ClassName
 roundedFull = ClassName "rounded-full"
 
+-- | roundedLLg
+roundedLLg :: ClassName
+roundedLLg = ClassName "rounded-l-lg"
+
 -- | roundedLMd
 roundedLMd :: ClassName
 roundedLMd = ClassName "rounded-l-md"
