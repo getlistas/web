@@ -21,7 +21,6 @@ import Listasio.Capability.Navigate (class Navigate)
 import Listasio.Capability.Now (class Now, nowDateTime)
 import Listasio.Capability.Resource.Resource (class ManageResource, changePosition, completeResource, deleteResource, getListResources)
 import Listasio.Component.HTML.Icons as Icons
-import Listasio.Component.HTML.Resource as Resource
 import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
@@ -32,6 +31,7 @@ import Network.RemoteData (RemoteData(..), _Success)
 import Network.RemoteData as RemoteData
 import Routing.Duplex (print)
 import Tailwind as T
+import Util (takeDomain)
 import Web.HTML (window) as Window
 import Web.HTML.Location as Location
 import Web.HTML.Window (location) as Window
@@ -204,93 +204,114 @@ component = H.mkComponent
     isLast id = Just id == mbLastId
 
     listResource :: Int -> ListResource -> Tuple String _
-    listResource i resource@{id, url, thumbnail, title, completed_at, position} =
+    listResource i resource@{id, url, thumbnail, title, completed_at, position, description} =
       Tuple (ID.toString id)
         $ HH.div
             [ HP.classes
-                [ T.border
+                [ T.flex
+                , T.justifyBetween
+                , T.border
                 , T.borderKiwi
                 , T.roundedLg
                 , T.bgWhite
-                , T.p4
                 , T.group
+                , T.h36
                 ]
             ]
-            [ HH.a
-                [ HP.classes [ T.flex, T.itemsCenter ]
-                , HP.href url
-                , HP.target "_blank"
-                , HP.rel "noreferrer noopener nofollow"
-                ]
-                [ HH.img [ HP.classes [ T.w4, T.h4, T.mr2 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
-                , HH.div [ HP.classes [ T.textGray400, T.textSm, T.fontMedium, T.truncate ] ] [ HH.text title ]
-                ]
-
-            , maybeElem (filter (const false) thumbnail) \u ->
-                HH.img
-                  [ HP.alt title
-                  , HP.src u
-                  , HP.classes
-                      [ T.w32
-                      , T.h20
-                      , T.objectCover
-                      , T.roundedLLg
-                      ]
-                  ]
-            , Resource.shortUrl url
-
-            , HH.div
-                [ HP.classes [ T.flex, T.justifyBetween, T.itemsCenter, T.mt2 ] ]
+            [ HH.div
+                [ HP.classes [ T.px4, T.py2, T.flex, T.flexCol, T.justifyBetween ] ]
                 [ HH.div
-                    [ HP.classes [ T.flex ] ]
-                    [ HH.div
-                        [ HP.classes
-                            [ T.textSm
-                            , T.fontBold
-                            , T.mr2
-                            , T.w4
-                            , T.textCenter
-                            ]
+                    []
+                    [ HH.a
+                        [ HP.classes [ T.textGray400, T.fontMedium, T.truncate ]
+                        , HP.href url
+                        , HP.target "_blank"
+                        , HP.rel "noreferrer noopener nofollow"
                         ]
-                        [ whenElem isCompleted \_ ->
-                            Icons.check [ Icons.classes [ T.textKiwi, T.h5, T.w5 ] ]
-                        ]
-                    ]
+                        [ HH.text title ]
 
-                , HH.div
-                    [ HP.classes [ T.hidden, T.groupHoverFlex, T.ml4, T.bgWhite, T.roundedMd ] ]
-                    [ HH.button
-                        [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ CompleteResource resource
-                        , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                        , HP.disabled (isProcessingAction || isCompleted)
-                        ]
-                        [ Icons.check [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
-                    , HH.button
-                        [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ SkipResource i resource
-                        , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                        , HP.disabled $ isProcessingAction || isLast id
-                        ]
-                        [ Icons.sortDescending [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
-                    , if confirmDelete == Just id
-                        then
-                          HH.button
-                            [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ ConfirmDeleteResource resource
-                            , HE.onFocusOut \_ -> Just CancelDeleteResource
-                              -- TODO: should it be on this element or on the wrapper?
-                            , HE.onMouseLeave \_ -> Just CancelDeleteResource
-                            , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgRed200, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                            , HP.disabled isProcessingAction
-                            ]
-                            [ Icons.check [ Icons.classes [ T.h5, T.w5, T.textRed700 ] ] ]
-                        else
-                          HH.button
-                            [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ DeleteResource resource
-                            , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                            , HP.disabled isProcessingAction
-                            ]
-                            [ Icons.trash [ Icons.classes [ T.h5, T.w5, T.textGray400 ] ] ]
+                    , maybeElem (takeDomain url) \short ->
+                        HH.div
+                          [ HP.classes [ T.flex, T.itemsCenter, T.mt1 ] ]
+                          [ HH.img [ HP.classes [ T.w4, T.h4, T.mr2 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
+                          , HH.div
+                              [ HP.classes [ T.textGray300, T.textXs ] ]
+                              [ HH.text short ]
+                          ]
+
+                    , maybeElem description \d ->
+                        HH.div
+                          [ HP.classes [ T.mt2, T.lineClamp2, T.textGray400, T.textSm ] ]
+                          [ HH.text d ]
                     ]
-              ]
+                , HH.div
+                    [ HP.classes [ T.flex, T.mt2 ] ]
+                    [ HH.div
+                        [ HP.classes [ T.flex ] ]
+                        [ HH.div
+                            [ HP.classes
+                                [ T.textSm
+                                , T.fontBold
+                                , T.mr2
+                                , T.w4
+                                , T.py1
+                                , T.textCenter
+                                ]
+                            ]
+                            [ whenElem isCompleted \_ ->
+                                Icons.check [ Icons.classes [ T.textKiwi, T.h5, T.w5 ] ]
+                            ]
+                        ]
+                    , HH.div
+                        [ HP.classes [ T.hidden, T.groupHoverFlex, T.ml4, T.bgWhite, T.roundedMd ] ]
+                        [ HH.button
+                            [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ CompleteResource resource
+                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                            , HP.disabled (isProcessingAction || isCompleted)
+                            ]
+                            [ Icons.check [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
+                        , HH.button
+                            [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ SkipResource i resource
+                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                            , HP.disabled $ isProcessingAction || isLast id
+                            ]
+                            [ Icons.sortDescending [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
+                        , if confirmDelete == Just id
+                            then
+                              HH.button
+                                [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ ConfirmDeleteResource resource
+                                , HE.onFocusOut \_ -> Just CancelDeleteResource
+                                  -- TODO: should it be on this element or on the wrapper?
+                                , HE.onMouseLeave \_ -> Just CancelDeleteResource
+                                , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgRed200, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                                , HP.disabled isProcessingAction
+                                ]
+                                [ Icons.check [ Icons.classes [ T.h5, T.w5, T.textRed700 ] ] ]
+                            else
+                              HH.button
+                                [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ DeleteResource resource
+                                , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                                , HP.disabled isProcessingAction
+                                ]
+                                [ Icons.trash [ Icons.classes [ T.h5, T.w5, T.textGray400 ] ] ]
+                        ]
+                  ]
+                ]
+            , HH.div
+                [ HP.classes [ T.w40, T.flexShrink0 ] ]
+                [ maybeElem thumbnail \u ->
+                    HH.img
+                      [ HP.alt title
+                      , HP.src u
+                      , HP.classes
+                          [ T.wFull
+                          , T.hFull
+                          , T.objectCover
+                          , T.objectCenter
+                          , T.roundedRLg
+                          ]
+                      ]
+                ]
             ]
       where
       isCompleted = isJust completed_at

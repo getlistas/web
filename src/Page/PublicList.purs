@@ -177,20 +177,13 @@ component = Connect.component $ H.mkComponent
             ]
             [ HH.div
                 []
-                [ sectionTitle "Details"
-                , listDetails l
+                [ listDetails l
                 ]
             , HH.div
-                []
-                [ sectionTitle "Resources"
-                , if isOwnList
+                [ HP.classes [ T.lgColSpan2 ] ]
+                [ if isOwnList
                     then HH.slot PersonalResources._personalResources unit PersonalResources.component {list: l.id} absurd
                     else HH.slot PublicResources._publicResources unit PublicResources.component {listSlug, authorSlug} absurd
-                ]
-            , HH.div
-                [ HP.classes [ T.smColSpan2, T.lgColSpan1 ] ]
-                [ sectionTitle "More from this author"
-                , HH.div [ HP.classes [ T.textGray200, T.textLg ] ] [ HH.text "..." ]
                 ]
             ]
         ]
@@ -276,6 +269,3 @@ component = Connect.component $ H.mkComponent
               , HH.text $ " " <> if count > 1 then many else one
               ]
           ]
-
-    sectionTitle title =
-      HH.h3 [ HP.classes [ T.textXl, T.fontBold, T.textGray400, T.mb4 ] ] [ HH.text title ]

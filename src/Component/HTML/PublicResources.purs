@@ -3,7 +3,6 @@ module Listasio.Component.HTML.PublicResources where
 import Prelude
 
 import Data.Either (note)
-import Data.Filterable (filter)
 import Data.Maybe (Maybe(..))
 import Data.Symbol (SProxy(..))
 import Data.Tuple (Tuple(..))
@@ -14,7 +13,6 @@ import Halogen.HTML.Elements.Keyed as HK
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Navigate (class Navigate)
 import Listasio.Capability.Resource.Resource (class ManageResource, getPublicListResources)
-import Listasio.Component.HTML.Resource as Resource
 import Listasio.Component.HTML.Utils (maybeElem)
 import Listasio.Data.ID as ID
 import Listasio.Data.Resource (ListResource)
@@ -22,6 +20,7 @@ import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
 import Slug (Slug)
 import Tailwind as T
+import Util (takeDomain)
 
 type Slot id = forall query. H.Slot query Void id
 
@@ -94,37 +93,55 @@ component = H.mkComponent
 
     where
     listResource :: ListResource -> Tuple String _
-    listResource {id, url, thumbnail, title} =
+    listResource {id, url, thumbnail, title, description} =
       Tuple (ID.toString id)
         $ HH.div
             [ HP.classes
-                [ T.border
+                [ T.flex
+                , T.justifyBetween
+                , T.border
                 , T.borderKiwi
                 , T.roundedLg
                 , T.bgWhite
-                , T.p4
                 ]
             ]
-            [ HH.a
-                [ HP.classes [ T.flex, T.itemsCenter ]
-                , HP.href url
-                , HP.target "_blank"
-                , HP.rel "noreferrer noopener nofollow"
-                ]
-                [ HH.img [ HP.classes [ T.w4, T.h4, T.mr2 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
-                , HH.div [ HP.classes [ T.textGray400, T.textSm, T.fontMedium, T.truncate ] ] [ HH.text title ]
-                ]
+            [ HH.div
+                [ HP.classes [ T.p4 ] ]
+                [ HH.a
+                    [ HP.classes [ T.textGray400, T.fontMedium, T.truncate ]
+                    , HP.href url
+                    , HP.target "_blank"
+                    , HP.rel "noreferrer noopener nofollow"
+                    ]
+                    [ HH.text title ]
 
-            , maybeElem (filter (const false) thumbnail) \u ->
-                HH.img
-                  [ HP.alt title
-                  , HP.src u
-                  , HP.classes
-                      [ T.w32
-                      , T.h20
-                      , T.objectCover
-                      , T.roundedLLg
+                , maybeElem (takeDomain url) \short ->
+                    HH.div
+                      [ HP.classes [ T.flex, T.itemsCenter, T.mt1 ] ]
+                      [ HH.img [ HP.classes [ T.w4, T.h4, T.mr2 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
+                      , HH.div
+                          [ HP.classes [ T.textGray300, T.textXs ] ]
+                          [ HH.text short ]
                       ]
-                  ]
-            , Resource.shortUrl url
+
+                , maybeElem description \d ->
+                    HH.div
+                      [ HP.classes [ T.mt2, T.lineClamp2, T.textGray400, T.textSm ] ]
+                      [ HH.text d ]
+                ]
+            , HH.div
+                [ HP.classes [ T.w40, T.flexShrink0 ] ]
+                [ maybeElem thumbnail \u ->
+                    HH.img
+                      [ HP.alt title
+                      , HP.src u
+                      , HP.classes
+                          [ T.wFull
+                          , T.hFull
+                          , T.objectCover
+                          , T.objectCenter
+                          , T.roundedRLg
+                          ]
+                      ]
+                ]
             ]

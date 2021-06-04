@@ -467,6 +467,10 @@ h24 = ClassName "h-24"
 h32 :: ClassName
 h32 = ClassName "h-32"
 
+-- | h36
+h36 :: ClassName
+h36 = ClassName "h-36"
+
 -- | h3
 h3 :: ClassName
 h3 = ClassName "h-3"
@@ -679,9 +683,9 @@ left0 = ClassName "left-0"
 left1d2 :: ClassName
 left1d2 = ClassName "left-1/2"
 
--- | lgColSpan1
-lgColSpan1 :: ClassName
-lgColSpan1 = ClassName "lg:col-span-1"
+-- | lgColSpan2
+lgColSpan2 :: ClassName
+lgColSpan2 = ClassName "lg:col-span-2"
 
 -- | lgColSpan3
 lgColSpan3 :: ClassName
@@ -1091,6 +1095,10 @@ negTranslateX6 = ClassName "-translate-x-6"
 negTranslateY6 :: ClassName
 negTranslateY6 = ClassName "-translate-y-6"
 
+-- | objectCenter
+objectCenter :: ClassName
+objectCenter = ClassName "object-center"
+
 -- | objectCover
 objectCover :: ClassName
 objectCover = ClassName "object-cover"
@@ -1319,10 +1327,6 @@ ringWhite = ClassName "ring-white"
 roundedFull :: ClassName
 roundedFull = ClassName "rounded-full"
 
--- | roundedLLg
-roundedLLg :: ClassName
-roundedLLg = ClassName "rounded-l-lg"
-
 -- | roundedLMd
 roundedLMd :: ClassName
 roundedLMd = ClassName "rounded-l-md"
@@ -1334,6 +1338,10 @@ roundedLg = ClassName "rounded-lg"
 -- | roundedMd
 roundedMd :: ClassName
 roundedMd = ClassName "rounded-md"
+
+-- | roundedRLg
+roundedRLg :: ClassName
+roundedRLg = ClassName "rounded-r-lg"
 
 -- | roundedRMd
 roundedRMd :: ClassName
@@ -1386,10 +1394,6 @@ smAlignMiddle = ClassName "sm:align-middle"
 -- | smBlock
 smBlock :: ClassName
 smBlock = ClassName "sm:block"
-
--- | smColSpan2
-smColSpan2 :: ClassName
-smColSpan2 = ClassName "sm:col-span-2"
 
 -- | smColSpan3
 smColSpan3 :: ClassName
