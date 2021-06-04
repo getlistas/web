@@ -7,17 +7,20 @@ import Control.Monad.Reader (class MonadAsk)
 import Data.Array.NonEmpty as NEA
 import Data.Either (note)
 import Data.Filterable (filter)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), isJust)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Listasio.Capability.Clipboard (class Clipboard)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Capability.Now (class Now)
 import Listasio.Capability.Resource.List (class ManageList, getPublicListBySlug)
 import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Capability.Resource.User (class ManageUser, userBySlug)
 import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.PersonalResources as PersonalResources
 import Listasio.Component.HTML.PublicResources as PublicResources
 import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
@@ -57,7 +60,9 @@ type State
     }
 
 type ChildSlots
-  = ( publicResources :: PublicResources.Slot Unit )
+  = ( publicResources :: PublicResources.Slot Unit
+    , personalResources :: PersonalResources.Slot Unit
+    )
 
 component
   :: forall q o m r
@@ -66,6 +71,8 @@ component
   => ManageUser m
   => ManageList m
   => ManageResource m
+  => Clipboard m
+  => Now m
   => Navigate m
   => H.Component HH.HTML q {list :: Slug, user :: Slug} o m
 component = Connect.component $ H.mkComponent
@@ -124,10 +131,13 @@ component = Connect.component $ H.mkComponent
 
           Success l -> listCols l
 
+          -- TODO: error message
           Failure msg -> HH.text msg
       ]
 
     where
+    isOwnList = isJust $ filter ((_ == authorSlug) <<< _.slug) currentUser
+
     listCols :: ListWithIdUserAndMeta -> _
     listCols l@{title, is_public} =
       HH.div
@@ -173,7 +183,9 @@ component = Connect.component $ H.mkComponent
             , HH.div
                 []
                 [ sectionTitle "Resources"
-                , HH.slot PublicResources._publicResources unit PublicResources.component {listSlug, authorSlug} absurd
+                , if isOwnList
+                    then HH.slot PersonalResources._personalResources unit PersonalResources.component {list: l.id} absurd
+                    else HH.slot PublicResources._publicResources unit PublicResources.component {listSlug, authorSlug} absurd
                 ]
             , HH.div
                 [ HP.classes [ T.smColSpan2, T.lgColSpan1 ] ]
@@ -225,7 +237,7 @@ component = Connect.component $ H.mkComponent
                   $ NEA.toArray ts
 
               ]
-        , maybeElem (filter ((_ == authorSlug) <<< _.slug) currentUser) \_ ->
+        , whenElem isOwnList \_ ->
             HH.a
               [ safeHref $ EditList authorSlug slug
               , HE.onClick $ Just <<< Navigate (EditList authorSlug slug) <<< Mouse.toEvent
