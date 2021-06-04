@@ -1968,6 +1968,11 @@ select{
   border-bottom-left-radius: 0.375rem;
 }
 
+.rounded-l-lg {
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+}
+
 .border-none {
   border-style: none;
 }
