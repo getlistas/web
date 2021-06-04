@@ -242,14 +242,23 @@ component = Connect.component $ H.mkComponent
                     , T.z20
                     ]
                 ]
-                [ case confirmDelete of
-                    false ->  Button.danger_ (HH.text "Delete list") false $ Just DeleteList
-                    true ->
-                      Button.danger
-                        (HH.text "Confirm")
-                        false
-                        (Just DeleteListConfirm)
-                        [ HE.onFocusOut \_ -> Just DeleteListCancel ]
+                [ if confirmDelete
+                    then
+                      Button.danger $ Button.dangerDefaultProps
+                        { label = HH.text "Confirm"
+                        , action = Just DeleteListConfirm
+                        , props =
+                            [ HE.onFocusOut \_ -> Just DeleteListCancel
+                            , HE.onMouseLeave \_ -> Just DeleteListCancel
+                            ]
+                        , classes = [ T.w32 ]
+                        }
+                    else
+                      Button.danger $ Button.dangerDefaultProps
+                        { label = HH.text "Delete list"
+                        , action = Just DeleteList
+                        , classes = [ T.w32 ]
+                        }
                 ]
             ]
         ]

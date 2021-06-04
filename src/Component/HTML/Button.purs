@@ -3,38 +3,55 @@ module Listasio.Component.HTML.Button where
 import Prelude
 
 import DOM.HTML.Indexed (HTMLbutton)
-import Data.Maybe (Maybe)
+import Data.Maybe (Maybe(..))
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Tailwind as T
 
-danger_ :: forall i p. HH.HTML i p -> Boolean -> Maybe p -> HH.HTML i p
-danger_ label disabled action = danger label disabled action []
+type DangerProps i p
+  = { label :: HH.HTML i p
+    , disabled :: Boolean
+    , action :: Maybe p
+    , props :: Array (HH.IProp HTMLbutton p)
+    , classes :: Array HH.ClassName
+    }
 
-danger :: forall i p. HH.HTML i p -> Boolean -> Maybe p -> Array (HH.IProp HTMLbutton p) -> HH.HTML i p
-danger label disabled action props =
+dangerDefaultProps :: forall i p. DangerProps i p
+dangerDefaultProps =
+  { label: HH.text ""
+  , disabled: false
+  , action: Nothing
+  , props: []
+  , classes: []
+  }
+
+danger :: forall i p. DangerProps i p -> HH.HTML i p
+danger {label, disabled, action, props, classes} =
   HH.button
     ( props
         <> [ HP.classes
-              [ T.inlineFlex
-              , T.itemsCenter
-              , T.justifyCenter
-              , T.px4
-              , T.py2
-              , T.border
-              , T.borderTransparent
-              , T.fontMedium
-              , T.roundedMd
-              , T.textRed700
-              , T.bgRed100
-              , T.hoverBgRed200
-              , T.focusOutlineNone
-              , T.focusRing2
-              , T.focusRingOffset2
-              , T.focusRingManzana
-              , T.smTextSm
-              ]
+              ( classes
+                  <>
+                    [ T.inlineFlex
+                    , T.itemsCenter
+                    , T.justifyCenter
+                    , T.px4
+                    , T.py2
+                    , T.border
+                    , T.borderTransparent
+                    , T.fontMedium
+                    , T.roundedMd
+                    , T.textRed700
+                    , T.bgRed100
+                    , T.hoverBgRed200
+                    , T.focusOutlineNone
+                    , T.focusRing2
+                    , T.focusRingOffset2
+                    , T.focusRingManzana
+                    , T.smTextSm
+                    ]
+              )
           , HP.type_ HP.ButtonButton
           , HP.disabled disabled
           , HE.onClick \_ -> action

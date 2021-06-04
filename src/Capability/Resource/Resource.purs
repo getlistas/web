@@ -14,7 +14,7 @@ type PositionChangeBody = { previus :: Maybe ID }
 class Monad m <= ManageResource m where
   getMeta :: String -> m (Maybe ResourceMeta)
   getResources :: m (Maybe (Array ListResource))
-  getListResources :: { list :: ID, completed :: Maybe Boolean } -> m (Maybe (Array ListResource))
+  getListResources :: {list :: ID, completed :: Maybe Boolean} -> m (Maybe (Array ListResource))
   getPublicListResources :: {user :: Slug, list :: Slug} -> m (Maybe (Array ListResource))
   createResource :: Resource -> m (Maybe ListResource)
   completeResource :: ListResource -> m (Maybe Unit)
