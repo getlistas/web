@@ -214,7 +214,9 @@ component = Connect.component $ H.mkComponent
     deleteListEl :: ListWithIdAndUser -> _
     deleteListEl list =
       HH.div
-        [ HP.classes [ T.px4, T.py5, T.smP6 ] ]
+        [ HP.classes [ T.px4, T.py5, T.smP6 ]
+        , HE.onMouseLeave \_ -> Just DeleteListCancel
+        ]
         [ HH.div
             [ HP.classes [ T.smFlex, T.smItemsStart, T.smJustifyBetween ] ]
             [ HH.div
@@ -247,10 +249,7 @@ component = Connect.component $ H.mkComponent
                       Button.danger $ Button.dangerDefaultProps
                         { label = HH.text "Confirm"
                         , action = Just DeleteListConfirm
-                        , props =
-                            [ HE.onFocusOut \_ -> Just DeleteListCancel
-                            , HE.onMouseLeave \_ -> Just DeleteListCancel
-                            ]
+                        , props = [ HE.onFocusOut \_ -> Just DeleteListCancel ]
                         , classes = [ T.w32 ]
                         }
                     else

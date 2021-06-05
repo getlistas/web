@@ -106,7 +106,7 @@ component = H.mkComponent
                 ]
             ]
             [ HH.div
-                [ HP.classes [ T.p4 ] ]
+                [ HP.classes [ T.p4, T.truncate ] ]
                 [ HH.a
                     [ HP.classes [ T.textGray400, T.fontMedium, T.truncate ]
                     , HP.href url
@@ -126,13 +126,13 @@ component = H.mkComponent
 
                 , maybeElem description \d ->
                     HH.div
-                      [ HP.classes [ T.mt2, T.lineClamp2, T.textGray400, T.textSm ] ]
+                      [ HP.classes [ T.mt2, T.truncate, T.textGray400, T.textSm ] ]
                       [ HH.text d ]
                 ]
-            , HH.div
-                [ HP.classes [ T.w40, T.flexShrink0 ] ]
-                [ maybeElem thumbnail \u ->
-                    HH.img
+            , maybeElem thumbnail \u ->
+                HH.div
+                  [ HP.classes [ T.w40, T.flexShrink0 ] ]
+                  [ HH.img
                       [ HP.alt title
                       , HP.src u
                       , HP.classes

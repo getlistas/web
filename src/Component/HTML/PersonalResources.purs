@@ -217,11 +217,12 @@ component = H.mkComponent
                 , T.group
                 , T.h36
                 ]
+            , HE.onMouseLeave \_ -> Just CancelDeleteResource
             ]
             [ HH.div
-                [ HP.classes [ T.px4, T.py2, T.flex, T.flexCol, T.justifyBetween ] ]
+                [ HP.classes [ T.p4, T.flex, T.flexCol, T.justifyBetween, T.truncate ] ]
                 [ HH.div
-                    []
+                    [ HP.classes [ T.truncate ] ]
                     [ HH.a
                         [ HP.classes [ T.textGray400, T.fontMedium, T.truncate ]
                         , HP.href url
@@ -241,9 +242,10 @@ component = H.mkComponent
 
                     , maybeElem description \d ->
                         HH.div
-                          [ HP.classes [ T.mt2, T.lineClamp2, T.textGray400, T.textSm ] ]
+                          [ HP.classes [ T.mt2, T.truncate, T.textGray400, T.textSm ] ]
                           [ HH.text d ]
                     ]
+                  -- TODO: icon actions fix the padding and position
                 , HH.div
                     [ HP.classes [ T.flex, T.mt2 ] ]
                     [ HH.div
@@ -253,7 +255,6 @@ component = H.mkComponent
                                 [ T.textSm
                                 , T.fontBold
                                 , T.mr2
-                                , T.w4
                                 , T.py1
                                 , T.textCenter
                                 ]
@@ -263,13 +264,14 @@ component = H.mkComponent
                             ]
                         ]
                     , HH.div
-                        [ HP.classes [ T.hidden, T.groupHoverFlex, T.ml4, T.bgWhite, T.roundedMd ] ]
-                        [ HH.button
-                            [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ CompleteResource resource
-                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                            , HP.disabled (isProcessingAction || isCompleted)
-                            ]
-                            [ Icons.check [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
+                        [ HP.classes [ T.hidden, T.groupHoverFlex, T.bgWhite, T.roundedMd ] ]
+                        [ whenElem (not isCompleted) \_ ->
+                            HH.button
+                              [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ CompleteResource resource
+                              , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                              , HP.disabled isProcessingAction
+                              ]
+                              [ Icons.check [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
                         , HH.button
                             [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ SkipResource i resource
                             , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
@@ -281,8 +283,6 @@ component = H.mkComponent
                               HH.button
                                 [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ ConfirmDeleteResource resource
                                 , HE.onFocusOut \_ -> Just CancelDeleteResource
-                                  -- TODO: should it be on this element or on the wrapper?
-                                , HE.onMouseLeave \_ -> Just CancelDeleteResource
                                 , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgRed200, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
                                 , HP.disabled isProcessingAction
                                 ]
@@ -297,10 +297,10 @@ component = H.mkComponent
                         ]
                   ]
                 ]
-            , HH.div
-                [ HP.classes [ T.w40, T.flexShrink0 ] ]
-                [ maybeElem thumbnail \u ->
-                    HH.img
+            , maybeElem thumbnail \u ->
+                HH.div
+                  [ HP.classes [ T.w40, T.flexShrink0 ] ]
+                  [ HH.img
                       [ HP.alt title
                       , HP.src u
                       , HP.classes

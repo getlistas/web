@@ -170,7 +170,6 @@ component = Connect.component $ H.mkComponent
             [ HP.classes
                 [ T.grid
                 , T.gridCols1
-                , T.smGridCols2
                 , T.lgGridCols3
                 , T.gap4
                 ]
