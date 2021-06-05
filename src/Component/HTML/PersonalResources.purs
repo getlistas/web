@@ -187,11 +187,7 @@ component = H.mkComponent
 
       Success rs ->
         HK.div
-          [ HP.classes
-              [ T.flex
-              , T.flexCol
-              ]
-          ]
+          [ HP.classes [ T.flex, T.flexCol ] ]
           $ A.mapWithIndex listResource rs
 
       -- TODO: error message element
