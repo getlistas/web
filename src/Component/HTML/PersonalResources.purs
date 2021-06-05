@@ -190,7 +190,6 @@ component = H.mkComponent
           [ HP.classes
               [ T.flex
               , T.flexCol
-              , T.gap4
               ]
           ]
           $ A.mapWithIndex listResource rs
@@ -216,6 +215,7 @@ component = H.mkComponent
                 , T.bgWhite
                 , T.group
                 , T.h36
+                , T.mb4
                 ]
             , HE.onMouseLeave \_ -> Just CancelDeleteResource
             ]

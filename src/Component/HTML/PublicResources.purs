@@ -83,7 +83,6 @@ component = H.mkComponent
           [ HP.classes
               [ T.flex
               , T.flexCol
-              , T.gap4
               ]
           ]
           $ listResource <$> rs
@@ -103,6 +102,7 @@ component = H.mkComponent
                 , T.borderKiwi
                 , T.roundedLg
                 , T.bgWhite
+                , T.mb4
                 ]
             ]
             [ HH.div
