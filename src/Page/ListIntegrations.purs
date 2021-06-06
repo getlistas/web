@@ -172,23 +172,29 @@ component = Connect.component $ H.mkComponent
     header =
       HH.div
         [ HP.classes [ T.pt2 ] ]
-        [ HH.h1
-            [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-            [ HH.text $ RemoteData.maybe "..." _.title mbList  ]
+        [ HH.div
+            [ HP.classes [ T.flex, T.itemsCenter, T.justifyBetween ] ]
+            [ HH.h1
+                [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
+                [ HH.text $ RemoteData.maybe "..." _.title mbList  ]
+            , HH.a
+                [ safeHref $ PublicList userSlug listSlug
+                , HE.onClick $ Just <<< Navigate (PublicList userSlug listSlug) <<< Mouse.toEvent
+                , HP.classes
+                    [ T.flex
+                    , T.itemsCenter
+                    , T.textGray300
+                    ]
+                ]
+                [ Icons.eye [ Icons.classes [ T.w6, T.h6, T.mr2 ] ]
+                , HH.text "View list"
+                ]
+            ]
         ]
 
     mkLayout list cards =
       CardsAndSidebar.layout
         [ { active: false
-          , icon: Icons.eye
-          , label: "Public"
-          , link:
-              Just
-                { action: Just <<< Navigate (PublicList userSlug listSlug)
-                , route: PublicList userSlug listSlug
-                }
-          }
-        , { active: false
           , icon: Icons.userCircle
           , label: "Settings"
           , link:
