@@ -535,10 +535,6 @@ hFull = ClassName "h-full"
 hidden :: ClassName
 hidden = ClassName "hidden"
 
--- | hoverBgDurazno
-hoverBgDurazno :: ClassName
-hoverBgDurazno = ClassName "hover:bg-durazno"
-
 -- | hoverBgGray100
 hoverBgGray100 :: ClassName
 hoverBgGray100 = ClassName "hover:bg-gray-100"
@@ -618,10 +614,6 @@ hoverTextKiwiDark = ClassName "hover:text-kiwi-dark"
 -- | hoverTextManzana
 hoverTextManzana :: ClassName
 hoverTextManzana = ClassName "hover:text-manzana"
-
--- | hoverTextWhite
-hoverTextWhite :: ClassName
-hoverTextWhite = ClassName "hover:text-white"
 
 -- | hoverUnderline
 hoverUnderline :: ClassName
@@ -1011,10 +1003,6 @@ mr2 = ClassName "mr-2"
 mr3 :: ClassName
 mr3 = ClassName "mr-3"
 
--- | mr4
-mr4 :: ClassName
-mr4 = ClassName "mr-4"
-
 -- | mr8
 mr8 :: ClassName
 mr8 = ClassName "mr-8"
@@ -1342,6 +1330,10 @@ ringOpacity5 = ClassName "ring-opacity-5"
 -- | ringWhite
 ringWhite :: ClassName
 ringWhite = ClassName "ring-white"
+
+-- | roundedBlMd
+roundedBlMd :: ClassName
+roundedBlMd = ClassName "rounded-bl-md"
 
 -- | roundedFull
 roundedFull :: ClassName

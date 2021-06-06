@@ -4,13 +4,12 @@ import Prelude
 
 import Component.HOC.Connect as Connect
 import Control.Monad.Reader (class MonadAsk)
-import Data.Array (findIndex, insertAt, mapWithIndex, null, singleton, snoc, tail)
+import Data.Array (findIndex, insertAt, null, singleton, snoc)
 import Data.Array.NonEmpty (cons')
 import Data.Either (note)
 import Data.Filterable (class Filterable, filter)
-import Data.Foldable (length)
 import Data.Lens (firstOf, lastOf, lengthOf, over, preview, set, traversed)
-import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing, maybe)
+import Data.Maybe (Maybe(..), fromMaybe, isNothing, maybe)
 import Data.Symbol (SProxy(..))
 import Data.Traversable (for_)
 import Data.Tuple (Tuple(..))
@@ -26,11 +25,11 @@ import Listasio.Capability.Now (class Now, nowDateTime)
 import Listasio.Capability.Resource.Resource (class ManageResource, changePosition, completeResource, deleteResource, getListResources)
 import Listasio.Component.HTML.ButtonGroupMenu as ButtonGroupMenu
 import Listasio.Component.HTML.Icons as Icons
-import Listasio.Component.HTML.Utils (cx, maybeElem, safeHref, whenElem)
+import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
-import Listasio.Data.Lens (_completed_count, _confirmDelete, _count, _isProcessingAction, _last_completed_at, _list, _resource_metadata, _resources, _showMore, _showNextMenu)
+import Listasio.Data.Lens (_completed_count, _confirmDelete, _count, _isProcessingAction, _last_completed_at, _list, _resource_metadata, _resources, _showNextMenu)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Resource (ListResource)
@@ -53,7 +52,6 @@ _listSlot = SProxy :: SProxy "list"
 
 data Action
   = Initialize
-  | ToggleShowMore
   | ToggleShowNextMenu
   | CopyToShare ListResource
   | CopyResourceURL ListResource
@@ -61,7 +59,6 @@ data Action
   | SkipResource Int ListResource
   | DeleteResource Boolean ListResource
   | ConfirmDeleteResource ListResource
-  | CancelDeleteResource
   | Navigate Route Event
   | RaiseCreateResource ID
   | Receive {currentUser :: Maybe ProfileWithIdAndEmail, list :: ListWithIdUserAndMeta}
@@ -85,10 +82,10 @@ removeResourceById :: ID -> State -> State
 removeResourceById id =
   over (_resources <<< _Success) (filter ((id /= _) <<< _.id))
 
+-- TODO: clean up actions & state to only operate on the "Next" (ie first) item
 type State
   = { list :: ListWithIdUserAndMeta
     , resources :: RemoteData String (Array ListResource)
-    , showMore :: Boolean
     , isProcessingAction :: Boolean
     , confirmDelete :: Maybe ID
     , showNextMenu :: Boolean
@@ -117,7 +114,6 @@ component = Connect.component $ H.mkComponent
   initialState {currentUser, list} =
     { list
     , resources: singleton <$> RemoteData.fromMaybe list.resource_metadata.next
-    , showMore: false
     , isProcessingAction: false
     , showNextMenu: false
     , confirmDelete: Nothing
@@ -134,8 +130,6 @@ component = Connect.component $ H.mkComponent
 
     Receive {currentUser} ->
       H.modify_ _ {currentUser = currentUser}
-
-    ToggleShowMore -> H.modify_ $ over _showMore not
 
     ToggleShowNextMenu -> H.modify_ $ over _showNextMenu not <<< set _confirmDelete Nothing
 
@@ -194,9 +188,6 @@ component = Connect.component $ H.mkComponent
       H.modify_ _ {confirmDelete = Just id}
       when confirmed $ void $ H.fork $ handleAction $ ConfirmDeleteResource toDelete
 
-    CancelDeleteResource ->
-      H.modify_ _ {confirmDelete = Nothing}
-
     ConfirmDeleteResource toDelete@{id} -> do
       {confirmDelete} <- H.get
 
@@ -233,7 +224,7 @@ component = Connect.component $ H.mkComponent
       pure $ Just a
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render state@{list, resources, showMore, showNextMenu, isProcessingAction, confirmDelete, currentUser} =
+  render state@{list, resources, showNextMenu, isProcessingAction, confirmDelete, currentUser} =
     HH.div
       [ HP.classes
           [ T.border2
@@ -244,7 +235,7 @@ component = Connect.component $ H.mkComponent
           , T.bgWhite
           ]
       ]
-      [ header, toRead, footer ]
+      [ header, toRead ]
     where
     shortUrl url =
       maybeElem (takeDomain url) \short ->
@@ -340,37 +331,19 @@ component = Connect.component $ H.mkComponent
     nextEl :: ListResource -> Boolean -> _
     nextEl next isLast =
       HH.div
-        [ HP.classes [ T.px4, T.pb2, T.pt4, T.flex, T.h40 ] ]
-        [ nextLink next
-            $ HH.div
-                [ HP.classes [ T.h32, T.w32, T.lgW44, T.mr4 ] ]
-                [ case next.thumbnail of
-                    Just url ->
-                      HH.img [ HP.classes [ T.hFull, T.wFull, T.objectCover, T.roundedLg ], HP.src url ]
-                    Nothing ->
-                      HH.div
-                        [ HP.classes
-                            [ T.wFull
-                            , T.hFull
-                            , T.flex
-                            , T.flexCol
-                            , T.justifyCenter
-                            , T.itemsCenter
-                            , T.textGray200
-                            , T.bgGray100
-                            , T.roundedLg
-                            , T.mr4
-                            ]
-                        ]
-                        [ Icons.photo [ Icons.classes [ T.h20, T.w20 ] ] ]
-                ]
+        [ HP.classes [ T.flex, T.h40 ] ]
+        [ maybeElem next.thumbnail \url ->
+            HH.div
+              [ HP.classes [ T.w32, T.lgW44, T.flexShrink0 ] ]
+              [ HH.img [ HP.classes [ T.hFull, T.wFull, T.objectCover, T.roundedBlMd ], HP.src url ]
+              ]
         , HH.div
-            [ HP.classes [ T.flex, T.flexCol, T.justifyBetween, T.wFull ] ]
+            [ HP.classes [ T.wFull, T.px4, T.pb2, T.pt4, T.flex, T.flexCol, T.justifyBetween ] ]
             [ HH.div
                 []
                 [ nextLink next $
                     HH.div
-                      [ HP.classes [ T.textSm, T.fontMedium, T.textGray400, T.leadingRelaxed, T.lineClamp2 ] ]
+                      [ HP.classes [ T.fontMedium, T.textGray400, T.leadingRelaxed, T.lineClamp2 ] ]
                       [ HH.text next.title ]
                 , nextLink next $
                     HH.div [ HP.classes [ T.mt2 ] ] [ shortUrl next.url ]
@@ -469,118 +442,6 @@ component = Connect.component $ H.mkComponent
               [ HP.classes [ T.textSm, T.textGray200 ] ]
               [ HH.text $ "Last done " <> DateTime.toDisplayDayMonth last_done ]
         ]
-
-    footer =
-      HH.div
-        [ HP.classes
-            [ T.py2
-            , T.borderT
-            , T.borderGray200
-            , T.flex
-            , T.flexCol
-            , T.itemsCenter
-            , cx T.h16 $ not showMore
-            ]
-        ]
-        [ HH.div
-            [ HP.classes [ T.flex, T.justifyCenter ] ]
-            [ HH.button
-                [ HE.onClick \_ -> Just ToggleShowMore
-                , HP.disabled $ not hasMore
-                , HP.classes
-                    [ T.flex
-                    , T.flexCol
-                    , T.itemsCenter
-                    , T.disabledCursorNotAllowed
-                    , T.disabledOpacity50
-                    , T.focusOutlineNone
-                    , T.focusRing2
-                    , T.focusRingGray300
-                    , T.px2
-                    ]
-                ]
-                [ HH.span
-                    [ HP.classes [ T.textSm, T.textGray200 ] ]
-                    [ HH.text "Next" ]
-                , if showMore && hasMore
-                    then Icons.chevronUp [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ]
-                    else Icons.chevronDown [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ]
-                ]
-            ]
-        , whenElem (showMore && hasMore) \_ ->
-            HK.div
-              [ HP.classes
-                  [ T.wFull
-                  , T.pt2
-                  , T.px4
-                  , T.mt2
-                  , T.borderT2
-                  , T.borderGray200
-                  , T.maxH44
-                  , T.overflowYAuto
-                  ]
-              ]
-              $ mapWithIndex nextItem rest
-        ]
-      where
-
-      mbRest = filterNotEmpty $ tail =<< (filterNotEmpty $ RemoteData.toMaybe resources)
-      hasMore = isJust $ (_ > 1) <$> length <$> mbRest
-      rest = fromMaybe [] mbRest
-
-      mbLastId = (map _.id $ lastOf (_resources <<< _Success <<< traversed) state)
-
-      isLast id = Just id == mbLastId
-
-      nextItem i resource@{url, title, id} =
-        Tuple
-          (ID.toString id)
-          $ HH.div
-              [ HP.classes
-                  [ T.mb1
-                  , T.mr2
-                  , T.py1
-                  , T.px2
-                  , T.hoverTextWhite
-                  , T.textGray300
-                  , T.hoverBgDurazno
-                  , T.roundedMd
-                  , T.flex
-                  , T.itemsCenter
-                  , T.justifyBetween
-                  , T.group
-                  ]
-              ]
-              [ HH.a
-                  [ HP.classes [ T.flex, T.itemsCenter, T.truncate, T.py1 ]
-                  , HP.target "_blank"
-                  , HP.href url
-                  ]
-                  [ HH.img [ HP.classes [ T.inlineBlock, T.w4, T.h4, T.mr1 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
-                  , HH.div [ HP.classes [ T.truncate, T.textSm ] ] [ HH.text title ]
-                  ]
-              , HH.div
-                  [ HP.classes [ T.hidden, T.groupHoverFlex, T.ml4, T.bgWhite, T.roundedMd ] ]
-                  [ HH.button
-                      [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ CompleteResource resource
-                      , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                      , HP.disabled isProcessingAction
-                      ]
-                      [ Icons.check [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
-                  , HH.button
-                      [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ SkipResource i resource
-                      , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                      , HP.disabled $ isProcessingAction || isLast id
-                      ]
-                      [ Icons.sortDescending [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
-                  , HH.button
-                      [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ DeleteResource true resource
-                      , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                      , HP.disabled isProcessingAction
-                      ]
-                      [ Icons.trash [ Icons.classes [ T.h5, T.w5, T.textGray400 ] ] ]
-                  ]
-              ]
 
 filterNotEmpty :: forall t a. Filterable t => t (Array a) -> t (Array a)
 filterNotEmpty = filter (not <<< null)
