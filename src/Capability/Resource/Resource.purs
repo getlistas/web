@@ -18,6 +18,7 @@ class Monad m <= ManageResource m where
   getPublicListResources :: {user :: Slug, list :: Slug} -> m (Maybe (Array ListResource))
   createResource :: Resource -> m (Maybe ListResource)
   completeResource :: ListResource -> m (Maybe Unit)
+  uncompleteResource :: ListResource -> m (Maybe Unit)
   deleteResource :: ListResource -> m (Maybe Unit)
   changePosition :: ListResource -> PositionChangeBody -> m (Maybe Unit)
 
@@ -28,5 +29,6 @@ instance manageResourceHalogenM :: ManageResource m => ManageResource (HalogenM 
   getPublicListResources = lift <<< getPublicListResources
   createResource = lift <<< createResource
   completeResource = lift <<< completeResource
+  uncompleteResource = lift <<< uncompleteResource
   deleteResource = lift <<< deleteResource
   changePosition id body = lift $ changePosition id body

@@ -19,9 +19,9 @@ import Halogen.HTML.Properties as HP
 import Listasio.Capability.Clipboard (class Clipboard, writeText)
 import Listasio.Capability.Navigate (class Navigate)
 import Listasio.Capability.Now (class Now, nowDateTime)
-import Listasio.Capability.Resource.Resource (class ManageResource, changePosition, completeResource, deleteResource, getListResources)
+import Listasio.Capability.Resource.Resource (class ManageResource, changePosition, completeResource, deleteResource, getListResources, uncompleteResource)
 import Listasio.Component.HTML.Icons as Icons
-import Listasio.Component.HTML.Utils (maybeElem, whenElem)
+import Listasio.Component.HTML.Utils (maybeElem)
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 import Listasio.Data.Lens (_isProcessingAction, _resources)
@@ -48,6 +48,7 @@ data Action
   | CopyToShare ListResource
   | CopyResourceURL ListResource
   | CompleteResource ListResource
+  | UncompleteResource ListResource
   | SkipResource Int ListResource
   | DeleteResource ListResource
   | ConfirmDeleteResource ListResource
@@ -132,6 +133,23 @@ component = H.mkComponent
             result <- completeResource toComplete
 
             when (isNothing result) $ H.modify_ $ insertResourceAt i toComplete
+
+            H.modify_ $ set _isProcessingAction false
+          Nothing -> pure unit
+
+    UncompleteResource toUndo@{id, completed_at} -> do
+      when (isJust completed_at) do
+        state <- H.get
+
+        case A.findIndex ((id == _) <<< _.id) =<< preview (_resources <<< _Success) state of
+          Just i -> do
+            H.modify_ $
+              modifyResourceById id (_ {completed_at = Nothing})
+                <<< set _isProcessingAction true
+
+            result <- uncompleteResource toUndo
+
+            when (isNothing result) $ H.modify_ $ insertResourceAt i toUndo
 
             H.modify_ $ set _isProcessingAction false
           Nothing -> pure unit
@@ -241,57 +259,67 @@ component = H.mkComponent
                           [ HP.classes [ T.mt2, T.truncate, T.textGray400, T.textSm ] ]
                           [ HH.text d ]
                     ]
-                  -- TODO: icon actions fix the padding and position
+                , maybeElem completed_at \_ ->
+                    HH.div
+                      [ HP.classes [ T.groupHoverHidden, T.groupFocusHidden, T.groupFocusWithinHidden, T.mt2, T.py1, T.px2 ] ]
+                      [ Icons.check [ Icons.classes [ T.textKiwi, T.h5, T.w5 ] ] ]
                 , HH.div
-                    [ HP.classes [ T.flex, T.mt2 ] ]
-                    [ HH.div
-                        [ HP.classes [ T.flex ] ]
-                        [ HH.div
-                            [ HP.classes
-                                [ T.textSm
-                                , T.fontBold
-                                , T.mr2
-                                , T.py1
-                                , T.textCenter
-                                ]
+                    [ HP.classes [ T.hidden, T.groupHoverFlex, T.groupFocusFlex, T.groupFocusWithinFlex, T.mt2 ] ]
+                    [ case completed_at of
+                        Just _ ->
+                          HH.button
+                            [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ UncompleteResource resource
+                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgRed200, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                            , HP.disabled isProcessingAction
+                            , HP.title "Mark as pending"
                             ]
-                            [ whenElem isCompleted \_ ->
-                                Icons.check [ Icons.classes [ T.textKiwi, T.h5, T.w5 ] ]
-                            ]
-                        ]
-                    , HH.div
-                        [ HP.classes [ T.hidden, T.groupHoverFlex, T.bgWhite, T.roundedMd ] ]
-                        [ whenElem (not isCompleted) \_ ->
-                            HH.button
-                              [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ CompleteResource resource
-                              , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                              , HP.disabled isProcessingAction
-                              ]
-                              [ Icons.check [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
-                        , HH.button
-                            [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ SkipResource i resource
+                            [ Icons.x [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textRed500 ] ] ]
+                        Nothing ->
+                          HH.button
+                            [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ CompleteResource resource
                             , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                            , HP.disabled $ isProcessingAction || isLast id
+                            , HP.disabled isProcessingAction
+                            , HP.title "Mark as done"
                             ]
-                            [ Icons.sortDescending [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
-                        , if confirmDelete == Just id
-                            then
-                              HH.button
-                                [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ ConfirmDeleteResource resource
-                                , HE.onFocusOut \_ -> Just CancelDeleteResource
-                                , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgRed200, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                                , HP.disabled isProcessingAction
-                                ]
-                                [ Icons.check [ Icons.classes [ T.h5, T.w5, T.textRed700 ] ] ]
-                            else
-                              HH.button
-                                [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ DeleteResource resource
-                                , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                                , HP.disabled isProcessingAction
-                                ]
-                                [ Icons.trash [ Icons.classes [ T.h5, T.w5, T.textGray400 ] ] ]
+                            [ Icons.check [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
+                    , HH.button
+                        [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ SkipResource i resource
+                        , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                        , HP.disabled $ isProcessingAction || isLast id
+                        , HP.title "Move to last"
                         ]
-                  ]
+                        [ Icons.sortDescending [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
+                    , case confirmDelete of
+                        Just toDelete | toDelete == id ->
+                          HH.button
+                            [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ ConfirmDeleteResource resource
+                            , HE.onFocusOut \_ -> Just CancelDeleteResource
+                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgRed200, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                            , HP.disabled isProcessingAction
+                            , HP.title "Confirm delete"
+                            ]
+                            [ Icons.check [ Icons.classes [ T.h5, T.w5, T.textRed700 ] ] ]
+                        _ ->
+                          HH.button
+                            [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ DeleteResource resource
+                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                            , HP.disabled isProcessingAction
+                            , HP.title "Delete"
+                            ]
+                            [ Icons.trash [ Icons.classes [ T.h5, T.w5, T.textGray400 ] ] ]
+                    , HH.button
+                        [ HE.onClick \_ -> Just $ CopyResourceURL resource
+                        , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                        , HP.title "Copy link"
+                        ]
+                        [ Icons.clipboardCopy [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
+                    , HH.button
+                        [ HE.onClick \_ -> Just $ CopyToShare resource
+                        , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                        , HP.title "Copy share link"
+                        ]
+                        [ Icons.share [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
+                    ]
                 ]
             , maybeElem thumbnail \u ->
                 HH.div
@@ -309,5 +337,3 @@ component = H.mkComponent
                       ]
                 ]
             ]
-      where
-      isCompleted = isJust completed_at
