@@ -217,7 +217,7 @@ component = Connect.component $ H.mkComponent
       HH.a
         [ safeHref CreateList
         , HE.onClick (Just <<< Navigate CreateList <<< Mouse.toEvent)
-        , HP.classes [ T.border2, T.borderKiwi, T.roundedMd, T.flex, T.itemsCenter, T.justifyCenter, T.p8, T.bgWhite, T.h72 ]
+        , HP.classes [ T.border2, T.borderKiwi, T.roundedMd, T.flex, T.itemsCenter, T.justifyCenter, T.p8, T.bgWhite, T.h56 ]
         ]
         [ HH.div
             [ HP.classes

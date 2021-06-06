@@ -233,6 +233,7 @@ component = Connect.component $ H.mkComponent
           , T.flex
           , T.flexCol
           , T.bgWhite
+          , T.h56
           ]
       ]
       [ header, toRead ]
@@ -255,11 +256,11 @@ component = Connect.component $ H.mkComponent
               [ T.px4
               , T.py2
               , T.wFull
+              , T.hFull
               , T.flex
               , T.flexCol
               , T.itemsCenter
               , T.justifyCenter
-              , T.h40
               ]
           ]
           [ HH.div
