@@ -16,3 +16,11 @@
   0%, 100% {opacity: 1;}
   50% {opacity: 0;}
 }
+
+.group:focus-within .group-focus-within\:flex {
+  display: flex;
+}
+
+.group:focus-within .group-focus-within\:hidden {
+  display: none;
+}

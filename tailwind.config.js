@@ -42,7 +42,7 @@ module.exports = {
       borderColor: ["checked"],
       borderWidth: ["hover", "group-hover"],
       cursor: ["disabled"],
-      display: ["group-hover"],
+      display: ["group-hover", "group-focus"],
       opacity: ["disabled"],
       ringColor: ["hover"],
       ringOffsetColor: ["hover"],
