@@ -24,7 +24,6 @@ import Listasio.Component.HTML.PersonalResources as PersonalResources
 import Listasio.Component.HTML.PublicResources as PublicResources
 import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
-import Listasio.Component.HTML.Wip as Wip
 import Listasio.Data.Avatar as Avatar
 import Listasio.Data.DateTime (toDisplayMonthDayYear)
 import Listasio.Data.List (ListWithIdUserAndMeta)
@@ -122,8 +121,7 @@ component = Connect.component $ H.mkComponent
   render {list, author, listSlug, authorSlug, currentUser} =
     HH.div
       []
-      [ Wip.elem
-      , case list of
+      [ case list of
           NotAsked -> HH.text ""
 
           -- TODO: loading skeleton
