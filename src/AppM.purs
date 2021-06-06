@@ -212,6 +212,10 @@ instance manageResourceAppM :: ManageResource AppM where
     map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
     where conf = {endpoint: CompleteResource id, method: Post Nothing}
 
+  uncompleteResource {id} =
+    map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
+    where conf = {endpoint: UncompleteResource id, method: Post Nothing}
+
   deleteResource {id} =
     map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
     where conf = {endpoint: Resource id, method: Delete}

@@ -423,6 +423,22 @@ gridRows7 = ClassName "grid-rows-7"
 group :: ClassName
 group = ClassName "group"
 
+-- | groupFocusFlex
+groupFocusFlex :: ClassName
+groupFocusFlex = ClassName "group-focus:flex"
+
+-- | groupFocusHidden
+groupFocusHidden :: ClassName
+groupFocusHidden = ClassName "group-focus:hidden"
+
+-- | groupFocusWithinFlex
+groupFocusWithinFlex :: ClassName
+groupFocusWithinFlex = ClassName "group-focus-within:flex"
+
+-- | groupFocusWithinHidden
+groupFocusWithinHidden :: ClassName
+groupFocusWithinHidden = ClassName "group-focus-within:hidden"
+
 -- | groupHoverBlock
 groupHoverBlock :: ClassName
 groupHoverBlock = ClassName "group-hover:block"
@@ -434,6 +450,10 @@ groupHoverBorderKiwi = ClassName "group-hover:border-kiwi"
 -- | groupHoverFlex
 groupHoverFlex :: ClassName
 groupHoverFlex = ClassName "group-hover:flex"
+
+-- | groupHoverHidden
+groupHoverHidden :: ClassName
+groupHoverHidden = ClassName "group-hover:hidden"
 
 -- | groupHoverTextGray400
 groupHoverTextGray400 :: ClassName
