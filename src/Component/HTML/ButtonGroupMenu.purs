@@ -53,7 +53,7 @@ buttonGroupMenu {mainAction, label, toggleMenu, isOpen, disabled} menuItems =
             , T.inlineFlex
             , T.itemsCenter
             , T.py1
-            , T.px4
+            , T.px2
             , T.textSm
             , T.textWhite
             , T.roundedLMd
@@ -77,7 +77,8 @@ buttonGroupMenu {mainAction, label, toggleMenu, isOpen, disabled} menuItems =
             [ T.relative
             , T.inlineFlex
             , T.itemsCenter
-            , T.p2
+            , T.py1
+            , T.px2
             , T.textXs
             , T.textWhite
             , T.roundedRMd
