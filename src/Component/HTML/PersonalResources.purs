@@ -228,6 +228,23 @@ component = H.mkComponent
 
     isLast id = Just id == mbLastId
 
+    iconAction {icon, action, hoverColor, title} =
+      HH.button
+        [ HE.onClick \_ -> Just action
+        , HP.classes
+            [ T.cursorPointer
+            , T.py1
+            , T.mr4
+            , T.disabledCursorNotAllowed
+            , T.disabledOpacity50
+            , T.textGray300
+            , hoverColor
+            ]
+        , HP.disabled isProcessingAction
+        , HP.title title
+        ]
+        [ icon [ Icons.classes [ T.h5, T.w5 ] ] ]
+
     listResource :: Int -> ListResource -> Tuple String _
     listResource i resource@{id, url, thumbnail, title, completed_at, created_at, position, description} =
       Tuple (ID.toString id)
@@ -276,7 +293,7 @@ component = H.mkComponent
                         $ case completed_at of
                             Just date ->
                               [ HH.div
-                                  [ HP.classes [ T.py1, T.px2 ] ]
+                                  [ HP.classes [ T.py1, T.mr2 ] ]
                                   [ Icons.check [ Icons.classes [ T.textKiwiDark, T.h5, T.w5 ] ] ]
                               , HH.div
                                   [ HP.classes [ T.textGray300, T.textXs ] ]
@@ -284,65 +301,59 @@ component = H.mkComponent
                               ]
                             Nothing ->
                               [ HH.div
-                                  [ HP.classes [ T.py1, T.px2, T.textGray300, T.textXs ] ]
+                                  [ HP.classes [ T.py1, T.textGray300, T.textXs ] ]
                                   [ HH.text $ "Added " <> displayDate created_at ]
                               ]
                 , HH.div
                     [ HP.classes [ T.hidden, T.groupHoverFlex, T.groupFocusFlex, T.groupFocusWithinFlex, T.mt2 ] ]
                     [ case completed_at of
                         Just _ ->
-                          HH.button
-                            [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ UncompleteResource resource
-                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgGray100, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                            , HP.disabled isProcessingAction
-                            , HP.title "Mark as pending"
-                            ]
-                            [ Icons.x [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textRed500 ] ] ]
+                          iconAction
+                            { icon: Icons.x
+                            , action: WhenNotProcessingAction $ UncompleteResource resource
+                            , hoverColor: T.hoverTextRed700
+                            , title: "Mark as pending"
+                            }
                         Nothing ->
-                          HH.button
-                            [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ CompleteResource resource
-                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgGray100, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                            , HP.disabled isProcessingAction
-                            , HP.title "Mark as done"
-                            ]
-                            [ Icons.check [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
-                    , HH.button
-                        [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ SkipResource i resource
-                        , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgGray100, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                        , HP.disabled $ isProcessingAction || isLast id
-                        , HP.title "Move to last"
-                        ]
-                        [ Icons.sortDescending [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
+                          iconAction
+                            { icon: Icons.check
+                            , action: WhenNotProcessingAction $ CompleteResource resource
+                            , hoverColor: T.hoverTextKiwiDark
+                            , title: "Mark as done"
+                            }
+                    , iconAction
+                        { icon: Icons.sortDescending
+                        , action: WhenNotProcessingAction $ SkipResource i resource
+                        , hoverColor: T.hoverTextKiwiDark
+                        , title: "Move to last"
+                        }
                     , case confirmDelete of
                         Just toDelete | toDelete == id ->
-                          HH.button
-                            [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ ConfirmDeleteResource resource
-                            , HE.onFocusOut \_ -> Just CancelDeleteResource
-                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgRed200, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                            , HP.disabled isProcessingAction
-                            , HP.title "Confirm delete"
-                            ]
-                            [ Icons.check [ Icons.classes [ T.h5, T.w5, T.textRed700 ] ] ]
+                          iconAction
+                            { icon: Icons.check
+                            , action: WhenNotProcessingAction $ ConfirmDeleteResource resource
+                            , hoverColor: T.hoverTextRed700
+                            , title: "Confirm delete"
+                            }
                         _ ->
-                          HH.button
-                            [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ DeleteResource resource
-                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgRed200, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                            , HP.disabled isProcessingAction
-                            , HP.title "Delete"
-                            ]
-                            [ Icons.trash [ Icons.classes [ T.h5, T.w5, T.textGray400 ] ] ]
-                    , HH.button
-                        [ HE.onClick \_ -> Just $ CopyResourceURL resource
-                        , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgGray100, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                        , HP.title "Copy link"
-                        ]
-                        [ Icons.clipboardCopy [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
-                    , HH.button
-                        [ HE.onClick \_ -> Just $ CopyToShare resource
-                        , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgGray100, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
-                        , HP.title "Copy share link"
-                        ]
-                        [ Icons.share [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
+                          iconAction
+                            { icon: Icons.trash
+                            , action: WhenNotProcessingAction $ DeleteResource resource
+                            , hoverColor: T.hoverTextRed700
+                            , title: "Delete"
+                            }
+                    , iconAction
+                        { icon: Icons.clipboardCopy
+                        , action: CopyResourceURL resource
+                        , hoverColor: T.hoverTextKiwiDark
+                        , title: "Copy link"
+                        }
+                    , iconAction
+                        { icon: Icons.share
+                        , action: CopyToShare resource
+                        , hoverColor: T.hoverTextKiwiDark
+                        , title: "Copy share link"
+                        }
                     ]
                 ]
             , maybeElem thumbnail \u ->

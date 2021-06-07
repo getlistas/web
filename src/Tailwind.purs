@@ -519,10 +519,6 @@ h5d6 = ClassName "h-5/6"
 h6 :: ClassName
 h6 = ClassName "h-6"
 
--- | h72
-h72 :: ClassName
-h72 = ClassName "h-72"
-
 -- | h8
 h8 :: ClassName
 h8 = ClassName "h-8"
@@ -614,6 +610,10 @@ hoverTextKiwiDark = ClassName "hover:text-kiwi-dark"
 -- | hoverTextManzana
 hoverTextManzana :: ClassName
 hoverTextManzana = ClassName "hover:text-manzana"
+
+-- | hoverTextRed700
+hoverTextRed700 :: ClassName
+hoverTextRed700 = ClassName "hover:text-red-700"
 
 -- | hoverUnderline
 hoverUnderline :: ClassName
@@ -1002,6 +1002,10 @@ mr2 = ClassName "mr-2"
 -- | mr3
 mr3 :: ClassName
 mr3 = ClassName "mr-3"
+
+-- | mr4
+mr4 :: ClassName
+mr4 = ClassName "mr-4"
 
 -- | mr8
 mr8 :: ClassName
