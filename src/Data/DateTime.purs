@@ -5,6 +5,9 @@ import Prelude
 import Data.Codec.Argonaut (JsonCodec)
 import Data.Codec.Argonaut as CA
 import Data.DateTime (DateTime)
+import Data.DateTime (date) as Date
+import Data.Date (Year)
+import Data.Date (year) as Date
 import Data.Formatter.DateTime (FormatterCommand(..), format)
 import Data.List (List, fromFoldable)
 import Data.Newtype (unwrap)
@@ -61,7 +64,7 @@ toDisplayMonthDayYear = format dateFormatter
     , YearFull
     ]
 
--- | Display month and day
+-- | Display (short) month and day
 -- |
 -- | Example: "Nov 5"
 toDisplayDayMonth :: DateTime -> String
@@ -73,3 +76,29 @@ toDisplayDayMonth = format dateFormatter
     , Placeholder " "
     , DayOfMonth
     ]
+
+-- | Display (short) month, day and year
+-- |
+-- | Example: "Nov 5, 2021"
+toDisplayDayMonthYear :: DateTime -> String
+toDisplayDayMonthYear = format dateFormatter
+  where
+  dateFormatter :: List FormatterCommand
+  dateFormatter = fromFoldable
+    [ MonthShort
+    , Placeholder " "
+    , DayOfMonth
+    , Placeholder ", "
+    , YearFull
+    ]
+
+-- | If date is on the current year display (short) month and day, otherwise
+-- | display (short) month, day and year.
+-- |
+-- | Example: "Nov 5"
+-- | Example: "Nov 5, 2020"
+toDisplayDayMonthRelative :: DateTime -> Year -> String
+toDisplayDayMonthRelative date currentYear =
+  if currentYear < Date.year (Date.date date)
+    then toDisplayDayMonthYear date
+    else toDisplayDayMonth date

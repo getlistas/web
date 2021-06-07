@@ -3,10 +3,13 @@ module Listasio.Component.HTML.PersonalResources where
 import Prelude
 
 import Data.Array as A
+import Data.Date (Year)
+import Data.Date (year) as Date
 import Data.Either (note)
+import Data.Enum (toEnum)
 import Data.Filterable (filter)
 import Data.Lens (lastOf, over, preview, set, traversed)
-import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
+import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing, maybe)
 import Data.Symbol (SProxy(..))
 import Data.Traversable (for_)
 import Data.Tuple (Tuple(..))
@@ -18,10 +21,11 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Capability.Clipboard (class Clipboard, writeText)
 import Listasio.Capability.Navigate (class Navigate)
-import Listasio.Capability.Now (class Now, nowDateTime)
+import Listasio.Capability.Now (class Now, nowDateTime, nowDate)
 import Listasio.Capability.Resource.Resource (class ManageResource, changePosition, completeResource, deleteResource, getListResources, uncompleteResource)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Utils (maybeElem)
+import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 import Listasio.Data.Lens (_isProcessingAction, _resources)
@@ -61,6 +65,7 @@ type State
     , resources :: RemoteData String (Array ListResource)
     , isProcessingAction :: Boolean
     , confirmDelete :: Maybe ID
+    , year :: Maybe Year
     }
 
 insertResourceAt :: Int -> ListResource -> State -> State
@@ -99,11 +104,15 @@ component = H.mkComponent
     , resources: NotAsked
     , isProcessingAction: false
     , confirmDelete: Nothing
+    , year: toEnum 0
     }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
     Initialize -> do
+      year <- Date.year <$> nowDate
+      H.modify_ _ {year = Just year}
+
       {list} <- H.get
 
       H.modify_ _ {resources = Loading}
@@ -196,7 +205,7 @@ component = H.mkComponent
       when (not isProcessingAction) $ void $ H.fork $ handleAction action
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {isProcessingAction, resources, confirmDelete} =
+  render {isProcessingAction, resources, confirmDelete, year} =
     case resources of
       NotAsked -> HH.text ""
 
@@ -212,12 +221,15 @@ component = H.mkComponent
       Failure msg -> HH.text msg
 
     where
+    displayDate date =
+      maybe (DateTime.toDisplayDayMonth date) (DateTime.toDisplayDayMonthRelative date) year
+
     mbLastId = (map _.id $ lastOf (_Success <<< traversed) resources)
 
     isLast id = Just id == mbLastId
 
     listResource :: Int -> ListResource -> Tuple String _
-    listResource i resource@{id, url, thumbnail, title, completed_at, position, description} =
+    listResource i resource@{id, url, thumbnail, title, completed_at, created_at, position, description} =
       Tuple (ID.toString id)
         $ HH.div
             [ HP.classes
@@ -259,17 +271,29 @@ component = H.mkComponent
                           [ HP.classes [ T.mt2, T.truncate, T.textGray400, T.textSm ] ]
                           [ HH.text d ]
                     ]
-                , maybeElem completed_at \_ ->
-                    HH.div
-                      [ HP.classes [ T.groupHoverHidden, T.groupFocusHidden, T.groupFocusWithinHidden, T.mt2, T.py1, T.px2 ] ]
-                      [ Icons.check [ Icons.classes [ T.textKiwi, T.h5, T.w5 ] ] ]
+                    , HH.div
+                        [ HP.classes [ T.flex, T.itemsCenter, T.groupHoverHidden, T.groupFocusHidden, T.groupFocusWithinHidden, T.mt2 ] ]
+                        $ case completed_at of
+                            Just date ->
+                              [ HH.div
+                                  [ HP.classes [ T.py1, T.px2 ] ]
+                                  [ Icons.check [ Icons.classes [ T.textKiwiDark, T.h5, T.w5 ] ] ]
+                              , HH.div
+                                  [ HP.classes [ T.textGray300, T.textXs ] ]
+                                  [ HH.text $ "Completed " <> displayDate date ]
+                              ]
+                            Nothing ->
+                              [ HH.div
+                                  [ HP.classes [ T.py1, T.px2, T.textGray300, T.textXs ] ]
+                                  [ HH.text $ "Added " <> displayDate created_at ]
+                              ]
                 , HH.div
                     [ HP.classes [ T.hidden, T.groupHoverFlex, T.groupFocusFlex, T.groupFocusWithinFlex, T.mt2 ] ]
                     [ case completed_at of
                         Just _ ->
                           HH.button
                             [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ UncompleteResource resource
-                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgRed200, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgGray100, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
                             , HP.disabled isProcessingAction
                             , HP.title "Mark as pending"
                             ]
@@ -277,14 +301,14 @@ component = H.mkComponent
                         Nothing ->
                           HH.button
                             [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ CompleteResource resource
-                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgGray100, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
                             , HP.disabled isProcessingAction
                             , HP.title "Mark as done"
                             ]
                             [ Icons.check [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
                     , HH.button
                         [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ SkipResource i resource
-                        , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                        , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgGray100, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
                         , HP.disabled $ isProcessingAction || isLast id
                         , HP.title "Move to last"
                         ]
@@ -302,20 +326,20 @@ component = H.mkComponent
                         _ ->
                           HH.button
                             [ HE.onClick \_ -> Just $ WhenNotProcessingAction $ DeleteResource resource
-                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                            , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgRed200, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
                             , HP.disabled isProcessingAction
                             , HP.title "Delete"
                             ]
                             [ Icons.trash [ Icons.classes [ T.h5, T.w5, T.textGray400 ] ] ]
                     , HH.button
                         [ HE.onClick \_ -> Just $ CopyResourceURL resource
-                        , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                        , HP.classes [ T.cursorPointer, T.mr2, T.py1, T.px2, T.hoverBgGray100, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
                         , HP.title "Copy link"
                         ]
                         [ Icons.clipboardCopy [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
                     , HH.button
                         [ HE.onClick \_ -> Just $ CopyToShare resource
-                        , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgKiwi, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
+                        , HP.classes [ T.cursorPointer, T.py1, T.px2, T.hoverBgGray100, T.roundedMd, T.disabledCursorNotAllowed, T.disabledOpacity50 ]
                         , HP.title "Copy share link"
                         ]
                         [ Icons.share [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray400 ] ] ]
