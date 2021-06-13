@@ -471,6 +471,10 @@ h0 = ClassName "h-0"
 h10 :: ClassName
 h10 = ClassName "h-10"
 
+-- | h12
+h12 :: ClassName
+h12 = ClassName "h-12"
+
 -- | h16
 h16 :: ClassName
 h16 = ClassName "h-16"
@@ -807,6 +811,10 @@ lgPy32 = ClassName "lg:py-32"
 lgSelfCenter :: ClassName
 lgSelfCenter = ClassName "lg:self-center"
 
+-- | lgSticky
+lgSticky :: ClassName
+lgSticky = ClassName "lg:sticky"
+
 -- | lgText5xl
 lgText5xl :: ClassName
 lgText5xl = ClassName "lg:text-5xl"
@@ -818,6 +826,14 @@ lgTextLeft = ClassName "lg:text-left"
 -- | lgTextLg
 lgTextLg :: ClassName
 lgTextLg = ClassName "lg:text-lg"
+
+-- | lgTop0
+lgTop0 :: ClassName
+lgTop0 = ClassName "lg:top-0"
+
+-- | lgTop4
+lgTop4 :: ClassName
+lgTop4 = ClassName "lg:top-4"
 
 -- | lgTranslateY20
 lgTranslateY20 :: ClassName
@@ -966,10 +982,6 @@ minHScreen = ClassName "min-h-screen"
 -- | minW0
 minW0 :: ClassName
 minW0 = ClassName "min-w-0"
-
--- | ml1
-ml1 :: ClassName
-ml1 = ClassName "ml-1"
 
 -- | ml2
 ml2 :: ClassName
@@ -1210,6 +1222,10 @@ pr10 = ClassName "pr-10"
 -- | pr1
 pr1 :: ClassName
 pr1 = ClassName "pr-1"
+
+-- | pr2
+pr2 :: ClassName
+pr2 = ClassName "pr-2"
 
 -- | pr3
 pr3 :: ClassName
@@ -1863,9 +1879,9 @@ w10 = ClassName "w-10"
 w11d12 :: ClassName
 w11d12 = ClassName "w-11/12"
 
--- | w16
-w16 :: ClassName
-w16 = ClassName "w-16"
+-- | w12
+w12 :: ClassName
+w12 = ClassName "w-12"
 
 -- | w20
 w20 :: ClassName

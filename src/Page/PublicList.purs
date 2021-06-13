@@ -173,9 +173,8 @@ component = Connect.component $ H.mkComponent
                 ]
             ]
             [ HH.div
-                []
-                [ listDetails l
-                ]
+                [ HP.classes [ T.lgSticky, T.lgTop0 ] ]
+                [ listDetails l ]
             , HH.div
                 [ HP.classes [ T.lgColSpan2 ] ]
                 [ if isOwnList
@@ -192,6 +191,8 @@ component = Connect.component $ H.mkComponent
             [ T.bgWhite
             , T.p4
             , T.roundedLg
+            , T.lgSticky
+            , T.lgTop4
             ]
         ]
         [ maybeElem description \d ->

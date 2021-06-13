@@ -413,7 +413,7 @@ component = Connect.component $ H.mkComponent
 
     header =
       HH.div
-        [ HP.classes [ T.px4, T.py2, T.borderB, T.borderGray200, T.h16 ] ]
+        [ HP.classes [ T.px4, T.py2, T.borderB, T.borderGray200, T.flexShrink0, T.h16 ] ]
         [ HH.div
             [ HP.classes [ T.flex, T.justifyBetween, T.itemsCenter ] ]
             [ HH.a
