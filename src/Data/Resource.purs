@@ -1,5 +1,7 @@
 module Listasio.Data.Resource where
 
+import Prelude
+
 import Data.Codec.Argonaut (JsonCodec)
 import Data.Codec.Argonaut as CA
 import Data.Codec.Argonaut.Compat as CAC
@@ -71,3 +73,18 @@ positionChangeBodyCodec =
     { list: ID.codec
     , previus: CAC.maybe ID.codec
     }
+
+data FilterByDone
+  = ShowAll
+  | ShowDone
+  | ShowPending
+
+derive instance eqFilterByDone :: Eq FilterByDone
+
+toggleFilterByDone :: FilterByDone -> FilterByDone
+toggleFilterByDone ShowDone = ShowAll
+toggleFilterByDone _ = ShowDone
+
+toggleFilterByPending :: FilterByDone -> FilterByDone
+toggleFilterByPending ShowPending = ShowAll
+toggleFilterByPending _ = ShowPending

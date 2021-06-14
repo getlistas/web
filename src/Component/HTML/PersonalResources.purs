@@ -7,7 +7,6 @@ import Data.Date (Year)
 import Data.Date (year) as Date
 import Data.Either (note)
 import Data.Enum (toEnum)
-import Data.Filterable (filter)
 import Data.Lens (lastOf, over, preview, set, traversed)
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing, maybe)
 import Data.Symbol (SProxy(..))
@@ -24,12 +23,13 @@ import Listasio.Capability.Navigate (class Navigate)
 import Listasio.Capability.Now (class Now, nowDateTime, nowDate)
 import Listasio.Capability.Resource.Resource (class ManageResource, changePosition, completeResource, deleteResource, getListResources, uncompleteResource)
 import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.ToggleGroup as ToggleGroup
 import Listasio.Component.HTML.Utils (maybeElem)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 import Listasio.Data.Lens (_isProcessingAction, _resources)
-import Listasio.Data.Resource (ListResource)
+import Listasio.Data.Resource (FilterByDone(..), ListResource)
 import Listasio.Data.Route (Route(..), routeCodec)
 import Network.RemoteData (RemoteData(..), _Success)
 import Network.RemoteData as RemoteData
@@ -48,7 +48,7 @@ type Input = {list :: ID}
 
 data Action
   = Initialize
-  -- resources actions
+    -- resources actions
   | CopyToShare ListResource
   | CopyResourceURL ListResource
   | CompleteResource ListResource
@@ -57,7 +57,9 @@ data Action
   | DeleteResource ListResource
   | ConfirmDeleteResource ListResource
   | CancelDeleteResource
-  -- meta actions
+    -- filtering
+  | ToggleStatusFilter FilterByDone
+    -- meta actions
   | WhenNotProcessingAction Action
 
 type State
@@ -66,6 +68,7 @@ type State
     , isProcessingAction :: Boolean
     , confirmDelete :: Maybe ID
     , year :: Maybe Year
+    , filterByStatus :: FilterByDone
     }
 
 insertResourceAt :: Int -> ListResource -> State -> State
@@ -76,7 +79,7 @@ insertResourceAt i resource =
 
 removeResourceById :: ID -> State -> State
 removeResourceById id =
-  over (_resources <<< _Success) (filter ((id /= _) <<< _.id))
+  over (_resources <<< _Success) (A.filter ((id /= _) <<< _.id))
 
 modifyResourceById :: ID -> (ListResource -> ListResource) -> State -> State
 modifyResourceById id f =
@@ -105,6 +108,7 @@ component = H.mkComponent
     , isProcessingAction: false
     , confirmDelete: Nothing
     , year: toEnum 0
+    , filterByStatus: ShowAll
     }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
@@ -200,12 +204,15 @@ component = H.mkComponent
     CancelDeleteResource ->
       H.modify_ _ {confirmDelete = Nothing}
 
+    ToggleStatusFilter status ->
+      H.modify_ _ {filterByStatus = status}
+
     WhenNotProcessingAction action -> do
       {isProcessingAction} <- H.get
       when (not isProcessingAction) $ void $ H.fork $ handleAction action
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {isProcessingAction, resources, confirmDelete, year} =
+  render {isProcessingAction, resources, confirmDelete, year, filterByStatus} =
     case resources of
       NotAsked -> HH.text ""
 
@@ -213,14 +220,45 @@ component = H.mkComponent
       Loading -> HH.text "..."
 
       Success rs ->
-        HK.div
-          [ HP.classes [ T.flex, T.flexCol ] ]
-          $ A.mapWithIndex listResource rs
+        HH.div
+          []
+          [ HH.div
+            [ HP.classes [ T.flex, T.itemsStart, T.flexRowReverse, T.mb4 ] ]
+             [ HH.div
+                 [ HP.classes [ T.wFull , T.smWAuto ] ]
+                 [ ToggleGroup.toggleGroup
+                     false
+                     [ {label: "All", action: Just (ToggleStatusFilter ShowAll), active: filterByStatus == ShowAll}
+                     , {label: "Done", action: Just (ToggleStatusFilter ShowDone), active: filterByStatus == ShowDone}
+                     , {label: "Pending", action: Just (ToggleStatusFilter ShowPending), active: filterByStatus == ShowPending}
+                     ]
+                 ]
+             ]
+          , case filterFn rs of
+              [] ->
+                HH.div
+                  [ HP.classes [ T.bgWhite, T.p4, T.roundedLg, T.textGray300, T.textXl ] ]
+                  [ HH.text $ case filterByStatus of
+                      ShowAll -> "This list is empty 😅"
+                      ShowDone -> "No completed resources yet 😅"
+                      ShowPending -> "No pending resources 👏"
+                  ]
+              rs' ->
+                HK.div
+                  [ HP.classes [ T.flex, T.flexCol, T.gap4 ] ]
+                  $ A.mapWithIndex listResource rs'
+          ]
 
       -- TODO: error message element
       Failure msg -> HH.text msg
 
     where
+    filterFn =
+      case filterByStatus of
+        ShowAll -> identity
+        ShowDone -> A.filter (isJust <<< _.completed_at)
+        ShowPending -> A.filter (isNothing <<< _.completed_at)
+
     displayDate date =
       maybe (DateTime.toDisplayDayMonth date) (DateTime.toDisplayDayMonthRelative date) year
 
@@ -233,8 +271,8 @@ component = H.mkComponent
         [ HE.onClick \_ -> Just action
         , HP.classes
             [ T.cursorPointer
-            , T.py1
-            , T.mr4
+            , T.p2
+            , T.mr2
             , T.disabledCursorNotAllowed
             , T.disabledOpacity50
             , T.textGray300
@@ -258,12 +296,11 @@ component = H.mkComponent
                 , T.bgWhite
                 , T.group
                 , T.h36
-                , T.mb4
                 ]
             , HE.onMouseLeave \_ -> Just CancelDeleteResource
             ]
             [ HH.div
-                [ HP.classes [ T.p4, T.flex, T.flexCol, T.justifyBetween, T.truncate ] ]
+                [ HP.classes [ T.pt4, T.px4, T.pb2, T.flex, T.flexCol, T.justifyBetween, T.truncate ] ]
                 [ HH.div
                     [ HP.classes [ T.truncate ] ]
                     [ HH.a
@@ -305,7 +342,7 @@ component = H.mkComponent
                                   [ HH.text $ "Added " <> displayDate created_at ]
                               ]
                 , HH.div
-                    [ HP.classes [ T.hidden, T.groupHoverFlex, T.groupFocusFlex, T.groupFocusWithinFlex, T.mt2 ] ]
+                    [ HP.classes [ T.hidden, T.groupHoverFlex, T.groupFocusFlex, T.groupFocusWithinFlex, T.mt1 ] ]
                     [ case completed_at of
                         Just _ ->
                           iconAction
@@ -318,13 +355,13 @@ component = H.mkComponent
                           iconAction
                             { icon: Icons.check
                             , action: WhenNotProcessingAction $ CompleteResource resource
-                            , hoverColor: T.hoverTextKiwiDark
+                            , hoverColor: T.hoverTextKiwi
                             , title: "Mark as done"
                             }
                     , iconAction
                         { icon: Icons.sortDescending
                         , action: WhenNotProcessingAction $ SkipResource i resource
-                        , hoverColor: T.hoverTextKiwiDark
+                        , hoverColor: T.hoverTextKiwi
                         , title: "Move to last"
                         }
                     , case confirmDelete of
@@ -345,13 +382,13 @@ component = H.mkComponent
                     , iconAction
                         { icon: Icons.clipboardCopy
                         , action: CopyResourceURL resource
-                        , hoverColor: T.hoverTextKiwiDark
+                        , hoverColor: T.hoverTextKiwi
                         , title: "Copy link"
                         }
                     , iconAction
                         { icon: Icons.share
                         , action: CopyToShare resource
-                        , hoverColor: T.hoverTextKiwiDark
+                        , hoverColor: T.hoverTextKiwi
                         , title: "Copy share link"
                         }
                     ]

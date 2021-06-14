@@ -31,7 +31,7 @@ import Listasio.Component.HTML.Utils (cx, safeHref)
 import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
-import Listasio.Data.Resource (ListResource)
+import Listasio.Data.Resource (FilterByDone(..), ListResource)
 import Listasio.Data.Route (Route(..))
 import Listasio.Data.YearMonth (YearMonth)
 import Listasio.Data.YearMonth as YearMonth
@@ -49,22 +49,6 @@ data Action
   | Navigate Route Event
   | ToggleGroupBy GroupBy
   | ToggleFilterByDone FilterByDone
-
-data FilterByDone
-  = ShowAll
-  | ShowDone
-  | ShowPending
-
-derive instance eqFilterByDone :: Eq FilterByDone
-
-toggleFilterByDone :: FilterByDone -> FilterByDone
-toggleFilterByDone ShowDone = ShowAll
-toggleFilterByDone _ = ShowDone
-
-toggleFilterByPending :: FilterByDone -> FilterByDone
-toggleFilterByPending ShowPending = ShowAll
-toggleFilterByPending _ = ShowPending
-
 
 filterByDoneMsg :: FilterByDone -> String
 filterByDoneMsg = case _ of
@@ -204,7 +188,7 @@ component = Connect.component $ H.mkComponent
       HH.div
         [ HP.classes [ T.flex, T.itemsStart, T.flexWrap, T.my6 ] ]
         [ HH.div
-            [ HP.classes [ T.mb4, T.mr0, T.smMr4, T.wFull , T.smWAuto ] ]
+            [ HP.classes [ T.mb4, T.mr0, T.smMr4, T.wFull, T.smWAuto ] ]
             [ ToggleGroup.toggleGroup
                 false
                 [ {label: "None", action: Just (ToggleGroupBy GroupNone), active: groupBy == GroupNone}

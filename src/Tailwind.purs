@@ -267,6 +267,10 @@ flexCol = ClassName "flex-col"
 flexNone :: ClassName
 flexNone = ClassName "flex-none"
 
+-- | flexRowReverse
+flexRowReverse :: ClassName
+flexRowReverse = ClassName "flex-row-reverse"
+
 -- | flexShrink0
 flexShrink0 :: ClassName
 flexShrink0 = ClassName "flex-shrink-0"
@@ -1014,10 +1018,6 @@ mr2 = ClassName "mr-2"
 -- | mr3
 mr3 :: ClassName
 mr3 = ClassName "mr-3"
-
--- | mr4
-mr4 :: ClassName
-mr4 = ClassName "mr-4"
 
 -- | mr8
 mr8 :: ClassName
