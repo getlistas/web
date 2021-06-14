@@ -157,7 +157,6 @@ component = Connect.component $ H.mkComponent
       HH.a
         [ HP.classes
             [ T.fontMedium
-            , T.mt3
             , cx T.textGray400 isCurrent
             , cx T.textGray300 $ not isCurrent
             , T.borderB2
