@@ -333,13 +333,8 @@ component = Connect.component $ H.mkComponent
     nextEl next isLast =
       HH.div
         [ HP.classes [ T.flex, T.h40 ] ]
-        [ maybeElem next.thumbnail \url ->
-            HH.div
-              [ HP.classes [ T.w32, T.lgW44, T.flexShrink0 ] ]
-              [ HH.img [ HP.classes [ T.hFull, T.wFull, T.objectCover, T.roundedBlMd ], HP.src url ]
-              ]
-        , HH.div
-            [ HP.classes [ T.wFull, T.px4, T.pb2, T.pt4, T.flex, T.flexCol, T.justifyBetween ] ]
+        [ HH.div
+            [ HP.classes [ T.wFull, T.p4, T.flex, T.flexCol, T.justifyBetween ] ]
             [ HH.div
                 []
                 [ nextLink next $
@@ -350,7 +345,7 @@ component = Connect.component $ H.mkComponent
                     HH.div [ HP.classes [ T.mt2 ] ] [ shortUrl next.url ]
                 ]
             , HK.div
-                [ HP.classes [ T.mt2, T.flex, T.justifyEnd ] ]
+                [ HP.classes [ T.mt2 ] ]
                 [ Tuple
                     (ID.toString next.id)
                     $ ButtonGroupMenu.buttonGroupMenu
@@ -398,7 +393,13 @@ component = Connect.component $ H.mkComponent
                               }
                             ]
                 ]
+
             ]
+        , maybeElem next.thumbnail \url ->
+            HH.div
+              [ HP.classes [ T.w32, T.lgW44, T.py4, T.pr4, T.flexShrink0 ] ]
+              [ HH.img [ HP.classes [ T.hFull, T.wFull, T.objectCover, T.roundedMd ], HP.src url ]
+              ]
 
         ]
 

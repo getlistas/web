@@ -671,10 +671,6 @@ justifyBetween = ClassName "justify-between"
 justifyCenter :: ClassName
 justifyCenter = ClassName "justify-center"
 
--- | justifyEnd
-justifyEnd :: ClassName
-justifyEnd = ClassName "justify-end"
-
 -- | leading5
 leading5 :: ClassName
 leading5 = ClassName "leading-5"
@@ -698,6 +694,10 @@ leadingRelaxed = ClassName "leading-relaxed"
 -- | left0
 left0 :: ClassName
 left0 = ClassName "left-0"
+
+-- | left12
+left12 :: ClassName
+left12 = ClassName "left-12"
 
 -- | left1d2
 left1d2 :: ClassName
@@ -1018,6 +1018,10 @@ mr2 = ClassName "mr-2"
 -- | mr3
 mr3 :: ClassName
 mr3 = ClassName "mr-3"
+
+-- | mr4
+mr4 :: ClassName
+mr4 = ClassName "mr-4"
 
 -- | mr8
 mr8 :: ClassName
@@ -1350,10 +1354,6 @@ ringOpacity5 = ClassName "ring-opacity-5"
 -- | ringWhite
 ringWhite :: ClassName
 ringWhite = ClassName "ring-white"
-
--- | roundedBlMd
-roundedBlMd :: ClassName
-roundedBlMd = ClassName "rounded-bl-md"
 
 -- | roundedFull
 roundedFull :: ClassName
