@@ -271,8 +271,8 @@ component = H.mkComponent
         [ HE.onClick \_ -> Just action
         , HP.classes
             [ T.cursorPointer
-            , T.p2
-            , T.mr2
+            , T.py2
+            , T.mr4
             , T.disabledCursorNotAllowed
             , T.disabledOpacity50
             , T.textGray300
@@ -330,7 +330,7 @@ component = H.mkComponent
                         $ case completed_at of
                             Just date ->
                               [ HH.div
-                                  [ HP.classes [ T.py1, T.mr2 ] ]
+                                  [ HP.classes [ T.py2, T.mr2 ] ]
                                   [ Icons.check [ Icons.classes [ T.textKiwiDark, T.h5, T.w5 ] ] ]
                               , HH.div
                                   [ HP.classes [ T.textGray300, T.textXs ] ]

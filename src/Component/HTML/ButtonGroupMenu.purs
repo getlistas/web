@@ -108,7 +108,7 @@ buttonGroupMenu {mainAction, label, toggleMenu, isOpen, disabled} menuItems =
           [ HP.classes
               [ T.originTopRight
               , T.absolute
-              , T.right0
+              , T.left12
               , T.top1
               , T.mt8
               , T.w40
