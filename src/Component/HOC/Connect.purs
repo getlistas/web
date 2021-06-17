@@ -39,10 +39,10 @@ _inner = SProxy :: SProxy "inner"
 component
   :: forall query input output m r
    . MonadAff m
-  => MonadAsk { userEnv :: UserEnv | r } m
+  => MonadAsk {userEnv :: UserEnv | r} m
   => Row.Lacks "currentUser" input
-  => H.Component HH.HTML query { | WithCurrentUser input } output m
-  -> H.Component HH.HTML query { | input } output m
+  => H.Component HH.HTML query {| WithCurrentUser input} output m
+  -> H.Component HH.HTML query {| input} output m
 component innerComponent =
   H.mkComponent
     -- here, we'll insert the current user into the wrapped component's input
@@ -62,18 +62,18 @@ component innerComponent =
     -- state; we'll also subscribe to any updates so we can always
     -- stay in sync.
     Initialize -> do
-      { currentUser, userBus } <- asks _.userEnv
+      {currentUser, userBus} <- asks _.userEnv
       _ <- H.subscribe (HandleUserBus <$> busEventSource userBus)
       mbProfile <- liftEffect $ Ref.read currentUser
-      H.modify_ _ { currentUser = mbProfile }
+      H.modify_ _ {currentUser = mbProfile}
 
     -- When the user in global state changes, this event will occur
     -- and we need to update our local state to stay in sync.
     HandleUserBus mbProfile ->
-      H.modify_ _ { currentUser = mbProfile }
+      H.modify_ _ {currentUser = mbProfile}
 
     Receive input -> do
-      { currentUser } <- H.get
+      {currentUser} <- H.get
       H.put $ Record.insert (SProxy :: _ "currentUser") currentUser input
 
     Emit output ->

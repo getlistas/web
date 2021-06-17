@@ -172,12 +172,10 @@ component = Connect.component $ H.mkComponent
       [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.bgGray10 ] ]
       [ HH.div
           [ HP.classes [ T.container, T.mxAuto, T.mdPx4, T.xlPx0 ] ]
-          [ HH.slot (SProxy :: _ "nav") unit Nav.component {route: currentRoute} absurd
-          ]
+          [ HH.slot (SProxy :: _ "nav") unit Nav.component {route: currentRoute} absurd ]
       , HH.div
           [ HP.classes [ T.container, T.mxAuto, T.px4, T.xlPx0, T.pb20, T.flex1 ] ]
-          [ content
-          ]
+          [ content ]
       , footer NavigateAct
       ]
 
