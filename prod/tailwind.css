@@ -1968,10 +1968,6 @@ select{
   border-bottom-right-radius: 0.5rem;
 }
 
-.rounded-bl-md {
-  border-bottom-left-radius: 0.375rem;
-}
-
 .border-none {
   border-style: none;
 }
@@ -2328,10 +2324,6 @@ select{
   align-items: center;
 }
 
-.justify-end {
-  justify-content: flex-end;
-}
-
 .justify-center {
   justify-content: center;
 }
@@ -2599,6 +2591,10 @@ select{
 
 .mt-4 {
   margin-top: 1rem;
+}
+
+.mr-4 {
+  margin-right: 1rem;
 }
 
 .mb-4 {
@@ -3062,6 +3058,10 @@ select{
 
 .bottom-4 {
   bottom: 1rem;
+}
+
+.left-12 {
+  left: 3rem;
 }
 
 .left-1\/2 {
