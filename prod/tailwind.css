@@ -2295,10 +2295,6 @@ select{
   display: none;
 }
 
-.flex-row-reverse {
-  flex-direction: row-reverse;
-}
-
 .flex-col {
   flex-direction: column;
 }
