@@ -9,6 +9,7 @@ import Data.Either (note)
 import Data.Enum (toEnum)
 import Data.Lens (lastOf, over, preview, set, traversed)
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing, maybe)
+import Data.String (null, trim)
 import Data.Symbol (SProxy(..))
 import Data.Traversable (for_)
 import Data.Tuple (Tuple(..))
@@ -18,10 +19,11 @@ import Halogen.HTML as HH
 import Halogen.HTML.Elements.Keyed as HK
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Listasio.Api.Endpoint (SortingResources(..), defaultSearch)
 import Listasio.Capability.Clipboard (class Clipboard, writeText)
 import Listasio.Capability.Navigate (class Navigate)
 import Listasio.Capability.Now (class Now, nowDateTime, nowDate)
-import Listasio.Capability.Resource.Resource (class ManageResource, changePosition, completeResource, deleteResource, getListResources, uncompleteResource)
+import Listasio.Capability.Resource.Resource (class ManageResource, changePosition, completeResource, deleteResource, getListResources, searchResources, uncompleteResource)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.ToggleGroup as ToggleGroup
 import Listasio.Component.HTML.Utils (maybeElem)
@@ -36,6 +38,8 @@ import Network.RemoteData as RemoteData
 import Routing.Duplex (print)
 import Tailwind as T
 import Util (takeDomain)
+import Web.Event.Event (Event)
+import Web.Event.Event as Event
 import Web.HTML (window) as Window
 import Web.HTML.Location as Location
 import Web.HTML.Window (location) as Window
@@ -48,6 +52,9 @@ type Input = {list :: ID}
 
 data Action
   = Initialize
+  | SearchChange String
+  | OnSearch Event
+  | LoadResources
     -- resources actions
   | CopyToShare ListResource
   | CopyResourceURL ListResource
@@ -69,6 +76,7 @@ type State
     , confirmDelete :: Maybe ID
     , year :: Maybe Year
     , filterByStatus :: FilterByDone
+    , searchQuery :: String
     }
 
 insertResourceAt :: Int -> ListResource -> State -> State
@@ -109,6 +117,7 @@ component = H.mkComponent
     , confirmDelete: Nothing
     , year: toEnum 0
     , filterByStatus: ShowAll
+    , searchQuery: ""
     }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
@@ -117,6 +126,9 @@ component = H.mkComponent
       year <- Date.year <$> nowDate
       H.modify_ _ {year = Just year}
 
+      handleAction LoadResources
+
+    LoadResources -> do
       {list} <- H.get
 
       H.modify_ _ {resources = Loading}
@@ -124,6 +136,30 @@ component = H.mkComponent
       resources <- RemoteData.fromEither <$> note "Failed to load resources" <$> getListResources {list, completed: Nothing}
 
       H.modify_ _ {resources = resources}
+
+    SearchChange newQuery -> do
+      {searchQuery: oldQuery} <- H.get
+      H.modify_ _ {searchQuery = newQuery}
+
+      when (null newQuery && oldQuery /= newQuery) do
+        handleAction LoadResources
+
+    OnSearch event -> do
+      H.liftEffect $ Event.preventDefault event
+
+      {searchQuery, list} <- H.get
+
+      when (null searchQuery) do
+        handleAction LoadResources
+
+      when (not $ null searchQuery) do
+        let search = defaultSearch {list = Just list, search_text = Just searchQuery, sort = Just PositionAsc}
+
+        H.modify_ _ {resources = Loading}
+
+        resources <- RemoteData.fromEither <$> note "Failed to load resources" <$> searchResources search
+
+        H.modify_ _ {resources = resources}
 
     CopyToShare {url} -> do
       host <- H.liftEffect $ Location.host =<< Window.location =<< Window.window
@@ -212,45 +248,71 @@ component = H.mkComponent
       when (not isProcessingAction) $ void $ H.fork $ handleAction action
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {isProcessingAction, resources, confirmDelete, year, filterByStatus} =
-    case resources of
-      NotAsked -> HH.text ""
-
-      -- TODO: skeleton
-      Loading -> HH.text "..."
-
-      Success rs ->
-        HH.div
-          []
-          [ HH.div
-            [ HP.classes [ T.flex, T.itemsStart, T.flexRowReverse, T.mb4 ] ]
-             [ HH.div
-                 [ HP.classes [ T.wFull , T.smWAuto ] ]
-                 [ ToggleGroup.toggleGroup
-                     false
-                     [ {label: "All", action: Just (ToggleStatusFilter ShowAll), active: filterByStatus == ShowAll}
-                     , {label: "Done", action: Just (ToggleStatusFilter ShowDone), active: filterByStatus == ShowDone}
-                     , {label: "Pending", action: Just (ToggleStatusFilter ShowPending), active: filterByStatus == ShowPending}
-                     ]
-                 ]
-             ]
-          , case filterFn rs of
-              [] ->
-                HH.div
-                  [ HP.classes [ T.bgWhite, T.p4, T.roundedLg, T.textGray300, T.textXl ] ]
-                  [ HH.text $ case filterByStatus of
-                      ShowAll -> "This list is empty 😅"
-                      ShowDone -> "No completed resources yet 😅"
-                      ShowPending -> "No pending resources 👏"
+  render {isProcessingAction, resources, confirmDelete, year, filterByStatus, searchQuery} =
+    HH.div
+      []
+      [ HH.div
+        [ HP.classes [ T.flex, T.justifyBetween, T.gap4, T.mb4 ] ]
+          [ HH.form
+              [ HE.onSubmit $ Just <<< OnSearch
+              , HP.classes [ T.wFull ]
+              ]
+              [ HH.input
+                [ HP.type_ HP.InputSearch
+                , HP.placeholder "Search resources"
+                , HP.classes
+                    [ T.wFull
+                    , T.px2
+                    , T.py1
+                    , T.border
+                    , T.borderKiwi
+                    , T.focusBorderKiwi
+                    , T.focusOutlineNone
+                    , T.focusRing2
+                    , T.focusRingKiwi
+                    , T.focusRingOffset2
+                    , T.focusRingOffsetGray10
+                    , T.textGray400
+                    , T.roundedLg
+                    ]
+                , HP.value searchQuery
+                , HE.onValueInput $ Just <<< SearchChange
+                ]
+              ]
+          , HH.div
+              [ HP.classes [ T.wFull , T.smWAuto ] ]
+              [ ToggleGroup.toggleGroup
+                  false
+                  [ {label: "All", action: Just (ToggleStatusFilter ShowAll), active: filterByStatus == ShowAll}
+                  , {label: "Done", action: Just (ToggleStatusFilter ShowDone), active: filterByStatus == ShowDone}
+                  , {label: "Pending", action: Just (ToggleStatusFilter ShowPending), active: filterByStatus == ShowPending}
                   ]
-              rs' ->
-                HK.div
-                  [ HP.classes [ T.flex, T.flexCol, T.gap4 ] ]
-                  $ A.mapWithIndex listResource rs'
+              ]
           ]
+      , case filterFn <$> resources of
+          NotAsked -> HH.text ""
 
-      -- TODO: error message element
-      Failure msg -> HH.text msg
+          -- TODO: skeleton
+          Loading -> HH.text "..."
+
+          Success [] ->
+            HH.div
+              [ HP.classes [ T.bgWhite, T.p4, T.roundedLg, T.textGray300, T.textXl ] ]
+              [ HH.text $ case filterByStatus, null $ trim searchQuery of
+                  _, false -> "No results found 😅"
+                  ShowAll, _ -> "This list is empty 😅"
+                  ShowDone, _ -> "No completed resources yet 😅"
+                  ShowPending, _ -> "No pending resources 👏"
+              ]
+
+          Success rs ->
+            HK.div
+              [ HP.classes [ T.flex, T.flexCol, T.gap4 ] ]
+              $ A.mapWithIndex listResource rs
+
+          -- TODO: error message element
+          Failure msg -> HH.text msg
+      ]
 
     where
     filterFn =

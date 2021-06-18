@@ -699,12 +699,12 @@ component = Connect.component $ H.mkComponent
                         Icons.userAdd
                         "Subscribe"
                         "Subscribe to a list and get up to date content from the list author."
-                        true
+                        false
                     , feature
                         Icons.bookmark
                         "History"
                         "Keep track of everything you consumed, you’ll never know when you’ll need it again."
-                        true
+                        false
                     , feature
                         Icons.rss
                         "RSS"

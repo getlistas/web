@@ -202,6 +202,11 @@ instance manageResourceAppM :: ManageResource AppM where
           endpoint = ListResourcesBySlug user list
           codec = CAC.array Resource.listResourceCodec
 
+  searchResources args = do
+    hush <$> mkAuthRequest conf codec
+    where conf = {endpoint: SearchResources args, method: Get}
+          codec = CAC.array Resource.listResourceCodec
+
   createResource newResource =
     hush <$> mkAuthRequest conf codec
     where method = Post $ Just $ Codec.encode Resource.resourceCodec newResource

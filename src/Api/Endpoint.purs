@@ -7,29 +7,57 @@ import Prelude hiding ((/))
 
 import Data.Either (Either(..), note)
 import Data.Generic.Rep (class Generic)
-import Data.Maybe (Maybe)
+import Data.Maybe (Maybe(..))
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 import Listasio.Data.Integration (IntegrationKind(..))
-import Routing.Duplex (RouteDuplex', as, boolean, int, optional, root, segment)
+import Routing.Duplex (RouteDuplex', as, boolean, int, optional, root, segment, string)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/), (?))
 import Slug (Slug)
 import Slug as Slug
 
-type PaginationRep
+type PaginationRep row
   = ( limit :: Maybe Int
     , skip :: Maybe Int
+    | row
     )
 
 type Pagination
-  = { | PaginationRep }
+  = {| PaginationRep ()}
 
-data SortingResources
-  = PositionAsc
-  | PositionDes
-  | DateAsc
-  | DateDes
+data SortingResources = PositionAsc | PositionDes
+
+type SearchResourcesArgs
+  = {
+    | PaginationRep
+      ( list :: Maybe ID
+      , completed :: Maybe Boolean
+      , sort :: Maybe SortingResources
+      , search_text :: Maybe String
+      )
+    }
+
+defaultSearch :: SearchResourcesArgs
+defaultSearch =
+  { skip: Nothing
+  , limit: Nothing
+  , list: Nothing
+  , completed: Nothing
+  , sort: Nothing
+  , search_text: Nothing
+  }
+
+type ResourcesByListArgs
+  = { list :: ID
+    , sort :: SortingResources
+    , completed :: Maybe Boolean
+    }
+
+type IntegrationsArgs
+  = { list :: ID
+    , kind :: Maybe IntegrationKind
+    }
 
 data Endpoint
   = Login
@@ -46,14 +74,15 @@ data Endpoint
   | Lists
   | Discover Pagination
   | Resources
-  | ResourcesByList { list :: ID, sort :: SortingResources, completed :: Maybe Boolean }
+  | ResourcesByList ResourcesByListArgs
+  | SearchResources SearchResourcesArgs
   | Resource ID
   | CompleteResource ID
   | UncompleteResource ID
   | PositionResource ID
   | ResourceMeta
   | Integration ID
-  | Integrations { list :: ID, kind :: Maybe IntegrationKind }
+  | Integrations IntegrationsArgs
   | RssIntegrations
   | ListSubscriptionIntegrations
 
@@ -81,7 +110,15 @@ endpointCodec =
             }
         , "Resources": "resources" / noArgs
         , "ResourcesByList": "resources"
-            ? { list: id, sort: sortingResources, completed: optional <<< boolean }
+            ? {list: id, sort: sortingResources, completed: optional <<< boolean}
+        , "SearchResources": "resources"
+            ? { list: optional <<< id
+              , completed: optional <<< boolean
+              , sort: optional <<< sortingResources
+              , search_text: optional <<< string
+              , skip: optional <<< int
+              , limit: optional <<< int
+              }
         , "Resource": "resources" / id segment
         , "CompleteResource": "resources" / id segment / "complete"
         , "UncompleteResource": "resources" / id segment / "undo-complete"
@@ -89,7 +126,7 @@ endpointCodec =
         , "ResourceMeta": "resource-metadata" / noArgs
         , "Integration": "integrations" / id segment
         , "Integrations": "integrations"
-            ? { list: id, kind: optional <<< integrationKind }
+            ? {list: id, kind: optional <<< integrationKind}
         , "RssIntegrations": "integrations" / "rss" / noArgs
         , "ListSubscriptionIntegrations": "integrations" / "listas-subscription" / noArgs
         }
@@ -114,13 +151,9 @@ sortingResources = as toString parse
   where
   toString PositionAsc = "position_asc"
   toString PositionDes = "position_des"
-  toString DateAsc = "date_asc"
-  toString DateDes = "date_des"
 
   parse = case _ of
     "position_asc" -> Right PositionAsc
     "position_des" -> Right PositionDes
-    "date_asc" -> Right DateAsc
-    "date_des" -> Right DateDes
     s -> Left $ "Bad SortingResources '" <> s <> "'"
 
