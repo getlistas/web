@@ -1371,10 +1371,6 @@ roundedLg = ClassName "rounded-lg"
 roundedMd :: ClassName
 roundedMd = ClassName "rounded-md"
 
--- | roundedRLg
-roundedRLg :: ClassName
-roundedRLg = ClassName "rounded-r-lg"
-
 -- | roundedRMd
 roundedRMd :: ClassName
 roundedRMd = ClassName "rounded-r-md"
