@@ -179,7 +179,7 @@ component = Connect.component $ H.mkComponent
                 [ HP.classes [ T.lgColSpan2 ] ]
                 [ if isOwnList
                     then HH.slot PersonalResources._personalResources unit PersonalResources.component {list: l.id} absurd
-                    else HH.slot PublicResources._publicResources unit PublicResources.component {listSlug, authorSlug} absurd
+                    else HH.slot PublicResources._publicResources unit PublicResources.component {listId: l.id, listSlug, authorSlug} absurd
                 ]
             ]
         ]

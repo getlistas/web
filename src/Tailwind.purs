@@ -267,10 +267,6 @@ flexCol = ClassName "flex-col"
 flexNone :: ClassName
 flexNone = ClassName "flex-none"
 
--- | flexRowReverse
-flexRowReverse :: ClassName
-flexRowReverse = ClassName "flex-row-reverse"
-
 -- | flexShrink0
 flexShrink0 :: ClassName
 flexShrink0 = ClassName "flex-shrink-0"
@@ -542,6 +538,10 @@ hidden = ClassName "hidden"
 -- | hoverBgGray100
 hoverBgGray100 :: ClassName
 hoverBgGray100 = ClassName "hover:bg-gray-100"
+
+-- | hoverBgGray200
+hoverBgGray200 :: ClassName
+hoverBgGray200 = ClassName "hover:bg-gray-200"
 
 -- | hoverBgGray50
 hoverBgGray50 :: ClassName
@@ -1091,6 +1091,10 @@ my6 = ClassName "my-6"
 negMl1 :: ClassName
 negMl1 = ClassName "-ml-1"
 
+-- | negMlPx
+negMlPx :: ClassName
+negMlPx = ClassName "-ml-px"
+
 -- | negMr2
 negMr2 :: ClassName
 negMr2 = ClassName "-mr-2"
@@ -1202,6 +1206,10 @@ pb8 = ClassName "pb-8"
 -- | pl10
 pl10 :: ClassName
 pl10 = ClassName "pl-10"
+
+-- | pl2
+pl2 :: ClassName
+pl2 = ClassName "pl-2"
 
 -- | pl3
 pl3 :: ClassName
@@ -1359,6 +1367,10 @@ ringWhite = ClassName "ring-white"
 roundedFull :: ClassName
 roundedFull = ClassName "rounded-full"
 
+-- | roundedLLg
+roundedLLg :: ClassName
+roundedLLg = ClassName "rounded-l-lg"
+
 -- | roundedLMd
 roundedLMd :: ClassName
 roundedLMd = ClassName "rounded-l-md"
@@ -1370,6 +1382,14 @@ roundedLg = ClassName "rounded-lg"
 -- | roundedMd
 roundedMd :: ClassName
 roundedMd = ClassName "rounded-md"
+
+-- | roundedNone
+roundedNone :: ClassName
+roundedNone = ClassName "rounded-none"
+
+-- | roundedRLg
+roundedRLg :: ClassName
+roundedRLg = ClassName "rounded-r-lg"
 
 -- | roundedRMd
 roundedRMd :: ClassName

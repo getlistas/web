@@ -38,11 +38,10 @@ import Network.RemoteData as RemoteData
 import Routing.Duplex (print)
 import Tailwind as T
 import Util (takeDomain)
-import Web.Event.Event (Event)
-import Web.Event.Event as Event
 import Web.HTML (window) as Window
 import Web.HTML.Location as Location
 import Web.HTML.Window (location) as Window
+import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
 type Slot id = forall query. H.Slot query Void id
 
@@ -53,7 +52,6 @@ type Input = {list :: ID}
 data Action
   = Initialize
   | SearchChange String
-  | OnSearch Event
   | LoadResources
     -- resources actions
   | CopyToShare ListResource
@@ -141,25 +139,20 @@ component = H.mkComponent
       {searchQuery: oldQuery} <- H.get
       H.modify_ _ {searchQuery = newQuery}
 
-      when (null newQuery && oldQuery /= newQuery) do
+      when (null newQuery && (oldQuery /= newQuery)) do
         handleAction LoadResources
 
-    OnSearch event -> do
-      H.liftEffect $ Event.preventDefault event
+      when (not $ null newQuery) do
+        {list} <- H.get
 
-      {searchQuery, list} <- H.get
-
-      when (null searchQuery) do
-        handleAction LoadResources
-
-      when (not $ null searchQuery) do
-        let search = defaultSearch {list = Just list, search_text = Just searchQuery, sort = Just PositionAsc}
+        let search = defaultSearch {list = Just list, search_text = Just newQuery, sort = Just PositionAsc}
 
         H.modify_ _ {resources = Loading}
 
         resources <- RemoteData.fromEither <$> note "Failed to load resources" <$> searchResources search
 
         H.modify_ _ {resources = resources}
+
 
     CopyToShare {url} -> do
       host <- H.liftEffect $ Location.host =<< Window.location =<< Window.window
@@ -253,31 +246,53 @@ component = H.mkComponent
       []
       [ HH.div
         [ HP.classes [ T.flex, T.justifyBetween, T.gap4, T.mb4 ] ]
-          [ HH.form
-              [ HE.onSubmit $ Just <<< OnSearch
-              , HP.classes [ T.wFull ]
-              ]
+          [ HH.div
+              [ HP.classes [ T.wFull, T.flex, T.roundedLg ] ]
               [ HH.input
-                [ HP.type_ HP.InputSearch
-                , HP.placeholder "Search resources"
-                , HP.classes
-                    [ T.wFull
-                    , T.px2
-                    , T.py1
-                    , T.border
-                    , T.borderKiwi
-                    , T.focusBorderKiwi
-                    , T.focusOutlineNone
-                    , T.focusRing2
-                    , T.focusRingKiwi
-                    , T.focusRingOffset2
-                    , T.focusRingOffsetGray10
-                    , T.textGray400
-                    , T.roundedLg
-                    ]
-                , HP.value searchQuery
-                , HE.onValueInput $ Just <<< SearchChange
-                ]
+                  [ HP.placeholder "Search resources"
+                  , HP.classes
+                      [ T.wFull
+                      , T.roundedNone
+                      , T.roundedLLg
+                      , T.smTextSm
+                      , T.border
+                      , T.borderGray300
+                      , T.px4
+                      , T.focusRing2
+                      , T.focusRingKiwi
+                      , T.focusOutlineNone
+                      , T.focusBorderKiwi
+                      , T.focusZ10
+                      ]
+                  , HP.value searchQuery
+                  , HE.onValueInput $ Just <<< SearchChange
+                  , HE.onKeyDown \e ->
+                      case KeyboardEvent.code e of
+                        "Escape" -> Just $ SearchChange ""
+                        _ -> Nothing
+                  ]
+              , HH.button
+                  [ HP.classes
+                      [ T.negMlPx
+                      , T.flex
+                      , T.itemsCenter
+                      , T.p2
+                      , T.border
+                      , T.borderGray300
+                      , T.roundedRLg
+                      , T.textGray300
+                      , T.hoverTextKiwi
+                      , T.bgGray100
+                      , T.focusOutlineNone
+                      , T.focusRing2
+                      , T.focusRingKiwi
+                      , T.focusBorderKiwi
+                      ]
+                  , HE.onClick \_ -> Just $ SearchChange ""
+                  ]
+                  [ Icons.x
+                      [ Icons.classes [ T.h5, T.w5 ] ]
+                  ]
               ]
           , HH.div
               [ HP.classes [ T.wFull , T.smWAuto ] ]
