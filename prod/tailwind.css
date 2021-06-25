@@ -2109,10 +2109,6 @@ select{
   border-left-width: 1px;
 }
 
-.hover\:border-b-2:hover {
-  border-bottom-width: 2px;
-}
-
 .cursor-default {
   cursor: default;
 }
