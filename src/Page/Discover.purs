@@ -216,9 +216,17 @@ component = Connect.component $ H.mkComponent
         , HE.onClick $ Just <<< Navigate (Profile slug) <<< Mouse.toEvent
         ]
         [ HH.div
-            [ HP.classes [ T.flex, T.itemsCenter ] ]
+            [ HP.classes [ T.flex, T.itemsCenter, T.group ] ]
             [ Avatar.renderWithDefault Avatar.Xs avatar
-            , HH.div [ HP.classes [ T.textSm, T.textGray300, T.ml2 ] ] [ HH.text $ Username.toString name ]
+            , HH.div
+                [ HP.classes
+                    [ T.textSm
+                    , T.textGray300
+                    , T.groupHoverTextKiwi
+                    , T.ml2
+                    ]
+                ]
+                [ HH.text $ Username.toString name ]
             ]
         ]
 
@@ -234,7 +242,14 @@ component = Connect.component $ H.mkComponent
                   , HE.onClick $ Just <<< Navigate (PublicList slug list.slug) <<< Mouse.toEvent
                   ]
                   [ HH.div
-                      [ HP.classes [ T.textLg, T.borderB2, T.borderGray200, T.textGray400, T.mb4 ] ]
+                      [ HP.classes
+                          [ T.textLg
+                          , T.textGray400
+                          , T.hoverTextKiwi
+                          , T.hoverUnderline
+                          , T.mb4
+                          ]
+                      ]
                       [ HH.text title ]
                   ]
             Nothing ->

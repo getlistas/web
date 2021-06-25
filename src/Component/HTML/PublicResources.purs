@@ -4,7 +4,7 @@ import Prelude
 
 import Data.Either (note)
 import Data.Maybe (Maybe(..))
-import Data.String (null)
+import Data.String (null, trim)
 import Data.Symbol (SProxy(..))
 import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
@@ -151,6 +151,7 @@ component = H.mkComponent
                       , T.focusBorderKiwi
                       ]
                   , HE.onClick \_ -> Just $ SearchChange ""
+                  , HP.disabled $ null searchQuery
                   ]
                   [ Icons.x
                       [ Icons.classes [ T.h5, T.w5 ] ]
@@ -162,6 +163,11 @@ component = H.mkComponent
 
           -- TODO: skeleton
           Loading -> HH.text "..."
+
+          Success [] | not $ null $ trim searchQuery ->
+            HH.div
+              [ HP.classes [ T.bgWhite, T.p4, T.roundedLg, T.textGray300, T.textXl ] ]
+              [ HH.text "No results found 😅" ]
 
           Success rs ->
             HK.div
@@ -190,7 +196,7 @@ component = H.mkComponent
             [ HH.div
                 [ HP.classes [ T.p4, T.truncate ] ]
                 [ HH.a
-                    [ HP.classes [ T.textGray400, T.fontMedium, T.truncate ]
+                    [ HP.classes [ T.textGray400, T.hoverTextKiwi, T.hoverUnderline, T.fontMedium, T.truncate ]
                     , HP.href url
                     , HP.target "_blank"
                     , HP.rel "noreferrer noopener nofollow"

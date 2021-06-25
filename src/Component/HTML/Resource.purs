@@ -36,7 +36,17 @@ resource lists { url, title, list, completed_at } =
         , HP.rel "noreferrer noopener nofollow"
         ]
         [ HH.img [ HP.classes [ T.w4, T.h4, T.mr2 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
-        , HH.div [ HP.classes [ T.textGray400, T.textSm, T.fontMedium, T.truncate ] ] [ HH.text title ]
+        , HH.div
+            [ HP.classes
+                [ T.textGray400
+                , T.hoverTextKiwi
+                , T.hoverUnderline
+                , T.textSm
+                , T.fontMedium
+                , T.truncate
+                ]
+            ]
+            [ HH.text title ]
         ]
     , shortUrl url
     , HH.div

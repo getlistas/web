@@ -339,7 +339,15 @@ component = Connect.component $ H.mkComponent
                 []
                 [ nextLink next $
                     HH.div
-                      [ HP.classes [ T.fontMedium, T.textGray400, T.leadingRelaxed, T.lineClamp2 ] ]
+                      [ HP.classes
+                          [ T.fontMedium
+                          , T.textGray400
+                          , T.hoverTextKiwi
+                          , T.hoverUnderline
+                          , T.leadingRelaxed
+                          , T.lineClamp2
+                          ]
+                      ]
                       [ HH.text next.title ]
                 , nextLink next $
                     HH.div [ HP.classes [ T.mt2 ] ] [ shortUrl next.url ]
@@ -418,7 +426,17 @@ component = Connect.component $ H.mkComponent
         [ HH.div
             [ HP.classes [ T.flex, T.justifyBetween, T.itemsCenter ] ]
             [ HH.a
-                ( listLinkProps (flip PublicList list.slug)  [ HP.classes [ T.textXl, T.textGray400, T.fontBold, T.truncate ] ] )
+                ( listLinkProps (flip PublicList list.slug)
+                  [ HP.classes
+                      [ T.textXl
+                      , T.textGray400
+                      , T.hoverTextKiwi
+                      , T.hoverUnderline
+                      , T.fontBold
+                      , T.truncate
+                      ]
+                  ]
+                )
                 [ HH.text list.title ]
             , HH.div
                 [ HP.classes [ T.ml6, T.flex, T.itemsCenter ] ]

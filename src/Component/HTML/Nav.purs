@@ -157,13 +157,10 @@ component = Connect.component $ H.mkComponent
       HH.a
         [ HP.classes
             [ T.fontMedium
-            , cx T.textGray400 isCurrent
+            , cx T.textKiwi isCurrent
             , cx T.textGray300 $ not isCurrent
-            , T.borderB2
-            , cx T.borderTransparent $ not isCurrent
-            , cx T.borderKiwi isCurrent
-            , T.hoverBorderB2
-            , T.hoverBorderKiwi
+            , T.hoverTextKiwi
+            , T.leadingNone
             ]
         , safeHref route
         , HE.onClick $ onNavigate route

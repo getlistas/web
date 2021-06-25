@@ -463,6 +463,14 @@ groupHoverTextGray400 = ClassName "group-hover:text-gray-400"
 groupHoverTextGray700 :: ClassName
 groupHoverTextGray700 = ClassName "group-hover:text-gray-700"
 
+-- | groupHoverTextKiwi
+groupHoverTextKiwi :: ClassName
+groupHoverTextKiwi = ClassName "group-hover:text-kiwi"
+
+-- | groupHoverUnderline
+groupHoverUnderline :: ClassName
+groupHoverUnderline = ClassName "group-hover:underline"
+
 -- | h0
 h0 :: ClassName
 h0 = ClassName "h-0"
@@ -539,10 +547,6 @@ hidden = ClassName "hidden"
 hoverBgGray100 :: ClassName
 hoverBgGray100 = ClassName "hover:bg-gray-100"
 
--- | hoverBgGray200
-hoverBgGray200 :: ClassName
-hoverBgGray200 = ClassName "hover:bg-gray-200"
-
 -- | hoverBgGray50
 hoverBgGray50 :: ClassName
 hoverBgGray50 = ClassName "hover:bg-gray-50"
@@ -566,10 +570,6 @@ hoverBgRed200 = ClassName "hover:bg-red-200"
 -- | hoverBgWhite
 hoverBgWhite :: ClassName
 hoverBgWhite = ClassName "hover:bg-white"
-
--- | hoverBorderB2
-hoverBorderB2 :: ClassName
-hoverBorderB2 = ClassName "hover:border-b-2"
 
 -- | hoverBorderGray400
 hoverBorderGray400 :: ClassName
@@ -1206,10 +1206,6 @@ pb8 = ClassName "pb-8"
 -- | pl10
 pl10 :: ClassName
 pl10 = ClassName "pl-10"
-
--- | pl2
-pl2 :: ClassName
-pl2 = ClassName "pl-2"
 
 -- | pl3
 pl3 :: ClassName

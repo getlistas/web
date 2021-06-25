@@ -319,9 +319,23 @@ component = Connect.component $ H.mkComponent
                 HH.div
                   []
                   [ HH.a
-                      ( editLinkProps l [ HP.classes [ T.textXl, T.textGray400, T.mt6, T.mb4, T.block, T.flex, T.itemsCenter ] ] )
+                      ( editLinkProps
+                          l
+                          [ HP.classes
+                              [ T.textXl
+                              , T.textGray400
+                              , T.mt6
+                              , T.mb4
+                              , T.block
+                              , T.flex
+                              , T.itemsCenter
+                              , T.hoverTextKiwi
+                              , T.hoverUnderline
+                              ]
+                          ]
+                      )
                       [ HH.span [] [ HH.text l.title ]
-                      , Icons.cog [ Icons.classes [ T.ml2, T.h5, T.w5, T.textGray300, T.hoverTextGray400 ] ]
+                      , Icons.cog [ Icons.classes [ T.ml2, T.h5, T.w5 ] ]
                       ]
                   , HH.div
                       [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.lgGridCols3, T.xlGridCols4, T.gap4 ] ]

@@ -289,6 +289,7 @@ component = H.mkComponent
                       , T.focusBorderKiwi
                       ]
                   , HE.onClick \_ -> Just $ SearchChange ""
+                  , HP.disabled $ null searchQuery
                   ]
                   [ Icons.x
                       [ Icons.classes [ T.h5, T.w5 ] ]
@@ -381,7 +382,7 @@ component = H.mkComponent
                 [ HH.div
                     [ HP.classes [ T.truncate ] ]
                     [ HH.a
-                        [ HP.classes [ T.textGray400, T.fontMedium, T.truncate ]
+                        [ HP.classes [ T.textGray400, T.hoverTextKiwi, T.hoverUnderline, T.fontMedium, T.truncate ]
                         , HP.href url
                         , HP.target "_blank"
                         , HP.rel "noreferrer noopener nofollow"
