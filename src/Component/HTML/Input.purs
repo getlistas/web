@@ -18,7 +18,7 @@ import Tailwind as T
 type SimpleInputProps act
   = { error :: Maybe V.FormError
     , value :: String
-    , action :: String -> Maybe act
+    , action :: String -> act
     , required :: Boolean
     , disabled :: Boolean
     , hideOptional :: Boolean
@@ -32,11 +32,11 @@ type SimpleInputProps act
     , iconAfter :: Maybe Icons.Icon
     }
 
-defaultProps :: forall act. SimpleInputProps act
-defaultProps
+defaultProps :: forall act. (String -> act) -> SimpleInputProps act
+defaultProps action
   = { value: ""
     , error: Nothing
-    , action: const Nothing
+    , action
     , disabled: false
     , required: false
     , hideOptional: false
@@ -83,7 +83,7 @@ input groupProps =
                         }
                     , Just $ HP.required groupProps.required
                     , Just $ HP.disabled groupProps.disabled
-                    , HP.id_ <$> groupProps.id
+                    , HP.id <$> groupProps.id
                     , HP.name <$> groupProps.id
                     , HP.placeholder <$> groupProps.placeholder
                     ]

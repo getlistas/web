@@ -27,7 +27,7 @@ derive instance eqAvatar :: Eq Avatar
 derive newtype instance showAvatar :: Show Avatar
 
 codec :: JsonCodec Avatar
-codec = CA.prismaticCodec parse toString CA.string
+codec = CA.prismaticCodec "Avatar" parse toString CA.string
 
 parse :: String -> Maybe Avatar
 parse = case _ of

@@ -2,8 +2,6 @@ module Listasio.Page.Discover where
 
 import Prelude
 
-import Component.HOC.Connect as Connect
-import Control.Monad.Reader (class MonadAsk)
 import Data.Array (cons, length, null)
 import Data.Either (Either, note)
 import Data.Filterable (filter)
@@ -15,6 +13,9 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.Integration (class ManageIntegration, subscribeToList)
 import Listasio.Capability.Resource.List (class ManageList, createList, discoverLists, forkList, getLists)
@@ -30,17 +31,21 @@ import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
 import Listasio.Data.Username (Username)
 import Listasio.Data.Username as Username
-import Listasio.Env (UserEnv)
+import Listasio.Store as Store
 import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
 import Slug (Slug)
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
 import Web.UIEvent.MouseEvent as Mouse
 
+_slot :: Proxy "discover"
+_slot = Proxy
+
 data Action
   = Initialize
-  | Receive {currentUser :: Maybe ProfileWithIdAndEmail}
+  | Receive (Connected (Maybe ProfileWithIdAndEmail) Unit)
   | Navigate Route Event
   | LoadPublicLists
   | LoadMore
@@ -76,14 +81,14 @@ hasActionInProgress {id} =
   anyOf (_actionInProgress <<< traversed) (_ == id)
 
 component
-  :: forall q o m r
+  :: forall q o m
    . MonadAff m
-  => MonadAsk {userEnv :: UserEnv | r} m
+  => MonadStore Store.Action Store.Store m
   => ManageList m
   => ManageIntegration m
   => Navigate m
-  => H.Component HH.HTML q {} o m
-component = Connect.component $ H.mkComponent
+  => H.Component q Unit o m
+component = connect (selectEq _.currentUser) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
@@ -93,7 +98,7 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState {currentUser} =
+  initialState {context: currentUser} =
     { currentUser
     , lists: NotAsked
     , page: 1
@@ -108,7 +113,8 @@ component = Connect.component $ H.mkComponent
       void $ H.fork $ handleAction LoadPublicLists
       void $ H.fork $ handleAction LoadOwnLists
 
-    Receive {currentUser} -> H.modify_ _ {currentUser = currentUser}
+    Receive {context: currentUser} ->
+      H.modify_ _ {currentUser = currentUser}
 
     Navigate route e -> navigate_ e route
 
@@ -198,7 +204,7 @@ component = Connect.component $ H.mkComponent
           , whenElem (not isLast) \_ ->
               HH.div
                 [ HP.classes [ T.mt8, T.flex, T.justifyCenter ] ]
-                [ button "Load More" (Just LoadMore) refreshing ]
+                [ button "Load More" LoadMore refreshing ]
           ]
       Failure msg ->
         HH.div
@@ -213,7 +219,7 @@ component = Connect.component $ H.mkComponent
     authorEl {slug, avatar, name} =
       HH.a
         [ safeHref $ Profile slug
-        , HE.onClick $ Just <<< Navigate (Profile slug) <<< Mouse.toEvent
+        , HE.onClick $ Navigate (Profile slug) <<< Mouse.toEvent
         ]
         [ HH.div
             [ HP.classes [ T.flex, T.itemsCenter, T.group ] ]
@@ -239,7 +245,7 @@ component = Connect.component $ H.mkComponent
               HH.a
                   [ HP.classes [ T.cursorPointer ]
                   , safeHref $ PublicList slug list.slug
-                  , HE.onClick $ Just <<< Navigate (PublicList slug list.slug) <<< Mouse.toEvent
+                  , HE.onClick $ Navigate (PublicList slug list.slug) <<< Mouse.toEvent
                   ]
                   [ HH.div
                       [ HP.classes
@@ -266,24 +272,24 @@ component = Connect.component $ H.mkComponent
         , HH.div
             [ HP.classes [ T.mt4, T.flex, T.justifyBetween ] ]
             case author, currentUser of
-              You, Just me -> [ authorEl { slug: me.slug, name: me.name, avatar: _.avatar =<< currentUser } ]
+              You, Just me -> [ authorEl {slug: me.slug, name: me.name, avatar: _.avatar =<< currentUser} ]
               Other user, Just _ ->
                 [ authorEl user
                 , HH.div
                     [ HP.classes [ T.flex ] ]
                     [ HH.div
                         [ HP.classes [ T.mr2 ] ]
-                        [ button "Copy" (Just $ ForkList list) $ hasActionInProgress list state ]
+                        [ button "Copy" (ForkList list) $ hasActionInProgress list state ]
                     , HH.div
                         []
-                        [ button "Follow" (Just $ SubscribeToList list) $ hasActionInProgress list state ]
+                        [ button "Follow" (SubscribeToList list) $ hasActionInProgress list state ]
                     ]
                 ]
               Other user, Nothing -> [ authorEl user ]
               _, _ -> [ HH.text "" ]
         ]
 
-button :: forall i p. String -> Maybe p -> Boolean -> HH.HTML i p
+button :: forall i p. String -> p -> Boolean -> HH.HTML i p
 button text action disabled =
   HH.button
     [ HP.type_ HP.ButtonButton

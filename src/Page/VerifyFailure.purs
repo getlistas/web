@@ -2,33 +2,38 @@ module Listasio.Page.VerifyFailure where
 
 import Prelude
 
-import Component.HOC.Connect as Connect
-import Control.Monad.Reader (class MonadAsk)
 import Data.Maybe (Maybe(..))
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route)
-import Listasio.Env (UserEnv)
+import Listasio.Store as Store
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectEq)
 import Tailwind as T
-import Web.Event.Event (Event)
+import Type.Proxy (Proxy(..))
+import Web.Event.Event as Event
+
+_slot :: Proxy "verifyFailure"
+_slot = Proxy
 
 data Action
-  = Receive { currentUser :: Maybe ProfileWithIdAndEmail }
-  | Navigate Route Event
+  = Receive (Connected (Maybe ProfileWithIdAndEmail) Unit)
+  | Navigate Route Event.Event
 
 type State = {currentUser :: Maybe ProfileWithIdAndEmail}
 
 component
-  :: forall q o m r
+  :: forall q o m
    . MonadAff m
-  => MonadAsk { userEnv :: UserEnv | r } m
+  => MonadStore Store.Action Store.Store m
   => Navigate m
-  => H.Component HH.HTML q {} o m
-component = Connect.component $ H.mkComponent
+  => H.Component q Unit o m
+component = connect (selectEq _.currentUser) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
@@ -37,17 +42,17 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState { currentUser } = { currentUser }
+  initialState {context: currentUser} = {currentUser}
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
-    Receive { currentUser } ->
-      H.modify_ _ { currentUser = currentUser }
+    Receive {context: currentUser} ->
+      H.modify_ _ {currentUser = currentUser}
 
     Navigate route e -> navigate_ e route
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render { currentUser } =
+  render _ =
     HH.div
       [ HP.classes [ T.container, T.textCenter, T.mt10, T.textRed500 ] ]
       [ HH.text "Verification failed" ]

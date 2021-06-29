@@ -7,7 +7,7 @@ import Data.Array (catMaybes)
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), isJust)
 import Data.Newtype (class Newtype)
-import Data.Symbol (class IsSymbol, SProxy)
+import Data.Symbol (class IsSymbol)
 import Data.Variant (Variant)
 import Formless as F
 import Halogen.HTML as HH
@@ -20,6 +20,7 @@ import Listasio.Form.Validation (errorToString)
 import Listasio.Form.Validation as V
 import Tailwind as T
 import Type.Row as Row
+import Type.Proxy (Proxy)
 
 -- TODO: Move to Button module
 submit :: forall i p. String -> Boolean -> HH.HTML i p
@@ -52,7 +53,7 @@ cancel buttonText disabled action =
   HH.input
     [ HP.type_ HP.InputButton
     , HP.value buttonText
-    , HE.onClick \_ -> Just action
+    , HE.onClick \_ -> action
     , HP.classes
         [ T.flex1
         , T.wFull
@@ -131,15 +132,14 @@ input ::
   Newtype (form Variant F.InputFunction) (Variant inputs) =>
   Row.Cons sym (F.FormField V.FormError String out) t0 fields =>
   Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs =>
-  SProxy sym ->
+  Proxy sym ->
   form Record F.FormField ->
   InputProps form act ->
   F.ComponentHTML form act slots m
 input sym form {required, hideOptional, placeholder, id, props, type_, message, label} =
-  Input.input $ Input.defaultProps
+  Input.input $ defProps
     { value = F.getInput sym form
     , error = filter (const $ F.getTouched sym form) $ F.getError sym form
-    , action = Just <<< F.setValidate sym
     , hideOptional = hideOptional
     , placeholder = placeholder
     , id = id
@@ -149,6 +149,7 @@ input sym form {required, hideOptional, placeholder, id, props, type_, message, 
     , required = required
     , label = label
     }
+  where defProps = Input.defaultProps (F.setValidate sym)
 
 type TextareaProps form act
   = { required :: Boolean
@@ -178,7 +179,7 @@ textarea ::
   Newtype (form Variant F.InputFunction) (Variant inputs) =>
   Row.Cons sym (F.FormField V.FormError String out) t0 fields =>
   Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs =>
-  SProxy sym ->
+  Proxy sym ->
   form Record F.FormField ->
   TextareaProps form act ->
   F.ComponentHTML form act slots m
@@ -192,11 +193,11 @@ textarea sym form groupProps =
             ( append
                 ( catMaybes
                     [ Just $ HP.value $ F.getInput sym form
-                    , Just $ HE.onValueInput $ Just <<< F.setValidate sym
+                    , Just $ HE.onValueInput $ F.setValidate sym
                     , Just $ HP.classes $ Input.fieldInputClasses
                         { hasError, iconBefore: false, iconAfter: false }
                     , Just $ HP.required groupProps.required
-                    , HP.id_ <$> groupProps.id
+                    , HP.id <$> groupProps.id
                     , HP.name <$> groupProps.id
                     , HP.placeholder <$> groupProps.placeholder
                     ]

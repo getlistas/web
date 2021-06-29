@@ -3,16 +3,14 @@ module Listasio.Component.HTML.CreateResource where
 import Prelude
 
 import Control.Alt ((<|>))
-import Data.Array (sortWith, find)
-import Data.Char.Unicode as Char
+import Data.Array (sortWith, find, filter) as A
+import Data.CodePoint.Unicode (isAlphaNum)
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.MediaType.Common as MediaType
 import Data.Newtype (class Newtype, unwrap)
-import Data.String (null, take, replace) as String
 import Data.String (Pattern(..), Replacement(..))
-import Data.String.CodeUnits (fromCharArray, toCharArray) as String
-import Data.Symbol (SProxy(..))
+import Data.String (fromCodePointArray, null, replace, take, toCodePointArray) as String
 import Data.Traversable (for_, traverse)
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
@@ -35,6 +33,7 @@ import Listasio.Form.Validation as V
 import Network.RemoteData (RemoteData(..), isFailure, isLoading, isSuccess)
 import Select as Select
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Util as Util
 import Web.Clipboard.ClipboardEvent as Clipboard
 import Web.Event.Event as Event
@@ -42,7 +41,7 @@ import Web.HTML.Event.DataTransfer as DataTransfer
 
 type Slot = forall query. H.Slot query Output Unit
 
-_createResource = SProxy :: SProxy "createResource"
+_slot = Proxy :: Proxy "createResource"
 
 data Action
   = HandleFormMessage Resource
@@ -71,12 +70,12 @@ type ChildSlots
 
 filterNonAlphanum :: String -> String
 filterNonAlphanum =
-  String.fromCharArray <<< filter Char.isAlphaNum <<< String.toCharArray
+  String.fromCodePointArray <<< A.filter isAlphaNum <<< String.toCodePointArray
 
 component :: forall query m.
      MonadAff m
   => ManageResource m
-  => H.Component HH.HTML query Input Output m
+  => H.Component query Input Output m
 component = H.mkComponent
   { initialState
   , render
@@ -86,7 +85,7 @@ component = H.mkComponent
   }
   where
   initialState {lists, selectedList, url, title, text} =
-    { lists: sortWith (filterNonAlphanum <<< _.title) lists
+    { lists: A.sortWith (filterNonAlphanum <<< _.title) lists
     , selectedList
     , url
     , title
@@ -112,7 +111,7 @@ component = H.mkComponent
   render state =
     HH.div
       []
-      [ HH.slot F._formless unit formComponent state (Just <<< HandleFormMessage) ]
+      [ HH.slot F._formless unit formComponent state HandleFormMessage ]
 
 newtype DDItem = DDItem {label :: String, value :: ID}
 
@@ -125,18 +124,17 @@ instance toTextDDItem :: ToText DDItem where
 type FormSlot
   = F.Slot CreateResourceForm FormQuery FormChildSlots Resource Unit
 
-newtype CreateResourceForm r f
-  = CreateResourceForm
-  ( r
-      ( title :: f V.FormError String String
-      , url :: f V.FormError String String
-      , description :: f V.FormError String (Maybe String)
-      , thumbnail :: f V.FormError (Maybe String) (Maybe String)
-      , list :: f V.FormError (Maybe ID) ID
-      )
-  )
+newtype CreateResourceForm (r :: Row Type -> Type) f = CreateResourceForm (r (FormRow f))
+derive instance Newtype (CreateResourceForm r f) _
 
-derive instance newtypeCreateResourceForm :: Newtype (CreateResourceForm r f) _
+type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
+type FormRow f =
+  ( title :: f V.FormError String String
+  , url :: f V.FormError String String
+  , description :: f V.FormError String (Maybe String)
+  , thumbnail :: f V.FormError (Maybe String) (Maybe String)
+  , list :: f V.FormError (Maybe ID) ID
+  )
 
 data FormQuery a
   = SetCreateStatus (RemoteData String Unit) a
@@ -213,12 +211,12 @@ formComponent = F.component formInput $ F.defaultSpec
 
   handleAction = case _ of
     FormInitialize -> do
-      {pastedUrl, form, selectedList, lists} <- H.get
+      {pastedUrl, selectedList, lists} <- H.get
 
-      let mbSelectedItem = listToItem <$> ((\id -> find ((id == _) <<< _.id) lists) =<< selectedList)
+      let mbSelectedItem = listToItem <$> ((\id -> A.find ((id == _) <<< _.id) lists) =<< selectedList)
 
       for_ mbSelectedItem \item ->
-        void $ H.query DD._dropdown unit (DD.select item)
+        H.query DD._dropdown unit (DD.select item)
 
       void $ H.fork $ for_ pastedUrl \url -> handleAction $ FetchMeta url
 
@@ -271,11 +269,11 @@ formComponent = F.component formInput $ F.defaultSpec
     where
     eval act = F.handleAction handleAction handleEvent act
 
-  proxies = F.mkSProxies (F.FormProxy :: _ CreateResourceForm)
+  proxies = F.mkSProxies (Proxy :: Proxy CreateResourceForm)
 
-  renderCreateResource {form, status, lists, submitting, dirty, meta} =
+  renderCreateResource {form, status, lists, submitting, meta} =
     HH.form
-      [ HE.onSubmit $ Just <<< F.injAction <<< Submit
+      [ HE.onSubmit $ F.injAction <<< Submit
       , HP.noValidate true
       ]
       [ whenElem (isFailure status) \_ ->
@@ -378,7 +376,7 @@ formComponent = F.component formInput $ F.defaultSpec
           ]
       ]
     where
-    handler = Just <<< F.injAction <<< HandleDropdown
+    handler = F.injAction <<< HandleDropdown
     ddInput = {placeholder: "Choose a list", items: map listToItem lists}
 
     url =
@@ -387,7 +385,7 @@ formComponent = F.component formInput $ F.defaultSpec
         , id = Just "url"
         , placeholder = Just "https://blog.com/some-blogpost"
         , required = true
-        , props = [ HE.onPaste $ Just <<< F.injAction <<< PasteUrl ]
+        , props = [ HE.onPaste $ F.injAction <<< PasteUrl ]
         , message = case meta of
             Loading -> Just "Fetching title and description ..."
             Success {can_resolve} | not can_resolve -> Just "Looks like the link does not exist. Are you sure you got the right one?"

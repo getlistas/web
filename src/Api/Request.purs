@@ -18,7 +18,7 @@ module Listasio.Api.Request
 
 import Prelude
 
-import Affjax (Request, printError, request)
+import Affjax as Fetch
 import Affjax.RequestBody as RB
 import Affjax.RequestHeader (RequestHeader(..))
 import Affjax.ResponseFormat as RF
@@ -95,20 +95,19 @@ type RequestOptions
     , method :: RequestMethod
     }
 
-defaultRequest :: BaseURL -> Maybe Token -> RequestOptions -> Request Json
+defaultRequest :: BaseURL -> Maybe Token -> RequestOptions -> Fetch.Request Json
 defaultRequest (BaseURL baseUrl) auth { endpoint, method } =
-  { method: Left method
-  , url: baseUrl <> print endpointCodec endpoint
-  , headers:
-      case auth of
-        Nothing -> []
-        Just (Token t) -> [ RequestHeader "Authorization" $ "Bearer " <> t ]
-  , content: RB.json <$> body
-  , username: Nothing
-  , password: Nothing
-  , withCredentials: false
-  , responseFormat: RF.json
-  }
+  Fetch.defaultRequest
+    { method = Left method
+    , url = baseUrl <> print endpointCodec endpoint
+    , headers =
+        case auth of
+          Nothing -> []
+          Just (Token t) -> [ RequestHeader "Authorization" $ "Bearer " <> t ]
+    , content = RB.json <$> body
+    , withCredentials = false
+    , responseFormat = RF.json
+    }
   where
   Tuple method body = case method of
     Get -> Tuple GET Nothing
@@ -170,9 +169,9 @@ addAvatarField {email, name, id, slug} =
 
 login :: forall m. MonadAff m => BaseURL -> LoginFields -> m (Either String (Tuple Token ProfileWithIdAndEmail))
 login baseUrl fields = do
-  res <- liftAff $ request $ defaultRequest baseUrl Nothing conf
+  res <- liftAff $ Fetch.request $ defaultRequest baseUrl Nothing conf
   case res of
-    Left e -> pure $ Left $ printError e
+    Left e -> pure $ Left $ Fetch.printError e
     Right v -> pure $ lmap printJwtError $ decodeAuthProfileFromToken =<< decode v.body
   where conf = { endpoint: Login, method: Post $ Just $ Codec.encode loginCodec fields }
         decode = lmap Jwt.JsonDecodeError <<< Codec.decode CA.json
@@ -194,9 +193,9 @@ googleLogin baseUrl _ = do
       let conf = { endpoint: GoogleLogin, method: Post $ Just $ body }
           body = Codec.encode googleLoginCodec { token: googleToken }
           decode = lmap Jwt.JsonDecodeError <<< Codec.decode CA.json
-      res <- liftAff $ request $ defaultRequest baseUrl Nothing conf
+      res <- liftAff $ Fetch.request $ defaultRequest baseUrl Nothing conf
       case res of
-        Left e -> pure $ Left $ printError e
+        Left e -> pure $ Left $ Fetch.printError e
         Right v -> pure $ lmap printJwtError $ decodeAuthProfileFromToken =<< decode v.body
 
 
@@ -219,8 +218,8 @@ decodeAuthProfileFromToken payload = do
 
 register :: forall m. MonadAff m => BaseURL -> RegisterFields -> m (Either String ProfileWithIdAndEmail)
 register baseUrl fields = do
-  res <- liftAff $ request $ defaultRequest baseUrl Nothing conf
-  pure $ decode <$> _.body =<< lmap printError res
+  res <- liftAff $ Fetch.request $ defaultRequest baseUrl Nothing conf
+  pure $ decode <$> _.body =<< lmap Fetch.printError res
   where method = Post $ Just $ Codec.encode registerCodec fields
         conf = { endpoint: Users, method }
         decode = map addAvatarField <$> lmap printJsonDecodeError <<< Codec.decode createdProfileCodec

@@ -9,18 +9,21 @@ import Data.Array.NonEmpty (NonEmptyArray)
 import Data.Array.NonEmpty as NEA
 import Data.Maybe (Maybe(..))
 import Data.String as String
-import Effect.Aff (Milliseconds(..), delay, error, forkAff, killFiber)
+import Data.Traversable (for_)
+import Effect.Aff (Fiber, Milliseconds(..), delay, error, forkAff, killFiber)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
-import Halogen.Query.EventSource as ES
+import Halogen.Subscription as HS
 import Listasio.Component.HTML.Utils (cx)
 import Tailwind as T
+import Type.Proxy (Proxy(..))
+
+_slot :: Proxy "typed"
+_slot = Proxy
 
 type Slot id = forall query. H.Slot query Void id
-
-data Tick = Tick
 
 data TypeStatus
   = Typing Boolean | Deliting | Waiting Int
@@ -31,7 +34,8 @@ isWaiting _ = false
 
 data Action
   = Initialize
-  | OnTick Tick
+  | Tick
+  | Finalize
 
 type State
   = { before :: Array String
@@ -40,29 +44,23 @@ type State
     , status :: TypeStatus
     , display :: String
     , position :: Int
+    , tickFiber :: Maybe (Fiber Unit)
     }
 
 type Input
-  = { words :: NonEmptyArray String }
-
-tickSource :: forall m. MonadAff m => ES.EventSource m Tick
-tickSource =
-  ES.affEventSource \emitter -> do
-    fiber <- forkAff $ forever do
-      ES.emit emitter Tick
-      delay $ Milliseconds 60.0
-    pure (ES.Finalizer (killFiber (error "Event source closed") fiber))
+  = {words :: NonEmptyArray String}
 
 component
   :: forall q o m
    . MonadAff m
-  => H.Component HH.HTML q Input o m
+  => H.Component q Input o m
 component = H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
       { handleAction = handleAction
       , initialize = Just Initialize
+      , finalize = Just Finalize
       }
   }
   where
@@ -73,26 +71,39 @@ component = H.mkComponent
     , status: Typing false
     , display: ""
     , position: 0
+    , tickFiber: Nothing
     }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
     Initialize -> do
-      _ <- H.subscribe (OnTick <$> tickSource)
-      pure unit
+      {emitter, listener} <- H.liftEffect HS.create
+      void $ H.subscribe emitter
 
-    OnTick Tick -> do
+      fiber <- H.liftAff $ forkAff $ forever do
+        H.liftEffect $ HS.notify listener Tick
+        delay $ Milliseconds 60.0
+
+      H.modify_ _ {tickFiber = Just fiber}
+
+    Finalize -> do
+      {tickFiber} <- H.get
+      for_ tickFiber \fiber ->
+        H.liftAff $ killFiber (error "Finalize") fiber
+
+
+    Tick -> do
       {display, position, status, before, current, after} <- H.get
 
       case status of
-        Waiting 0 -> H.modify_ _ { status = Deliting }
+        Waiting 0 -> H.modify_ _ {status = Deliting}
 
-        Waiting n -> H.modify_ _ { status = Waiting (n - 1) }
+        Waiting n -> H.modify_ _ {status = Waiting (n - 1)}
 
-        Typing false ->  H.modify_ _ { status = Typing true }
+        Typing false ->  H.modify_ _ {status = Typing true}
 
         Typing true -> do
-          when (display == current) $ H.modify_ _ { status = Waiting 33 }
+          when (display == current) $ H.modify_ _ {status = Waiting 33}
 
           unless (display == current) do
             let newPosition = position + 1
@@ -130,7 +141,7 @@ component = H.mkComponent
             _ -> H.modify_ _ {display = String.take (String.length display - 1) display}
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {display, current, status} =
+  render {display, status} =
     HH.span
       [ HP.classes
          [ T.typingCursor

@@ -2,8 +2,6 @@ module Listasio.Page.History where
 
 import Prelude
 
-import Component.HOC.Connect as Connect
-import Control.Monad.Reader (class MonadAsk)
 import Data.Array (find, groupBy, mapMaybe, null, sortBy, sortWith)
 import Data.Array.NonEmpty (NonEmptyArray)
 import Data.Array.NonEmpty as NEA
@@ -20,6 +18,9 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource, getResources)
@@ -27,7 +28,7 @@ import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Message as Message
 import Listasio.Component.HTML.Resource (resource)
 import Listasio.Component.HTML.ToggleGroup as ToggleGroup
-import Listasio.Component.HTML.Utils (cx, safeHref)
+import Listasio.Component.HTML.Utils (safeHref)
 import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
@@ -35,15 +36,19 @@ import Listasio.Data.Resource (FilterByDone(..), ListResource)
 import Listasio.Data.Route (Route(..))
 import Listasio.Data.YearMonth (YearMonth)
 import Listasio.Data.YearMonth as YearMonth
-import Listasio.Env (UserEnv)
+import Listasio.Store as Store
 import Network.RemoteData (RemoteData(..), fromEither)
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
 import Web.UIEvent.MouseEvent as Mouse
 
+_slot :: Proxy "history"
+_slot = Proxy
+
 data Action
   = Initialize
-  | Receive {currentUser :: Maybe ProfileWithIdAndEmail}
+  | Receive (Connected (Maybe ProfileWithIdAndEmail) Unit)
   | LoadResources
   | LoadLists
   | Navigate Route Event
@@ -115,14 +120,14 @@ noteError :: forall a. Maybe a -> Either String a
 noteError = note "Failed to load history"
 
 component
-  :: forall q o m r
+  :: forall q o m
    . MonadAff m
-  => MonadAsk {userEnv :: UserEnv | r} m
+  => MonadStore Store.Action Store.Store m
   => ManageResource m
   => ManageList m
   => Navigate m
-  => H.Component HH.HTML q {} o m
-component = Connect.component $ H.mkComponent
+  => H.Component q Unit o m
+component = connect (selectEq _.currentUser) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
@@ -132,7 +137,7 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState {currentUser} =
+  initialState {context: currentUser} =
     { currentUser
     , resources: NotAsked
     , lists: Nothing
@@ -156,7 +161,7 @@ component = Connect.component $ H.mkComponent
       lists <- getLists
       H.modify_ _ {lists = lists}
 
-    Receive {currentUser} ->
+    Receive {context: currentUser} ->
       H.modify_ _ {currentUser = currentUser}
 
     Navigate route e -> navigate_ e route
@@ -191,63 +196,20 @@ component = Connect.component $ H.mkComponent
             [ HP.classes [ T.mb4, T.mr0, T.smMr4, T.wFull, T.smWAuto ] ]
             [ ToggleGroup.toggleGroup
                 false
-                [ {label: "None", action: Just (ToggleGroupBy GroupNone), active: groupBy == GroupNone}
-                , {label: "By Date", action: Just (ToggleGroupBy GroupDate), active: groupBy == GroupDate}
-                , {label: "By List", action: Just (ToggleGroupBy GroupList), active: groupBy == GroupList}
+                [ {label: "None", action: ToggleGroupBy GroupNone, active: groupBy == GroupNone}
+                , {label: "By Date", action: ToggleGroupBy GroupDate, active: groupBy == GroupDate}
+                , {label: "By List", action: ToggleGroupBy GroupList, active: groupBy == GroupList}
                 ]
             ]
         , HH.div
             [ HP.classes [ T.wFull , T.smWAuto ] ]
             [ ToggleGroup.toggleGroup
                 (groupBy == GroupDate)
-                [ {label: "All", action: Just (ToggleFilterByDone ShowAll), active: filterByDone == ShowAll && groupBy /= GroupDate}
-                , {label: "Done", action: Just (ToggleFilterByDone ShowDone), active: filterByDone == ShowDone || groupBy == GroupDate}
-                , {label: "Pending", action: Just (ToggleFilterByDone ShowPending), active: filterByDone == ShowPending && groupBy /= GroupDate}
+                [ {label: "All", action: ToggleFilterByDone ShowAll, active: filterByDone == ShowAll && groupBy /= GroupDate}
+                , {label: "Done", action: ToggleFilterByDone ShowDone, active: filterByDone == ShowDone || groupBy == GroupDate}
+                , {label: "Pending", action: ToggleFilterByDone ShowPending, active: filterByDone == ShowPending && groupBy /= GroupDate}
                 ]
             ]
-        ]
-
-    filterBtnGroup disabled l r =
-      HH.div
-        [ HP.classes
-            [ T.roundedMd
-            , T.bgGray100
-            , T.py1
-            , T.grid
-            , T.gridCols2
-            , T.divideX2
-            , T.divideWhite
-            , T.textSm
-            , cx T.cursorNotAllowed disabled
-            ]
-        ]
-        [ l disabled, r disabled ]
-
-    filterBtn label action isSelected disabled =
-      HH.div
-        [ HP.classes [ T.px2 ] ]
-        [ HH.button
-            [ HP.type_ HP.ButtonButton
-            , HE.onClick \_ -> action
-            , HP.disabled disabled
-            , HP.classes
-                [ T.roundedMd
-                , T.px4
-                , T.py1
-                , T.wFull
-                , cx T.bgKiwi isSelected
-                , cx T.textWhite isSelected
-                , cx T.bgTransparent $ not isSelected
-                , cx T.textGray300 $ not isSelected
-                , T.focusOutlineNone
-                , T.focusRing2
-                , T.focusRingGray300
-                , T.focusRingInset
-                , T.disabledCursorNotAllowed
-                , cx T.disabledOpacity50 $ isSelected
-                ]
-            ]
-            [ HH.text label ]
         ]
 
     filterByDoneFn =
@@ -350,7 +312,7 @@ component = Connect.component $ H.mkComponent
           case currentUser of
             Just {slug} ->
               [ safeHref $ EditList slug l.slug
-              , HE.onClick (Just <<< Navigate (EditList slug l.slug) <<< Mouse.toEvent)
+              , HE.onClick (Navigate (EditList slug l.slug) <<< Mouse.toEvent)
               ]
                 <> rest
             Nothing -> rest

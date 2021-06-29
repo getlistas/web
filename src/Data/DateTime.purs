@@ -15,7 +15,7 @@ import Data.PreciseDateTime as PDT
 import Data.RFC3339String (RFC3339String(..))
 
 codec :: JsonCodec DateTime
-codec = CA.prismaticCodec from to CA.string
+codec = CA.prismaticCodec "DateTime" from to CA.string
   where from = map PDT.toDateTimeLossy <<< PDT.fromRFC3339String <<< RFC3339String
         to = unwrap <<< PDT.toRFC3339String <<< PDT.fromDateTime
 

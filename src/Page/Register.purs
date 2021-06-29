@@ -2,8 +2,6 @@ module Listasio.Page.Register where
 
 import Prelude
 
-import Data.Maybe (Maybe(..))
-import Data.Symbol (SProxy(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -14,7 +12,11 @@ import Listasio.Capability.Resource.User (class ManageUser)
 import Listasio.Component.HTML.Register as Register
 import Listasio.Data.Route (Route(..))
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Web.Event.Event as Event
+
+_slot :: Proxy "register"
+_slot = Proxy
 
 type ChildSlots
   = ( register :: Register.Slot )
@@ -31,7 +33,7 @@ component ::
   ManageUser m =>
   Navigate m =>
   Analytics m =>
-  H.Component HH.HTML q Unit o m
+  H.Component q Unit o m
 component =
   H.mkComponent
     { initialState: const unit
@@ -56,6 +58,6 @@ component =
           [ HH.text "Create your account" ]
       , HH.div
           [ HP.classes [ T.w96, T.maxWFull ] ]
-          [ HH.slot (SProxy :: _ "register") unit Register.component unit (Just <<< GoToSignin)
+          [ HH.slot Register._slot unit Register.component unit GoToSignin
           ]
       ]

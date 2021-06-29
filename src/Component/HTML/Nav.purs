@@ -2,18 +2,16 @@ module Listasio.Component.HTML.Nav where
 
 import Prelude
 
-import Component.HOC.Connect as Connect
-import Control.Monad.Reader (class MonadAsk)
-import Control.Monad.Reader.Trans (asks)
 import Data.Lens (over, set)
 import Data.Maybe (Maybe(..), isJust, isNothing, maybe)
-import Effect.Aff.Bus as Bus
 import Effect.Aff.Class (class MonadAff)
-import Effect.Ref as Ref
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore, updateStore)
+import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, getCurrentUser)
 import Listasio.Component.HTML.Icons as Icons
@@ -24,10 +22,14 @@ import Listasio.Data.Lens (_menuOpen)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
 import Listasio.Data.Username as Username
-import Listasio.Env (UserEnv)
+import Listasio.Store as Store
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
 import Web.UIEvent.MouseEvent as Mouse
+
+_slot :: Proxy "nav"
+_slot = Proxy
 
 type Slot = forall query. H.Slot query Void Unit
 
@@ -38,10 +40,13 @@ data AuthStatus
 
 derive instance eqForm :: Eq AuthStatus
 
+type Input
+  = {route :: Maybe Route}
+
 data Action
   = Initialize
   | GetCurrentUser
-  | Receive {currentUser :: Maybe ProfileWithIdAndEmail, route :: Maybe Route}
+  | Receive (Connected (Maybe ProfileWithIdAndEmail) Input)
   | Navigate Route Event
   | ToggleMenu
   | AndClose Action
@@ -54,13 +59,13 @@ type State
     }
 
 component
-  :: forall q o m r
+  :: forall q o m
    . MonadAff m
-  => MonadAsk {userEnv :: UserEnv | r} m
+  => MonadStore Store.Action Store.Store m
   => ManageUser m
   => Navigate m
-  => H.Component HH.HTML q {route:: Maybe Route} o m
-component = Connect.component $ H.mkComponent
+  => H.Component q Input o m
+component = connect (selectEq _.currentUser) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
@@ -70,7 +75,7 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState {currentUser, route} =
+  initialState {context: currentUser, input: {route}} =
     { currentUser
     , menuOpen: false
     , authStatus: maybe ShowLoading ShowUser currentUser
@@ -86,11 +91,9 @@ component = Connect.component $ H.mkComponent
 
     GetCurrentUser -> do
       user <- getCurrentUser
-      {currentUser, userBus} <- asks _.userEnv
-      H.liftEffect do Ref.write user currentUser
-      H.liftAff do Bus.write user userBus
+      updateStore $ maybe Store.LogoutUser Store.LoginUser user
 
-    Receive {currentUser, route} -> do
+    Receive {context: currentUser, input: {route}} -> do
       prev <- H.get
 
       H.modify_ _
@@ -124,9 +127,9 @@ component = Connect.component $ H.mkComponent
     where
     -- TODO: Home nav shares most of this
 
-    onNavigate route = Just <<< Navigate route <<< Mouse.toEvent
+    onNavigate route = Navigate route <<< Mouse.toEvent
 
-    onNavigateAndClose route = Just <<< AndClose <<< Navigate route <<< Mouse.toEvent
+    onNavigateAndClose route = AndClose <<< Navigate route <<< Mouse.toEvent
 
     isRoute = (_ == currentRoute) <<< Just
 
@@ -204,7 +207,7 @@ component = Connect.component $ H.mkComponent
                             , T.focusRingWhite
                             ]
                         , HP.type_ HP.ButtonButton
-                        , HE.onClick $ \_ -> Just ToggleMenu
+                        , HE.onClick $ const ToggleMenu
                         ]
                         [ HH.span
                             [ HP.classes [ T.srOnly ] ]
@@ -340,7 +343,7 @@ component = Connect.component $ H.mkComponent
                               , T.focusRingKiwi
                               ]
                           , HP.type_ HP.ButtonButton
-                          , HE.onClick $ \_ -> Just ToggleMenu
+                          , HE.onClick $ const ToggleMenu
                           ]
                           [ HH.span
                               [ HP.classes [ T.srOnly ] ]

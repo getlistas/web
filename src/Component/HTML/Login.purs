@@ -23,8 +23,12 @@ import Listasio.Form.Field as Field
 import Listasio.Form.Validation as V
 import Network.RemoteData (RemoteData(..), isFailure, isLoading)
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Web.Event.Event as Event
 import Web.UIEvent.MouseEvent as Mouse
+
+_slot :: Proxy "login"
+_slot = Proxy
 
 type Slot = forall query. H.Slot query Output Unit
 
@@ -56,7 +60,7 @@ component ::
   Navigate m =>
   ManageUser m =>
   Analytics m =>
-  H.Component HH.HTML q Input Output m
+  H.Component q Input Output m
 component =
   H.mkComponent
     { initialState
@@ -87,7 +91,7 @@ component =
              void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Failure "Could not login") unit
              H.modify_ _ {status = Failure "Could not login"}
 
-          Just profile@{email, id} -> do
+          Just {email, id} -> do
             userSet {email: unwrap email, userId: ID.toString id}
             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Success unit) unit
             H.modify_ _ { status = Success unit }
@@ -107,7 +111,7 @@ component =
             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus NotAsked unit
             H.modify_ _ { status = NotAsked }
 
-          Just profile@{email, id} -> do
+          Just {email, id} -> do
             userSet {email: unwrap email, userId: ID.toString id}
             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Success unit) unit
             H.modify_ _ { status = Success unit }
@@ -126,7 +130,7 @@ component =
       [ HP.classes [ T.flex, T.flexCol, T.itemsCenter ] ]
       [ HH.button
           [ HP.type_ HP.ButtonButton
-          , HE.onClick \_ -> Just HandleGoogleLogin
+          , HE.onClick $ const HandleGoogleLogin
           , HP.classes
               [ T.flex1
               , T.wFull
@@ -160,27 +164,26 @@ component =
           , HH.div [ HP.classes [ T.textGray300, T.mx4, T.leadingNone ] ] [ HH.text "Or" ]
           , HH.div [ HP.classes [ T.h0, T.wFull, T.borderT, T.borderGray200 ] ] []
           ]
-      , HH.slot F._formless unit formComponent unit (Just <<< HandleLoginForm)
+      , HH.slot F._formless unit formComponent unit HandleLoginForm
       , HH.p
           [ HP.classes [ T.mt4 ] ]
           [ HH.span [ HP.classes [ T.textGray400 ] ] [HH.text "Don't have an account? " ]
           , HH.a
               [ HP.classes [ T.textDurazno ]
-              , safeHref Register, HE.onClick (Just <<< SwitchToRegister <<< Mouse.toEvent)
+              , safeHref Register, HE.onClick $ SwitchToRegister <<< Mouse.toEvent
               ]
               [ HH.text "Sign up" ]
           ]
       ]
 
-newtype LoginForm r f
-  = LoginForm
-  ( r
-      ( email :: f V.FormError String Email
-      , password :: f V.FormError String String
-      )
-  )
+newtype LoginForm (r :: Row Type -> Type) f = LoginForm (r (FormRow f))
+derive instance Newtype (LoginForm r f) _
 
-derive instance newtypeLoginForm :: Newtype (LoginForm r f) _
+type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
+type FormRow f =
+  ( email :: f V.FormError String Email
+  , password :: f V.FormError String String
+  )
 
 data FormQuery a
   = SetLoginStatus (RemoteData String Unit) a
@@ -231,11 +234,11 @@ formComponent =
       H.modify_ _ { status = status }
       pure (Just a)
 
-  proxies = F.mkSProxies (F.FormProxy :: _ LoginForm)
+  proxies = F.mkSProxies (Proxy :: Proxy LoginForm)
 
   renderLogin { form, status, submitting } =
     HH.form
-      [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev
+      [ HE.onSubmit $ F.injAction <<< Submit
       , HP.noValidate true
       , HP.classes [ T.wFull ]
       ]

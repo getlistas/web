@@ -22,22 +22,22 @@ import Listasio.Form.Validation ((<?>))
 import Listasio.Form.Validation as V
 import Network.RemoteData (RemoteData(..), isFailure, isLoading)
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Web.Event.Event as Event
 
 type Slot
   = F.Slot ListForm FormQuery () CreateListFields Unit
 
-newtype ListForm r f
-  = ListForm
-  ( r
-      ( title :: f V.FormError String String
-      , description :: f V.FormError String (Maybe String)
-      , tags :: f V.FormError String (Array String)
-      , is_public :: f V.FormError Boolean Boolean
-      )
-  )
+newtype ListForm (r :: Row Type -> Type) f = ListForm (r (FormRow f))
+derive instance Newtype (ListForm r f) _
 
-derive instance newtypeListForm :: Newtype (ListForm r f) _
+type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
+type FormRow f =
+  ( title :: f V.FormError String String
+  , description :: f V.FormError String (Maybe String)
+  , tags :: f V.FormError String (Array String)
+  , is_public :: f V.FormError Boolean Boolean
+  )
 
 data FormQuery a
   = SetCreateStatus (RemoteData String ListWithIdAndUser) a
@@ -71,7 +71,7 @@ formComponent =
         }
   where
   formInput :: FormInput -> F.Input ListForm ListState m
-  formInput { list } =
+  formInput {list} =
     { validators:
         ListForm
           { title: V.required >>> V.maxLength 100
@@ -87,7 +87,7 @@ formComponent =
     , isNew: isNothing list
     }
 
-  initialInputs { title, description, tags, is_public } = F.wrapInputFields
+  initialInputs {title, description, tags, is_public} = F.wrapInputFields
     { title
     , description: fromMaybe "" description
     , tags: joinWith ", " tags
@@ -101,25 +101,26 @@ formComponent =
   handleAction = case _ of
     Submit event -> do
       H.liftEffect $ Event.preventDefault event
-      { status, dirty } <- H.get
+      {status, dirty} <- H.get
       let shouldSubmit = dirty && not (isLoading status)
       when shouldSubmit do eval F.submit
 
   handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
-    SetCreateStatus (Success newList@{title, description, tags, is_public}) a -> do
-      H.modify_ _ { status = Success unit, initialList = Just newList }
+    SetCreateStatus (Success newList) a -> do
+      H.modify_ _ {status = Success unit, initialList = Just newList}
       eval $ F.loadForm $ initialInputs newList
       pure (Just a)
+
     SetCreateStatus status a -> do
-      H.modify_ _ { status = map (const unit) status }
+      H.modify_ _ {status = map (const unit) status}
       pure (Just a)
 
-  proxies = F.mkSProxies (F.FormProxy :: _ ListForm)
+  proxies = F.mkSProxies (Proxy :: Proxy ListForm)
 
-  render { dirty, form, status, submitting, isNew, initialList } =
+  render {dirty, form, status, submitting, isNew} =
     HH.form
-      [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev
+      [ HE.onSubmit $ F.injAction <<< Submit
       , HP.noValidate true
       ]
       [ HH.fieldset_
@@ -134,7 +135,7 @@ formComponent =
               [ HH.input
                   [ HP.type_ HP.InputCheckbox
                   , HP.checked $ F.getInput proxies.is_public form
-                  , HE.onChange $ \_ -> Just $ F.modify proxies.is_public not
+                  , HE.onChange $ const $ F.modify proxies.is_public not
                   , HP.classes
                       [ T.h6
                       , T.w6

@@ -2,9 +2,7 @@ module Listasio.Page.Profile where
 
 import Prelude
 
-import Component.HOC.Connect as Connect
 import Control.Error.Util (note)
-import Control.Monad.Reader (class MonadAsk)
 import Data.Array (cons, drop, range)
 import Data.Date (Date, Weekday(..), adjust, weekday)
 import Data.DateTime (DateTime(..), date)
@@ -21,6 +19,9 @@ import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Now (class Now, nowDate, nowTime)
 import Listasio.Capability.Resource.User (class ManageUser, userMetrics, userBySlug)
@@ -31,16 +32,23 @@ import Listasio.Data.Metrics (Metric)
 import Listasio.Data.Profile (ProfileWithIdAndEmail, PublicProfile)
 import Listasio.Data.Route (Route)
 import Listasio.Data.Username as Username
-import Listasio.Env (UserEnv)
+import Listasio.Store as Store
 import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
 import Slug (Slug)
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
+
+_slot :: Proxy "profile"
+_slot = Proxy
+
+type Input
+  = {slug :: Slug}
 
 data Action
   = Initialize
-  | Receive {slug :: Slug, currentUser :: Maybe ProfileWithIdAndEmail}
+  | Receive (Connected (Maybe ProfileWithIdAndEmail) Input)
   | LoadUser
   | LoadMetrics
   | Navigate Route Event
@@ -113,14 +121,14 @@ allDaysPastYear date =
     $ weekday date
 
 component
-  :: forall q o m r
+  :: forall q o m
    . MonadAff m
-  => MonadAsk { userEnv :: UserEnv | r } m
+  => MonadStore Store.Action Store.Store m
   => ManageUser m
   => Navigate m
   => Now m
-  => H.Component HH.HTML q {slug :: Slug} o m
-component = Connect.component $ H.mkComponent
+  => H.Component q Input o m
+component = connect (selectEq _.currentUser) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
@@ -130,7 +138,7 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState {slug, currentUser} =
+  initialState {context: currentUser, input: {slug}} =
     { slug
     , currentUser
     , profile: NotAsked
@@ -147,7 +155,7 @@ component = Connect.component $ H.mkComponent
       void $ H.fork $ handleAction LoadUser
       void $ H.fork $ handleAction LoadMetrics
 
-    Receive {currentUser} -> do
+    Receive {context: currentUser} -> do
       H.modify_ _ {currentUser = currentUser}
 
     LoadUser -> do
@@ -171,7 +179,7 @@ component = Connect.component $ H.mkComponent
     Navigate route e -> navigate_ e route
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {currentUser, profile, metrics, time} =
+  render {profile, metrics, time} =
     HH.div
       []
       [ Wip.elem

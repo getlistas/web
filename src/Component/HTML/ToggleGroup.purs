@@ -10,7 +10,7 @@ import Listasio.Component.HTML.Utils (cx)
 import Tailwind as T
 
 type ButtonSpec p
-  = { action :: Maybe p
+  = { action :: p
     , label :: String
     , active :: Boolean
     }

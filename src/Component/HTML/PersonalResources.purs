@@ -10,7 +10,7 @@ import Data.Enum (toEnum)
 import Data.Lens (lastOf, over, preview, set, traversed)
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing, maybe)
 import Data.String (null, trim)
-import Data.Symbol (SProxy(..))
+import Type.Proxy (Proxy(..))
 import Data.Traversable (for_)
 import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
@@ -45,7 +45,7 @@ import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
 type Slot id = forall query. H.Slot query Void id
 
-_personalResources = SProxy :: SProxy "personalResources"
+_personalResources = Proxy :: Proxy "personalResources"
 
 type Input = {list :: ID}
 
@@ -66,6 +66,7 @@ data Action
   | ToggleStatusFilter FilterByDone
     -- meta actions
   | WhenNotProcessingAction Action
+  | NoOp
 
 type State
   = { list :: ID
@@ -98,7 +99,7 @@ component
   => Navigate m
   => Clipboard m
   => Now m
-  => H.Component HH.HTML q Input o m
+  => H.Component q Input o m
 component = H.mkComponent
   { initialState
   , render
@@ -240,6 +241,8 @@ component = H.mkComponent
       {isProcessingAction} <- H.get
       when (not isProcessingAction) $ void $ H.fork $ handleAction action
 
+    NoOp -> pure unit
+
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render {isProcessingAction, resources, confirmDelete, year, filterByStatus, searchQuery} =
     HH.div
@@ -265,11 +268,11 @@ component = H.mkComponent
                       , T.focusZ10
                       ]
                   , HP.value searchQuery
-                  , HE.onValueInput $ Just <<< SearchChange
+                  , HE.onValueInput $ SearchChange
                   , HE.onKeyDown \e ->
                       case KeyboardEvent.code e of
-                        "Escape" -> Just $ SearchChange ""
-                        _ -> Nothing
+                        "Escape" -> SearchChange ""
+                        _ -> NoOp
                   ]
               , HH.button
                   [ HP.classes
@@ -288,7 +291,7 @@ component = H.mkComponent
                       , T.focusRingKiwi
                       , T.focusBorderKiwi
                       ]
-                  , HE.onClick \_ -> Just $ SearchChange ""
+                  , HE.onClick $ const $ SearchChange ""
                   , HP.disabled $ null searchQuery
                   ]
                   [ Icons.x
@@ -299,9 +302,9 @@ component = H.mkComponent
               [ HP.classes [ T.wFull , T.smWAuto ] ]
               [ ToggleGroup.toggleGroup
                   false
-                  [ {label: "All", action: Just (ToggleStatusFilter ShowAll), active: filterByStatus == ShowAll}
-                  , {label: "Done", action: Just (ToggleStatusFilter ShowDone), active: filterByStatus == ShowDone}
-                  , {label: "Pending", action: Just (ToggleStatusFilter ShowPending), active: filterByStatus == ShowPending}
+                  [ {label: "All", action: ToggleStatusFilter ShowAll, active: filterByStatus == ShowAll}
+                  , {label: "Done", action: ToggleStatusFilter ShowDone, active: filterByStatus == ShowDone}
+                  , {label: "Pending", action: ToggleStatusFilter ShowPending, active: filterByStatus == ShowPending}
                   ]
               ]
           ]
@@ -344,9 +347,9 @@ component = H.mkComponent
 
     isLast id = Just id == mbLastId
 
-    iconAction {icon, action, hoverColor, title} =
+    iconAction {icon, action, hoverColor, title, disabled} =
       HH.button
-        [ HE.onClick \_ -> Just action
+        [ HE.onClick $ const action
         , HP.classes
             [ T.cursorPointer
             , T.py2
@@ -356,13 +359,13 @@ component = H.mkComponent
             , T.textGray300
             , hoverColor
             ]
-        , HP.disabled isProcessingAction
+        , HP.disabled (isProcessingAction || disabled)
         , HP.title title
         ]
         [ icon [ Icons.classes [ T.h5, T.w5 ] ] ]
 
     listResource :: Int -> ListResource -> Tuple String _
-    listResource i resource@{id, url, thumbnail, title, completed_at, created_at, position, description} =
+    listResource i resource@{id, url, thumbnail, title, completed_at, created_at, description} =
       Tuple (ID.toString id)
         $ HH.div
             [ HP.classes
@@ -375,7 +378,7 @@ component = H.mkComponent
                 , T.group
                 , T.h36
                 ]
-            , HE.onMouseLeave \_ -> Just CancelDeleteResource
+            , HE.onMouseLeave $ const CancelDeleteResource
             ]
             [ HH.div
                 [ HP.classes [ T.pt4, T.px4, T.pb2, T.flex, T.flexCol, T.justifyBetween, T.truncate ] ]
@@ -428,6 +431,7 @@ component = H.mkComponent
                             , action: WhenNotProcessingAction $ UncompleteResource resource
                             , hoverColor: T.hoverTextRed700
                             , title: "Mark as pending"
+                            , disabled: false
                             }
                         Nothing ->
                           iconAction
@@ -435,12 +439,14 @@ component = H.mkComponent
                             , action: WhenNotProcessingAction $ CompleteResource resource
                             , hoverColor: T.hoverTextKiwi
                             , title: "Mark as done"
+                            , disabled: false
                             }
                     , iconAction
                         { icon: Icons.sortDescending
                         , action: WhenNotProcessingAction $ SkipResource i resource
                         , hoverColor: T.hoverTextKiwi
                         , title: "Move to last"
+                        , disabled: isLast id
                         }
                     , case confirmDelete of
                         Just toDelete | toDelete == id ->
@@ -449,6 +455,7 @@ component = H.mkComponent
                             , action: WhenNotProcessingAction $ ConfirmDeleteResource resource
                             , hoverColor: T.hoverTextRed700
                             , title: "Confirm delete"
+                            , disabled: false
                             }
                         _ ->
                           iconAction
@@ -456,18 +463,21 @@ component = H.mkComponent
                             , action: WhenNotProcessingAction $ DeleteResource resource
                             , hoverColor: T.hoverTextRed700
                             , title: "Delete"
+                            , disabled: false
                             }
                     , iconAction
                         { icon: Icons.clipboardCopy
                         , action: CopyResourceURL resource
                         , hoverColor: T.hoverTextKiwi
                         , title: "Copy link"
+                        , disabled: false
                         }
                     , iconAction
                         { icon: Icons.share
                         , action: CopyToShare resource
                         , hoverColor: T.hoverTextKiwi
                         , title: "Copy share link"
+                        , disabled: false
                         }
                     ]
                 ]

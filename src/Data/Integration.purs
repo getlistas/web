@@ -19,7 +19,8 @@ data IntegrationKind
   | KindListSubscription
 
 integrationKindCodec :: JsonCodec IntegrationKind
-integrationKindCodec = CA.prismaticCodec parse toString CA.string
+integrationKindCodec =
+  CA.prismaticCodec "IntegrationKind" parse toString CA.string
   where
   parse "rss" = Just KindRss
   parse "listas-subscription" = Just KindListSubscription

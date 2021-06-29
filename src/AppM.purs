@@ -3,7 +3,6 @@ module Listasio.AppM where
 import Prelude
 
 import ConfigProvider as ConfigProvider
-import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, ask, asks, runReaderT)
 import Data.Argonaut.Encode (encodeJson)
 import Data.Codec.Argonaut as Codec
 import Data.Codec.Argonaut.Compat as CAC
@@ -11,12 +10,12 @@ import Data.Codec.Argonaut.Record as CAR
 import Data.Either (Either(..), hush)
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
-import Effect.Aff.Bus as Bus
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (class MonadEffect, liftEffect)
 import Effect.Console as Console
 import Effect.Now as Now
-import Effect.Ref as Ref
+import Halogen as H
+import Halogen.Store.Monad (class MonadStore, StoreT, getStore, runStoreT, updateStore)
 import Listasio.Api.Endpoint (Endpoint(..), SortingResources(..))
 import Listasio.Api.Request (RequestMethod(..))
 import Listasio.Api.Request as Request
@@ -38,18 +37,18 @@ import Listasio.Data.Profile as Profile
 import Listasio.Data.Resource as Resource
 import Listasio.Data.ResourceMetadata as ResourceMeta
 import Listasio.Data.Route as Route
-import Listasio.Env (Env, LogLevel(..))
 import Listasio.Foreign.Clipboard as ForeignClipboard
 import Listasio.Foreign.Splitbee as Splitbee
+import Listasio.Store as Store
 import Routing.Duplex (print)
-import Type.Equality (class TypeEquals, from)
+import Safe.Coerce (coerce)
 import Web.Event.Event (preventDefault)
 
 newtype AppM a
-  = AppM (ReaderT Env Aff a)
+  = AppM (StoreT Store.Action Store.Store Aff a)
 
-runAppM :: Env -> AppM ~> Aff
-runAppM env (AppM m) = runReaderT m env
+runAppM :: forall q i o. Store.Store -> H.Component q i o AppM -> Aff (H.Component q i o Aff)
+runAppM store = runStoreT store Store.reduce <<< coerce
 
 derive newtype instance functorAppM :: Functor AppM
 derive newtype instance applyAppM :: Apply AppM
@@ -58,9 +57,7 @@ derive newtype instance bindAppM :: Bind AppM
 derive newtype instance monadAppM :: Monad AppM
 derive newtype instance monadEffectAppM :: MonadEffect AppM
 derive newtype instance monadAffAppM :: MonadAff AppM
-
-instance monadAskAppM :: TypeEquals e Env => MonadAsk e AppM where
-  ask = AppM $ asks from
+derive newtype instance monadStoreAppM :: MonadStore Store.Action Store.Store AppM
 
 instance cliboardAppM :: Clipboard AppM where
   writeText = liftAff <<< ForeignClipboard.writeText
@@ -73,30 +70,26 @@ instance nowAppM :: Now AppM where
 
 instance logMessagesAppM :: LogMessages AppM where
   logMessage log = do
-    env <- ask
-    liftEffect case env.logLevel, Log.reason log of
-      Prod, Log.Debug -> pure unit
+    {env} <- getStore
+    liftEffect case env, Log.reason log of
+      Store.Prod, Log.Debug -> pure unit
       _, _ -> Console.log $ Log.message log
 
 instance navigateAppM :: Navigate AppM where
-  locationState = liftEffect =<< _.nav.locationState <$> ask
+  locationState = liftEffect =<< _.nav.locationState <$> getStore
 
   navigate route = do
-    {pushState} <- asks _.nav
+    {nav} <- getStore
     {state} <- locationState
-    liftEffect $ pushState state $ print Route.routeCodec $ route
+    liftEffect $ nav.pushState state $ print Route.routeCodec $ route
 
   navigate_ event route = do
     liftEffect $ preventDefault event
     navigate route
 
   logout = do
-    {currentUser, userBus} <- asks _.userEnv
-    liftEffect do
-      Ref.write Nothing currentUser
-      Request.removeToken
-    liftAff do
-      Bus.write Nothing userBus
+    liftEffect $ Request.removeToken
+    updateStore Store.LogoutUser
     navigate Route.Home
 
 instance analyticsAppM :: Analytics AppM where
@@ -114,7 +107,7 @@ instance manageUserAppM :: ManageUser AppM where
   googleLoginUser = authenticate Request.googleLogin unit
 
   registerUser fields = do
-    {baseUrl} <- ask
+    {baseUrl} <- getStore
     res <- Request.register baseUrl fields
     case res of
       Left err -> logError err *> pure Nothing
@@ -172,9 +165,8 @@ instance manageListAppM :: ManageList AppM where
     where conf = {endpoint: ListFork id, method: Post Nothing}
 
   discoverLists pagination = do
-    {userEnv} <- ask
-    mbId <- map _.id <$> (liftEffect $ Ref.read userEnv.currentUser)
     res <- hush <$> mkRequest conf (CAC.array List.publicListCodec)
+    mbId <- map _.id <$> _.currentUser <$> getStore
     pure $ map (List.publicListUserToAuthor mbId) <$> res
     where conf = {endpoint: Discover pagination, method: Get}
 

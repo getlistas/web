@@ -2,8 +2,6 @@ module Listasio.Page.ListIntegrations where
 
 import Prelude
 
-import Component.HOC.Connect as Connect
-import Control.Monad.Reader (class MonadAsk)
 import Data.Array as Array
 import Data.Either (note)
 import Data.Lens (over, preview, set)
@@ -15,6 +13,9 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.Integration (class ManageIntegration, createRssIntegration, deleteIntegration, getListIntegrations)
 import Listasio.Capability.Resource.List (class ManageList, getListBySlug)
@@ -28,23 +29,33 @@ import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 import Listasio.Data.Integration (Integration(..), ListSubscription, RssIntegration)
-import Listasio.Data.Lens (_id, _newRss, _rss, _rssResult, _subscriptions)
+import Listasio.Data.Lens (_id, _list, _newRss, _rss, _rssResult, _subscriptions)
 import Listasio.Data.List (ListWithIdAndUser)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
-import Listasio.Env (UserEnv)
 import Listasio.Form.Validation (FormError(..))
+import Listasio.Store as Store
 import Network.RemoteData (RemoteData(..), _Failure, _Loading, _NotAsked, _Success)
 import Network.RemoteData as RemoteData
 import Slug (Slug)
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Unsafe.Coerce (unsafeCoerce)
 import Util (fromPredicate)
 import Web.Event.Event (Event)
 import Web.UIEvent.MouseEvent as Mouse
 
+_slot :: Proxy "listIntegrations"
+_slot = Proxy
+
+type Input
+  = {user :: Slug, list :: Slug}
+
 data Action
-  = Receive {currentUser :: Maybe ProfileWithIdAndEmail, user :: Slug, list :: Slug}
+  = Initialize
+  | LoadList
+  | LoadIntegrations
+  | Receive (Connected (Maybe ProfileWithIdAndEmail) Input)
   | OnNewChange String
   | SaveRss
   | Navigate Route Event
@@ -73,23 +84,24 @@ getSubscription (ListSubscription a) = Just a
 getSubscription _ = Nothing
 
 component
-  :: forall q o m r
+  :: forall q o m
    . MonadAff m
-  => MonadAsk {userEnv :: UserEnv | r} m
+  => MonadStore Store.Action Store.Store m
   => Navigate m
   => ManageList m
   => ManageIntegration m
-  => H.Component HH.HTML q {user :: Slug, list :: Slug} o m
-component = Connect.component $ H.mkComponent
+  => H.Component q Input o m
+component = connect (selectEq _.currentUser) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
       { handleAction = handleAction
+      , initialize = Just Initialize
       , receive = Just <<< Receive
       }
   }
   where
-  initialState {currentUser, list, user} =
+  initialState {context: currentUser, input: {list, user}} =
     { currentUser
     , userSlug: user
     , listSlug: list
@@ -102,22 +114,27 @@ component = Connect.component $ H.mkComponent
 
   handleAction :: Action -> H.HalogenM State Action Slots o m Unit
   handleAction = case _ of
-    Receive {currentUser} -> do
+    Initialize ->
+      void $ H.fork $ handleAction LoadList
+
+    LoadList -> do
       st <- H.get
+      H.modify_ _ {list = Loading}
+      list <- RemoteData.fromEither <$> note "Could not get list" <$> getListBySlug {list: st.listSlug, user: st.userSlug}
+      H.modify_ _ {list = list}
+
+      void $ H.fork $ handleAction LoadIntegrations
+
+    LoadIntegrations -> do
+      mbId <- H.gets $ preview ( _list <<< _Success <<< _id)
+
+      for_ mbId \listId -> do
+        H.modify_ _ {rss = Loading, subscriptions = Loading}
+        res <- RemoteData.fromEither <$> note "Could not get RSS integrations" <$> getListIntegrations listId
+        H.modify_ _ {rss = Array.mapMaybe getRss <$> res, subscriptions = Array.mapMaybe getSubscription <$> res}
+
+    Receive {context: currentUser} -> do
       H.modify_ _ {currentUser = currentUser}
-      case st.currentUser, currentUser of
-        Nothing, Just {slug} -> do
-          H.modify_ _ {list = Loading}
-          list <- RemoteData.fromEither <$> note "Could not get list" <$> getListBySlug { list: st.listSlug, user: st.userSlug }
-          H.modify_ _ {list = list}
-
-          case preview (_Success <<< _id) list of
-            Just listId -> do
-              res <- RemoteData.fromEither <$> note "Could not get RSS integrations" <$> getListIntegrations listId
-              H.modify_ _ { rss = Array.mapMaybe getRss <$> res, subscriptions = Array.mapMaybe getSubscription <$> res }
-            Nothing -> pure unit
-
-        _, _ -> pure unit
 
     Navigate route e -> navigate_ e route
 
@@ -146,7 +163,7 @@ component = Connect.component $ H.mkComponent
       mbRss <- H.gets $ preview (_rss <<< _Success)
       let shouldDelete = (_ == id) <<< _.id
           toDelete = Array.find shouldDelete =<< mbRss
-      for_ ({rss: _, deleted: _} <$> mbRss <*> toDelete) $ \{rss, deleted} -> do
+      for_ ({rss: _, deleted: _} <$> mbRss <*> toDelete) $ \{deleted} -> do
         H.modify_ $ over (_rss <<< _Success) (Array.filter (not <<< shouldDelete))
         result <- deleteIntegration id
         case result of
@@ -157,7 +174,7 @@ component = Connect.component $ H.mkComponent
       mbSubscriptions <- H.gets $ preview (_subscriptions <<< _Success)
       let shouldDelete = (_ == id) <<< _.id
           toDelete = Array.find shouldDelete =<< mbSubscriptions
-      for_ ({subscriptions: _, deleted: _} <$> mbSubscriptions <*> toDelete) $ \{subscriptions, deleted} -> do
+      for_ ({subscriptions: _, deleted: _} <$> mbSubscriptions <*> toDelete) $ \{deleted} -> do
         H.modify_ $ over (_subscriptions <<< _Success) (Array.filter (not <<< shouldDelete))
         result <- deleteIntegration id
         case result of
@@ -165,7 +182,7 @@ component = Connect.component $ H.mkComponent
           Just _ -> pure unit
 
   render :: State -> H.ComponentHTML Action Slots m
-  render {subscriptions, newRss, rss, rssResult, currentUser, list: mbList, listSlug, userSlug} =
+  render {subscriptions, newRss, rss, rssResult, list: mbList, listSlug, userSlug} =
     HH.div [] [ header, content ]
 
     where
@@ -179,7 +196,7 @@ component = Connect.component $ H.mkComponent
                 [ HH.text $ RemoteData.maybe "..." _.title mbList  ]
             , HH.a
                 [ safeHref $ PublicList userSlug listSlug
-                , HE.onClick $ Just <<< Navigate (PublicList userSlug listSlug) <<< Mouse.toEvent
+                , HE.onClick $ Navigate (PublicList userSlug listSlug) <<< Mouse.toEvent
                 , HP.classes
                     [ T.flex
                     , T.itemsCenter
@@ -192,14 +209,14 @@ component = Connect.component $ H.mkComponent
             ]
         ]
 
-    mkLayout list cards =
+    mkLayout cards =
       CardsAndSidebar.layout
         [ { active: false
           , icon: Icons.userCircle
           , label: "Settings"
           , link:
               Just
-                { action: Just <<< Navigate (EditList userSlug listSlug)
+                { action: Navigate (EditList userSlug listSlug)
                 , route: EditList userSlug listSlug
                 }
           }
@@ -213,9 +230,8 @@ component = Connect.component $ H.mkComponent
 
     content =
       case mbList of
-        Success list ->
+        Success _ ->
           mkLayout
-            (Just list)
             [ { cta: Nothing
               , title: "RSS feed"
               , description: Nothing
@@ -224,18 +240,17 @@ component = Connect.component $ H.mkComponent
                     []
                     [ HH.div
                         [ HP.classes [ T.flex, T.itemsStart, T.spaceX4 ] ]
-                        [ Input.input $ Input.defaultProps
+                        [ Input.input $ (Input.defaultProps OnNewChange)
                             { label = Nothing
                             , placeholder = Just "https://collectednotes.com/listas.rss"
                             , required = true
                             , iconBefore = unsafeCoerce $ Just Icons.rss -- TODO !!!!!!!!!
-                            , action = Just <<< OnNewChange
                             , value = newRss
                             , disabled = RemoteData.isLoading rssResult
                             , error = WithMsg <$> preview _Failure rssResult -- TODO validation / use form ?
                             , message = const "Creating RSS integration ..." <$> preview _Loading rssResult
                             }
-                        , Button.primary (HH.text "Save") (String.null newRss || not (RemoteData.isNotAsked rssResult)) $ Just SaveRss
+                        , Button.primary (HH.text "Save") (String.null newRss || not (RemoteData.isNotAsked rssResult)) SaveRss
                         ]
                     , case rss of
                         Success items ->
@@ -263,7 +278,7 @@ component = Connect.component $ H.mkComponent
                             ]
                             [ HH.text "Find lists to follow on "
                             , HH.a
-                                [ HE.onClick $ Just <<< Navigate Discover <<< Mouse.toEvent
+                                [ HE.onClick $ Navigate Discover <<< Mouse.toEvent
                                 , safeHref Discover
                                 , HP.classes [ T.textKiwi ]
                                 ]
@@ -283,7 +298,6 @@ component = Connect.component $ H.mkComponent
         -- TODO: better message
         Failure msg ->
           mkLayout
-            Nothing
             [ { cta: Nothing
               , content: HH.div [ HP.classes [ T.textManzana ] ] [ HH.text msg ]
               , title: "RSS feed subscriptions"
@@ -299,7 +313,6 @@ component = Connect.component $ H.mkComponent
         -- TODO: better message
         _ ->
           mkLayout
-            Nothing
             [ { cta: Nothing
               , content: HH.div [ HP.classes [ T.textGray400 ] ] [ HH.text "Loading ..." ]
               , title: "RSS feed subscriptions"
@@ -373,7 +386,7 @@ component = Connect.component $ H.mkComponent
                 [ HH.div
                     [ HP.classes [ T.flex ] ]
                     [ HH.button
-                        [ HE.onClick \_ -> Just $ DeleteRssIntegration i.id
+                        [ HE.onClick $ const $ DeleteRssIntegration i.id
                         , HP.classes [ T.cursorPointer ]
                         , HP.type_ HP.ButtonButton
                         ]
@@ -440,7 +453,7 @@ component = Connect.component $ H.mkComponent
                 [ HH.div
                     [ HP.classes [ T.flex ] ]
                     [ HH.button
-                        [ HE.onClick \_ -> Just $ DeleteSubscription i.id
+                        [ HE.onClick $ const $ DeleteSubscription i.id
                         , HP.classes [ T.cursorPointer ]
                         , HP.type_ HP.ButtonButton
                         ]

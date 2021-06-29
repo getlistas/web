@@ -26,19 +26,23 @@ import Listasio.Form.Field as Field
 import Listasio.Form.Validation as V
 import Network.RemoteData (RemoteData(..), fromEither, isFailure, isLoading)
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Web.Event.Event as Event
 import Web.UIEvent.MouseEvent as Mouse
+
+_slot :: Proxy "register"
+_slot = Proxy
 
 type Slot = forall query. H.Slot query Output Unit
 
 type ChildSlots
-  = ( formless :: F.Slot RegisterForm FormQuery () RegisterFields Unit )
+  = ( registerForm :: F.Slot RegisterForm FormQuery () RegisterFields Unit )
 
 data Output
   = GoToSignin
 
 type State
-  = { status :: RemoteData String Unit }
+  = {status :: RemoteData String Unit}
 
 data Action
   = Initialize
@@ -53,10 +57,10 @@ component ::
   ManageUser m =>
   Navigate m =>
   Analytics m =>
-  H.Component HH.HTML q Unit Output m
+  H.Component q Unit Output m
 component =
   H.mkComponent
-    { initialState: const { status: NotAsked }
+    { initialState: const {status: NotAsked}
     , render
     , eval: H.mkEval $ H.defaultEval
         { handleAction = handleAction
@@ -70,28 +74,28 @@ component =
       void $ H.liftAff $ initGoogleAuth
 
     HandleRegisterForm fields -> do
-      { status } <- H.get
+      {status} <- H.get
       when (not $ isLoading status) do
-        void $ H.query F._formless unit $ F.injQuery $ SetRegisterStatus Loading unit
-        H.modify_ _ { status = Loading }
+        void $ H.query _form unit $ F.injQuery $ SetRegisterStatus Loading unit
+        H.modify_ _ {status = Loading}
 
         result <- fromEither <$> note "Failed to register" <$> registerUser fields
 
-        H.modify_ _ { status = unit <$ result }
-        void $ H.query F._formless unit $ F.injQuery $ SetRegisterStatus (unit <$ result) unit
+        H.modify_ _ {status = unit <$ result}
+        void $ H.query _form unit $ F.injQuery $ SetRegisterStatus (unit <$ result) unit
 
     HandleGoogleLogin -> do
-      { status } <- H.get
+      {status} <- H.get
       when (not $ isLoading status) do
-        void $ H.query F._formless unit $ F.injQuery $ SetRegisterStatus Loading unit
-        H.modify_ _ { status = Loading }
+        void $ H.query _form unit $ F.injQuery $ SetRegisterStatus Loading unit
+        H.modify_ _ {status = Loading}
 
         mbProfile <- googleLoginUser
 
         case mbProfile of
           Nothing -> do
-            void $ H.query F._formless unit $ F.injQuery $ SetRegisterStatus NotAsked unit
-            H.modify_ _ { status = NotAsked }
+            void $ H.query _form unit $ F.injQuery $ SetRegisterStatus NotAsked unit
+            H.modify_ _ {status = NotAsked}
 
           Just {email, id} -> do
             userSet {email: unwrap email, userId: ID.toString id}
@@ -104,7 +108,7 @@ component =
       H.raise GoToSignin
 
   render :: State -> H.ComponentHTML Action ChildSlots m
-  render { status } =
+  render {status} =
     case status of
       Success _ ->
         HH.div
@@ -121,7 +125,7 @@ component =
           [ HP.classes [ T.flex, T.flexCol, T.itemsCenter ] ]
           [ HH.button
               [ HP.type_ HP.ButtonButton
-              , HE.onClick \_ -> Just HandleGoogleLogin
+              , HE.onClick $ const HandleGoogleLogin
               , HP.classes
                   [ T.flex1
                   , T.wFull
@@ -153,28 +157,30 @@ component =
               , HH.div [ HP.classes [ T.textGray300, T.mx4, T.leadingNone ] ] [ HH.text "Or" ]
               , HH.div [ HP.classes [ T.h0, T.wFull, T.borderT, T.borderGray200 ] ] []
               ]
-          , HH.slot F._formless unit formComponent unit (Just <<< HandleRegisterForm)
+          , HH.slot _form unit formComponent unit HandleRegisterForm
           , HH.p
               [ HP.classes [ T.mt4 ] ]
               [ HH.span [ HP.classes [ T.textGray400 ] ] [HH.text "Already have an account? " ]
               , HH.a
                   [ HP.classes [ T.textDurazno ]
-                  , safeHref Register, HE.onClick (Just <<< SwitchToSignin <<< Mouse.toEvent)
+                  , safeHref Register
+                  , HE.onClick $ SwitchToSignin <<< Mouse.toEvent
                   ]
                   [ HH.text "Sign in" ]
               ]
           ]
 
-newtype RegisterForm r f
-  = RegisterForm
-  ( r
-      ( name :: f V.FormError String Username
-      , email :: f V.FormError String Email
-      , password :: f V.FormError String String
-      )
-  )
+_form = Proxy :: Proxy "registerForm"
 
-derive instance newtypeRegisterForm :: Newtype (RegisterForm r f) _
+newtype RegisterForm (r :: Row Type -> Type) f = RegisterForm (r (FormRow f))
+derive instance Newtype (RegisterForm r f) _
+
+type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
+type FormRow f =
+  ( name :: f V.FormError String Username
+  , email :: f V.FormError String Email
+  , password :: f V.FormError String String
+  )
 
 data FormQuery a
   = SetRegisterStatus (RemoteData String Unit) a
@@ -213,7 +219,7 @@ formComponent =
   handleAction = case _ of
     Submit event -> do
       H.liftEffect $ Event.preventDefault event
-      { status } <- H.get
+      {status} <- H.get
       when (not $ isLoading status) do eval F.submit
 
     where
@@ -222,12 +228,12 @@ formComponent =
   handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
     SetRegisterStatus status a -> do
-      H.modify_ _ { status = status }
+      H.modify_ _ {status = status}
       pure (Just a)
 
-  renderForm { form, status, submitting } =
+  renderForm {form, status, submitting} =
     HH.form
-      [ HE.onSubmit \ev -> Just $ F.injAction $ Submit ev
+      [ HE.onSubmit $ F.injAction <<< Submit
       , HP.noValidate true
       , HP.classes [ T.wFull ]
       ]
@@ -247,7 +253,7 @@ formComponent =
           [ Field.submit "Sign up" (submitting || isLoading status) ]
       ]
     where
-    proxies = F.mkSProxies (F.FormProxy :: _ RegisterForm)
+    proxies = F.mkSProxies (Proxy :: Proxy RegisterForm)
 
     name =
       Field.input proxies.name form $ Field.defaultProps

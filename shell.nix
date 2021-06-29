@@ -11,8 +11,8 @@ let
   pursPkgs = import (pkgs.fetchFromGitHub {
     owner = "justinwoo";
     repo = "easy-purescript-nix";
-    rev = "860a95cb9e1ebdf574cede2b4fcb0f66eac77242";
-    sha256 = "1ly3bm6i1viw6d64gi1zfiwdvjncm3963rj59320cr15na5bzjri";
+    rev = "47bdc016c7d56e987ca1aca690b1d6c9816a8584";
+    sha256 = "051fzxd03y0c63sll2bhn0h66dywy9lw6ylyh5vq8fymvix20q94";
   }) { inherit pkgs; };
 
   twpurs = import (builtins.fetchGit {

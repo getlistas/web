@@ -5,18 +5,17 @@ module Listasio.Component.Router where
 
 import Prelude
 
-import Component.HOC.Connect (WithCurrentUser)
-import Component.HOC.Connect as Connect
-import Control.Monad.Reader (class MonadAsk)
 import Data.Either (hush)
 import Data.Foldable (elem)
 import Data.Maybe (Maybe(..), isJust)
-import Data.Symbol (SProxy(..))
 import Data.Traversable (for_)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Analytics (class Analytics)
 import Listasio.Capability.Clipboard (class Clipboard)
 import Listasio.Capability.LogMessages (class LogMessages)
@@ -32,7 +31,6 @@ import Listasio.Component.HTML.NotFound as NotFound
 import Listasio.Component.Utils (OpaqueSlot)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..), routeCodec)
-import Listasio.Env (UserEnv)
 import Listasio.Page.About as About
 import Listasio.Page.Changelog as Changelog
 import Listasio.Page.CreateList as CreateList
@@ -40,6 +38,7 @@ import Listasio.Page.CreateResource as CreateResource
 import Listasio.Page.Dashboard as Dashboard
 import Listasio.Page.Discover as Discover
 import Listasio.Page.EditList as EditList
+import Listasio.Page.History as History
 import Listasio.Page.Home as Home
 import Listasio.Page.ListIntegrations as ListIntegrations
 import Listasio.Page.Login as Login
@@ -48,11 +47,11 @@ import Listasio.Page.Pricing as Pricing
 import Listasio.Page.Profile as Profile
 import Listasio.Page.PublicList as PublicList
 import Listasio.Page.Register as Register
-import Listasio.Page.History as History
 import Listasio.Page.Settings as Settings
 import Listasio.Page.Terms as Terms
 import Listasio.Page.VerifyFailure as VerifyFailure
 import Listasio.Page.ViewList as ViewList
+import Listasio.Store as Store
 import Routing.Duplex as RD
 import Slug (Slug)
 import Tailwind as T
@@ -69,7 +68,7 @@ data Query a
 data Action
   = Initialize
   | NavigateAct Route Event
-  | Receive { | WithCurrentUser () }
+  | Receive (Connected (Maybe ProfileWithIdAndEmail) Unit)
 
 type ChildSlots =
   ( nav :: Nav.Slot
@@ -96,13 +95,13 @@ type ChildSlots =
   , createResource :: OpaqueSlot Unit
   , viewList :: OpaqueSlot Unit
   , editList :: OpaqueSlot Unit
-  , listintegrations :: OpaqueSlot Unit
+  , listIntegrations :: OpaqueSlot Unit
   )
 
 component
-  :: forall m r
+  :: forall m
    . MonadAff m
-  => MonadAsk {userEnv :: UserEnv | r} m
+  => MonadStore Store.Action Store.Store m
   => Now m
   => LogMessages m
   => Navigate m
@@ -112,9 +111,9 @@ component
   => ManageList m
   => Clipboard m
   => Analytics m
-  => H.Component HH.HTML Query {} Void m
-component = Connect.component $ H.mkComponent
-  { initialState: \{currentUser} -> {route: Nothing, currentUser}
+  => H.Component Query Unit Void m
+component = connect (selectEq _.currentUser) $ H.mkComponent
+  { initialState: \{context: currentUser} -> {route: Nothing, currentUser}
   , render
   , eval: H.mkEval $ H.defaultEval
       { handleQuery = handleQuery
@@ -134,7 +133,7 @@ component = Connect.component $ H.mkComponent
 
     NavigateAct route e -> navigate_ e route
 
-    Receive {currentUser} ->
+    Receive {context: currentUser} ->
       H.modify_ _ {currentUser = currentUser}
 
   handleQuery :: forall a. Query a -> H.HalogenM State Action ChildSlots Void m (Maybe a)
@@ -153,14 +152,14 @@ component = Connect.component $ H.mkComponent
   authorize :: Maybe ProfileWithIdAndEmail -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
   authorize mbProfile html = case mbProfile of
     Nothing ->
-      HH.slot (SProxy :: _ "login") unit Login.component {redirect: false, registerSuccess: false} absurd
+      HH.slot_ Login._slot unit Login.component {redirect: false, registerSuccess: false}
     Just _ ->
       html
 
   authorizeList :: Maybe ProfileWithIdAndEmail -> Slug -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
   authorizeList mbProfile pathSlug html = case mbProfile of
     Nothing ->
-      HH.slot (SProxy :: _ "login") unit Login.component {redirect: false, registerSuccess: false} absurd
+      HH.slot_ Login._slot unit Login.component {redirect: false, registerSuccess: false}
     Just {slug} | slug == pathSlug ->
       html
     Just _ ->
@@ -172,7 +171,7 @@ component = Connect.component $ H.mkComponent
       [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.bgGray10 ] ]
       [ HH.div
           [ HP.classes [ T.container, T.mxAuto, T.mdPx4, T.xlPx0 ] ]
-          [ HH.slot (SProxy :: _ "nav") unit Nav.component {route: currentRoute} absurd ]
+          [ HH.slot_ Nav._slot unit Nav.component {route: currentRoute} ]
       , HH.div
           [ HP.classes [ T.container, T.mxAuto, T.px4, T.xlPx0, T.pb20, T.flex1 ] ]
           [ content ]
@@ -186,80 +185,80 @@ component = Connect.component $ H.mkComponent
         layout Nothing NotFound.elem
 
       Just Home ->
-        HH.slot (SProxy :: _ "home") unit Home.component {} absurd
+        HH.slot_ Home._slot unit Home.component unit
 
       Just r -> layout (Just r)
         case r of
           -- PUBLIC ----------------------------------------------------------------
           About ->
-            HH.slot (SProxy :: _ "about") unit About.component {} absurd
+            HH.slot_ About._slot unit About.component unit
 
           Discover ->
-            HH.slot (SProxy :: _ "discover") unit Discover.component {} absurd
+            HH.slot_ Discover._slot unit Discover.component unit
 
           Pricing ->
-            HH.slot (SProxy :: _ "pricing") unit Pricing.component {} absurd
+            HH.slot_ Pricing._slot unit Pricing.component unit
 
           Changelog ->
-            HH.slot (SProxy :: _ "changelog") unit Changelog.component {} absurd
+            HH.slot_ Changelog._slot unit Changelog.component unit
 
           Profile slug ->
-            HH.slot (SProxy :: _ "profile") unit Profile.component {slug} absurd
+            HH.slot_ Profile._slot unit Profile.component {slug}
 
           PublicList user list ->
-            HH.slot (SProxy :: _ "publicList") unit PublicList.component {user, list} absurd
+            HH.slot_ PublicList._slot unit PublicList.component {user, list}
 
           -- LEGAL -----------------------------------------------------------------
           Terms ->
-            HH.slot (SProxy :: _ "terms") unit Terms.component {} absurd
+            HH.slot_ Terms._slot unit Terms.component unit
 
           Policy ->
-            HH.slot (SProxy :: _ "policy") unit Policy.component {} absurd
+            HH.slot_ Policy._slot unit Policy.component unit
 
           -- AUTH ------------------------------------------------------------------
           Login ->
-            HH.slot (SProxy :: _ "login") unit Login.component {redirect: true, registerSuccess: false} absurd
+            HH.slot_ Login._slot unit Login.component {redirect: true, registerSuccess: false}
 
           Register ->
-            HH.slot (SProxy :: _ "register") unit Register.component unit absurd
+            HH.slot_ Register._slot unit Register.component unit
 
           VerifyEmailSuccess ->
-            HH.slot (SProxy :: _ "verifySuccess") unit Login.component {redirect: true, registerSuccess: true} absurd
+            HH.slot_ Login._slot unit Login.component {redirect: true, registerSuccess: true}
 
           VerifyEmailFailure ->
-            HH.slot (SProxy :: _ "verifyFailure") unit VerifyFailure.component {} absurd
+            HH.slot_ VerifyFailure._slot unit VerifyFailure.component unit
 
           -- PRIVATE ---------------------------------------------------------------
           Dashboard ->
-            HH.slot (SProxy :: _ "dashboard") unit Dashboard.component {} absurd
+            HH.slot_ Dashboard._slot unit Dashboard.component unit
               # authorize currentUser
 
           History ->
-            HH.slot (SProxy :: _ "history") unit History.component {} absurd
+            HH.slot_ History._slot unit History.component unit
               # authorize currentUser
 
           Settings ->
-            HH.slot (SProxy :: _ "settings") unit Settings.component {} absurd
+            HH.slot_ Settings._slot unit Settings.component unit
               # authorize currentUser
 
           CreateList ->
-            HH.slot (SProxy :: _ "createList") unit CreateList.component {} absurd
+            HH.slot_ CreateList._slot unit CreateList.component unit
               # authorize currentUser
 
           CreateResource args ->
-            HH.slot (SProxy :: _ "createResource") unit CreateResource.component args absurd
+            HH.slot_ CreateResource._slot unit CreateResource.component args
               # authorize currentUser
 
           ViewList _ ->
-            HH.slot (SProxy :: _ "viewList") unit ViewList.component {} absurd
+            HH.slot_ ViewList._slot unit ViewList.component unit
 
           EditList user list ->
-            HH.slot (SProxy :: _ "editList") unit EditList.component {user, list} absurd
+            HH.slot_ EditList._slot unit EditList.component {user, list}
               # authorizeList currentUser user
 
           -- TODO: validate that the current user is accessing this list
           IntegrationsList user list ->
-            HH.slot (SProxy :: _ "listintegrations") unit ListIntegrations.component {user, list} absurd
+            HH.slot_ ListIntegrations._slot unit ListIntegrations.component {user, list}
               # authorizeList currentUser user
 
           -- This shouldn't happend, as is already pattern matched above

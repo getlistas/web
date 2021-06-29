@@ -7,21 +7,19 @@ import Prelude
 
 import Affjax (printError, request)
 import Affjax.StatusCode (StatusCode(..))
-import Control.Monad.Reader (class MonadAsk, ask)
 import Data.Codec.Argonaut (JsonCodec, printJsonDecodeError)
 import Data.Codec.Argonaut as CA
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
-import Effect.Aff.Bus as Bus
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (liftEffect)
-import Effect.Ref as Ref
+import Halogen.Store.Monad (class MonadStore, getStore, updateStore)
 import Listasio.Api.Request (BaseURL, RequestOptions, Token, defaultRequest, readToken, removeToken, writeToken)
 import Listasio.Capability.LogMessages (class LogMessages, logError)
 import Listasio.Capability.Now (class Now)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
-import Listasio.Env (UserEnv)
+import Listasio.Store (Action(..), Store)
 
 -- TODO: parse API errors into an union type
 data HttpError
@@ -41,16 +39,16 @@ instance showHttpError :: Show HttpError where
 -- | request. This function only requires the `baseUrl` field from the app
 -- | environment.
 mkRequest
-  :: forall a m r
+  :: forall a m
    . MonadAff m
-  => MonadAsk { baseUrl :: BaseURL | r } m
+  => MonadStore Action Store m
   => LogMessages m
   => Now m
   => RequestOptions
   -> JsonCodec a
   -> m (Either HttpError a)
 mkRequest opts codec = do
-  {baseUrl} <- ask
+  {baseUrl} <- getStore
   response <- liftAff $ request $ defaultRequest baseUrl Nothing opts
   case response of
     Left err -> do
@@ -66,39 +64,33 @@ mkRequest opts codec = do
            pure $ Left $ DecodingError errorMsg
         Right decodedBody -> pure $ Right decodedBody
 
-clearUserEnv :: forall m r . MonadAff m => MonadAsk { userEnv :: UserEnv | r } m => m Unit
-clearUserEnv = do
-  {userEnv} <- ask
-  liftEffect do
-    removeToken
-    Ref.write Nothing userEnv.currentUser
-  liftAff $ Bus.write Nothing userEnv.userBus
-
 -- | This function performs a request that requires authentication by pulling
 -- | the base URL out of the app environment, reading the auth token from local
 -- | storage, and then performing the asynchronous request. In case of an auth
--- | error (401 or fetch failure) the user is cleared from the `userEnv`.
+-- | error (401 or fetch failure) the user is cleared from the Store.
 mkAuthRequest
-  :: forall a m r
+  :: forall a m
    . MonadAff m
-  => MonadAsk { baseUrl :: BaseURL, userEnv :: UserEnv | r } m
+  => MonadStore Action Store m
   => LogMessages m
   => Now m
   => RequestOptions
   -> JsonCodec a
   -> m (Either HttpError a)
 mkAuthRequest opts codec = do
-  {baseUrl} <- ask
+  {baseUrl} <- getStore
   token <- liftEffect readToken
   response <- liftAff $ request $ defaultRequest baseUrl token opts
   case response of
     Left err -> do
       logError $ printError err
-      clearUserEnv
+      liftEffect $ removeToken
+      updateStore LogoutUser
       pure $ Left RequestError
 
     Right {status: StatusCode 401} -> do
-      clearUserEnv
+      liftEffect $ removeToken
+      updateStore LogoutUser
       pure $ Left $ ClientError (StatusCode 401) "Something went wrong"
 
     Right {status} | status >= (StatusCode 500) -> pure $ Left $ ServerError status "Something went wrong"
@@ -117,22 +109,19 @@ mkAuthRequest opts codec = do
 -- | behaviors on top of the request. This also performs the work of broadcasting
 -- | changes in the current user to all subscribed components.
 authenticate
-  :: forall m a r
+  :: forall m a
    . MonadAff m
-  => MonadAsk { baseUrl :: BaseURL, userEnv :: UserEnv | r } m
+  => MonadStore Action Store m
   => LogMessages m
   => Now m
   => (BaseURL -> a -> m (Either String (Tuple Token ProfileWithIdAndEmail)))
   -> a
   -> m (Maybe ProfileWithIdAndEmail)
 authenticate req fields = do
-  { baseUrl, userEnv } <- ask
+  {baseUrl} <- getStore
   req baseUrl fields >>= case _ of
     Left err -> logError err *> pure Nothing
     Right (Tuple token profile) -> do
-      liftEffect do
-        writeToken token
-        Ref.write (Just profile) userEnv.currentUser
-      -- any time we write to the current user ref, we should also broadcast the change
-      liftAff $ Bus.write (Just profile) userEnv.userBus
+      liftEffect $ writeToken token
+      updateStore $ LoginUser profile
       pure (Just profile)
