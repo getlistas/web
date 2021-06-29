@@ -5,7 +5,7 @@ import Prelude
 import DOM.HTML.Indexed (HTMLbutton)
 import Data.Array (difference, mapWithIndex, length, (!!))
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
-import Data.Symbol (SProxy(..))
+import Type.Proxy (Proxy(..))
 import Data.Traversable (for_)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -20,17 +20,17 @@ import Tailwind as T
 type Slot item =
   H.Slot (Select.Query (Query item) ()) (Message item)
 
-_dropdown = SProxy :: SProxy "dropdown"
+_dropdown = Proxy :: Proxy "dropdown"
 
 data Query item a
   = Clear a
   | Select item a
 
 clear :: forall item. Select.Query (Query item) () Unit
-clear = Select.Query (H.tell Clear)
+clear = Select.Query $ H.mkTell Clear
 
 select :: forall item. item -> Select.Query (Query item) () Unit
-select item = Select.Query (H.tell $ Select item)
+select item = Select.Query $ H.mkTell $ Select item
 
 type State item =
   ( selected :: Maybe item
@@ -45,7 +45,7 @@ type Input item =
   }
 
 input :: forall item. Input item -> Select.Input (State item)
-input { items, placeholder } =
+input {items, placeholder} =
   { inputType: Select.Toggle
   , search: Nothing
   , debounceTime: Nothing
@@ -88,12 +88,12 @@ spec = Select.defaultSpec
   handleQuery :: forall a. Query item a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
     Clear a -> do
-      H.modify_ \st -> st { selected = Nothing, available = st.items }
+      H.modify_ \st -> st {selected = Nothing, available = st.items}
       H.raise Cleared
       pure (Just a)
 
     Select item a -> do
-      H.modify_ \st -> st { selected = Just item, available = difference st.items [ item ] }
+      H.modify_ \st -> st {selected = Just item, available = difference st.items [ item ]}
       H.raise $ Selected item
       pure (Just a)
 

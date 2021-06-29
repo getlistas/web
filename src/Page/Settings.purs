@@ -2,8 +2,6 @@ module Listasio.Page.Settings where
 
 import Prelude
 
-import Component.HOC.Connect as Connect
-import Control.Monad.Reader (class MonadAsk)
 import Data.Lens (_Just, set)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
@@ -13,6 +11,9 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Navigate (class Navigate, logout, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, updateUser)
 import Listasio.Component.HTML.Icons as Icons
@@ -22,42 +23,45 @@ import Listasio.Data.Profile (Profile, ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route)
 import Listasio.Data.Username (Username)
 import Listasio.Data.Username as Username
-import Listasio.Env (UserEnv)
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation as V
+import Listasio.Store as Store
 import Slug (Slug)
 import Slug as Slug
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
 import Web.Event.Event as Event
 
-newtype SettingsForm r f
-  = SettingsForm
-  ( r
-      ( name :: f V.FormError String Username
-      , slug :: f V.FormError String Slug
-      )
+_slot :: Proxy "settings"
+_slot = Proxy
+
+newtype Form (r :: Row Type -> Type) f = Form (r (FormRow f))
+derive instance Newtype (Form r f) _
+
+type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
+type FormRow f =
+  ( name :: f V.FormError String Username
+  , slug :: f V.FormError String Slug
   )
 
-derive instance newtypeSettingsForm :: Newtype (SettingsForm r f) _
-
 data Action
-  = Receive { currentUser :: Maybe ProfileWithIdAndEmail }
+  = Receive (Connected (Maybe ProfileWithIdAndEmail) Unit)
   | HandleForm Profile
   | LogUserOut
   | Navigate Route Event
 
 type State
-  = { currentUser :: Maybe ProfileWithIdAndEmail }
+  = {currentUser :: Maybe ProfileWithIdAndEmail}
 
 component ::
-  forall q o r m.
+  forall q o m.
   MonadAff m =>
-  MonadAsk { userEnv :: UserEnv | r } m =>
+  MonadStore Store.Action Store.Store m =>
   Navigate m =>
   ManageUser m =>
-  H.Component HH.HTML q {} o m
-component = Connect.component $ H.mkComponent
+  H.Component q Unit o m
+component = connect (selectEq _.currentUser) $ H.mkComponent
   { initialState
   , render
   , eval:
@@ -68,22 +72,19 @@ component = Connect.component $ H.mkComponent
             }
   }
   where
-  initialState { currentUser } = { currentUser }
+  initialState {context: currentUser} = {currentUser}
 
   handleAction = case _ of
-    Receive { currentUser } -> do
-      H.modify_ _ { currentUser = currentUser }
+    Receive {context: currentUser} -> do
+      H.modify_ _ {currentUser = currentUser}
       case currentUser of
-       -- if we dont' have a profile something went completely wrong
-       Nothing -> logout
-       Just profile -> do
-         let
-           newInputs =
-             F.wrapInputFields
-               { name: Username.toString profile.name
-               , slug: Slug.toString profile.slug
-               }
-         void $ H.query F._formless unit $ F.asQuery $ F.loadForm newInputs
+        -- if we dont' have a profile something went completely wrong
+        Nothing -> logout
+        Just profile -> do
+          void $ H.query _form unit $ F.asQuery $ F.loadForm $ F.wrapInputFields
+            { name: Username.toString profile.name
+            , slug: Slug.toString profile.slug
+            }
 
     HandleForm {name, slug} -> do
       -- TODO: check response !!!
@@ -95,7 +96,7 @@ component = Connect.component $ H.mkComponent
 
     Navigate route e -> navigate_ e route
 
-  render { currentUser } =
+  render _ =
     HH.div
       []
       [ HH.div
@@ -106,11 +107,11 @@ component = Connect.component $ H.mkComponent
           ]
       , HH.div
           []
-          [ whenElem false \_ -> HH.slot F._formless unit formComponent unit (Just <<< HandleForm)
+          [ whenElem false \_ -> HH.slot _form unit formComponent unit HandleForm
           , HH.div
               [ HP.classes [ T.mt8 ] ]
               [ HH.button
-                  [ HE.onClick \_ -> Just LogUserOut
+                  [ HE.onClick $ const LogUserOut
                   , HP.classes
                       [ T.cursorPointer
                       , T.py2
@@ -136,12 +137,14 @@ component = Connect.component $ H.mkComponent
           ]
       ]
 
+_form = Proxy :: Proxy "settingsForm"
+
 data FormAction
   = Submit Event.Event
 
 formComponent :: forall m query slots.
   MonadAff m =>
-  F.Component SettingsForm query slots Unit Profile m
+  F.Component Form query slots Unit Profile m
 formComponent =
   F.component formInput
     $ F.defaultSpec
@@ -150,10 +153,10 @@ formComponent =
         , handleAction = handleAction
         }
   where
-  formInput :: Unit -> F.Input' SettingsForm m
+  formInput :: Unit -> F.Input' Form m
   formInput _ =
     { validators:
-        SettingsForm
+        Form
           { name: V.required >>> V.minLength 3 >>> V.maxLength 20 >>> V.usernameFormat
           , slug: V.required >>> V.minLength 3 >>> V.maxLength 20 >>> V.slugFormat
           }
@@ -170,9 +173,9 @@ formComponent =
     where
     eval act = F.handleAction handleAction handleEvent act
 
-  renderForm { form, submitting } =
+  renderForm {form, submitting} =
     HH.form
-      [ HE.onSubmit $ Just <<< F.injAction <<< Submit
+      [ HE.onSubmit $ F.injAction <<< Submit
       , HP.noValidate true
       ]
       [ HH.fieldset_
@@ -184,7 +187,7 @@ formComponent =
           ]
       ]
     where
-    proxies = F.mkSProxies (F.FormProxy :: _ SettingsForm)
+    proxies = F.mkSProxies (Proxy :: Proxy Form)
 
     name =
       Field.input proxies.name form $ Field.defaultProps

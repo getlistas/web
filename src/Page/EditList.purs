@@ -2,8 +2,6 @@ module Listasio.Page.EditList where
 
 import Prelude
 
-import Component.HOC.Connect as Connect
-import Control.Monad.Reader (class MonadAsk)
 import Data.Either (note)
 import Data.Lens (preview)
 import Data.Maybe (Maybe(..))
@@ -13,6 +11,9 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, deleteList, getListBySlug, updateList)
 import Listasio.Component.HTML.Button as Button
@@ -24,16 +25,25 @@ import Listasio.Data.Lens (_list)
 import Listasio.Data.List (CreateListFields, ListWithIdAndUser)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
-import Listasio.Env (UserEnv)
+import Listasio.Store as Store
 import Network.RemoteData (RemoteData(..), _Success)
 import Network.RemoteData as RemoteData
 import Slug (Slug)
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
 import Web.UIEvent.MouseEvent as Mouse
 
+_slot :: Proxy "editList"
+_slot = Proxy
+
+type Input
+  = {user :: Slug, list :: Slug}
+
 data Action
-  = Receive {currentUser :: Maybe ProfileWithIdAndEmail, user :: Slug, list :: Slug}
+  = Initialize
+  | LoadList
+  | Receive (Connected (Maybe ProfileWithIdAndEmail) Input)
   | HandleListForm CreateListFields
   | Navigate Route Event
   | DeleteList
@@ -51,22 +61,23 @@ type State
 type Slots = (formless :: ListForm.Slot)
 
 component
-  :: forall q o m r
+  :: forall q o m
    . MonadAff m
-  => MonadAsk {userEnv :: UserEnv | r} m
+  => MonadStore Store.Action Store.Store m
   => Navigate m
   => ManageList m
-  => H.Component HH.HTML q {user :: Slug, list :: Slug} o m
-component = Connect.component $ H.mkComponent
+  => H.Component q Input o m
+component = connect (selectEq _.currentUser) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
       { handleAction = handleAction
+      , initialize = Just Initialize
       , receive = Just <<< Receive
       }
   }
   where
-  initialState {currentUser, list, user} =
+  initialState {context: currentUser, input: {list, user}} =
     { currentUser
     , list: NotAsked
     , listSlug: list
@@ -76,15 +87,17 @@ component = Connect.component $ H.mkComponent
 
   handleAction :: Action -> H.HalogenM State Action Slots o m Unit
   handleAction = case _ of
-    Receive {currentUser} -> do
+    Initialize ->
+      void $ H.fork $ handleAction LoadList
+
+    LoadList -> do
       st <- H.get
+      H.modify_ _ {list = Loading}
+      list <- RemoteData.fromEither <$> note "Could not get list" <$> getListBySlug {list: st.listSlug, user: st.userSlug}
+      H.modify_ _ {list = list}
+
+    Receive {context: currentUser} ->
       H.modify_ _ {currentUser = currentUser}
-      case st.currentUser, currentUser of
-        Nothing, Just {slug} -> do
-          H.modify_ _ {list = Loading}
-          list <- RemoteData.fromEither <$> note "Could not get list" <$> getListBySlug {list: st.listSlug, user: st.userSlug}
-          H.modify_ _ {list = list}
-        _, _ -> pure unit
 
     Navigate route e -> navigate_ e route
 
@@ -100,7 +113,7 @@ component = Connect.component $ H.mkComponent
           case mbCreatedList of
             Just createdList -> do
               void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Success createdList) unit
-              H.modify_ _ { list = Success createdList }
+              H.modify_ _ {list = Success createdList}
             Nothing ->
               void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Failure "Could not create list") unit
 
@@ -121,7 +134,7 @@ component = Connect.component $ H.mkComponent
           navigate Dashboard
 
   render :: State -> H.ComponentHTML Action Slots m
-  render {currentUser, list: mbList, confirmDelete, listSlug, userSlug} =
+  render {list: mbList, confirmDelete, listSlug, userSlug} =
     HH.div [] [ header, content ]
 
     where
@@ -135,7 +148,7 @@ component = Connect.component $ H.mkComponent
                 [ HH.text $ RemoteData.maybe "..." _.title mbList  ]
             , HH.a
                 [ safeHref $ PublicList userSlug listSlug
-                , HE.onClick $ Just <<< Navigate (PublicList userSlug listSlug) <<< Mouse.toEvent
+                , HE.onClick $ Navigate (PublicList userSlug listSlug) <<< Mouse.toEvent
                 , HP.classes
                     [ T.flex
                     , T.itemsCenter
@@ -148,7 +161,7 @@ component = Connect.component $ H.mkComponent
             ]
         ]
 
-    mkLayout list cards =
+    mkLayout cards =
       CardsAndSidebar.layout
         [ { active: true
           , icon: Icons.userCircle
@@ -160,7 +173,7 @@ component = Connect.component $ H.mkComponent
           , label: "Integrations"
           , link:
               Just
-                { action: Just <<< Navigate (IntegrationsList userSlug listSlug)
+                { action: Navigate (IntegrationsList userSlug listSlug)
                 , route: IntegrationsList userSlug listSlug
                 }
           }
@@ -171,14 +184,13 @@ component = Connect.component $ H.mkComponent
       case mbList of
         Success list ->
           mkLayout
-            (Just list)
             [ { cta: Nothing
-              , content: HH.slot F._formless unit ListForm.formComponent { list: Just list } $ Just <<< HandleListForm
+              , content: HH.slot F._formless unit ListForm.formComponent {list: Just list} HandleListForm
               , title: "Details"
               , description: Nothing
               }
             , { cta: Nothing
-              , content: dangerZone list
+              , content: dangerZone
               , title: "Danger zone"
               , description: Nothing
               }
@@ -187,7 +199,6 @@ component = Connect.component $ H.mkComponent
         -- TODO: better message
         Failure msg ->
           mkLayout
-            Nothing
             [ { cta: Nothing
               , content: HH.div [ HP.classes [ T.textManzana ] ] [ HH.text msg ]
               , title: "Details"
@@ -198,7 +209,6 @@ component = Connect.component $ H.mkComponent
         -- TODO: better message
         _ ->
           mkLayout
-            Nothing
             [ { cta: Nothing
               , content: HH.div [ HP.classes [ T.textGray400 ] ] [ HH.text "Loading ..." ]
               , title: "Details"
@@ -206,8 +216,7 @@ component = Connect.component $ H.mkComponent
               }
             ]
 
-    dangerZone :: ListWithIdAndUser -> _
-    dangerZone list =
+    dangerZone =
       HH.div
         [ HP.classes
             [ T.roundedMd
@@ -217,13 +226,12 @@ component = Connect.component $ H.mkComponent
             , T.p4
             ]
         ]
-        [ deleteListEl list ]
+        [ deleteListEl ]
 
-    deleteListEl :: ListWithIdAndUser -> _
-    deleteListEl list =
+    deleteListEl =
       HH.div
         [ HP.classes [ T.px4, T.py5, T.smP6 ]
-        , HE.onMouseLeave \_ -> Just DeleteListCancel
+        , HE.onMouseLeave $ const DeleteListCancel
         ]
         [ HH.div
             [ HP.classes [ T.smFlex, T.smItemsStart, T.smJustifyBetween ] ]
@@ -254,16 +262,14 @@ component = Connect.component $ H.mkComponent
                 ]
                 [ if confirmDelete
                     then
-                      Button.danger $ Button.dangerDefaultProps
+                      Button.danger $ (Button.dangerDefaultProps DeleteListConfirm)
                         { label = HH.text "Confirm"
-                        , action = Just DeleteListConfirm
-                        , props = [ HE.onFocusOut \_ -> Just DeleteListCancel ]
+                        , props = [ HE.onFocusOut $ const DeleteListCancel ]
                         , classes = [ T.w32 ]
                         }
                     else
-                      Button.danger $ Button.dangerDefaultProps
+                      Button.danger $ (Button.dangerDefaultProps DeleteList)
                         { label = HH.text "Delete list"
-                        , action = Just DeleteList
                         , classes = [ T.w32 ]
                         }
                 ]

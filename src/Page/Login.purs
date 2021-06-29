@@ -3,7 +3,6 @@ module Listasio.Page.Login where
 import Prelude
 
 import Data.Maybe (Maybe(..))
-import Data.Symbol (SProxy(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -16,7 +15,11 @@ import Listasio.Component.HTML.Message as Message
 import Listasio.Component.HTML.Utils (whenElem)
 import Listasio.Data.Route (Route(..))
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Web.Event.Event as Event
+
+_slot :: Proxy "login"
+_slot = Proxy
 
 type ChildSlots
   = ( login :: Login.Slot )
@@ -41,7 +44,7 @@ component ::
   Navigate m =>
   ManageUser m =>
   Analytics m =>
-  H.Component HH.HTML q Input o m
+  H.Component q Input o m
 component =
   H.mkComponent
     { initialState
@@ -76,6 +79,6 @@ component =
             }
       , HH.div
           [ HP.classes [ T.w96, T.maxWFull ] ]
-          [ HH.slot (SProxy :: _ "login") unit Login.component {redirect} (Just <<< GoToRegister)
+          [ HH.slot Login._slot unit Login.component {redirect} GoToRegister
           ]
       ]

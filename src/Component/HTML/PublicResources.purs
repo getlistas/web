@@ -5,7 +5,7 @@ import Prelude
 import Data.Either (note)
 import Data.Maybe (Maybe(..))
 import Data.String (null, trim)
-import Data.Symbol (SProxy(..))
+import Type.Proxy (Proxy(..))
 import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -30,7 +30,7 @@ import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
 type Slot id = forall query. H.Slot query Void id
 
-_publicResources = SProxy :: SProxy "publicResources"
+_publicResources = Proxy :: Proxy "publicResources"
 
 type Input
   = { listSlug :: Slug
@@ -42,6 +42,8 @@ data Action
   = Initialize
   | SearchChange String
   | LoadResources
+    -- meta actions
+  | NoOp
 
 type State
   = { authorSlug :: Slug
@@ -56,7 +58,7 @@ component
    . MonadAff m
   => ManageResource m
   => Navigate m
-  => H.Component HH.HTML q Input o m
+  => H.Component q Input o m
 component = H.mkComponent
   { initialState
   , render
@@ -101,6 +103,7 @@ component = H.mkComponent
 
       H.modify_ _ {resources = resources}
 
+    NoOp -> pure unit
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render {resources, searchQuery} =
@@ -127,11 +130,10 @@ component = H.mkComponent
                       , T.focusZ10
                       ]
                   , HP.value searchQuery
-                  , HE.onValueInput $ Just <<< SearchChange
-                  , HE.onKeyDown \e ->
-                      case KeyboardEvent.code e of
-                        "Escape" -> Just $ SearchChange ""
-                        _ -> Nothing
+                  , HE.onValueInput $ SearchChange
+                  , HE.onKeyDown \e -> case KeyboardEvent.code e of
+                      "Escape" -> SearchChange ""
+                      _ -> NoOp
                   ]
               , HH.button
                   [ HP.classes
@@ -150,7 +152,7 @@ component = H.mkComponent
                       , T.focusRingKiwi
                       , T.focusBorderKiwi
                       ]
-                  , HE.onClick \_ -> Just $ SearchChange ""
+                  , HE.onClick $ const $ SearchChange ""
                   , HP.disabled $ null searchQuery
                   ]
                   [ Icons.x

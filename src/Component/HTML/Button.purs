@@ -12,16 +12,16 @@ import Tailwind as T
 type DangerProps i p
   = { label :: HH.HTML i p
     , disabled :: Boolean
-    , action :: Maybe p
+    , action :: p
     , props :: Array (HH.IProp HTMLbutton p)
     , classes :: Array HH.ClassName
     }
 
-dangerDefaultProps :: forall i p. DangerProps i p
-dangerDefaultProps =
+dangerDefaultProps :: forall i p. p -> DangerProps i p
+dangerDefaultProps action =
   { label: HH.text ""
   , disabled: false
-  , action: Nothing
+  , action
   , props: []
   , classes: []
   }
@@ -54,12 +54,12 @@ danger {label, disabled, action, props, classes} =
               )
           , HP.type_ HP.ButtonButton
           , HP.disabled disabled
-          , HE.onClick \_ -> action
+          , HE.onClick $ const action
           ]
     )
     [ label ]
 
-primary :: forall i p. HH.HTML i p -> Boolean -> Maybe p -> HH.HTML i p
+primary :: forall i p. HH.HTML i p -> Boolean -> p -> HH.HTML i p
 primary label disabled action =
   HH.button
     [ HP.classes
@@ -85,6 +85,6 @@ primary label disabled action =
         ]
     , HP.type_ HP.ButtonButton
     , HP.disabled disabled
-    , HE.onClick \_ -> action
+    , HE.onClick $ const action
     ]
     [ label ]

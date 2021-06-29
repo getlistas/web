@@ -4,7 +4,6 @@ import Prelude
 
 import Listasio.Component.HTML.Icons as Icons
 import Data.Array.NonEmpty (NonEmptyArray, toArray)
-import Data.Maybe (Maybe(..))
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
@@ -12,24 +11,24 @@ import Listasio.Component.HTML.Utils (whenElem)
 import Tailwind as T
 
 type Props i p
-  = { mainAction :: Maybe p
+  = { mainAction :: p
+    , toggleMenu :: p
     , label :: HH.HTML i p
-    , toggleMenu :: Maybe p
     , isOpen :: Boolean
     , disabled :: Boolean
     }
 
-props :: forall i p. Props i p
-props =
-  { mainAction: Nothing
+props :: forall i p. {mainAction :: p, toggleMenu :: p} -> Props i p
+props {mainAction, toggleMenu} =
+  { mainAction
+  , toggleMenu
   , label: HH.text ""
-  , toggleMenu: Nothing
   , isOpen: false
   , disabled: false
   }
 
 type MenuItem i p
-  = { action :: Maybe p
+  = { action :: p
     , label :: HH.HTML i p
     , disabled :: Boolean
     }
@@ -47,7 +46,7 @@ buttonGroupMenu {mainAction, label, toggleMenu, isOpen, disabled} menuItems =
     ]
     [ HH.button
         [ HP.type_ HP.ButtonButton
-        , HE.onClick \_ -> mainAction
+        , HE.onClick $ const mainAction
         , HP.classes
             [ T.relative
             , T.inlineFlex
@@ -72,7 +71,7 @@ buttonGroupMenu {mainAction, label, toggleMenu, isOpen, disabled} menuItems =
         [ label ]
     , HH.button
         [ HP.type_ HP.ButtonButton
-        , HE.onClick \_ -> toggleMenu
+        , HE.onClick $ const toggleMenu
         , HP.classes
             [ T.relative
             , T.inlineFlex
@@ -98,7 +97,7 @@ buttonGroupMenu {mainAction, label, toggleMenu, isOpen, disabled} menuItems =
       -- Invisible overlay to close on outside click
     , whenElem isOpen \_ ->
         HH.div
-          [ HE.onClick \_ -> toggleMenu
+          [ HE.onClick $ const toggleMenu
           , HP.classes [ T.fixed, T.inset0 ]
           ]
           [ HH.div [ HP.classes [ T.absolute, T.inset0 ] ] [] ]
@@ -143,7 +142,7 @@ buttonGroupMenu {mainAction, label, toggleMenu, isOpen, disabled} menuItems =
                           , T.focusRingGray300
                           ]
                       , HP.type_ HP.ButtonButton
-                      , HE.onClick \_ -> i.action
+                      , HE.onClick $ const i.action
                       , HP.disabled i.disabled
                       ]
                       [ i.label ]

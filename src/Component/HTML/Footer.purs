@@ -67,7 +67,7 @@ footer navigate =
         ]
     ]
   where
-  onNavigate route = Just <<< navigate route <<< Mouse.toEvent
+  onNavigate route = navigate route <<< Mouse.toEvent
 
   link route name =
     HH.div

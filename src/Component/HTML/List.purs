@@ -2,15 +2,12 @@ module Listasio.Component.HTML.List where
 
 import Prelude
 
-import Component.HOC.Connect as Connect
-import Control.Monad.Reader (class MonadAsk)
 import Data.Array (findIndex, insertAt, null, singleton, snoc)
 import Data.Array.NonEmpty (cons')
 import Data.Either (note)
 import Data.Filterable (class Filterable, filter)
 import Data.Lens (firstOf, lastOf, lengthOf, over, preview, set, traversed)
 import Data.Maybe (Maybe(..), fromMaybe, isNothing, maybe)
-import Data.Symbol (SProxy(..))
 import Data.Traversable (for_)
 import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
@@ -19,6 +16,9 @@ import Halogen.HTML as HH
 import Halogen.HTML.Elements.Keyed as HK
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Clipboard (class Clipboard, writeText)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Now (class Now, nowDateTime)
@@ -34,11 +34,12 @@ import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Resource (ListResource)
 import Listasio.Data.Route (Route(..), routeCodec)
-import Listasio.Env (UserEnv)
+import Listasio.Store as Store
 import Network.RemoteData (RemoteData(..), _Success)
 import Network.RemoteData as RemoteData
 import Routing.Duplex (print)
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Util (takeDomain)
 import Web.Event.Event (Event)
 import Web.HTML (window) as Window
@@ -48,7 +49,10 @@ import Web.UIEvent.MouseEvent as Mouse
 
 type Slot = H.Slot Query Output ID
 
-_listSlot = SProxy :: SProxy "list"
+_slot = Proxy :: Proxy "list"
+
+type Input
+  = {list :: ListWithIdUserAndMeta}
 
 data Action
   = Initialize
@@ -61,8 +65,8 @@ data Action
   | ConfirmDeleteResource ListResource
   | Navigate Route Event
   | RaiseCreateResource ID
-  | Receive {currentUser :: Maybe ProfileWithIdAndEmail, list :: ListWithIdUserAndMeta}
     -- meta actions
+  | Receive (Connected (Maybe ProfileWithIdAndEmail) Input)
   | AndCloseNextMenu Action
   | WhenNotProcessingAction Action
 
@@ -92,15 +96,15 @@ type State
     , currentUser :: Maybe ProfileWithIdAndEmail
     }
 
-component :: forall m r.
+component :: forall m.
      MonadAff m
-  => MonadAsk {userEnv :: UserEnv | r} m
+  => MonadStore Store.Action Store.Store m
   => ManageResource m
   => Clipboard m
   => Now m
   => Navigate m
-  => H.Component HH.HTML Query {list :: ListWithIdUserAndMeta} Output m
-component = Connect.component $ H.mkComponent
+  => H.Component Query Input Output m
+component = connect (selectEq _.currentUser) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
@@ -111,7 +115,7 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState {currentUser, list} =
+  initialState {context: currentUser, input: {list}} =
     { list
     , resources: singleton <$> RemoteData.fromMaybe list.resource_metadata.next
     , isProcessingAction: false
@@ -128,7 +132,7 @@ component = Connect.component $ H.mkComponent
       resources <- RemoteData.fromEither <$> note "Failed to load list resources" <$> getListResources {list: list.id, completed: Just false}
       H.modify_ _ {resources = resources}
 
-    Receive {currentUser} ->
+    Receive {context: currentUser} ->
       H.modify_ _ {currentUser = currentUser}
 
     ToggleShowNextMenu -> H.modify_ $ over _showNextMenu not <<< set _confirmDelete Nothing
@@ -224,7 +228,7 @@ component = Connect.component $ H.mkComponent
       pure $ Just a
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render state@{list, resources, showNextMenu, isProcessingAction, confirmDelete, currentUser} =
+  render state@{list, showNextMenu, isProcessingAction, confirmDelete, currentUser} =
     HH.div
       [ HP.classes
           [ T.border2
@@ -250,7 +254,7 @@ component = Connect.component $ H.mkComponent
       _, Just next ->
         nextEl next $ lengthOf (_resources <<< _Success <<< traversed) state == 1
 
-      { count: 0 }, _ ->
+      {count: 0}, _ ->
         HH.div
           [ HP.classes
               [ T.px4
@@ -279,13 +283,13 @@ component = Connect.component $ H.mkComponent
                       , T.focusOutlineNone
                       ]
                   , HP.type_ HP.ButtonButton
-                  , HE.onClick $ \_ -> Just $ RaiseCreateResource list.id
+                  , HE.onClick $ const $ RaiseCreateResource list.id
                   ]
                   [ HH.text "add resource" ]
               ]
           ]
 
-      { count, completed_count }, _ | count == completed_count ->
+      {count, completed_count}, _ | count == completed_count ->
         HH.div
           [ HP.classes
               [ T.px4
@@ -357,14 +361,14 @@ component = Connect.component $ H.mkComponent
                 [ Tuple
                     (ID.toString next.id)
                     $ ButtonGroupMenu.buttonGroupMenu
-                        { mainAction: Just $ WhenNotProcessingAction $ CompleteResource next
+                        { mainAction: WhenNotProcessingAction $ CompleteResource next
                         , label: HH.text "Done"
-                        , toggleMenu: Just ToggleShowNextMenu
+                        , toggleMenu: ToggleShowNextMenu
                         , isOpen: showNextMenu
                         , disabled: isProcessingAction
                         }
                         $ cons'
-                            { action: Just $ AndCloseNextMenu $ CopyResourceURL next
+                            { action: AndCloseNextMenu $ CopyResourceURL next
                             , label: HH.div
                                        [ HP.classes [ T.flex, T.itemsCenter ] ]
                                        [ Icons.clipboardCopy [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
@@ -372,7 +376,7 @@ component = Connect.component $ H.mkComponent
                                        ]
                             , disabled: false
                             }
-                            [ { action: Just $ AndCloseNextMenu $ CopyToShare next
+                            [ { action: AndCloseNextMenu $ CopyToShare next
                               , label: HH.div
                                          [ HP.classes [ T.flex, T.itemsCenter ] ]
                                          [ Icons.share [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
@@ -380,7 +384,7 @@ component = Connect.component $ H.mkComponent
                                          ]
                               , disabled: false
                               }
-                            , { action: Just $ WhenNotProcessingAction $ AndCloseNextMenu $ SkipResource 0 next
+                            , { action: WhenNotProcessingAction $ AndCloseNextMenu $ SkipResource 0 next
                               , label: HH.div
                                          [ HP.classes [ T.flex, T.itemsCenter ] ]
                                          [ Icons.sortDescending [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
@@ -388,7 +392,7 @@ component = Connect.component $ H.mkComponent
                                          ]
                               , disabled: isLast || isProcessingAction
                               }
-                            , { action: Just $ WhenNotProcessingAction $ maybe
+                            , { action: WhenNotProcessingAction $ maybe
                                           (DeleteResource false next)
                                           (const $ AndCloseNextMenu $ ConfirmDeleteResource next)
                                           confirmDelete
@@ -415,7 +419,7 @@ component = Connect.component $ H.mkComponent
       case currentUser of
         Just {slug} ->
           [ safeHref $ route slug
-          , HE.onClick (Just <<< Navigate (route slug) <<< Mouse.toEvent)
+          , HE.onClick (Navigate (route slug) <<< Mouse.toEvent)
           ]
             <> rest
         Nothing -> rest
@@ -448,7 +452,7 @@ component = Connect.component $ H.mkComponent
                       , HH.span [ HP.classes [ T.textGray300 ] ] [ HH.text $ show list.resource_metadata.count ]
                       ]
                 , HH.button
-                    [ HE.onClick $ \_ -> Just $ RaiseCreateResource list.id
+                    [ HE.onClick $ const $ RaiseCreateResource list.id
                     , HP.classes [ T.ml2 ]
                     ]
                     [ Icons.plus [ Icons.classes [ T.h5, T.w5, T.textGray300, T.hoverTextGray400 ] ] ]

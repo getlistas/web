@@ -3,21 +3,20 @@ module Listasio.Component.HTML.Modal where
 import Prelude
 
 import Listasio.Component.HTML.Icons as Icons
-import Data.Maybe (Maybe(..))
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Listasio.Component.HTML.Utils (maybeElem, whenElem)
+import Listasio.Component.HTML.Utils (whenElem)
 import Tailwind as T
 import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
-modal :: forall i p. Boolean -> Maybe p -> HH.HTML i p -> HH.HTML i p
-modal show mbOnClose content =
+modal :: forall i p. Boolean -> {noOp :: p, onClose :: p} -> HH.HTML i p -> HH.HTML i p
+modal show {noOp, onClose} content =
   whenElem show \_ ->
     HH.div
       [ HP.classes [ T.fixed, T.z10, T.inset0, T.overflowYAuto ]
       , HE.onKeyDown \e ->
-          if KeyboardEvent.code e == "Escape" then mbOnClose else Nothing
+          if KeyboardEvent.code e == "Escape" then onClose else noOp
       ]
       [ HH.div
           [ HP.classes
@@ -44,7 +43,7 @@ modal show mbOnClose content =
             --   From: "opacity-100"
             --   To: "opacity-0"
             HH.div
-              [ HE.onClick \_ -> mbOnClose
+              [ HE.onClick \_ -> onClose
               , HP.classes [ T.fixed, T.inset0, T.transitionOpacity ]
               ]
               [ HH.div [ HP.classes [ T.absolute, T.inset0, T.bgGray200, T.opacity50 ] ] [] ]
@@ -81,34 +80,33 @@ modal show mbOnClose content =
                     , T.smP6
                     ]
                 ]
-                [ maybeElem mbOnClose \_ ->
-                    HH.div
-                      [ HP.classes
-                          [ T.absolute
-                          , T.top0
-                          , T.right0
-                          , T.pt4
-                          , T.pr4
-                          ]
-                      ]
-                      [ HH.button
-                          [ HE.onClick \_ -> mbOnClose
-                          , HP.type_ HP.ButtonButton
-                          , HP.classes
-                              [ T.bgWhite
-                              , T.roundedMd
-                              , T.textGray200
-                              , T.hoverTextGray300
-                              , T.focusOutlineNone
-                              , T.focusRing2
-                              , T.focusRingOffset2
-                              , T.focusRingGray300
-                              ]
-                          ]
-                          [ HH.span [ HP.classes [ T.srOnly ] ] [ HH.text "Close" ]
-                          , Icons.x [ Icons.classes [ T.h5, T.w5 ] ]
-                          ]
-                      ]
+                [ HH.div
+                    [ HP.classes
+                        [ T.absolute
+                        , T.top0
+                        , T.right0
+                        , T.pt4
+                        , T.pr4
+                        ]
+                    ]
+                    [ HH.button
+                        [ HE.onClick \_ -> onClose
+                        , HP.type_ HP.ButtonButton
+                        , HP.classes
+                            [ T.bgWhite
+                            , T.roundedMd
+                            , T.textGray200
+                            , T.hoverTextGray300
+                            , T.focusOutlineNone
+                            , T.focusRing2
+                            , T.focusRingOffset2
+                            , T.focusRingGray300
+                            ]
+                        ]
+                        [ HH.span [ HP.classes [ T.srOnly ] ] [ HH.text "Close" ]
+                        , Icons.x [ Icons.classes [ T.h5, T.w5 ] ]
+                        ]
+                    ]
                 , content
                 ]
           ]

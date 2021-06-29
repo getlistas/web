@@ -2,8 +2,6 @@ module Listasio.Page.PublicList where
 
 import Prelude
 
-import Component.HOC.Connect as Connect
-import Control.Monad.Reader (class MonadAsk)
 import Data.Array.NonEmpty as NEA
 import Data.Either (note)
 import Data.Filterable (filter)
@@ -13,6 +11,9 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Clipboard (class Clipboard)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Now (class Now)
@@ -29,23 +30,24 @@ import Listasio.Data.DateTime (toDisplayMonthDayYear)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail, PublicProfile)
 import Listasio.Data.Route (Route(..))
-import Listasio.Env (UserEnv)
+import Listasio.Store as Store
 import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
 import Slug (Slug)
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
 import Web.UIEvent.MouseEvent as Mouse
 
-type Props
-  = { user :: Slug
-    , list :: Slug
-    , currentUser :: Maybe ProfileWithIdAndEmail
-    }
+_slot :: Proxy "publicList"
+_slot = Proxy
+
+type Input
+  = {user :: Slug, list :: Slug}
 
 data Action
   = Initialize
-  | Receive Props
+  | Receive (Connected (Maybe ProfileWithIdAndEmail) Input)
   | LoadList
   | LoadAuthor
   | Navigate Route Event
@@ -64,17 +66,17 @@ type ChildSlots
     )
 
 component
-  :: forall q o m r
+  :: forall q o m
    . MonadAff m
-  => MonadAsk {userEnv :: UserEnv | r} m
+  => MonadStore Store.Action Store.Store m
   => ManageUser m
   => ManageList m
   => ManageResource m
   => Clipboard m
   => Now m
   => Navigate m
-  => H.Component HH.HTML q {list :: Slug, user :: Slug} o m
-component = Connect.component $ H.mkComponent
+  => H.Component q Input o m
+component = connect (selectEq _.currentUser) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
@@ -84,7 +86,7 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState {list, user, currentUser} =
+  initialState {context: currentUser, input: {list, user}} =
     { listSlug: list
     , authorSlug: user
     , currentUser
@@ -112,7 +114,7 @@ component = Connect.component $ H.mkComponent
       author <- RemoteData.fromEither <$> note "Failed to fetch list author" <$> userBySlug authorSlug
       H.modify_ _ {author = author}
 
-    Receive {currentUser} ->
+    Receive {context: currentUser} ->
       H.modify_ _ {currentUser = currentUser}
 
     Navigate route e -> navigate_ e route
@@ -148,7 +150,7 @@ component = Connect.component $ H.mkComponent
                     (case author of
                       Success {slug} ->
                         [ safeHref $ Profile slug
-                        , HE.onClick $ Just <<< Navigate (Profile slug) <<< Mouse.toEvent
+                        , HE.onClick $ Navigate (Profile slug) <<< Mouse.toEvent
                         ]
                       _ -> []
                     )
@@ -184,7 +186,6 @@ component = Connect.component $ H.mkComponent
             ]
         ]
 
-    listDetails :: ListWithIdUserAndMeta -> _
     listDetails {slug, description, resource_metadata, tags, updated_at, forks_count, likes_count, subscriptions_count} =
       HH.div
         [ HP.classes
@@ -231,7 +232,7 @@ component = Connect.component $ H.mkComponent
         , whenElem isOwnList \_ ->
             HH.a
               [ safeHref $ EditList authorSlug slug
-              , HE.onClick $ Just <<< Navigate (EditList authorSlug slug) <<< Mouse.toEvent
+              , HE.onClick $ Navigate (EditList authorSlug slug) <<< Mouse.toEvent
               , HP.classes
                   [ T.flex
                   , T.itemsCenter

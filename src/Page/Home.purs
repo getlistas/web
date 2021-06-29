@@ -2,20 +2,17 @@ module Listasio.Page.Home where
 
 import Prelude
 
-import Component.HOC.Connect as Connect
-import Control.Monad.Reader (class MonadAsk)
-import Control.Monad.Reader.Trans (asks)
 import Data.Array.NonEmpty as NEA
 import Data.Lens (over)
-import Data.Maybe (Maybe(..), isJust, isNothing, maybe)
-import Data.Symbol (SProxy(..))
-import Effect.Aff.Bus as Bus
+import Data.Maybe (Maybe(..), isJust, maybe)
 import Effect.Aff.Class (class MonadAff)
-import Effect.Ref as Ref
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore, updateStore)
+import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Analytics (class Analytics)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, getCurrentUser)
@@ -31,10 +28,14 @@ import Listasio.Data.Lens (_menuOpen)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
 import Listasio.Data.Username as Username
-import Listasio.Env (UserEnv)
+import Listasio.Store as Store
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
 import Web.UIEvent.MouseEvent as Mouse
+
+_slot :: Proxy "home"
+_slot = Proxy
 
 data Form
   = ShowLoading
@@ -57,7 +58,7 @@ type ChildSlots
 data Action
   = Initialize
   | GetCurrentUser
-  | Receive {currentUser :: Maybe ProfileWithIdAndEmail}
+  | Receive (Connected (Maybe ProfileWithIdAndEmail) Unit)
   | Navigate Route Event
   | ToggleMenu
   | GoToSignin Register.Output
@@ -70,14 +71,14 @@ type State
     }
 
 component
-  :: forall q o m r
+  :: forall q o m
    . MonadAff m
-  => MonadAsk {userEnv :: UserEnv | r} m
+  => MonadStore Store.Action Store.Store m
   => ManageUser m
   => Navigate m
   => Analytics m
-  => H.Component HH.HTML q {} o m
-component = Connect.component $ H.mkComponent
+  => H.Component q Unit o m
+component = connect (selectEq _.currentUser) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
@@ -87,32 +88,30 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState {currentUser} =
+  initialState {context: currentUser} =
     { currentUser
     , menuOpen: false
-    , authStatus: maybe ShowLoading ShowUser currentUser
+    , authStatus: maybe ShowRegister ShowUser currentUser
     }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
     Initialize -> do
       st <- H.get
-      when (isJust st.currentUser) $
-        void $ H.fork $ handleAction GetCurrentUser
+      when (isJust st.currentUser) $ void $ H.fork $ handleAction GetCurrentUser
 
-    GetCurrentUser -> do
-      user <- getCurrentUser
-      {currentUser, userBus} <- asks _.userEnv
-      H.liftEffect do Ref.write user currentUser
-      H.liftAff do Bus.write user userBus
-
-    Receive {currentUser} -> do
+    Receive {context: currentUser} -> do
       prev <- H.get
 
       H.modify_ _ {authStatus = maybe ShowRegister ShowUser currentUser, currentUser = currentUser}
 
-      when (isNothing prev.currentUser && isJust currentUser) $
-        void $ H.fork $ handleAction GetCurrentUser
+      case prev.currentUser, currentUser of
+        Nothing, Just _ -> void $ H.fork $ handleAction GetCurrentUser
+        _, _ -> pure unit
+
+    GetCurrentUser -> do
+      user <- getCurrentUser
+      updateStore $ maybe Store.LogoutUser Store.LoginUser user
 
     Navigate route e -> navigate_ e route
 
@@ -141,7 +140,7 @@ component = Connect.component $ H.mkComponent
       ]
 
     where
-    onNavigate route = Just <<< Navigate route <<< Mouse.toEvent
+    onNavigate route = Navigate route <<< Mouse.toEvent
 
     logo = HH.a [ safeHref Home, HE.onClick $ onNavigate Home ] [ Logo.elem ]
 
@@ -207,7 +206,7 @@ component = Connect.component $ H.mkComponent
                 , HH.span
                     [ HP.classes [ T.textKiwi, T.block ] ]
                     [ HH.text " your "
-                    , HH.slot (SProxy :: _ "typed") unit Typed.component {words: NEA.cons' "reading" ["watching", "listening"]} absurd
+                    , HH.slot Typed._slot unit Typed.component {words: NEA.cons' "reading" ["watching", "listening"]} absurd
                     , HH.text " lists"
                     ]
                 ]
@@ -263,7 +262,7 @@ component = Connect.component $ H.mkComponent
                             , T.focusRingWhite
                             ]
                         , HP.type_ HP.ButtonButton
-                        , HE.onClick $ \_ -> Just ToggleMenu
+                        , HE.onClick $ const ToggleMenu
                         ]
                         [ HH.span
                             [ HP.classes [ T.srOnly ] ]
@@ -391,7 +390,7 @@ component = Connect.component $ H.mkComponent
                               , T.focusRingKiwi
                               ]
                           , HP.type_ HP.ButtonButton
-                          , HE.onClick $ \_ -> Just ToggleMenu
+                          , HE.onClick $ const ToggleMenu
                           ]
                           [ HH.span
                               [ HP.classes [ T.srOnly ] ]
@@ -538,7 +537,7 @@ component = Connect.component $ H.mkComponent
             ]
             [ HH.div
                 [ HP.classes [ T.px4, T.py8, T.smPx10 ] ]
-                [ HH.slot (SProxy :: _ "register") unit Register.component unit (Just <<< GoToSignin) ]
+                [ HH.slot Register._slot unit Register.component unit GoToSignin ]
             , HH.div
                 [ HP.classes
                     [ T.px4
@@ -583,7 +582,7 @@ component = Connect.component $ H.mkComponent
             ]
             [ HH.div
                 [ HP.classes [ T.px4, T.py8, T.smPx10 ] ]
-                [ HH.slot (SProxy :: _ "login") unit Login.component {redirect: true} (Just <<< GoToRegister) ]
+                [ HH.slot Login._slot unit Login.component {redirect: true} GoToRegister ]
             ]
 
     heroAndNav =

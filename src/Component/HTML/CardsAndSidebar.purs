@@ -17,11 +17,11 @@ type SidebarItem p
   = { active :: Boolean
     , icon :: Icons.Icon
     , label :: String
-    , link :: Maybe { action :: Event -> Maybe p, route :: Route }
+    , link :: Maybe { action :: Event -> p, route :: Route }
     }
 
 type SectionCard i p
-  = { cta :: Maybe { label :: String, action :: Maybe p }
+  = { cta :: Maybe { label :: String, action :: p }
     , content :: HH.HTML i p
     , title :: String
     , description :: Maybe String
@@ -72,7 +72,7 @@ layout items sections =
           HH.div
             [ HP.classes [ T.px4, T.py3, T.bgGray50, T.textRight, T.smPx6 ] ]
             [ HH.button
-                [ HE.onClick \_ -> action
+                [ HE.onClick $ const action
                 , HP.classes
                     [ T.bgIndigo600
                     , T.border

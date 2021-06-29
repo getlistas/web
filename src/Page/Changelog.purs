@@ -2,34 +2,40 @@ module Listasio.Page.Changelog where
 
 import Prelude
 
-import Component.HOC.Connect as Connect
-import Control.Monad.Reader (class MonadAsk)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Component.HTML.Wip as Wip
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route)
-import Listasio.Env (UserEnv)
+import Listasio.Store as Store
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
 
+_slot :: Proxy "changelog"
+_slot = Proxy
+
 data Action
-  = Receive { currentUser :: Maybe ProfileWithIdAndEmail }
+  = Receive (Connected (Maybe ProfileWithIdAndEmail) Unit)
   | Navigate Route Event
 
-type State = {currentUser :: Maybe ProfileWithIdAndEmail}
+type State
+  = {currentUser :: Maybe ProfileWithIdAndEmail}
 
 component
-  :: forall q o m r
+  :: forall q o m
    . MonadAff m
-  => MonadAsk { userEnv :: UserEnv | r } m
+  => MonadStore Store.Action Store.Store m
   => Navigate m
-  => H.Component HH.HTML q {} o m
-component = Connect.component $ H.mkComponent
+  => H.Component q Unit o m
+component = connect (selectEq _.currentUser) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
@@ -38,17 +44,17 @@ component = Connect.component $ H.mkComponent
       }
   }
   where
-  initialState { currentUser } = { currentUser }
+  initialState {context: currentUser} = {currentUser}
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
-    Receive { currentUser } ->
-      H.modify_ _ { currentUser = currentUser }
+    Receive {context: currentUser} ->
+      H.modify_ _ {currentUser = currentUser}
 
     Navigate route e -> navigate_ e route
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render { currentUser } =
+  render _ =
     HH.div
       []
       [ HH.div

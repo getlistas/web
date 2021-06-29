@@ -38,9 +38,8 @@ parse str = Just $ Slug str
 toString :: Slug -> String
 toString (Slug s) = s
 
-
 codec :: JsonCodec Slug
-codec = CA.prismaticCodec parse toString CA.string
+codec = CA.prismaticCodec "Slug" parse toString CA.string
 
 term :: RouteDuplex' String -> RouteDuplex' Slug
 term = as toString (parse >>> note "Bad slug")
