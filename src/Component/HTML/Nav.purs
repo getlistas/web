@@ -3,7 +3,7 @@ module Listasio.Component.HTML.Nav where
 import Prelude
 
 import Data.Lens (over, set)
-import Data.Maybe (Maybe(..), isJust, isNothing, maybe)
+import Data.Maybe (Maybe(..), isJust, maybe)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -86,8 +86,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
   handleAction = case _ of
     Initialize -> do
       st <- H.get
-      when (isJust st.currentUser) $
-        void $ H.fork $ handleAction GetCurrentUser
+      -- TODO: if I already got the user, should I still fetch the user ???
+      when (isJust st.currentUser) $ void $ H.fork $ handleAction GetCurrentUser
 
     GetCurrentUser -> do
       user <- getCurrentUser
@@ -102,8 +102,9 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
         , currentRoute = route
         }
 
-      when (isNothing prev.currentUser && isJust currentUser) $
-        void $ H.fork $ handleAction GetCurrentUser
+      case prev.currentUser, currentUser of
+        Nothing, Just _ -> void $ H.fork $ handleAction GetCurrentUser
+        _, _ -> pure unit
 
     Navigate route e -> navigate_ e route
 

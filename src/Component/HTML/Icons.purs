@@ -11,10 +11,6 @@ import Svg.Parser.Halogen (icon)
 
 type Icon = forall p r i. Array (HH.IProp r i) -> HH.HTML p i
 
--- TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
--- icon :: String -> Icon
--- icon text props = HH.span props [ HH.text text ]
-
 classes :: forall r i. Array ClassName -> HH.IProp r i
 classes =
   HH.attr (HH.AttrName "class")

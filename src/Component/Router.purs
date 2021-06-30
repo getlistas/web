@@ -140,30 +140,34 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
   handleQuery = case _ of
     Navigate dest a -> do
       {route, currentUser} <- H.get
+
+      let isLoggedIn = isJust currentUser
+          isAuthRoute = dest `elem` authRoutes
+
       when (route /= Just dest) do
-        case isJust currentUser && dest `elem` authRoutes of
+        case isLoggedIn && isAuthRoute of
           false -> H.modify_ _ {route = Just dest}
           _ -> pure unit
+
       pure $ Just a
+
     where
     authRoutes = [ Login, Register, VerifyEmailSuccess, VerifyEmailFailure ]
 
   -- Display the login page instead of the expected page if there is no current user
   authorize :: Maybe ProfileWithIdAndEmail -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
   authorize mbProfile html = case mbProfile of
-    Nothing ->
-      HH.slot_ Login._slot unit Login.component {redirect: false, registerSuccess: false}
-    Just _ ->
-      html
+    Nothing -> HH.slot_ Login._slot unit Login.component {redirect: false, registerSuccess: false}
+
+    Just _ -> html
 
   authorizeList :: Maybe ProfileWithIdAndEmail -> Slug -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
   authorizeList mbProfile pathSlug html = case mbProfile of
-    Nothing ->
-      HH.slot_ Login._slot unit Login.component {redirect: false, registerSuccess: false}
-    Just {slug} | slug == pathSlug ->
-      html
-    Just _ ->
-      NotFound.elem
+    Nothing -> HH.slot_ Login._slot unit Login.component {redirect: false, registerSuccess: false}
+
+    Just {slug} | slug == pathSlug -> html
+
+    Just _ -> NotFound.elem
 
   layout :: Maybe Route -> _ -> _
   layout currentRoute content =
@@ -180,86 +184,92 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
   render :: State -> H.ComponentHTML Action ChildSlots m
   render {route, currentUser} =
-    case route of
-      Nothing ->
-        layout Nothing NotFound.elem
+    -- removing this wrapping div causes the navigation from Home to other pages
+    -- to render nothing at all, even when the lifecycle of the other pages is
+    -- triggered
+    HH.div
+      []
+      [ case route of
+          Nothing -> layout Nothing NotFound.elem
 
-      Just Home ->
-        HH.slot_ Home._slot unit Home.component unit
+          Just Home -> HH.slot_ Home._slot unit Home.component unit
 
-      Just r -> layout (Just r)
-        case r of
-          -- PUBLIC ----------------------------------------------------------------
-          About ->
-            HH.slot_ About._slot unit About.component unit
+          Just r ->
+            layout
+              (Just r)
+              case r of
+                -- PUBLIC ----------------------------------------------------------------
+                About ->
+                  HH.slot_ About._slot unit About.component unit
 
-          Discover ->
-            HH.slot_ Discover._slot unit Discover.component unit
+                Discover ->
+                  HH.slot_ Discover._slot unit Discover.component unit
 
-          Pricing ->
-            HH.slot_ Pricing._slot unit Pricing.component unit
+                Pricing ->
+                  HH.slot_ Pricing._slot unit Pricing.component unit
 
-          Changelog ->
-            HH.slot_ Changelog._slot unit Changelog.component unit
+                Changelog ->
+                  HH.slot_ Changelog._slot unit Changelog.component unit
 
-          Profile slug ->
-            HH.slot_ Profile._slot unit Profile.component {slug}
+                Profile slug ->
+                  HH.slot_ Profile._slot unit Profile.component {slug}
 
-          PublicList user list ->
-            HH.slot_ PublicList._slot unit PublicList.component {user, list}
+                PublicList user list ->
+                  HH.slot_ PublicList._slot unit PublicList.component {user, list}
 
-          -- LEGAL -----------------------------------------------------------------
-          Terms ->
-            HH.slot_ Terms._slot unit Terms.component unit
+                -- LEGAL -----------------------------------------------------------------
+                Terms ->
+                  HH.slot_ Terms._slot unit Terms.component unit
 
-          Policy ->
-            HH.slot_ Policy._slot unit Policy.component unit
+                Policy ->
+                  HH.slot_ Policy._slot unit Policy.component unit
 
-          -- AUTH ------------------------------------------------------------------
-          Login ->
-            HH.slot_ Login._slot unit Login.component {redirect: true, registerSuccess: false}
+                -- AUTH ------------------------------------------------------------------
+                Login ->
+                  HH.slot_ Login._slot unit Login.component {redirect: true, registerSuccess: false}
 
-          Register ->
-            HH.slot_ Register._slot unit Register.component unit
+                Register ->
+                  HH.slot_ Register._slot unit Register.component unit
 
-          VerifyEmailSuccess ->
-            HH.slot_ Login._slot unit Login.component {redirect: true, registerSuccess: true}
+                VerifyEmailSuccess ->
+                  HH.slot_ Login._slot unit Login.component {redirect: true, registerSuccess: true}
 
-          VerifyEmailFailure ->
-            HH.slot_ VerifyFailure._slot unit VerifyFailure.component unit
+                VerifyEmailFailure ->
+                  HH.slot_ VerifyFailure._slot unit VerifyFailure.component unit
 
-          -- PRIVATE ---------------------------------------------------------------
-          Dashboard ->
-            HH.slot_ Dashboard._slot unit Dashboard.component unit
-              # authorize currentUser
+                -- PRIVATE ---------------------------------------------------------------
+                Dashboard ->
+                  HH.slot_ Dashboard._slot unit Dashboard.component unit
+                    # authorize currentUser
 
-          History ->
-            HH.slot_ History._slot unit History.component unit
-              # authorize currentUser
+                History ->
+                  HH.slot_ History._slot unit History.component unit
+                    # authorize currentUser
 
-          Settings ->
-            HH.slot_ Settings._slot unit Settings.component unit
-              # authorize currentUser
+                Settings ->
+                  HH.slot_ Settings._slot unit Settings.component unit
+                    # authorize currentUser
 
-          CreateList ->
-            HH.slot_ CreateList._slot unit CreateList.component unit
-              # authorize currentUser
+                CreateList ->
+                  HH.slot_ CreateList._slot unit CreateList.component unit
+                    # authorize currentUser
 
-          CreateResource args ->
-            HH.slot_ CreateResource._slot unit CreateResource.component args
-              # authorize currentUser
+                CreateResource args ->
+                  HH.slot_ CreateResource._slot unit CreateResource.component args
+                    # authorize currentUser
 
-          ViewList _ ->
-            HH.slot_ ViewList._slot unit ViewList.component unit
+                ViewList _ ->
+                  HH.slot_ ViewList._slot unit ViewList.component unit
 
-          EditList user list ->
-            HH.slot_ EditList._slot unit EditList.component {user, list}
-              # authorizeList currentUser user
+                EditList user list ->
+                  HH.slot_ EditList._slot unit EditList.component {user, list}
+                    # authorizeList currentUser user
 
-          -- TODO: validate that the current user is accessing this list
-          IntegrationsList user list ->
-            HH.slot_ ListIntegrations._slot unit ListIntegrations.component {user, list}
-              # authorizeList currentUser user
+                -- TODO: validate that the current user is accessing this list
+                IntegrationsList user list ->
+                  HH.slot_ ListIntegrations._slot unit ListIntegrations.component {user, list}
+                    # authorizeList currentUser user
 
-          -- This shouldn't happend, as is already pattern matched above
-          Home -> HH.text ""
+                -- This shouldn't happend, as is already pattern matched above
+                Home -> HH.text ""
+      ]
