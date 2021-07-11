@@ -2694,10 +2694,6 @@ select{
   max-width: 100%;
 }
 
-.max-w-prose {
-  max-width: 65ch;
-}
-
 .min-h-screen {
   min-height: 100vh;
 }
@@ -3067,6 +3063,14 @@ select{
 
 .left-12 {
   left: 3rem;
+}
+
+.-top-3 {
+  top: -0.75rem;
+}
+
+.-right-6 {
+  right: -1.5rem;
 }
 
 .left-1\/2 {
