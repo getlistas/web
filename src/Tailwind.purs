@@ -403,10 +403,6 @@ gridCols1 = ClassName "grid-cols-1"
 gridCols26 :: ClassName
 gridCols26 = ClassName "grid-cols-26"
 
--- | gridCols2
-gridCols2 :: ClassName
-gridCols2 = ClassName "grid-cols-2"
-
 -- | gridCols52
 gridCols52 :: ClassName
 gridCols52 = ClassName "grid-cols-52"
@@ -466,10 +462,6 @@ groupHoverTextGray700 = ClassName "group-hover:text-gray-700"
 -- | groupHoverTextKiwi
 groupHoverTextKiwi :: ClassName
 groupHoverTextKiwi = ClassName "group-hover:text-kiwi"
-
--- | groupHoverUnderline
-groupHoverUnderline :: ClassName
-groupHoverUnderline = ClassName "group-hover:underline"
 
 -- | h0
 h0 :: ClassName
@@ -879,10 +871,6 @@ maxWLg = ClassName "max-w-lg"
 maxWMd :: ClassName
 maxWMd = ClassName "max-w-md"
 
--- | maxWProse
-maxWProse :: ClassName
-maxWProse = ClassName "max-w-prose"
-
 -- | maxWXl
 maxWXl :: ClassName
 maxWXl = ClassName "max-w-xl"
@@ -1114,6 +1102,14 @@ negMx5 = ClassName "-mx-5"
 -- | negMy2
 negMy2 :: ClassName
 negMy2 = ClassName "-my-2"
+
+-- | negRight6
+negRight6 :: ClassName
+negRight6 = ClassName "-right-6"
+
+-- | negTop3
+negTop3 :: ClassName
+negTop3 = ClassName "-top-3"
 
 -- | negTranslateX1d2
 negTranslateX1d2 :: ClassName

@@ -132,9 +132,9 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
     HH.div
       [ HP.classes [ T.bgWhite ] ]
       [ heroAndNav
-      , if false then splitImageAndFeature else HH.text ""
+      , whenElem false \_ -> splitImageAndFeature
       , readingListsFeatureCard
-      , discoveryFeatureCard
+      , whenElem false \_ -> discoveryFeatureCard
       , featuresList
       , footer Navigate
       ]
@@ -221,7 +221,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                     , T.xlTextXl
                     ]
                 ]
-                [ HH.text "Your reading lists and learning paths under control. Keep a reference and stats of any article, podcast, and video you have consumed. Discover, copy and follow what other people are reading." ]
+                [ HH.text "Your reading lists under control. Keep a reference and stats of any article, podcast, or video you have consumed. Discover, copy, and follow content from others." ]
             ]
         ]
 
@@ -617,7 +617,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             [ HH.div
                 [ HP.classes [ T.negMt6 ] ]
                 [ HH.div
-                    []
+                    [ HP.classes [ T.mb8 ] ]
                     [ HH.span
                         [ HP.classes
                             [ T.inlineFlex
@@ -631,21 +631,16 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                         ]
                         [ icon [ Icons.classes [ T.h6, T.w6, T.textWhite ] ] ]
                     ]
-                , case soon of
-                    true ->
-                      HH.div
-                        [ HP.classes [ T.mt8, T.flex, T.justifyCenter ] ]
-                        [ HH.h3
-                            [ HP.classes [ T.textLg, T.fontMedium, T.textGray400, T.trackingTight ] ]
-                            [ HH.text title ]
-                        , HH.span
-                            [ HP.classes [ T.ml2, T.textXs, T.fontSemibold, T.textKiwi ] ]
-                            [ HH.text "SOON" ]
-                        ]
-                    false ->
-                      HH.h3
-                        [ HP.classes [ T.mt8, T.textLg, T.fontMedium, T.textGray400, T.trackingTight ] ]
+                , HH.div
+                [ HP.classes [ T.relative, T.inlineBlock ] ]
+                    [ HH.h3
+                        [ HP.classes [ T.textLg, T.fontMedium, T.textGray400, T.trackingTight ] ]
                         [ HH.text title ]
+                    , whenElem soon \_ ->
+                        HH.div
+                          [ HP.classes [ T.textXs, T.fontSemibold, T.textKiwi, T.absolute, T.negTop3, T.negRight6 ] ]
+                          [ HH.text "SOON" ]
+                    ]
                 , HH.p
                     [ HP.classes [ T.mt5, T.textBase, T.textGray500 ] ]
                     [ HH.text body ]
@@ -682,28 +677,30 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                     ]
                 ]
                 [ HH.text "Enhance the way you consume and share content" ]
-            -- , HH.p
-            --     [ HP.classes [ T.mt5, T.maxWProse, T.mxAuto, T.textXl, T.textGray500 ] ]
-            --     [ HH.text "Optimize your experience with our following features." ]
             , HH.div
                 [ HP.classes [ T.mt12 ] ]
                 [ HH.div
                     [ HP.classes [ T.grid, T.gridCols1, T.gap8, T.smGridCols2, T.lgGridCols3 ] ]
                     [ feature
+                        Icons.bookmark
+                        "History"
+                        "Keep track of everything you consumed. You’ll never know when you’ll need it again."
+                        false
+                    , feature
+                        Icons.bookmark
+                        "Full text search"
+                        "Find any saved resource by their content, search more than just titles and tags."
+                        true
+                    , feature
                         Icons.duplicate
                         "Copy"
                         "Copy public lists content to read it yourself."
-                        false
+                        true
                     , feature
                         Icons.userAdd
                         "Subscribe"
                         "Subscribe to a list and get up to date content from the list author."
-                        false
-                    , feature
-                        Icons.bookmark
-                        "History"
-                        "Keep track of everything you consumed, you’ll never know when you’ll need it again."
-                        false
+                        true
                     , feature
                         Icons.rss
                         "RSS"
@@ -713,7 +710,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                         Icons.hashtag
                         "Discover"
                         "Explore and discover lists and learning paths from others."
-                        false
+                        true
                     ]
                 ]
             ]
@@ -759,16 +756,16 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                     [ HH.div
                         [ HP.classes [ T.lgSelfCenter ] ]
                         [ HH.h2
-                            [ HP.classes [ T.text3xl, T.fontExtrabold, T.textWhite, T.smText4xl ] ]
+                            [ HP.classes [ T.text3xl, T.fontExtrabold, T.textGray400, T.smText4xl ] ]
                             [ HH.span
                                 [ HP.classes [ T.block ] ]
                                 [ HH.text "Discover and learning paths" ]
                             ]
                         , HH.p
-                            [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textGray400 ] ]
+                            [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textWhite ] ]
                             [ HH.text "Want to put together a list that helped you grow in a specific area and share it with friends? Listas can help! Want to subscribe interesting reading Lists? Listas discover section might have what you need!" ]
                         , HH.p
-                            [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textGray400 ] ]
+                            [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textWhite ] ]
                             [ HH.text "Learning paths allow users to create and copy or follow lists designed to be consumed in a specific sequential order laid-out by the author." ]
                         ]
                     ]
@@ -852,16 +849,16 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                     [ HH.div
                         [ HP.classes [ T.lgSelfCenter ] ]
                         [ HH.h2
-                            [ HP.classes [ T.text3xl, T.fontExtrabold, T.textWhite, T.smText4xl ] ]
+                            [ HP.classes [ T.text3xl, T.fontExtrabold, T.textGray400, T.smText4xl ] ]
                             [ HH.span
                                 [ HP.classes [ T.block ] ]
                                 [ HH.text "Manage your reading lists" ]
                             ]
                         , HH.p
-                            [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textGray400 ] ]
+                            [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textWhite ] ]
                             [ HH.text "Listas lets you organize your reading material on different lists and focus only on what to read next." ]
                         , HH.p
-                            [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textGray400 ] ]
+                            [ HP.classes [ T.mt4, T.textLg, T.leading6, T.textWhite ] ]
                             [ HH.text "You'll have access to everything you read. Having trouble remembering that article you read last year? Find it on Listas. Want to measure how much you read every week? Listas shows you stats of your reading progress and habits." ]
                         ]
                     ]
