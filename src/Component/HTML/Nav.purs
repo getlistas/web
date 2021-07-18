@@ -224,12 +224,10 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                     [ desktopLink Dashboard "Up next"
                     , desktopLink History "History"
                     , desktopLink Discover "Discover"
-                    -- , desktopLink Pricing "Pricing"
                     ]
 
                   Nothing ->
                     [ desktopLink Discover "Discover"
-                    -- , desktopLink Pricing "Pricing"
                     ]
             ]
           , case authStatus of
@@ -269,14 +267,13 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
               ShowAuth ->
                 HH.div
-                  [ HP.classes [ T.hidden, T.mdFlex, T.itemsCenter ] ]
+                  [ HP.classes [ T.hidden, T.mdFlex, T.itemsCenter, T.gap8 ] ]
                   [ HH.a
                       [ HP.classes
                           [ T.inlineFlex
                           , T.itemsCenter
                           , T.px4
                           , T.py1
-                          , T.mr8
                           , T.border
                           , T.borderTransparent
                           , T.textSm

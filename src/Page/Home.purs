@@ -278,7 +278,6 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                 , whenElem (hasUser authStatus) \_ ->
                     desktopLink History "History"
                 , desktopLink Discover "Discover"
-                -- , desktopLink Pricing "Pricing"
                 ]
             ]
           , case authStatus of
@@ -316,7 +315,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
               _ ->
                 HH.div
-                  [ HP.classes [ T.hidden, T.mdFlex ] ]
+                  [ HP.classes [ T.hidden, T.mdFlex, T.itemsCenter, T.gap8 ] ]
                   [ HH.a
                       [ HP.classes
                           [ T.inlineFlex
@@ -336,10 +335,11 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                           , T.focusRingOffset2
                           , T.focusOutlineNone
                           ]
-                      , safeHref Login
-                      , HE.onClick $ onNavigate Login
+                      , safeHref Register
+                      , HE.onClick $ onNavigate Register
                       ]
-                      [ HH.text "Sign in" ]
+                      [ HH.text "Try for free" ]
+                  , desktopLink Login "Sing in"
                   ]
         ]
 
@@ -407,7 +407,6 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                   , whenElem (hasUser authStatus) \_ ->
                       mobileLink History "History"
                   , mobileLink Discover "Discover"
-                  -- , mobileLink Pricing "Pricing"
                   ]
               , case authStatus of
                   ShowUser _ -> HH.text ""
@@ -484,23 +483,20 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
               ]
           ]
 
-    authBlock =
-      case authStatus of
-        ShowLoading -> HH.text ""
-
-        ShowUser _ ->
-          HH.div
-            [ HP.classes
-                [ T.smMaxWMd
-                , T.smWFull
-                , T.smMxAuto
-                , T.smRoundedLg
-                , T.smOverflowHidden
-                ]
+    showUserBlock =
+      HH.div
+        [ HP.classes
+            [ T.smMaxWMd
+            , T.smWFull
+            , T.smMxAuto
+            , T.smRoundedLg
+            , T.smOverflowHidden
             ]
-            [ HH.div
-                [ HP.classes [ T.flex, T.justifyCenter, T.p4 ] ]
-                [ HH.a
+        ]
+        [ HH.div
+            [ HP.classes [ T.flex, T.justifyCenter, T.p4 ] ]
+            [ whenElem false \_ ->
+                HH.a
                   [ HP.classes
                       [ T.inlineFlex
                       , T.itemsCenter
@@ -521,8 +517,17 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                   , HE.onClick $ onNavigate Dashboard
                   ]
                   [ HH.text "Go to Dashboard" ]
-              ]
-            ]
+          , Icons.reading []
+          ]
+        ]
+
+    authBlock =
+      case authStatus of
+        ShowLoading -> HH.text ""
+
+        ShowUser _ ->
+          showUserBlock
+
         ShowRegister ->
           HH.div
             [ HP.classes
@@ -601,7 +606,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                         [ heroText
                         , HH.div
                             [ HP.classes [ T.mt16, T.smMt24, T.lgMt0, T.lgColSpan6 ] ]
-                            [ authBlock
+                            [ whenElem false \_ -> authBlock
+                            , showUserBlock
                             ]
                         ]
                     ]
@@ -613,7 +619,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       HH.div
         [ HP.classes [ T.pt6 ] ]
         [ HH.div
-            [ HP.classes [ T.flowRoot, T.bgGray10, T.roundedLg, T.px6, T.pb8 ] ]
+            [ HP.classes [ T.flowRoot, T.bgGray10, T.roundedLg, T.px6, T.pb8, T.hFull ] ]
             [ HH.div
                 [ HP.classes [ T.negMt6 ] ]
                 [ HH.div
@@ -680,17 +686,30 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             , HH.div
                 [ HP.classes [ T.mt12 ] ]
                 [ HH.div
-                    [ HP.classes [ T.grid, T.gridCols1, T.gap8, T.smGridCols2, T.lgGridCols3 ] ]
+                    [ HP.classes
+                        [ T.grid
+                        , T.gridCols1
+                        , T.gap8
+                        , T.smGridCols2
+                        , T.lgGridCols3
+                        , T.autoRowsFr
+                        ]
+                    ]
                     [ feature
                         Icons.bookmark
                         "History"
                         "Keep track of everything you consumed. You’ll never know when you’ll need it again."
                         false
                     , feature
-                        Icons.bookmark
+                        Icons.search
                         "Full text search"
                         "Find any saved resource by their content, search more than just titles and tags."
                         true
+                    , feature
+                        Icons.rss
+                        "RSS"
+                        "Bring outside content automatically to Listas using the RSS integration."
+                        false
                     , feature
                         Icons.duplicate
                         "Copy"
@@ -699,13 +718,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                     , feature
                         Icons.userAdd
                         "Subscribe"
-                        "Subscribe to a list and get up to date content from the list author."
+                        "Subscribe to a list and get up to date content from its author."
                         true
-                    , feature
-                        Icons.rss
-                        "RSS"
-                        "Bring outside content automatically to Listas using the RSS integration."
-                        false
                     , feature
                         Icons.hashtag
                         "Discover"
@@ -817,13 +831,14 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                 [ HH.div
                     [ HP.classes [ T.negMt6, T.aspectW5, T.aspectH3, T.mdAspectW2, T.mdAspectH1 ] ]
                     [ HH.img
-                        [ HP.alt "App screenshot"
-                        , HP.src "https://i.imgur.com/2UGt2Ko.png"
+                        [ HP.alt "Listas dashboard screenshot"
+                          -- Source https://imgur.com/a/V4mRN1f
+                        , HP.src "https://i.imgur.com/MvdQl9b.png"
                         , HP.classes
                             [ T.transform
                             , T.roundedMd
                             , T.objectCover
-                            , T.objectLeftTop
+                            , T.objectCenter
                             , T.negTranslateX6
                             , T.negTranslateY6
                             , T.smNegTranslateX6

@@ -27,6 +27,10 @@ aspectH3 = ClassName "aspect-h-3"
 aspectW5 :: ClassName
 aspectW5 = ClassName "aspect-w-5"
 
+-- | autoRowsFr
+autoRowsFr :: ClassName
+autoRowsFr = ClassName "auto-rows-fr"
+
 -- | bgDurazno
 bgDurazno :: ClassName
 bgDurazno = ClassName "bg-durazno"
