@@ -833,7 +833,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                     [ HH.img
                         [ HP.alt "Listas dashboard screenshot"
                           -- Source https://imgur.com/a/V4mRN1f
-                        , HP.src "https://i.imgur.com/MvdQl9b.png"
+                        , HP.src "https://i.imgur.com/IZs2gRv.png"
                         , HP.classes
                             [ T.transform
                             , T.roundedMd
