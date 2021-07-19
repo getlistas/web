@@ -3,7 +3,6 @@ module Listasio.Component.HTML.Button where
 import Prelude
 
 import DOM.HTML.Indexed (HTMLbutton)
-import Data.Maybe (Maybe(..))
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
