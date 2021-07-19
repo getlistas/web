@@ -346,7 +346,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                       , HE.onClick $ onNavigate Register
                       ]
                       [ HH.text "Try for free" ]
-                  , desktopLink Login "Sing in"
+                  , desktopLink Login "Sign in"
                   ]
         ]
 
