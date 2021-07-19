@@ -517,7 +517,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                   , HE.onClick $ onNavigate Dashboard
                   ]
                   [ HH.text "Go to Dashboard" ]
-          , Icons.reading []
+          , Icons.reading [ Icons.classes [ T.wFull, T.hFull ] ]
           ]
         ]
 
