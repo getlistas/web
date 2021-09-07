@@ -22,6 +22,7 @@ import Listasio.Component.Router as Router
 import Listasio.Data.ID as ID
 import Listasio.Data.Route (Route, routeCodec)
 import Listasio.Foreign.Splitbee as Splitbee
+import Network.RemoteData (RemoteData(..))
 import Routing.Duplex (parse)
 import Routing.PushState (makeInterface, matchesWith)
 import Web.DOM.ParentNode (QuerySelector(..))
@@ -49,7 +50,7 @@ main = HA.runHalogenAff do
   let
     baseUrl = ConfigProvider.provide
     env = ConfigProvider.env
-    store = {nav, baseUrl, env, currentUser}
+    store = {nav, baseUrl, env, currentUser, lists: NotAsked}
 
   rootComponent <- (runAppM store) Router.component
 

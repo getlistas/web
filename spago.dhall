@@ -42,6 +42,7 @@
   , "prelude"
   , "profunctor"
   , "profunctor-lenses"
+  , "record"
   , "remotedata"
   , "routing"
   , "routing-duplex"

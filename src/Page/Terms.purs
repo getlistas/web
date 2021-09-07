@@ -55,7 +55,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
     Navigate route e -> navigate_ e route
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {currentUser} =
+  render _ =
     HH.div
       []
       [ HH.div

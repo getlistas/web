@@ -2,9 +2,11 @@ module Listasio.Page.EditList where
 
 import Prelude
 
-import Data.Either (note)
+import Data.Array as A
+import Data.Either (Either, note)
 import Data.Lens (preview)
 import Data.Maybe (Maybe(..))
+import Data.Traversable (for_)
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
@@ -12,7 +14,7 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Store.Connect (Connected, connect)
-import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Monad (class MonadStore, updateStore)
 import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, deleteList, getListBySlug, updateList)
@@ -21,8 +23,9 @@ import Listasio.Component.HTML.CardsAndSidebar as CardsAndSidebar
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.ListForm as ListForm
 import Listasio.Component.HTML.Utils (safeHref)
+import Listasio.Data.ID (ID)
 import Listasio.Data.Lens (_list)
-import Listasio.Data.List (CreateListFields, ListWithIdAndUser)
+import Listasio.Data.List (CreateListFields, ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
 import Listasio.Store as Store
@@ -40,10 +43,17 @@ _slot = Proxy
 type Input
   = {user :: Slug, list :: Slug}
 
+type Lists = RemoteData String (Array ListWithIdUserAndMeta)
+
+type StoreState
+  = { currentUser :: Maybe ProfileWithIdAndEmail
+    , lists :: Lists
+    }
+
 data Action
   = Initialize
   | LoadList
-  | Receive (Connected (Maybe ProfileWithIdAndEmail) Input)
+  | Receive (Connected StoreState Input)
   | HandleListForm CreateListFields
   | Navigate Route Event
   | DeleteList
@@ -52,13 +62,31 @@ data Action
 
 type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
-    , list :: RemoteData String ListWithIdAndUser
+    , list :: RemoteData String ListWithIdUserAndMeta
     , listSlug :: Slug
     , userSlug :: Slug
     , confirmDelete :: Boolean
     }
 
 type Slots = (formless :: ListForm.Slot)
+
+failedToFetch :: forall a. Maybe a -> Either String a
+failedToFetch = note "Could not get list"
+
+replaceById :: forall r. {id :: ID | r} -> {id :: ID | r} -> {id :: ID | r}
+replaceById new old
+  | new.id == old.id = new
+  | otherwise = old
+
+select :: Store.Store -> StoreState
+select {lists, currentUser} = {lists, currentUser}
+
+ensureList :: RemoteData String (Maybe ListWithIdUserAndMeta) -> RemoteData String ListWithIdUserAndMeta
+ensureList (Success (Just list)) = Success list
+ensureList (Success Nothing) = NotAsked
+ensureList (Failure e) = Failure e
+ensureList Loading = Loading
+ensureList NotAsked = NotAsked
 
 component
   :: forall q o m
@@ -67,7 +95,7 @@ component
   => Navigate m
   => ManageList m
   => H.Component q Input o m
-component = connect (selectEq _.currentUser) $ H.mkComponent
+component = connect (selectEq select) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
@@ -77,9 +105,9 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       }
   }
   where
-  initialState {context: currentUser, input: {list, user}} =
+  initialState {context: {lists, currentUser}, input: {list, user}} =
     { currentUser
-    , list: NotAsked
+    , list: ensureList $ A.find (eq list <<< _.slug) <$> lists
     , listSlug: list
     , userSlug: user
     , confirmDelete: false
@@ -87,35 +115,50 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
   handleAction :: Action -> H.HalogenM State Action Slots o m Unit
   handleAction = case _ of
-    Initialize ->
-      void $ H.fork $ handleAction LoadList
+    Initialize -> void $ H.fork $ handleAction LoadList
 
     LoadList -> do
       st <- H.get
-      H.modify_ _ {list = Loading}
-      list <- RemoteData.fromEither <$> note "Could not get list" <$> getListBySlug {list: st.listSlug, user: st.userSlug}
-      H.modify_ _ {list = list}
+      case st.list of
+        NotAsked -> do
+          H.modify_ _ {list = Loading}
 
-    Receive {context: currentUser} ->
-      H.modify_ _ {currentUser = currentUser}
+          list <- RemoteData.fromEither <$> failedToFetch <$> getListBySlug {list: st.listSlug, user: st.userSlug}
+
+          -- TODO: since we fetch only when missing, should update store as well?
+          H.modify_ _ {list = list}
+
+        _ -> pure unit
+
+    Receive {context: {currentUser, lists}} -> do
+      {listSlug} <- H.get
+
+      let list = ensureList $ A.find (eq listSlug <<< _.slug) <$> lists
+
+      H.modify_ _ {currentUser = currentUser, list = list}
+
+      void $ H.fork $ handleAction LoadList
 
     Navigate route e -> navigate_ e route
 
     HandleListForm newList -> do
       mbList <- H.gets $ preview (_list <<< _Success)
-      case mbList of
-        Nothing -> pure unit
-        Just list -> do
-          void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus Loading unit
+      for_ mbList \oldList -> do
+        void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus Loading unit
 
-          mbCreatedList <- updateList list.id newList
+        mbUpdatedList <- updateList oldList.id newList
 
-          case mbCreatedList of
-            Just createdList -> do
-              void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Success createdList) unit
-              H.modify_ _ {list = Success createdList}
-            Nothing ->
-              void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Failure "Could not create list") unit
+        case mbUpdatedList of
+          Just updatedList -> do
+            void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Success updatedList) unit
+            -- We modify the local one in case there are no global lists
+            -- Eg. when loading this page first
+            H.modify_ _ {list = Success updatedList}
+
+            updateStore $ Store.OverLists $ map $ replaceById updatedList
+
+          Nothing ->
+            void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Failure "Could not update list") unit
 
     DeleteList ->
       H.modify_ _ {confirmDelete = true}
@@ -125,13 +168,16 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
     DeleteListConfirm -> do
       mbList <- H.gets $ preview (_list <<< _Success)
-      case mbList of
-        Nothing -> pure unit
-        Just list -> do
-          -- TODO: deleteList should result `Maybe Unit` instead
-          -- TODO: show toast on success
-          deleteList list.id
-          navigate Dashboard
+
+      -- TODO: show toast on success
+      for_ mbList \{id} -> do
+        result <- deleteList id
+        case result of
+          -- TODO show error
+          Nothing -> pure unit
+          Just _ -> do
+            updateStore $ Store.OverLists $ A.filter $ (_ /= id) <<< _.id
+            navigate Dashboard
 
   render :: State -> H.ComponentHTML Action Slots m
   render {list: mbList, confirmDelete, listSlug, userSlug} =

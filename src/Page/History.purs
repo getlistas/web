@@ -10,7 +10,7 @@ import Data.Filterable (filter)
 import Data.FunctorWithIndex (mapWithIndex)
 import Data.Map (Map)
 import Data.Map as Map
-import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
+import Data.Maybe (Maybe(..), isJust, isNothing)
 import Data.Ord.Down (Down(..))
 import Data.Tuple (Tuple(..), snd)
 import Effect.Aff.Class (class MonadAff)
@@ -19,7 +19,7 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Store.Connect (Connected, connect)
-import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Monad (class MonadStore, updateStore)
 import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
@@ -37,7 +37,7 @@ import Listasio.Data.Route (Route(..))
 import Listasio.Data.YearMonth (YearMonth)
 import Listasio.Data.YearMonth as YearMonth
 import Listasio.Store as Store
-import Network.RemoteData (RemoteData(..), fromEither)
+import Network.RemoteData (RemoteData(..), fromEither, isNotAsked, withDefault)
 import Tailwind as T
 import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
@@ -46,9 +46,16 @@ import Web.UIEvent.MouseEvent as Mouse
 _slot :: Proxy "history"
 _slot = Proxy
 
+type Lists = RemoteData String (Array ListWithIdUserAndMeta)
+
+type StoreState
+  = { currentUser :: Maybe ProfileWithIdAndEmail
+    , lists :: Lists
+    }
+
 data Action
   = Initialize
-  | Receive (Connected (Maybe ProfileWithIdAndEmail) Unit)
+  | Receive (Connected StoreState Unit)
   | LoadResources
   | LoadLists
   | Navigate Route Event
@@ -111,13 +118,16 @@ monthItemsPair is =
 type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
     , resources :: RemoteData String GroupedResources
-    , lists :: Maybe (Array ListWithIdUserAndMeta)
+    , lists :: Lists
     , groupBy :: GroupBy
     , filterByDone :: FilterByDone
     }
 
 noteError :: forall a. Maybe a -> Either String a
 noteError = note "Failed to load history"
+
+select :: Store.Store -> StoreState
+select {lists, currentUser} = {lists, currentUser}
 
 component
   :: forall q o m
@@ -127,7 +137,7 @@ component
   => ManageList m
   => Navigate m
   => H.Component q Unit o m
-component = connect (selectEq _.currentUser) $ H.mkComponent
+component = connect (selectEq select) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
@@ -137,10 +147,10 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       }
   }
   where
-  initialState {context: currentUser} =
+  initialState {context: {lists, currentUser}} =
     { currentUser
     , resources: NotAsked
-    , lists: Nothing
+    , lists
     , groupBy: GroupDate
     , filterByDone: ShowDone
     }
@@ -148,8 +158,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
     Initialize -> do
-      void $ H.fork $ handleAction LoadLists
       void $ H.fork $ handleAction LoadResources
+      void $ H.fork $ handleAction LoadLists
 
     LoadResources -> do
       H.modify_ _ {resources = Loading}
@@ -157,12 +167,13 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       H.modify_ _ {resources = resources}
 
     LoadLists -> do
-      H.modify_ _ {lists = Nothing}
-      lists <- getLists
-      H.modify_ _ {lists = lists}
+      {lists} <- H.get
+      when (isNotAsked lists) do updateStore $ Store.SetLists Loading
+      result <- fromEither <$> noteError <$> getLists
+      updateStore $ Store.SetLists result
 
-    Receive {context: currentUser} ->
-      H.modify_ _ {currentUser = currentUser}
+    Receive {context: {currentUser, lists}} ->
+      H.modify_ _ {currentUser = currentUser, lists = lists}
 
     Navigate route e -> navigate_ e route
 
@@ -187,7 +198,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       ]
 
     where
-    lists = fromMaybe [] mbLists
+    lists = withDefault [] mbLists
 
     settings =
       HH.div

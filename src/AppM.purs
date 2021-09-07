@@ -133,7 +133,7 @@ instance manageUserAppM :: ManageUser AppM where
 
 instance manageListAppM :: ManageList AppM where
   createList list =
-    hush <$> mkAuthRequest conf List.listWitIdAndUserCodec
+    hush <$> mkAuthRequest conf List.listWitIdUserAndMetaCodec
     where method = Post $ Just $ Codec.encode List.createListFieldsCodec list
           conf = {endpoint: Lists, method}
 
@@ -142,7 +142,7 @@ instance manageListAppM :: ManageList AppM where
     where conf = {endpoint: List id, method: Get}
 
   getListBySlug {list, user} =
-    hush <$> mkAuthRequest conf List.listWitIdAndUserCodec
+    hush <$> mkAuthRequest conf List.listWitIdUserAndMetaCodec
     where conf = {endpoint: ListBySlug user list, method: Get}
 
   getPublicListBySlug {list, user} =
@@ -154,11 +154,12 @@ instance manageListAppM :: ManageList AppM where
     where conf = {endpoint: Lists, method: Get}
 
   updateList id list =
-    hush <$> mkAuthRequest conf List.listWitIdAndUserCodec
+    hush <$> mkAuthRequest conf List.listWitIdUserAndMetaCodec
     where method = Put $ Just $ Codec.encode List.createListFieldsCodec list
           conf = {endpoint: List id, method}
 
-  deleteList id = void $ mkAuthRequest {endpoint: List id, method: Delete} Codec.json
+  deleteList id =
+    hush <$> map (const unit) <$> mkAuthRequest {endpoint: List id, method: Delete} Codec.json
 
   forkList id =
     hush <$> mkAuthRequest conf List.listWitIdAndUserCodec

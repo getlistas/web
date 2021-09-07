@@ -2,7 +2,6 @@ module Listasio.Component.HTML.Footer where
 
 import Prelude
 
-import Data.Maybe (Maybe(..))
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP

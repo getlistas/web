@@ -30,7 +30,7 @@ import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 import Listasio.Data.Integration (Integration(..), ListSubscription, RssIntegration)
 import Listasio.Data.Lens (_id, _list, _newRss, _rss, _rssResult, _subscriptions)
-import Listasio.Data.List (ListWithIdAndUser)
+import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
 import Listasio.Form.Validation (FormError(..))
@@ -64,7 +64,7 @@ data Action
 
 type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
-    , list :: RemoteData String ListWithIdAndUser
+    , list :: RemoteData String ListWithIdUserAndMeta
     , rss :: RemoteData String (Array RssIntegration)
     , subscriptions :: RemoteData String (Array ListSubscription)
     , rssResult :: RemoteData String Unit
@@ -83,6 +83,7 @@ getSubscription :: Integration -> Maybe ListSubscription
 getSubscription (ListSubscription a) = Just a
 getSubscription _ = Nothing
 
+-- TODO: EditList approach -> only fetching when not present
 component
   :: forall q o m
    . MonadAff m
