@@ -16,7 +16,7 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Component.HTML.Utils (whenElem)
-import Listasio.Data.List (CreateListFields, ListWithIdAndUser)
+import Listasio.Data.List (CreateListFields, ListWithIdUserAndMeta)
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation ((<?>))
 import Listasio.Form.Validation as V
@@ -40,7 +40,7 @@ type FormRow f =
   )
 
 data FormQuery a
-  = SetCreateStatus (RemoteData String ListWithIdAndUser) a
+  = SetCreateStatus (RemoteData String ListWithIdUserAndMeta) a
 
 derive instance functorFormQuery :: Functor FormQuery
 
@@ -48,13 +48,12 @@ data FormAction
   = Submit Event.Event
 
 type FormInput
-  -- TODO: accept the Row Type version with as less fields as possible
-  = { list :: Maybe ListWithIdAndUser }
+  = {list :: Maybe ListWithIdUserAndMeta}
 
 type ListState
   = ( status :: RemoteData String Unit
     , isNew :: Boolean
-    , initialList :: Maybe ListWithIdAndUser
+    , initialList :: Maybe ListWithIdUserAndMeta
     )
 
 formComponent ::

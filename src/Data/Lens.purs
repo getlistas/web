@@ -43,6 +43,9 @@ _last_completed_at = prop (SProxy :: SProxy "last_completed_at")
 _list :: forall a r. Lens' { list :: a | r } a
 _list = prop (SProxy :: SProxy "list")
 
+_lists :: forall a r. Lens' { lists :: a | r } a
+_lists = prop (SProxy :: SProxy "lists")
+
 _menuOpen :: forall a r. Lens' { menuOpen :: a | r } a
 _menuOpen = prop (SProxy :: SProxy "menuOpen")
 
@@ -64,11 +67,11 @@ _resource_metadata = prop (SProxy :: SProxy "resource_metadata")
 _resources :: forall a r. Lens' { resources :: a | r } a
 _resources = prop (SProxy :: SProxy "resources")
 
+_showMenu :: forall a r. Lens' { showMenu :: a | r } a
+_showMenu = prop (SProxy :: SProxy "showMenu")
+
 _showMore :: forall a r. Lens' { showMore :: a | r } a
 _showMore = prop (SProxy :: SProxy "showMore")
-
-_showNextMenu :: forall a r. Lens' { showNextMenu :: a | r } a
-_showNextMenu = prop (SProxy :: SProxy "showNextMenu")
 
 _subscriptions :: forall a r. Lens' { subscriptions :: a | r } a
 _subscriptions = prop (SProxy :: SProxy "subscriptions")

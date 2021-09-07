@@ -1,6 +1,6 @@
 -- | Usernames are the unique identifier for users in Listasio.
 module Listasio.Data.Username
-  ( Username -- constructor not exported
+  ( Username(..)
   , parse
   , toString
   , codec

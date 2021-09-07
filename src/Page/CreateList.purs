@@ -2,6 +2,7 @@ module Listasio.Page.CreateList where
 
 import Prelude
 
+import Data.Array as A
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
@@ -10,7 +11,7 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Store.Connect (Connected, connect)
-import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Monad (class MonadStore, updateStore)
 import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Navigate (class Navigate, navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, createList)
@@ -38,7 +39,7 @@ data Action
 type State = {currentUser :: Maybe ProfileWithIdAndEmail}
 
 type ChildSlots
-  = ( formless :: ListForm.Slot )
+  = (formless :: ListForm.Slot)
 
 component
   :: forall q o m
@@ -73,6 +74,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       case mbCreatedList of
         Just createdList -> do
            void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Success createdList) unit
+           updateStore $ Store.OverLists $ flip A.snoc createdList
            navigate Dashboard
         Nothing ->
           void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Failure "Could not create list") unit

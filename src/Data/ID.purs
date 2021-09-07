@@ -1,6 +1,6 @@
 -- | IDs are unique identifier for users, lists & resources in Listasio.
 module Listasio.Data.ID
-  ( ID -- constructor not exported
+  ( ID(..)
   , parse
   , toString
   , codec

@@ -6,6 +6,7 @@ import Control.Alt ((<|>))
 import Data.Array (sortWith, find, filter) as A
 import Data.CodePoint.Unicode (isAlphaNum)
 import Data.Filterable (filter)
+import Data.Lens (over, set)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.MediaType.Common as MediaType
 import Data.Newtype (class Newtype, unwrap)
@@ -18,18 +19,21 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Store.Monad (class MonadStore, updateStore)
 import Listasio.Capability.Resource.Resource (class ManageResource, createResource, getMeta)
 import Listasio.Component.HTML.Dropdown as DD
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Resource as ResourceComponent
 import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Data.ID (ID)
+import Listasio.Data.Lens (_count, _next, _resource_metadata)
 import Listasio.Data.List (ListWithIdUserAndMeta)
-import Listasio.Data.Resource (ListResource, Resource)
+import Listasio.Data.Resource (Resource, ListResource)
 import Listasio.Data.ResourceMetadata (ResourceMeta)
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation (class ToText, (<?>))
 import Listasio.Form.Validation as V
+import Listasio.Store as Store
 import Network.RemoteData (RemoteData(..), isFailure, isLoading, isSuccess)
 import Select as Select
 import Tailwind as T
@@ -72,8 +76,20 @@ filterNonAlphanum :: String -> String
 filterNonAlphanum =
   String.fromCodePointArray <<< A.filter isAlphaNum <<< String.toCodePointArray
 
+-- TODO: should we move this somewhere else?
+addResourceToList :: ListResource -> ListWithIdUserAndMeta -> ListWithIdUserAndMeta
+addResourceToList resource list@{resource_metadata: {next: Nothing}}
+  | resource.list == list.id =
+    set (_resource_metadata <<< _next) (Just resource)
+      $ over (_resource_metadata <<< _count) (_ + 1) list
+addResourceToList resource list
+  | resource.list == list.id =
+    over (_resource_metadata <<< _count) (_ + 1) list
+addResourceToList _ list = list
+
 component :: forall query m.
      MonadAff m
+  => MonadStore Store.Action Store.Store m
   => ManageResource m
   => H.Component query Input Output m
 component = H.mkComponent
@@ -103,6 +119,7 @@ component = H.mkComponent
         Just resource -> do
           H.raise $ Created resource
           void $ H.query F._formless unit $ F.injQuery $ SetCreateStatus (Success unit) unit
+          updateStore $ Store.OverLists $ map $ addResourceToList resource
 
         Nothing ->
           void $ H.query F._formless unit $ F.injQuery $ SetCreateStatus (Failure "Could not create resource") unit
@@ -388,7 +405,7 @@ formComponent = F.component formInput $ F.defaultSpec
         , props = [ HE.onPaste $ F.injAction <<< PasteUrl ]
         , message = case meta of
             Loading -> Just "Fetching title and description ..."
-            Success {can_resolve} | not can_resolve -> Just "Looks like the link does not exist. Are you sure you got the right one?"
+            Success {can_resolve} | not can_resolve -> Just "Failed to load metadata for this link"
             _ -> Nothing
         }
 

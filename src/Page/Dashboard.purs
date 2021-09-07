@@ -15,7 +15,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Query.Event as HES
 import Halogen.Store.Connect (Connected, connect)
-import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Monad (class MonadStore, updateStore)
 import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Clipboard (class Clipboard)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
@@ -49,24 +49,31 @@ import Web.UIEvent.MouseEvent as Mouse
 _slot :: Proxy "dashboard"
 _slot = Proxy
 
+type Lists = RemoteData String (Array ListWithIdUserAndMeta)
+
+type StoreState
+  = { currentUser :: Maybe ProfileWithIdAndEmail
+    , lists :: Lists
+    }
+
 data Action
   = Initialize
-  | Receive (Connected (Maybe ProfileWithIdAndEmail) Unit)
-  | Navigate Route Event
+  | Receive (Connected StoreState Unit)
   | LoadLists
   | PasteUrl Clipboard.ClipboardEvent
-  | ToggleCreateResource
-  | HandleCreateResource CreateResource.Output
-  | HandleCreateResourceForList List.Output
+  | ToggleAddResource
+  | ResourceAdded CreateResource.Output
+  | ShowAddResourceForList List.Output
     -- meta actions
+  | Navigate Route Event
   | NoOp
 
 type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
-    , lists :: RemoteData String (Array ListWithIdUserAndMeta)
-    , showCreateResource :: Boolean
+    , lists :: Lists
+    , showAddResource :: Boolean
     , pastedUrl :: Maybe String
-    , createResourceForThisList :: Maybe ID
+    , listToAddResource :: Maybe ID
     }
 
 type ChildSlots
@@ -76,6 +83,9 @@ type ChildSlots
 
 noteError :: forall a. Maybe a -> Either String a
 noteError = note "Could not fetch your lists"
+
+select :: Store.Store -> StoreState
+select {lists, currentUser} = {lists, currentUser}
 
 component
   :: forall q o m
@@ -87,7 +97,7 @@ component
   => Clipboard m
   => Now m
   => H.Component q Unit o m
-component = connect (selectEq _.currentUser) $ H.mkComponent
+component = connect (selectEq select) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
@@ -97,12 +107,12 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       }
   }
   where
-  initialState {context: currentUser} =
+  initialState {context: {currentUser, lists}} =
     { currentUser
-    , lists: NotAsked
-    , showCreateResource: false
+    , lists
+    , showAddResource: false
     , pastedUrl: Nothing
-    , createResourceForThisList: Nothing
+    , listToAddResource: Nothing
     }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
@@ -116,34 +126,36 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       -- https://github.com/purescript-halogen/purescript-halogen/blob/2f8531168207cda5256dc64da60f791afe3855dc/src/Halogen/HTML/Events.purs#L151-L152
       void $ H.subscribe $ HES.eventListener Clipboard.paste document (Just <<< PasteUrl <<< unsafeCoerce)
 
-    Receive {context: currentUser} -> H.modify_ _ {currentUser = currentUser}
+    Receive {context: {lists, currentUser}} ->
+      H.modify_ _ {currentUser = currentUser, lists = lists}
 
     Navigate route e -> navigate_ e route
 
     LoadLists -> do
-      H.modify_ _ {lists = Loading}
-      lists <- RemoteData.fromEither <$> noteError <$> getLists
-      H.modify_ _ {lists = lists}
+      {lists} <- H.get
+      when (RemoteData.isNotAsked lists) $ updateStore $ Store.SetLists Loading
+      result <- RemoteData.fromEither <$> noteError <$> getLists
+      updateStore $ Store.SetLists result
 
-    HandleCreateResource (CreateResource.Created resource) -> do
+    ResourceAdded (CreateResource.Created resource) -> do
       H.tell List._slot resource.list $ List.ResourceAdded resource
-      H.modify_ _ {showCreateResource = false, pastedUrl = Nothing}
+      H.modify_ _ {showAddResource = false, pastedUrl = Nothing}
 
-    HandleCreateResourceForList (List.CreateResourceForThisList id) -> do
-      H.modify_ _ {createResourceForThisList = Just id, showCreateResource = true}
+    ShowAddResourceForList (List.CreateResourceForList id) -> do
+      H.modify_ _ {listToAddResource = Just id, showAddResource = true}
 
-    ToggleCreateResource ->
+    ToggleAddResource ->
       H.modify_ \s -> s
-        { showCreateResource = not s.showCreateResource
-        , pastedUrl = filter (const $ not s.showCreateResource) s.pastedUrl
-        , createResourceForThisList = Nothing
+        { showAddResource = not s.showAddResource
+        , pastedUrl = filter (const $ not s.showAddResource) s.pastedUrl
+        , listToAddResource = Nothing
         }
 
     PasteUrl event -> do
-      {showCreateResource, lists} <- H.get
-      when (not showCreateResource && RemoteData.isSuccess lists) do
+      {showAddResource, lists} <- H.get
+      when (not showAddResource && RemoteData.isSuccess lists) do
         mbUrl <- H.liftEffect $ filter Util.isUrl <$> traverse (DataTransfer.getData MediaType.textPlain) (Clipboard.clipboardData event)
-        for_ mbUrl \url -> H.modify_ _ {showCreateResource = true, pastedUrl = Just url}
+        for_ mbUrl \url -> H.modify_ _ {showAddResource = true, pastedUrl = Just url}
 
     NoOp -> pure unit
 
@@ -167,9 +179,9 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
               []
               [ HH.button
                   [ HE.onClick \_ ->
-                      if st.showCreateResource
+                      if st.showAddResource
                         then NoOp
-                        else ToggleCreateResource
+                        else ToggleAddResource
                   , HP.classes
                       [ T.flexNone
                       , T.cursorPointer
@@ -198,17 +210,20 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
           [ HH.div
               [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.xlGridCols3, T.gap4, T.itemsStart ] ]
               $ snoc
-                (map (\list -> HH.slot List._slot list.id List.component {list} (HandleCreateResourceForList)) lists)
-                listCreate
-          , Modal.modal st.showCreateResource ({onClose: ToggleCreateResource, noOp: NoOp}) $
+                  ( map
+                      (\list -> HH.slot List._slot list.id List.component {list} ShowAddResourceForList)
+                      lists
+                  )
+                  listCreateCard
+          , Modal.modal st.showAddResource ({onClose: ToggleAddResource, noOp: NoOp}) $
               HH.div
                 []
                 [ HH.div
                     [ HP.classes [ T.textCenter, T.textGray400, T.text2xl, T.fontBold, T.mb4 ] ]
                     [ HH.text "Add new resource" ]
-                , whenElem st.showCreateResource \_ ->
-                    let input = {lists, url: st.pastedUrl, selectedList: st.createResourceForThisList, text: Nothing, title: Nothing}
-                      in HH.slot CreateResource._slot unit CreateResource.component input HandleCreateResource
+                , whenElem st.showAddResource \_ ->
+                    let input = {lists, url: st.pastedUrl, selectedList: st.listToAddResource, text: Nothing, title: Nothing}
+                      in HH.slot CreateResource._slot unit CreateResource.component input ResourceAdded
                 ]
           ]
 
@@ -221,7 +236,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
       _ -> HH.div [ HP.classes [ T.textCenter ] ] [ HH.text "Loading ..." ]
 
-    listCreate =
+    listCreateCard =
       HH.a
         [ safeHref CreateList
         , HE.onClick $ Navigate CreateList <<< Mouse.toEvent

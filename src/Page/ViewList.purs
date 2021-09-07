@@ -60,7 +60,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
     Navigate route e -> navigate_ e route
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {currentUser} =
+  render _ =
     HH.div
       [ HP.classes [ T.container, T.textCenter, T.mt10 ] ]
       [ HH.text "view list" ]

@@ -2,11 +2,13 @@ module Listasio.Component.HTML.List where
 
 import Prelude
 
-import Data.Array (findIndex, insertAt, null, singleton, snoc)
+import Data.Array as A
 import Data.Array.NonEmpty (cons')
+import Data.DateTime (DateTime)
 import Data.Either (note)
 import Data.Filterable (class Filterable, filter)
 import Data.Lens (firstOf, lastOf, lengthOf, over, preview, set, traversed)
+import Data.Lens.Index (ix)
 import Data.Maybe (Maybe(..), fromMaybe, isNothing, maybe)
 import Data.Traversable (for_)
 import Data.Tuple (Tuple(..))
@@ -17,7 +19,7 @@ import Halogen.HTML.Elements.Keyed as HK
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Store.Connect (Connected, connect)
-import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Monad (class MonadStore, updateStore)
 import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Clipboard (class Clipboard, writeText)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
@@ -29,7 +31,7 @@ import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
-import Listasio.Data.Lens (_completed_count, _confirmDelete, _count, _isProcessingAction, _last_completed_at, _list, _resource_metadata, _resources, _showNextMenu)
+import Listasio.Data.Lens (_completed_count, _confirmDelete, _count, _isProcessingAction, _last_completed_at, _next, _resource_metadata, _resources, _showMenu)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Resource (ListResource)
@@ -54,19 +56,23 @@ _slot = Proxy :: Proxy "list"
 type Input
   = {list :: ListWithIdUserAndMeta}
 
+type StoreState
+  = Maybe ProfileWithIdAndEmail
+
 data Action
   = Initialize
   | ToggleShowNextMenu
   | CopyToShare ListResource
   | CopyResourceURL ListResource
+    -- UpdateResources
   | CompleteResource ListResource
-  | SkipResource Int ListResource
-  | DeleteResource Boolean ListResource
+  | SkipResource ListResource
+  | DeleteResource
   | ConfirmDeleteResource ListResource
-  | Navigate Route Event
   | RaiseCreateResource ID
     -- meta actions
-  | Receive (Connected (Maybe ProfileWithIdAndEmail) Input)
+  | Navigate Route Event
+  | Receive (Connected StoreState Input)
   | AndCloseNextMenu Action
   | WhenNotProcessingAction Action
 
@@ -74,25 +80,34 @@ data Query a
   = ResourceAdded ListResource a
 
 data Output
-  = CreateResourceForThisList ID
+  = CreateResourceForList ID
 
-insertResourceAt :: Int -> ListResource -> State -> State
-insertResourceAt i resource =
-  over
-    (_resources <<< _Success)
-    (\is -> fromMaybe is $ insertAt i resource is)
+updateListById :: ID -> (ListWithIdUserAndMeta -> ListWithIdUserAndMeta) -> ListWithIdUserAndMeta -> ListWithIdUserAndMeta
+updateListById id f list
+  | id == list.id = f list
+  | otherwise = list
 
-removeResourceById :: ID -> State -> State
-removeResourceById id =
-  over (_resources <<< _Success) (filter ((id /= _) <<< _.id))
+onComplete :: DateTime -> Maybe ListResource -> ListWithIdUserAndMeta -> ListWithIdUserAndMeta
+onComplete now next =
+  over (_resource_metadata <<< _completed_count) (_ + 1)
+    <<< set (_resource_metadata <<< _last_completed_at) (Just now)
+    <<< set (_resource_metadata <<< _next) next
+
+onReverseComplete :: ID -> Maybe DateTime -> Maybe ListResource -> ListWithIdUserAndMeta -> ListWithIdUserAndMeta
+onReverseComplete id date next list
+  | id == list.id =
+    over (_resource_metadata <<< _completed_count) (_ - 1)
+      $ set (_resource_metadata <<< _last_completed_at) date
+      $ set (_resource_metadata <<< _next) next list
+  | otherwise = list
 
 -- TODO: clean up actions & state to only operate on the "Next" (ie first) item
 type State
   = { list :: ListWithIdUserAndMeta
     , resources :: RemoteData String (Array ListResource)
     , isProcessingAction :: Boolean
-    , confirmDelete :: Maybe ID
-    , showNextMenu :: Boolean
+    , confirmDelete :: Maybe Unit
+    , showMenu :: Boolean
     , currentUser :: Maybe ProfileWithIdAndEmail
     }
 
@@ -115,11 +130,11 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       }
   }
   where
-  initialState {context: currentUser, input: {list}} =
-    { list
-    , resources: singleton <$> RemoteData.fromMaybe list.resource_metadata.next
+  initialState {context: currentUser, input} =
+    { list: input.list
+    , resources: A.singleton <$> RemoteData.fromMaybe input.list.resource_metadata.next
     , isProcessingAction: false
-    , showNextMenu: false
+    , showMenu: false
     , confirmDelete: Nothing
     , currentUser
     }
@@ -132,10 +147,10 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       resources <- RemoteData.fromEither <$> note "Failed to load list resources" <$> getListResources {list: list.id, completed: Just false}
       H.modify_ _ {resources = resources}
 
-    Receive {context: currentUser} ->
-      H.modify_ _ {currentUser = currentUser}
+    Receive {context: currentUser, input} ->
+      H.modify_ _ {currentUser = currentUser, list = input.list}
 
-    ToggleShowNextMenu -> H.modify_ $ over _showNextMenu not <<< set _confirmDelete Nothing
+    ToggleShowNextMenu -> H.modify_ $ over _showMenu not <<< set _confirmDelete Nothing
 
     CopyToShare {url} -> do
       host <- H.liftEffect $ Location.host =<< Window.location =<< Window.window
@@ -145,90 +160,112 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
     AndCloseNextMenu action -> do
       void $ H.fork $ handleAction action
-      H.modify_ _ {showNextMenu = false, confirmDelete = Nothing}
+      H.modify_ _ {showMenu = false, confirmDelete = Nothing}
 
     WhenNotProcessingAction action -> do
       {isProcessingAction} <- H.get
-      when (not isProcessingAction) $ void $ H.fork $ handleAction action
+      unless isProcessingAction $ void $ H.fork $ handleAction action
 
-    CompleteResource toComplete@{id} -> do
+    CompleteResource toComplete -> do
       state <- H.get
 
-      case findIndex ((id == _) <<< _.id) =<< preview (_resources <<< _Success) state of
-        Just i -> do
-          now <- nowDateTime
-
-          H.modify_
-            $ removeResourceById id
-                <<< set _isProcessingAction true
-                <<< over (_list <<< _resource_metadata <<< _completed_count) (_ + 1)
-                <<< set (_list <<< _resource_metadata <<< _last_completed_at) (Just now)
-
-          result <- completeResource toComplete
-
-          when (isNothing result) $ H.modify_
-            $ over (_list <<< _resource_metadata <<< _completed_count) (_ - 1)
-                <<< insertResourceAt i toComplete
-                <<< set (_list <<< _resource_metadata <<< _last_completed_at) state.list.resource_metadata.last_completed_at
-
-          H.modify_ $ set _isProcessingAction false
-        Nothing -> pure unit
-
-    SkipResource i toSkip@{id} -> do
-      lastId <- H.gets $ map _.id <<< lastOf (_resources <<< _Success <<< traversed)
+      now <- nowDateTime
 
       H.modify_
-        $ set _isProcessingAction true
-            <<< over (_resources <<< _Success) (flip snoc toSkip)
-            <<< removeResourceById id
+        $ over (_resources <<< _Success) (fromMaybe [] <<< A.tail)
+            <<< set _isProcessingAction true
 
-      result <- changePosition toSkip {previus: lastId}
+      let nextResource = preview (_resources <<< _Success <<< ix 1) state
 
-      when (isNothing result) $ H.modify_ $ insertResourceAt i toSkip <<< removeResourceById id
+      updateStore $ Store.OverLists $ map
+        $ updateListById state.list.id $ onComplete now nextResource
+
+      result <- completeResource toComplete
+
+      -- Rollback
+      when (isNothing result) do
+        H.modify_ $ over (_resources <<< _Success) (A.cons toComplete)
+
+        updateStore $ Store.OverLists $ map
+          $ onReverseComplete
+              state.list.id
+              state.list.resource_metadata.last_completed_at
+          $ Just toComplete
 
       H.modify_ $ set _isProcessingAction false
 
-    DeleteResource confirmed toDelete@{id} -> do
-      H.modify_ _ {confirmDelete = Just id}
-      when confirmed $ void $ H.fork $ handleAction $ ConfirmDeleteResource toDelete
+    SkipResource toSkip -> do
+      state <- H.get
 
-    ConfirmDeleteResource toDelete@{id} -> do
-      {confirmDelete} <- H.get
+      H.modify_
+        $ set _isProcessingAction true
+            <<< over (_resources <<< _Success) (flip A.snoc toSkip)
+            <<< over (_resources <<< _Success) (fromMaybe [] <<< A.tail)
 
-      mbItems <- H.gets $ preview (_resources <<< _Success)
+      let nextResource = preview (_resources <<< _Success <<< ix 1) state
+          lastId = map _.id $ lastOf (_Success <<< traversed) state.resources
 
-      when (Just id == confirmDelete) $
-        for_ (findIndex ((id == _) <<< _.id) =<< mbItems) \i -> do
-          H.modify_
-            $ removeResourceById id
-                <<< set _isProcessingAction true
-                <<< over (_list <<< _resource_metadata <<< _count) (_ - 1)
+      updateStore $ Store.OverLists $ map
+        $ updateListById state.list.id $ set (_resource_metadata <<< _next) nextResource
 
-          result <- deleteResource toDelete
+      result <- changePosition toSkip {previus: lastId}
 
-          when (isNothing result) $ H.modify_
-            $ over (_list <<< _resource_metadata <<< _count) (_ + 1)
-                <<< insertResourceAt i toDelete
+      -- Rollback
+      when (isNothing result) do
+        H.modify_ $
+          over (_resources <<< _Success) (A.cons toSkip)
+            <<< over (_resources <<< _Success) (fromMaybe [] <<< A.init)
 
-          H.modify_ $ set _isProcessingAction false
+        updateStore $ Store.OverLists $ map
+          $ updateListById state.list.id $ set (_resource_metadata <<< _next) $ Just toSkip
 
-      H.modify_ _ {confirmDelete = Nothing}
+      H.modify_ $ set _isProcessingAction false
 
-    RaiseCreateResource id -> H.raise $ CreateResourceForThisList id
+    DeleteResource -> do
+      H.modify_ _ {confirmDelete = Just unit}
+
+    ConfirmDeleteResource toDelete -> do
+      state <- H.get
+
+      for_ state.confirmDelete \_ -> do
+        H.modify_
+          $ over (_resources <<< _Success) (fromMaybe [] <<< A.init)
+              <<< set _isProcessingAction true
+
+        let nextResource = preview (_resources <<< _Success <<< ix 1) state
+
+        updateStore $ Store.OverLists $ map
+          $ updateListById state.list.id
+          $ over (_resource_metadata <<< _count) (_ - 1)
+              <<< set (_resource_metadata <<< _next) nextResource
+
+
+        result <- deleteResource toDelete
+
+        -- Rollback
+        when (isNothing result) do
+          H.modify_ $ over (_resources <<< _Success) (A.cons toDelete)
+
+          updateStore $ Store.OverLists $ map
+            $ updateListById state.list.id
+            $ over (_resource_metadata <<< _count) (_ + 1)
+                <<< set (_resource_metadata <<< _next) (Just toDelete)
+
+        H.modify_ $ set _isProcessingAction false
+
+    RaiseCreateResource id -> H.raise $ CreateResourceForList id
 
     Navigate route e -> navigate_ e route
 
   handleQuery :: forall slots a. Query a -> H.HalogenM State Action slots Output m (Maybe a)
   handleQuery = case _ of
     ResourceAdded resource a -> do
-      H.modify_
-        $ over (_resources <<< _Success) (flip snoc resource)
-            <<< over (_list <<< _resource_metadata <<< _count) (_ + 1)
+      H.modify_ $ over (_resources <<< _Success) (flip A.snoc resource)
 
       pure $ Just a
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render state@{list, showNextMenu, isProcessingAction, confirmDelete, currentUser} =
+  render state@{list, showMenu, isProcessingAction, confirmDelete, currentUser} =
     HH.div
       [ HP.classes
           [ T.border2
@@ -332,7 +369,6 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
         ]
         [ content ]
 
-
     nextEl :: ListResource -> Boolean -> _
     nextEl next isLast =
       HH.div
@@ -364,7 +400,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                         { mainAction: WhenNotProcessingAction $ CompleteResource next
                         , label: HH.text "Done"
                         , toggleMenu: ToggleShowNextMenu
-                        , isOpen: showNextMenu
+                        , isOpen: showMenu
                         , disabled: isProcessingAction
                         }
                         $ cons'
@@ -384,7 +420,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                                          ]
                               , disabled: false
                               }
-                            , { action: WhenNotProcessingAction $ AndCloseNextMenu $ SkipResource 0 next
+                            , { action: WhenNotProcessingAction $ AndCloseNextMenu $ SkipResource next
                               , label: HH.div
                                          [ HP.classes [ T.flex, T.itemsCenter ] ]
                                          [ Icons.sortDescending [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
@@ -393,7 +429,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                               , disabled: isLast || isProcessingAction
                               }
                             , { action: WhenNotProcessingAction $ maybe
-                                          (DeleteResource false next)
+                                          DeleteResource
                                           (const $ AndCloseNextMenu $ ConfirmDeleteResource next)
                                           confirmDelete
                               , label: HH.div
@@ -466,6 +502,3 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
               [ HP.classes [ T.textSm, T.textGray200 ] ]
               [ HH.text $ "Last done " <> DateTime.toDisplayDayMonth last_done ]
         ]
-
-filterNotEmpty :: forall t a. Filterable t => t (Array a) -> t (Array a)
-filterNotEmpty = filter (not <<< null)
