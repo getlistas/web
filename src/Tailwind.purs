@@ -1143,6 +1143,10 @@ objectLeftTop = ClassName "object-left-top"
 opacity50 :: ClassName
 opacity50 = ClassName "opacity-50"
 
+-- | orderLast
+orderLast :: ClassName
+orderLast = ClassName "order-last"
+
 -- | originTopRight
 originTopRight :: ClassName
 originTopRight = ClassName "origin-top-right"
@@ -1451,6 +1455,14 @@ smFlex1 = ClassName "sm:flex-1"
 smFlex :: ClassName
 smFlex = ClassName "sm:flex"
 
+-- | smFlexNowrap
+smFlexNowrap :: ClassName
+smFlexNowrap = ClassName "sm:flex-nowrap"
+
+-- | smFlexRow
+smFlexRow :: ClassName
+smFlexRow = ClassName "sm:flex-row"
+
 -- | smFlexShrink0
 smFlexShrink0 :: ClassName
 smFlexShrink0 = ClassName "sm:flex-shrink-0"
@@ -1515,6 +1527,10 @@ smJustifyBetween = ClassName "sm:justify-between"
 smJustifyEnd :: ClassName
 smJustifyEnd = ClassName "sm:justify-end"
 
+-- | smJustifyStart
+smJustifyStart :: ClassName
+smJustifyStart = ClassName "sm:justify-start"
+
 -- | smLeadingNone
 smLeadingNone :: ClassName
 smLeadingNone = ClassName "sm:leading-none"
@@ -1574,6 +1590,10 @@ smNegMt16 = ClassName "sm:-mt-16"
 -- | smNegTranslateX6
 smNegTranslateX6 :: ClassName
 smNegTranslateX6 = ClassName "sm:-translate-x-6"
+
+-- | smOrderNone
+smOrderNone :: ClassName
+smOrderNone = ClassName "sm:order-none"
 
 -- | smOverflowHidden
 smOverflowHidden :: ClassName

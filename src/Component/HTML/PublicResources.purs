@@ -221,7 +221,7 @@ component = H.mkComponent
                 ]
             , maybeElem thumbnail \u ->
                 HH.div
-                  [ HP.classes [ T.w40, T.h36, T.py4, T.pr4, T.flexShrink0 ] ]
+                  [ HP.classes [ T.hidden, T.smBlock, T.w40, T.h36, T.py4, T.pr4, T.flexShrink0 ] ]
                   [ HH.img
                       [ HP.alt title
                       , HP.src u
