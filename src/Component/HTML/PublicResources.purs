@@ -14,6 +14,7 @@ import Halogen.HTML.Elements.Keyed as HK
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Api.Endpoint (SortingResources(..), defaultSearch)
+import Listasio.Capability.Clipboard (class Clipboard, writeText)
 import Listasio.Capability.Navigate (class Navigate)
 import Listasio.Capability.Resource.Resource (class ManageResource, getPublicListResources, searchResources)
 import Listasio.Component.HTML.Icons as Icons
@@ -21,11 +22,16 @@ import Listasio.Component.HTML.Utils (maybeElem)
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 import Listasio.Data.Resource (ListResource)
+import Listasio.Data.Route (Route(..), routeCodec)
 import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
 import Slug (Slug)
+import Routing.Duplex (print)
 import Tailwind as T
 import Util (takeDomain)
+import Web.HTML (window) as Window
+import Web.HTML.Location as Location
+import Web.HTML.Window (location) as Window
 import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
 type Slot id = forall query. H.Slot query Void id
@@ -42,6 +48,9 @@ data Action
   = Initialize
   | SearchChange String
   | LoadResources
+    -- resources actions
+  | CopyToShare ListResource
+  | CopyResourceURL ListResource
     -- meta actions
   | NoOp
 
@@ -57,6 +66,7 @@ component
   :: forall q o m
    . MonadAff m
   => ManageResource m
+  => Clipboard m
   => Navigate m
   => H.Component q Input o m
 component = H.mkComponent
@@ -102,6 +112,12 @@ component = H.mkComponent
       resources <- RemoteData.fromEither <$> note "Failed to load resources" <$> getPublicListResources {user: authorSlug, list: listSlug}
 
       H.modify_ _ {resources = resources}
+
+    CopyToShare {url} -> do
+      host <- H.liftEffect $ Location.host =<< Window.location =<< Window.window
+      void $ writeText $ host <> print routeCodec (CreateResource {url: Just url, text: Nothing, title: Nothing})
+
+    CopyResourceURL {url} -> void $ writeText url
 
     NoOp -> pure unit
 
@@ -173,7 +189,7 @@ component = H.mkComponent
 
           Success rs ->
             HK.div
-              [ HP.classes [ T.flex, T.flexCol ] ]
+              [ HP.classes [ T.flex, T.flexCol, T.gap4 ] ]
               $ listResource <$> rs
 
           -- TODO: error message element
@@ -181,8 +197,24 @@ component = H.mkComponent
       ]
 
     where
+    iconAction {icon, action, hoverColor, title} =
+      HH.button
+        [ HE.onClick $ const action
+        , HP.classes
+            [ T.cursorPointer
+            , T.py2
+            , T.mr4
+            , T.disabledCursorNotAllowed
+            , T.disabledOpacity50
+            , T.textGray300
+            , hoverColor
+            ]
+        , HP.title title
+        ]
+        [ icon [ Icons.classes [ T.h5, T.w5 ] ] ]
+
     listResource :: ListResource -> Tuple String _
-    listResource {id, url, thumbnail, title, description} =
+    listResource resource@{id, url, thumbnail, title, description} =
       Tuple (ID.toString id)
         $ HH.div
             [ HP.classes
@@ -192,32 +224,53 @@ component = H.mkComponent
                 , T.borderKiwi
                 , T.roundedLg
                 , T.bgWhite
-                , T.mb4
+                , T.group
+                , T.h36
                 ]
             ]
             [ HH.div
-                [ HP.classes [ T.p4, T.truncate ] ]
-                [ HH.a
-                    [ HP.classes [ T.textGray400, T.hoverTextKiwi, T.hoverUnderline, T.fontMedium, T.truncate ]
-                    , HP.href url
-                    , HP.target "_blank"
-                    , HP.rel "noreferrer noopener nofollow"
+                [ HP.classes [ T.pt4, T.px4, T.pb2, T.flex, T.flexCol, T.justifyBetween, T.truncate ] ]
+                [ HH.div
+                    [ HP.classes [ T.truncate ] ]
+                    [ HH.a
+                        [ HP.classes [ T.textGray400, T.hoverTextKiwi, T.hoverUnderline, T.fontMedium, T.truncate ]
+                        , HP.href url
+                        , HP.target "_blank"
+                        , HP.rel "noreferrer noopener nofollow"
+                        ]
+                        [ HH.text title ]
+
+                    , maybeElem (takeDomain url) \short ->
+                        HH.div
+                          [ HP.classes [ T.flex, T.itemsCenter, T.mt1 ] ]
+                          [ HH.img [ HP.classes [ T.w4, T.h4, T.mr2 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
+                          , HH.div
+                              [ HP.classes [ T.textGray300, T.textXs ] ]
+                              [ HH.text short ]
+                          ]
+
+                    , maybeElem description \d ->
+                        HH.div
+                          [ HP.classes [ T.mt2, T.truncate, T.textGray400, T.textSm ] ]
+                          [ HH.text d ]
                     ]
-                    [ HH.text title ]
-
-                , maybeElem (takeDomain url) \short ->
-                    HH.div
-                      [ HP.classes [ T.flex, T.itemsCenter, T.mt1 ] ]
-                      [ HH.img [ HP.classes [ T.w4, T.h4, T.mr2 ], HP.src $ "https://s2.googleusercontent.com/s2/favicons?domain_url=" <> url ]
-                      , HH.div
-                          [ HP.classes [ T.textGray300, T.textXs ] ]
-                          [ HH.text short ]
-                      ]
-
-                , maybeElem description \d ->
-                    HH.div
-                      [ HP.classes [ T.mt2, T.truncate, T.textGray400, T.textSm ] ]
-                      [ HH.text d ]
+                , HH.div
+                    [ HP.classes [ T.hidden, T.groupHoverFlex, T.groupFocusFlex, T.groupFocusWithinFlex, T.mt1 ] ]
+                    [ iconAction
+                        { icon: Icons.clipboardCopy
+                        , action: CopyResourceURL resource
+                        , hoverColor: T.hoverTextKiwi
+                        , title: "Copy link"
+                        , disabled: false
+                        }
+                    , iconAction
+                        { icon: Icons.share
+                        , action: CopyToShare resource
+                        , hoverColor: T.hoverTextKiwi
+                        , title: "Copy share link"
+                        , disabled: false
+                        }
+                    ]
                 ]
             , maybeElem thumbnail \u ->
                 HH.div
