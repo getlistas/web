@@ -143,27 +143,24 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       HH.div
         []
         [ HH.div
-            [ HP.classes [ T.flex, T.itemsCenter, T.mb8 ] ]
-            [ HH.div
-                [ HP.classes [ T.flex, T.itemsCenter ] ]
-                [ HH.a
-                    (case author of
-                      Success {slug} ->
-                        [ safeHref $ Profile slug
-                        , HE.onClick $ Navigate (Profile slug) <<< Mouse.toEvent
-                        ]
-                      _ -> []
-                    )
-                    [ Avatar.renderWithDefault Avatar.Sm
-                      $ _.avatar =<< RemoteData.toMaybe author
+            [ HP.classes [ T.flex, T.itemsCenter, T.justifyBetween, T.smJustifyStart, T.flexWrap, T.smFlexNowrap, T.gap4, T.mb8 ] ]
+            [ HH.a
+                (case author of
+                  Success {slug} ->
+                    [ safeHref $ Profile slug
+                    , HE.onClick $ Navigate (Profile slug) <<< Mouse.toEvent
                     ]
-                , HH.h1
-                    [ HP.classes [ T.text3xl, T.fontBold, T.textGray400, T.ml4 ] ]
-                    [ HH.text title ]
+                  _ -> []
+                )
+                [ Avatar.renderWithDefault Avatar.Sm
+                  $ _.avatar =<< RemoteData.toMaybe author
                 ]
+              , HH.h1
+                [ HP.classes [ T.text3xl, T.fontBold, T.textGray400, T.orderLast, T.smOrderNone ] ]
+                [ HH.text title ]
             , whenElem (not is_public) \_ ->
                 HH.div
-                  [ HP.classes [ T.ml4, T.px1, T.border, T.borderGray200, T.roundedSm, T.textSm, T.textGray300 ] ]
+                  [ HP.classes [ T.px1, T.border, T.borderGray200, T.roundedSm, T.textSm, T.textGray300 ] ]
                   [ HH.text "Private" ]
             ]
         , HH.div
