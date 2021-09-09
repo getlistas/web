@@ -2345,6 +2345,10 @@ select{
   flex-shrink: 0;
 }
 
+.order-last {
+  order: 9999;
+}
+
 .font-mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
@@ -5590,6 +5594,14 @@ select{
     display: none;
   }
 
+  .sm\:flex-row {
+    flex-direction: row;
+  }
+
+  .sm\:flex-nowrap {
+    flex-wrap: nowrap;
+  }
+
   .sm\:items-start {
     align-items: flex-start;
   }
@@ -5600,6 +5612,10 @@ select{
 
   .sm\:items-center {
     align-items: center;
+  }
+
+  .sm\:justify-start {
+    justify-content: flex-start;
   }
 
   .sm\:justify-end {
@@ -5616,6 +5632,10 @@ select{
 
   .sm\:flex-shrink-0 {
     flex-shrink: 0;
+  }
+
+  .sm\:order-none {
+    order: 0;
   }
 
   .sm\:h-32 {
