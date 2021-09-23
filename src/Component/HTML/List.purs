@@ -6,7 +6,6 @@ import Data.Array as A
 import Data.Array.NonEmpty (cons')
 import Data.DateTime (DateTime)
 import Data.Either (note)
-import Data.Filterable (class Filterable, filter)
 import Data.Lens (firstOf, lastOf, lengthOf, over, preview, set, traversed)
 import Data.Lens.Index (ix)
 import Data.Maybe (Maybe(..), fromMaybe, isNothing, maybe)

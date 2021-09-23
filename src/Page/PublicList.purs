@@ -6,11 +6,14 @@ import Data.Array.NonEmpty as NEA
 import Data.Either (note)
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), isJust)
+import Data.MediaType.Common as MediaType
+import Data.Traversable (for_, traverse)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Query.Event as HES
 import Halogen.Store.Connect (Connected, connect)
 import Halogen.Store.Monad (class MonadStore)
 import Halogen.Store.Select (selectEq)
@@ -20,7 +23,9 @@ import Listasio.Capability.Now (class Now)
 import Listasio.Capability.Resource.List (class ManageList, getPublicListBySlug)
 import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Capability.Resource.User (class ManageUser, userBySlug)
+import Listasio.Component.HTML.CreateResource as CreateResource
 import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Modal as Modal
 import Listasio.Component.HTML.PersonalResources as PersonalResources
 import Listasio.Component.HTML.PublicResources as PublicResources
 import Listasio.Component.HTML.Tag as Tag
@@ -36,7 +41,15 @@ import Network.RemoteData as RemoteData
 import Slug (Slug)
 import Tailwind as T
 import Type.Proxy (Proxy(..))
+import Unsafe.Coerce (unsafeCoerce)
+import Util as Util
+import Web.Clipboard.ClipboardEvent (ClipboardEvent, clipboardData) as Clipboard
+import Web.Clipboard.ClipboardEvent.EventTypes (paste) as Clipboard
 import Web.Event.Event (Event)
+import Web.HTML (window) as Web
+import Web.HTML.Event.DataTransfer as DataTransfer
+import Web.HTML.HTMLDocument as HTMLDocument
+import Web.HTML.Window (document) as Web
 import Web.UIEvent.MouseEvent as Mouse
 
 _slot :: Proxy "publicList"
@@ -47,10 +60,17 @@ type Input
 
 data Action
   = Initialize
+    -- TODO: use global list instead ?
   | Receive (Connected (Maybe ProfileWithIdAndEmail) Input)
   | LoadList
   | LoadAuthor
+    -- Adding resources
+  | ToggleAddResource
+  | PasteUrl Clipboard.ClipboardEvent
+  | ResourceAdded CreateResource.Output
+    -- Meta
   | Navigate Route Event
+  | NoOp
 
 type State
   = { authorSlug :: Slug
@@ -58,12 +78,19 @@ type State
     , currentUser :: Maybe ProfileWithIdAndEmail
     , list :: RemoteData String ListWithIdUserAndMeta
     , author :: RemoteData String PublicProfile
+    , showAddResource :: Boolean
+    , pastedUrl :: Maybe String
     }
 
 type ChildSlots
   = ( publicResources :: PublicResources.Slot Unit
     , personalResources :: PersonalResources.Slot Unit
+    , createResource :: CreateResource.Slot
     )
+
+isAuthor :: State -> Boolean
+isAuthor {authorSlug, currentUser} =
+  isJust $ filter ((_ == authorSlug) <<< _.slug) currentUser
 
 component
   :: forall q o m
@@ -92,6 +119,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
     , currentUser
     , list: NotAsked
     , author: NotAsked
+    , showAddResource: false
+    , pastedUrl: Nothing
     }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
@@ -99,6 +128,13 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
     Initialize -> do
       void $ H.fork $ handleAction LoadList
       void $ H.fork $ handleAction LoadAuthor
+
+      document <- H.liftEffect $ HTMLDocument.toEventTarget <$> (Web.document =<< Web.window)
+      -- unsafeCoerce is fine here, we are only listening to clipboard paste events :)
+      -- Halogen does the same ;)
+      -- https://github.com/purescript-halogen/purescript-halogen/blob/2f8531168207cda5256dc64da60f791afe3855dc/src/Halogen/HTML/Events.purs#L271-L272
+      -- https://github.com/purescript-halogen/purescript-halogen/blob/2f8531168207cda5256dc64da60f791afe3855dc/src/Halogen/HTML/Events.purs#L151-L152
+      void $ H.subscribe $ HES.eventListener Clipboard.paste document (Just <<< PasteUrl <<< unsafeCoerce)
 
     LoadList -> do
       {authorSlug, listSlug} <- H.get
@@ -114,13 +150,38 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       author <- RemoteData.fromEither <$> note "Failed to fetch list author" <$> userBySlug authorSlug
       H.modify_ _ {author = author}
 
+    PasteUrl event -> do
+      st@{showAddResource, list} <- H.get
+
+      when (isAuthor st && not showAddResource && RemoteData.isSuccess list) do
+        mbUrl <- H.liftEffect $ filter Util.isUrl <$> traverse (DataTransfer.getData MediaType.textPlain) (Clipboard.clipboardData event)
+        for_ mbUrl \url -> H.modify_ _ {showAddResource = true, pastedUrl = Just url}
+
+    ToggleAddResource -> do
+      isOwnList <- H.gets isAuthor
+      when isOwnList $
+        -- TODO: lenses magic xD
+        H.modify_ \s -> s
+          { showAddResource = not s.showAddResource
+          , pastedUrl = filter (const $ not s.showAddResource) s.pastedUrl
+          }
+
+    -- CreateResource.Created already handles the global state PogChamp
+    ResourceAdded (CreateResource.Created resource) -> do
+      isOwnList <- H.gets isAuthor
+      when isOwnList do
+        H.tell PersonalResources._slot unit $ PersonalResources.ResourceAdded resource
+        H.modify_ _ {showAddResource = false, pastedUrl = Nothing}
+
     Receive {context: currentUser} ->
       H.modify_ _ {currentUser = currentUser}
 
     Navigate route e -> navigate_ e route
 
+    NoOp -> pure unit
+
   render :: State -> H.ComponentHTML Action ChildSlots m
-  render {list, author, listSlug, authorSlug, currentUser} =
+  render st@{list, author, listSlug, authorSlug, showAddResource, pastedUrl} =
     HH.div
       []
       [ case list of
@@ -136,7 +197,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       ]
 
     where
-    isOwnList = isJust $ filter ((_ == authorSlug) <<< _.slug) currentUser
+    isOwnList = isAuthor st
 
     listCols :: ListWithIdUserAndMeta -> _
     listCols l@{title, is_public} =
@@ -177,9 +238,20 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             , HH.div
                 [ HP.classes [ T.lgColSpan2 ] ]
                 [ if isOwnList
-                    then HH.slot PersonalResources._personalResources unit PersonalResources.component {list: l.id} absurd
+                    then HH.slot PersonalResources._slot unit PersonalResources.component {list: l.id} absurd
                     else HH.slot PublicResources._publicResources unit PublicResources.component {listId: l.id, listSlug, authorSlug} absurd
                 ]
+            , whenElem isOwnList \_ ->
+                Modal.modal showAddResource ({onClose: ToggleAddResource, noOp: NoOp}) $
+                  HH.div
+                    []
+                    [ HH.div
+                        [ HP.classes [ T.textCenter, T.textGray400, T.text2xl, T.fontBold, T.mb4 ] ]
+                        [ HH.text "Add new resource" ]
+                    , whenElem showAddResource \_ ->
+                        let input = {lists: [l], url: pastedUrl, selectedList: Just l.id, text: Nothing, title: Nothing}
+                          in HH.slot CreateResource._slot unit CreateResource.component input ResourceAdded
+                    ]
             ]
         ]
 
@@ -227,6 +299,29 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
               ]
         , whenElem isOwnList \_ ->
+            HH.button
+              [ HE.onClick $ const ToggleAddResource
+              , HP.classes
+                  [ T.flex
+                  , T.itemsCenter
+                  , T.justifyCenter
+                  , T.textWhite
+                  , T.wFull
+                  , T.py2
+                  , T.bgKiwi
+                  , T.hoverBgKiwiDark
+                  , T.focusOutlineNone
+                  , T.focusRing2
+                  , T.focusRingKiwiDark
+                  , T.focusRingOffset2
+                  , T.roundedMd
+                  , T.mt8
+                  ]
+              ]
+              [ Icons.plus [ Icons.classes [ T.h6, T.w6, T.mr2 ] ]
+              , HH.text "Add Resource"
+              ]
+        , whenElem isOwnList \_ ->
             HH.a
               [ safeHref $ EditList authorSlug slug
               , HE.onClick $ Navigate (EditList authorSlug slug) <<< Mouse.toEvent
@@ -244,7 +339,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                   , T.focusRingKiwiDark
                   , T.focusRingOffset2
                   , T.roundedMd
-                  , T.mt8
+                  , T.mt4
                   ]
               ]
               [ Icons.cog [ Icons.classes [ T.h6, T.w6, T.mr2 ] ]
