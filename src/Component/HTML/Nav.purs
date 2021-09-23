@@ -12,7 +12,7 @@ import Halogen.HTML.Properties as HP
 import Halogen.Store.Connect (Connected, connect)
 import Halogen.Store.Monad (class MonadStore, updateStore)
 import Halogen.Store.Select (selectEq)
-import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Capability.Navigate (class Navigate, logout, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, getCurrentUser)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Logo as Logo
@@ -50,6 +50,7 @@ data Action
   | Navigate Route Event
   | ToggleMenu
   | AndClose Action
+  | Logout
 
 type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
@@ -113,6 +114,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
     AndClose a -> do
       H.modify_ $ set _menuOpen false
       handleAction a
+
+    Logout -> logout
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render {currentUser, menuOpen, authStatus, currentRoute} =
@@ -351,19 +354,44 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                           ]
                       ]
                   ]
-              , HH.div
-                  [ HP.classes [ T.px2, T.pt2, T.pb3, T.spaceY1 ] ]
-                  case currentUser of
-                    Just _ ->
-                      [ mobileLink Dashboard "Up next"
-                      , mobileLink History "History"
-                      , mobileLink Discover "Discover"
-                      -- , mobileLink Pricing "Pricing"
+              , case currentUser of
+                  Just _ ->
+                    HH.div
+                      [ HP.classes [ T.spaceY1, T.divideY2, T.divideOpacity50, T.divideGray100 ] ]
+                      [ HH.div
+                          [ HP.classes [ T.px2, T.py4, T.spaceY1 ] ]
+                          [ mobileLink Dashboard "Up next"
+                          , mobileLink History "History"
+                          , mobileLink Discover "Discover"
+                          ]
+                      , HH.div
+                          [ HP.classes [ T.px2, T.py4 ] ]
+                          [ HH.button
+                              [ HP.classes
+                                  [ T.block
+                                  , T.px3
+                                  , T.py2
+                                  , T.roundedMd
+                                  , T.textBase
+                                  , T.fontMedium
+                                  , T.textGray300
+                                  , T.hoverTextGray400
+                                  , T.hoverBgGray100
+                                  , T.flex
+                                  , T.itemsCenter
+                                  ]
+                              , HE.onClick $ const $ AndClose Logout
+                              ]
+                              [ HH.span [] [ HH.text "Log out" ]
+                              , Icons.logout [ Icons.classes [ T.h5, T.w5, T.ml2 ] ]
+                              ]
+                          ]
                       ]
 
-                    Nothing ->
+                  Nothing ->
+                    HH.div
+                      [ HP.classes [ T.px2, T.pt2, T.pb3, T.spaceY1 ] ]
                       [ mobileLink Discover "Discover"
-                      -- , mobileLink Pricing "Pricing"
                       ]
               , case authStatus of
                   ShowUser _ -> HH.text ""
