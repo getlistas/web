@@ -43,9 +43,9 @@ import Web.HTML.Location as Location
 import Web.HTML.Window (location) as Window
 import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
-type Slot id = forall query. H.Slot query Void id
+type Slot id = H.Slot Query Void id
 
-_personalResources = Proxy :: Proxy "personalResources"
+_slot = Proxy :: Proxy "personalResources"
 
 type Input = {list :: ID}
 
@@ -67,6 +67,9 @@ data Action
     -- meta actions
   | WhenNotProcessingAction Action
   | NoOp
+
+data Query a
+  = ResourceAdded ListResource a
 
 type State
   = { list :: ID
@@ -93,18 +96,19 @@ modifyResourceById id f =
   over (_resources <<< _Success) (map (\r -> if r.id == id then f r else r))
 
 component
-  :: forall q o m
+  :: forall o m
    . MonadAff m
   => ManageResource m
   => Navigate m
   => Clipboard m
   => Now m
-  => H.Component q Input o m
+  => H.Component Query Input o m
 component = H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
       { handleAction = handleAction
+      , handleQuery = handleQuery
       , initialize = Just Initialize
       }
   }
@@ -241,6 +245,13 @@ component = H.mkComponent
       when (not isProcessingAction) $ void $ H.fork $ handleAction action
 
     NoOp -> pure unit
+
+  handleQuery :: forall slots a. Query a -> H.HalogenM State Action slots o m (Maybe a)
+  handleQuery = case _ of
+    ResourceAdded resource a -> do
+      H.modify_ $ over (_resources <<< _Success) (flip A.snoc resource)
+
+      pure $ Just a
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render {isProcessingAction, resources, confirmDelete, year, filterByStatus, searchQuery} =

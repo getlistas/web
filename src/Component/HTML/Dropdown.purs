@@ -3,9 +3,8 @@ module Listasio.Component.HTML.Dropdown where
 import Prelude
 
 import DOM.HTML.Indexed (HTMLbutton)
-import Data.Array (difference, mapWithIndex, length, (!!))
+import Data.Array (difference, length, mapWithIndex, null, (!!))
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
-import Type.Proxy (Proxy(..))
 import Data.Traversable (for_)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -16,6 +15,7 @@ import Listasio.Form.Validation (class ToText, toText)
 import Select as Select
 import Select.Setters as Setters
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 
 type Slot item =
   H.Slot (Select.Query (Query item) ()) (Message item)
@@ -195,4 +195,4 @@ menu st =
       else HH.text ""
   ]
   where
-  isOn = st.visibility == Select.On
+  isOn = st.visibility == Select.On && not (null st.available)
