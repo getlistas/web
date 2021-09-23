@@ -22,3 +22,7 @@ dce-output
 *.map
 
 .vercel
+
+# Build files are tracked
+!prod/*
+!dist/*
