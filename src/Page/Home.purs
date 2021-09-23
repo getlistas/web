@@ -4,7 +4,7 @@ import Prelude
 
 import Data.Array as A
 import Data.Array.NonEmpty as NEA
-import Data.Lens (over)
+import Data.Lens (over, set)
 import Data.Maybe (Maybe(..), isJust, maybe)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -15,7 +15,7 @@ import Halogen.Store.Connect (Connected, connect)
 import Halogen.Store.Monad (class MonadStore, updateStore)
 import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Analytics (class Analytics)
-import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Capability.Navigate (class Navigate, logout, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, getCurrentUser)
 import Listasio.Component.HTML.Footer (footer)
 import Listasio.Component.HTML.Icons as Icons
@@ -66,6 +66,8 @@ data Action
   | GoToSignin Register.Output
   | GoToRegister Login.Output
   | NextDrawing
+  | AndClose Action
+  | Logout
 
 type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
@@ -133,6 +135,12 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
           H.modify_ _ {authStatus = ShowRegister}
 
     NextDrawing -> H.modify_ \s -> s {drawing = s.drawing + 1}
+
+    Logout -> logout
+
+    AndClose a -> do
+      H.modify_ $ set _menuOpen false
+      handleAction a
 
   render :: State -> H.ComponentHTML Action ChildSlots m
   render {currentUser, menuOpen, authStatus, drawing} =
@@ -407,14 +415,45 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                           ]
                       ]
                   ]
-              , HH.div
-                  [ HP.classes [ T.px2, T.pt2, T.pb3, T.spaceY1 ] ]
-                  [ whenElem (hasUser authStatus) \_ ->
-                      mobileLink Dashboard "Up next"
-                  , whenElem (hasUser authStatus) \_ ->
-                      mobileLink History "History"
-                  , mobileLink Discover "Discover"
-                  ]
+              , case currentUser of
+                  Just _ ->
+                    HH.div
+                      [ HP.classes [ T.spaceY1, T.divideY2, T.divideOpacity50, T.divideGray100 ] ]
+                      [ HH.div
+                          [ HP.classes [ T.px2, T.py4, T.spaceY1 ] ]
+                          [ mobileLink Dashboard "Up next"
+                          , mobileLink History "History"
+                          , mobileLink Discover "Discover"
+                          ]
+                      , HH.div
+                          [ HP.classes [ T.px2, T.py4 ] ]
+                          [ HH.button
+                              [ HP.classes
+                                  [ T.block
+                                  , T.px3
+                                  , T.py2
+                                  , T.roundedMd
+                                  , T.textBase
+                                  , T.fontMedium
+                                  , T.textGray300
+                                  , T.hoverTextGray400
+                                  , T.hoverBgGray100
+                                  , T.flex
+                                  , T.itemsCenter
+                                  ]
+                              , HE.onClick $ const $ AndClose Logout
+                              ]
+                              [ HH.span [] [ HH.text "Log out" ]
+                              , Icons.logout [ Icons.classes [ T.h5, T.w5, T.ml2 ] ]
+                              ]
+                          ]
+                      ]
+
+                  Nothing ->
+                    HH.div
+                      [ HP.classes [ T.px2, T.pt2, T.pb3, T.spaceY1 ] ]
+                      [ mobileLink Discover "Discover"
+                      ]
               , case authStatus of
                   ShowUser _ -> HH.text ""
                   ShowLoading -> HH.text ""

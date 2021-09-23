@@ -243,6 +243,14 @@ disabledOpacity50 = ClassName "disabled:opacity-50"
 disabledTextGray200 :: ClassName
 disabledTextGray200 = ClassName "disabled:text-gray-200"
 
+-- | divideGray100
+divideGray100 :: ClassName
+divideGray100 = ClassName "divide-gray-100"
+
+-- | divideOpacity50
+divideOpacity50 :: ClassName
+divideOpacity50 = ClassName "divide-opacity-50"
+
 -- | divideWhite
 divideWhite :: ClassName
 divideWhite = ClassName "divide-white"
@@ -250,6 +258,10 @@ divideWhite = ClassName "divide-white"
 -- | divideX2
 divideX2 :: ClassName
 divideX2 = ClassName "divide-x-2"
+
+-- | divideY2
+divideY2 :: ClassName
+divideY2 = ClassName "divide-y-2"
 
 -- | fixed
 fixed :: ClassName
