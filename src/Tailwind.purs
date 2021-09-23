@@ -295,6 +295,10 @@ flexWrap = ClassName "flex-wrap"
 flowRoot :: ClassName
 flowRoot = ClassName "flow-root"
 
+-- | focusBgGray100
+focusBgGray100 :: ClassName
+focusBgGray100 = ClassName "focus:bg-gray-100"
+
 -- | focusBgKiwiDark
 focusBgKiwiDark :: ClassName
 focusBgKiwiDark = ClassName "focus:bg-kiwi-dark"
@@ -442,6 +446,18 @@ groupFocusFlex = ClassName "group-focus:flex"
 -- | groupFocusHidden
 groupFocusHidden :: ClassName
 groupFocusHidden = ClassName "group-focus:hidden"
+
+-- | groupFocusRing2
+groupFocusRing2 :: ClassName
+groupFocusRing2 = ClassName "group-focus:ring-2"
+
+-- | groupFocusRingKiwi
+groupFocusRingKiwi :: ClassName
+groupFocusRingKiwi = ClassName "group-focus:ring-kiwi"
+
+-- | groupFocusRingOffset2
+groupFocusRingOffset2 :: ClassName
+groupFocusRingOffset2 = ClassName "group-focus:ring-offset-2"
 
 -- | groupFocusWithinFlex
 groupFocusWithinFlex :: ClassName
@@ -1946,6 +1962,10 @@ w3 = ClassName "w-3"
 -- | w40
 w40 :: ClassName
 w40 = ClassName "w-40"
+
+-- | w48
+w48 :: ClassName
+w48 = ClassName "w-48"
 
 -- | w4
 w4 :: ClassName

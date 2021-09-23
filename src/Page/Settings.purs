@@ -18,6 +18,7 @@ import Listasio.Capability.Navigate (class Navigate, logout, navigate_)
 import Listasio.Capability.Resource.User (class ManageUser, updateUser)
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Utils (whenElem)
+import Listasio.Component.HTML.Wip as Wip
 import Listasio.Data.Lens (_currentUser, _name, _slug)
 import Listasio.Data.Profile (Profile, ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route)
@@ -105,6 +106,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
               [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
               [ HH.text "Settings" ]
           ]
+      , Wip.elem
       , HH.div
           []
           [ whenElem false \_ -> HH.slot _form unit formComponent unit HandleForm

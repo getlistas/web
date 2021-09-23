@@ -53,7 +53,17 @@ w Full = T.wFull
 renderWithDefault :: forall i p. Size -> Maybe Avatar -> HH.HTML i p
 renderWithDefault size = case _ of
   Just (Avatar avatar) ->
-    HH.img [ HP.classes [ T.roundedFull, h size, w size ], HP.src avatar ]
+    HH.img
+      [ HP.classes
+          [ T.roundedFull
+          , h size
+          , w size
+          , T.groupFocusRing2
+          , T.groupFocusRingOffset2
+          , T.groupFocusRingKiwi
+          ]
+      , HP.src avatar
+      ]
   Nothing ->
     HH.div
       [ HP.classes
@@ -64,6 +74,9 @@ renderWithDefault size = case _ of
           , T.flex
           , T.justifyCenter
           , T.itemsCenter
+          , T.groupFocusRing2
+          , T.groupFocusRingOffset2
+          , T.groupFocusRingKiwi
           ]
       ]
       [ Icons.userCircle [ Icons.classes [ T.textGray300, T.w5d6, T.h5d6 ] ] ]

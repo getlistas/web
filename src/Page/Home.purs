@@ -25,7 +25,7 @@ import Listasio.Component.HTML.Register as Register
 import Listasio.Component.HTML.Typed as Typed
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
 import Listasio.Data.Avatar as Avatar
-import Listasio.Data.Lens (_menuOpen)
+import Listasio.Data.Lens (_mobileMenuOpen, _showSettingsMenu)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..))
 import Listasio.Data.Username as Username
@@ -62,16 +62,18 @@ data Action
   | GetCurrentUser
   | Receive (Connected (Maybe ProfileWithIdAndEmail) Unit)
   | Navigate Route Event
-  | ToggleMenu
   | GoToSignin Register.Output
   | GoToRegister Login.Output
   | NextDrawing
   | AndClose Action
+  | ToggleMobileMenu
+  | ToggleSettingsMenu
   | Logout
 
 type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
-    , menuOpen :: Boolean
+    , mobileMenuOpen :: Boolean
+    , showSettingsMenu :: Boolean
     , authStatus :: Form
     , drawing :: Int
     }
@@ -96,7 +98,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
   where
   initialState {context: currentUser} =
     { currentUser
-    , menuOpen: false
+    , mobileMenuOpen: false
+    , showSettingsMenu: false
     , authStatus: maybe ShowRegister ShowUser currentUser
     , drawing: 0
     }
@@ -122,8 +125,6 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
     Navigate route e -> navigate_ e route
 
-    ToggleMenu -> H.modify_ $ over _menuOpen not
-
     GoToSignin Register.GoToSignin -> do
        {authStatus} <- H.get
        when (authStatus == ShowRegister) do
@@ -138,12 +139,18 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
     Logout -> logout
 
+    ToggleMobileMenu -> H.modify_ $ over _mobileMenuOpen not
+
+    ToggleSettingsMenu -> H.modify_ $ over _showSettingsMenu not
+
     AndClose a -> do
-      H.modify_ $ set _menuOpen false
+      H.modify_
+        $ set _mobileMenuOpen false
+            <<< set _showSettingsMenu false
       handleAction a
 
   render :: State -> H.ComponentHTML Action ChildSlots m
-  render {currentUser, menuOpen, authStatus, drawing} =
+  render {currentUser, mobileMenuOpen, authStatus, drawing, showSettingsMenu} =
     HH.div
       [ HP.classes [ T.bgWhite ] ]
       [ heroAndNav
@@ -156,6 +163,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
     where
     onNavigate route = Navigate route <<< Mouse.toEvent
+
+    onNavigateAndClose route = AndClose <<< Navigate route <<< Mouse.toEvent
 
     logo = HH.a [ safeHref Home, HE.onClick $ onNavigate Home ] [ Logo.elem ]
 
@@ -277,7 +286,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                             , T.focusRingWhite
                             ]
                         , HP.type_ HP.ButtonButton
-                        , HE.onClick $ const ToggleMenu
+                        , HE.onClick $ const ToggleMobileMenu
                         ]
                         [ HH.span
                             [ HP.classes [ T.srOnly ] ]
@@ -296,34 +305,105 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                 ]
             ]
           , case authStatus of
-              ShowUser {name} ->
+              ShowUser {slug, name} ->
                 HH.div
-                  [ HP.classes [ T.hidden, T.mdFlex ] ]
-                  [ HH.a
-                      [ HP.classes
-                          [ T.inlineFlex
-                          , T.itemsCenter
-                          , T.py1
-                          , T.fontMedium
-                          , T.flex
-                          , T.itemsCenter
-                          , T.group
-                          ]
-                      , safeHref Settings
-                      , HE.onClick $ onNavigate Settings
-                      ]
-                      [ HH.span
-                          [ HP.classes
-                              [ T.textGray300
-                              , T.borderB2
-                              , T.borderKiwi
-                              , T.mr2
-                              , T.groupHoverTextGray400
+                  [ HP.classes [ T.ml4, T.relative, T.flexShrink0 ] ]
+                  [ HH.div
+                      []
+                      [ HH.div
+                          [ HP.classes [ T.hidden, T.mdFlex ] ]
+                          [ HH.button
+                              [ HP.classes
+                                  [ T.inlineFlex
+                                  , T.itemsCenter
+                                  , T.py1
+                                  , T.fontMedium
+                                  , T.textGray300
+                                  , T.flex
+                                  , T.itemsCenter
+                                  , T.group
+                                  , T.focusOutlineNone
+                                  ]
+                              , HE.onClick $ const ToggleSettingsMenu
+                              ]
+                              [ HH.span
+                                  [ HP.classes
+                                      [ T.borderB2
+                                      , T.borderTransparent
+                                      , T.groupHoverBorderKiwi
+                                      , T.mr2
+                                      ]
+                                  ]
+                                  [ HH.text $ Username.toString name ]
+                              , Avatar.renderWithDefault Avatar.Sm $ _.avatar =<< currentUser
                               ]
                           ]
-                          [ HH.text $ Username.toString name ]
-                      , Avatar.renderWithDefault Avatar.Sm $ _.avatar =<< currentUser
+
                       ]
+                  , whenElem showSettingsMenu \_ ->
+                      HH.div
+                        [ HP.classes
+                            [ T.originTopRight
+                            , T.absolute
+                            , T.right0
+                            , T.mt1
+                            , T.w48
+                            , T.roundedMd
+                            , T.shadowLg
+                            , T.py1
+                            , T.bgWhite
+                            , T.ring1
+                            , T.ringBlack
+                            , T.ringOpacity5
+                            , T.focusOutlineNone
+                            ]
+                        ]
+                        [ HH.a
+                            [ HP.classes
+                                [ T.block
+                                , T.px4
+                                , T.py2
+                                , T.textSm
+                                , T.textGray700
+                                , T.hoverBgGray100
+                                , T.focusBgGray100
+                                , T.focusOutlineNone
+                                ]
+                            , safeHref Settings
+                            , HE.onClick $ onNavigateAndClose $ Profile slug
+                            ]
+                            [ HH.text "Profile" ]
+                        , HH.a
+                            [ HP.classes
+                                [ T.block
+                                , T.px4
+                                , T.py2
+                                , T.textSm
+                                , T.textGray700
+                                , T.hoverBgGray100
+                                , T.focusBgGray100
+                                , T.focusOutlineNone
+                                ]
+                            , safeHref Settings
+                            , HE.onClick $ onNavigateAndClose Settings
+                            ]
+                            [ HH.text "Settings" ]
+                        , HH.button
+                            [ HP.classes
+                                [ T.wFull
+                                , T.px4
+                                , T.py2
+                                , T.textSm
+                                , T.textGray700
+                                , T.hoverBgGray100
+                                , T.focusBgGray100
+                                , T.focusOutlineNone
+                                , T.textLeft
+                                ]
+                            , HE.onClick $ const $ AndClose Logout
+                            ]
+                            [ HH.text "Log out" ]
+                        ]
                   ]
 
               ShowLoading -> HH.text ""
@@ -359,7 +439,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
         ]
 
     mobileNav =
-      whenElem menuOpen \_ ->
+      whenElem mobileMenuOpen \_ ->
         HH.div
           [ HP.classes
               [ T.absolute
@@ -405,7 +485,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                               , T.focusRingKiwi
                               ]
                           , HP.type_ HP.ButtonButton
-                          , HE.onClick $ const ToggleMenu
+                          , HE.onClick $ const ToggleMobileMenu
                           ]
                           [ HH.span
                               [ HP.classes [ T.srOnly ] ]
