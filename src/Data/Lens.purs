@@ -49,6 +49,9 @@ _lists = prop (SProxy :: SProxy "lists")
 _menuOpen :: forall a r. Lens' { menuOpen :: a | r } a
 _menuOpen = prop (SProxy :: SProxy "menuOpen")
 
+_mobileMenuOpen :: forall a r. Lens' { mobileMenuOpen :: a | r } a
+_mobileMenuOpen = prop (SProxy :: SProxy "mobileMenuOpen")
+
 _name :: forall a r. Lens' { name :: a | r } a
 _name = prop (SProxy :: SProxy "name")
 
@@ -84,6 +87,9 @@ _rssResult = prop (SProxy :: SProxy "rssResult")
 
 _slug :: forall a r. Lens' { slug :: a | r } a
 _slug = prop (SProxy :: SProxy "slug")
+
+_showSettingsMenu :: forall a r. Lens' { showSettingsMenu :: a | r } a
+_showSettingsMenu = prop (SProxy :: SProxy "showSettingsMenu")
 
 _tags :: forall a r. Lens' { tags :: a | r } a
 _tags = prop (SProxy :: SProxy "tags")
