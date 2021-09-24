@@ -296,55 +296,68 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                             , T.ringBlack
                             , T.ringOpacity5
                             , T.focusOutlineNone
+                            , T.divideY2
+                            , T.divideOpacity50
+                            , T.divideGray100
                             ]
                         ]
-                        [ HH.a
-                            [ HP.classes
-                                [ T.block
-                                , T.px4
-                                , T.py2
-                                , T.textSm
-                                , T.textGray700
-                                , T.hoverBgGray100
-                                , T.focusBgGray100
-                                , T.focusOutlineNone
-                                , cx T.bgGray10 $ isRoute $ Profile slug
+                        [ HH.div
+                            []
+                            [ HH.a
+                                [ HP.classes
+                                    [ T.block
+                                    , T.px4
+                                    , T.py2
+                                    , T.textSm
+                                    , T.textGray700
+                                    , T.hoverBgGray100
+                                    , T.focusBgGray100
+                                    , T.focusOutlineNone
+                                    , cx T.bgGray10 $ isRoute $ Profile slug
+                                    ]
+                                , safeHref Settings
+                                , HE.onClick $ onNavigateAndClose $ Profile slug
                                 ]
-                            , safeHref Settings
-                            , HE.onClick $ onNavigateAndClose $ Profile slug
-                            ]
-                            [ HH.text "Profile" ]
-                        , HH.a
-                            [ HP.classes
-                                [ T.block
-                                , T.px4
-                                , T.py2
-                                , T.textSm
-                                , T.textGray700
-                                , T.hoverBgGray100
-                                , T.focusBgGray100
-                                , T.focusOutlineNone
-                                , cx T.bgGray10 (isRoute Settings)
+                                [ HH.text "Profile" ]
+                            , HH.a
+                                [ HP.classes
+                                    [ T.block
+                                    , T.px4
+                                    , T.py2
+                                    , T.textSm
+                                    , T.textGray700
+                                    , T.hoverBgGray100
+                                    , T.focusBgGray100
+                                    , T.focusOutlineNone
+                                    , cx T.bgGray10 (isRoute Settings)
+                                    ]
+                                , safeHref Settings
+                                , HE.onClick $ onNavigateAndClose Settings
                                 ]
-                            , safeHref Settings
-                            , HE.onClick $ onNavigateAndClose Settings
+                                [ HH.text "Settings" ]
                             ]
-                            [ HH.text "Settings" ]
-                        , HH.button
-                            [ HP.classes
-                                [ T.wFull
-                                , T.px4
-                                , T.py2
-                                , T.textSm
-                                , T.textGray700
-                                , T.hoverBgGray100
-                                , T.focusBgGray100
-                                , T.focusOutlineNone
-                                , T.textLeft
+                        , HH.div
+                            []
+                            [ HH.button
+                                [ HP.classes
+                                    [ T.wFull
+                                    , T.px4
+                                    , T.py2
+                                    , T.textSm
+                                    , T.textGray700
+                                    , T.hoverBgGray100
+                                    , T.focusBgGray100
+                                    , T.focusOutlineNone
+                                    , T.textLeft
+                                    , T.flex
+                                    , T.itemsCenter
+                                    ]
+                                , HE.onClick $ const $ AndClose Logout
                                 ]
-                            , HE.onClick $ const $ AndClose Logout
+                                [ HH.span [] [ HH.text "Log out" ]
+                                , Icons.logout [ Icons.classes [ T.h5, T.w5, T.ml2 ] ]
+                                ]
                             ]
-                            [ HH.text "Log out" ]
                         ]
                   ]
 
@@ -382,7 +395,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       whenElem mobileMenuOpen \_ ->
         HH.div
           [ HP.classes
-              [ T.absolute
+              [ T.fixed
               , T.top0
               , T.insetX0
               , T.p2
@@ -390,6 +403,9 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
               , T.transform
               , T.originTopRight
               , T.mdHidden
+              , T.z20
+              , T.maxHFull
+              , T.overflowYAuto
               ]
           ]
           [ HH.div
@@ -435,7 +451,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                       ]
                   ]
               , case currentUser of
-                  Just _ ->
+                  Just {slug} ->
                     HH.div
                       [ HP.classes [ T.spaceY1, T.divideY2, T.divideOpacity50, T.divideGray100 ] ]
                       [ HH.div
@@ -446,9 +462,48 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                           ]
                       , HH.div
                           [ HP.classes [ T.px2, T.py4 ] ]
-                          [ HH.button
+                          [ HH.a
                               [ HP.classes
                                   [ T.block
+                                  , T.px3
+                                  , T.py2
+                                  , T.roundedMd
+                                  , T.textBase
+                                  , T.fontMedium
+                                  , T.textGray300
+                                  , T.hoverTextGray400
+                                  , T.hoverBgGray100
+                                  , T.flex
+                                  , T.itemsCenter
+                                  , cx T.bgGray100 $ isRoute $ Profile slug
+                                  ]
+                              , safeHref $ Profile slug
+                              , HE.onClick $ onNavigateAndClose $ Profile slug
+                              ]
+                              [ HH.text "Profile" ]
+                          , HH.a
+                              [ HP.classes
+                                  [ T.block
+                                  , T.px3
+                                  , T.py2
+                                  , T.roundedMd
+                                  , T.textBase
+                                  , T.fontMedium
+                                  , T.textGray300
+                                  , T.hoverTextGray400
+                                  , T.hoverBgGray100
+                                  , T.flex
+                                  , T.itemsCenter
+                                  , cx T.bgGray100 $ isRoute Settings
+                                  ]
+                              , safeHref Settings
+                              , HE.onClick $ onNavigateAndClose Settings
+                              ]
+                              [ HH.text "Settings" ]
+                          , HH.button
+                              [ HP.classes
+                                  [ T.block
+                                  , T.wFull
                                   , T.px3
                                   , T.py2
                                   , T.roundedMd
@@ -507,7 +562,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
               , case authStatus of
                   ShowLoading -> HH.text ""
 
-                  ShowUser {name} ->
+                  ShowUser {name, slug} ->
                     HH.a
                       [ HP.classes
                           [ T.block
@@ -518,11 +573,11 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                           , T.fontMedium
                           , T.bgGray50
                           , T.hoverBgGray100
-                          , cx T.textGray300 $ not $ isRoute Settings
-                          , cx T.textGray400 $ isRoute Settings
+                          , cx T.textGray300 $ not $ isRoute $ Profile slug
+                          , cx T.textGray400 $ isRoute $ Profile slug
                           ]
-                      , safeHref Settings
-                      , HE.onClick $ onNavigateAndClose Settings
+                      , safeHref $ Profile slug
+                      , HE.onClick $ onNavigateAndClose $ Profile slug
                       ]
                       [ HH.span
                           [ HP.classes [ T.py1, T.borderB2, T.borderKiwi ] ]
