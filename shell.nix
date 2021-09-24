@@ -1,6 +1,6 @@
 let
   pkgs = import (builtins.fetchTarball {
-    url = "https://github.com/NixOS/nixpkgs/archive/20.03.tar.gz";
+    url = "https://github.com/NixOS/nixpkgs/archive/21.05.tar.gz";
   }) {};
 
   # To update to a newer version of easy-purescript-nix, run:
@@ -29,7 +29,7 @@ in pkgs.stdenv.mkDerivation {
     pursPkgs.purs
     pursPkgs.spago
     pursPkgs.zephyr
-    pkgs.nodejs-12_x
+    pkgs.nodejs-14_x
     twpurs
   ];
 }
