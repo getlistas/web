@@ -2694,6 +2694,10 @@ select{
   max-height: 11rem;
 }
 
+.max-h-full {
+  max-height: 100%;
+}
+
 .max-w-md {
   max-width: 28rem;
 }
