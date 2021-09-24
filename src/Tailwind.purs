@@ -483,10 +483,6 @@ groupHoverFlex = ClassName "group-hover:flex"
 groupHoverHidden :: ClassName
 groupHoverHidden = ClassName "group-hover:hidden"
 
--- | groupHoverTextGray400
-groupHoverTextGray400 :: ClassName
-groupHoverTextGray400 = ClassName "group-hover:text-gray-400"
-
 -- | groupHoverTextGray700
 groupHoverTextGray700 :: ClassName
 groupHoverTextGray700 = ClassName "group-hover:text-gray-700"
@@ -882,6 +878,10 @@ m1 = ClassName "m-1"
 -- | maxH44
 maxH44 :: ClassName
 maxH44 = ClassName "max-h-44"
+
+-- | maxHFull
+maxHFull :: ClassName
+maxHFull = ClassName "max-h-full"
 
 -- | maxW5xl
 maxW5xl :: ClassName
