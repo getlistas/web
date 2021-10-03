@@ -12,6 +12,7 @@ import Data.MediaType.Common as MediaType
 import Data.Newtype (class Newtype, unwrap)
 import Data.String (Pattern(..), Replacement(..))
 import Data.String (fromCodePointArray, null, replace, take, toCodePointArray) as String
+import Data.String.Common (split, trim)
 import Data.Traversable (for_, traverse)
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
@@ -151,6 +152,7 @@ type FormRow f =
   , description :: f V.FormError String (Maybe String)
   , thumbnail :: f V.FormError (Maybe String) (Maybe String)
   , list :: f V.FormError (Maybe ID) ID
+  , tags :: f V.FormError String (Array String)
   )
 
 data FormQuery a
@@ -206,6 +208,9 @@ formComponent = F.component formInput $ F.defaultSpec
           , thumbnail: F.noValidation
           , list: V.requiredFromOptional F.noValidation
                    <?> V.WithMsg "Please select a list"
+          , tags: V.maxLengthArr 4
+                    <<< F.hoistFn_ (filter (not <<< String.null) <<< map trim <<< split (Pattern ","))
+                    <?> V.WithMsg "Cannot have more than 4 tags"
           }
     , initialInputs: Just $ initialInputs {url, title, text}
     , status: NotAsked
@@ -222,6 +227,7 @@ formComponent = F.component formInput $ F.defaultSpec
     , description: fromMaybe "" $ filter (not <<< Util.isUrl) text
     , thumbnail: Nothing
     , list: Nothing
+    , tags: ""
     }
 
   handleEvent = F.raiseResult
@@ -378,6 +384,7 @@ formComponent = F.component formInput $ F.defaultSpec
               , HH.div
                   [ HP.classes [ T.colSpan1, T.smColSpan3 ] ]
                   [ HH.div [] [ titleField ]
+                  , HH.div [ HP.classes [ T.mt4 ] ] [ tagsField ]
                   , HH.div [ HP.classes [ T.mt4 ] ] [ description ]
                   ]
               ]
@@ -424,6 +431,13 @@ formComponent = F.component formInput $ F.defaultSpec
         , id = Just "description"
         , placeholder = Just "Such description. Much wow."
         , props = [HP.rows 3]
+        }
+
+    tagsField =
+      Field.input proxies.tags form $ Field.defaultProps
+        { label = Just "Tags"
+        , id = Just "tags"
+        , placeholder = Just "videos, chill" -- TODO better placeholder
         }
 
   listToItem {id, title} = DDItem {value: id, label: title}

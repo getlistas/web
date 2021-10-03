@@ -18,6 +18,7 @@ type ResourceRep row
     , list :: ID
     , description :: Maybe String
     , thumbnail :: Maybe String
+    , tags :: Array String
     | row
     )
 
@@ -44,6 +45,7 @@ resourceCodec =
     , description: CAC.maybe CA.string
     , thumbnail: CAC.maybe CA.string
     , list: ID.codec
+    , tags: CAC.array CA.string
     }
 
 listResourceCodec :: JsonCodec ListResource
@@ -60,6 +62,7 @@ listResourceCodec =
     , created_at: DateTime.codec
     , updated_at: DateTime.codec
     , completed_at: CAC.maybe DateTime.codec
+    , tags: CAC.array CA.string
     }
 
 type PositionChangeBody

@@ -3,8 +3,8 @@ module Listasio.Component.HTML.Resource where
 import Prelude
 
 import Listasio.Component.HTML.Icons as Icons
-import Data.Array (find, null)
-import Data.Filterable (filter)
+import Data.Array (find)
+import Data.Array.NonEmpty as NEA
 import Data.Maybe (isJust)
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
@@ -16,7 +16,7 @@ import Tailwind as T
 import Util (takeDomain)
 
 resource :: forall i p. Array ListWithIdUserAndMeta -> ListResource -> HH.HTML i p
-resource lists { url, title, list, completed_at } =
+resource lists {url, title, list, completed_at, tags} =
   HH.div
     [ HP.classes
         [ T.roundedMd
@@ -66,10 +66,11 @@ resource lists { url, title, list, completed_at } =
                     then Icons.check [ Icons.classes [ T.textKiwi, T.h5, T.w5 ] ]
                     else HH.text ""
                 ]
-            , maybeElem (filter (not <<< null) $ map _.tags $ find ((list == _) <<< _.id) lists) \tags ->
+            , maybeElem (NEA.fromArray tags) \ts ->
                 HH.div
                   [ HP.classes [ T.flex ] ]
-                  $ map Tag.tag tags
+                  $ NEA.toArray
+                  $ map Tag.tag ts
             ]
         , maybeElem (find ((list == _) <<< _.id) lists) \l ->
             HH.div
