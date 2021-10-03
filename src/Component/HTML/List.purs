@@ -4,6 +4,7 @@ import Prelude
 
 import Data.Array as A
 import Data.Array.NonEmpty (cons')
+import Data.Array.NonEmpty as NEA
 import Data.DateTime (DateTime)
 import Data.Either (note)
 import Data.Lens (firstOf, lastOf, lengthOf, over, preview, set, traversed)
@@ -26,6 +27,7 @@ import Listasio.Capability.Now (class Now, nowDateTime)
 import Listasio.Capability.Resource.Resource (class ManageResource, changePosition, completeResource, deleteResource, getListResources)
 import Listasio.Component.HTML.ButtonGroupMenu as ButtonGroupMenu
 import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
@@ -390,6 +392,11 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                       [ HH.text next.title ]
                 , nextLink next $
                     HH.div [ HP.classes [ T.mt2 ] ] [ shortUrl next.url ]
+                , maybeElem (NEA.fromArray next.tags) \ts ->
+                    HH.div
+                      [ HP.classes [ T.mt2, T.flex ] ]
+                      $ NEA.toArray
+                      $ map Tag.tag ts
                 ]
             , HK.div
                 [ HP.classes [ T.mt2 ] ]

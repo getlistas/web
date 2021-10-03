@@ -11,7 +11,7 @@ tag text =
         [ T.leadingNormal
         , T.mr1
         , T.mb1
-        , T.px2
+        , T.px1
         , T.textGray400
         , T.textXs
         , T.roundedSm
