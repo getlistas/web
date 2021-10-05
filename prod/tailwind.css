@@ -2429,10 +2429,6 @@ select{
   height: 4rem;
 }
 
-.h-20 {
-  height: 5rem;
-}
-
 .h-24 {
   height: 6rem;
 }
@@ -3004,6 +3000,21 @@ select{
 
 .pb-20 {
   padding-bottom: 5rem;
+}
+
+.placeholder-gray-200::-moz-placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgba(160, 174, 192, var(--tw-placeholder-opacity));
+}
+
+.placeholder-gray-200:-ms-input-placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgba(160, 174, 192, var(--tw-placeholder-opacity));
+}
+
+.placeholder-gray-200::placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgba(160, 174, 192, var(--tw-placeholder-opacity));
 }
 
 .placeholder-gray-400::-moz-placeholder {
@@ -4930,10 +4941,6 @@ select{
   width: 3rem;
 }
 
-.w-20 {
-  width: 5rem;
-}
-
 .w-24 {
   width: 6rem;
 }
@@ -5022,14 +5029,6 @@ select{
 
 .grid-cols-52 {
   grid-template-columns: repeat(52, minmax(0, 1fr));
-}
-
-.col-span-1 {
-  grid-column: span 1 / span 1;
-}
-
-.col-span-2 {
-  grid-column: span 2 / span 2;
 }
 
 .grid-rows-7 {
@@ -5173,11 +5172,6 @@ select{
     -webkit-animation-timing-function: cubic-bezier(0,0,0.2,1);
             animation-timing-function: cubic-bezier(0,0,0.2,1);
   }
-}
-
-.animate-spin-slow {
-  -webkit-animation: spin 2s linear infinite;
-          animation: spin 2s linear infinite;
 }
 
 .line-clamp-2 {
@@ -8328,14 +8322,6 @@ select{
 
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .sm\:grid-cols-5 {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-
-  .sm\:col-span-3 {
-    grid-column: span 3 / span 3;
   }
 
   .sm\:translate-x-16 {
