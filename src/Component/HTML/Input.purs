@@ -124,12 +124,12 @@ input groupProps =
     , whenElem (not $ isJust groupProps.error) \_ ->
         maybeElem groupProps.message \message ->
           HH.p
-            [ HP.classes [ T.mt2, T.textSm, T.textGray500 ] ]
+            [ HP.classes [ T.mt1, T.textSm, T.textGray500 ] ]
             [ HH.text message ]
       -- TODO: extract as function for both input & textarea
     , maybeElem groupProps.error \error ->
           HH.p
-            [ HP.classes [ T.mt2, T.textSm, T.textManzana ] ]
+            [ HP.classes [ T.mt1, T.textSm, T.textManzana ] ]
             [ HH.text $ errorToString error ]
     ]
 
@@ -184,4 +184,5 @@ fieldInputClasses { hasError, iconBefore, iconAfter } =
   , cx T.focusBorderManzana hasError
   , cx T.textRed900 hasError
   , cx T.placeholderRed300 hasError
+  , cx T.placeholderGray200 $ not hasError
   ]

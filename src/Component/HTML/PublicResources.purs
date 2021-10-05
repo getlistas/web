@@ -5,7 +5,6 @@ import Prelude
 import Data.Either (note)
 import Data.Maybe (Maybe(..))
 import Data.String (null, trim)
-import Type.Proxy (Proxy(..))
 import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -21,13 +20,14 @@ import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Utils (maybeElem)
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
-import Listasio.Data.Resource (ListResource)
+import Listasio.Data.Resource (ListResource, titleOrUrl)
 import Listasio.Data.Route (Route(..), routeCodec)
 import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
-import Slug (Slug)
 import Routing.Duplex (print)
+import Slug (Slug)
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Util (takeDomain)
 import Web.HTML (window) as Window
 import Web.HTML.Location as Location
@@ -214,7 +214,7 @@ component = H.mkComponent
         [ icon [ Icons.classes [ T.h5, T.w5 ] ] ]
 
     listResource :: ListResource -> Tuple String _
-    listResource resource@{id, url, thumbnail, title, description} =
+    listResource resource@{id, url, thumbnail, description} =
       Tuple (ID.toString id)
         $ HH.div
             [ HP.classes
@@ -238,7 +238,7 @@ component = H.mkComponent
                         , HP.target "_blank"
                         , HP.rel "noreferrer noopener nofollow"
                         ]
-                        [ HH.text title ]
+                        [ HH.text $ titleOrUrl resource ]
 
                     , maybeElem (takeDomain url) \short ->
                         HH.div
@@ -276,7 +276,7 @@ component = H.mkComponent
                 HH.div
                   [ HP.classes [ T.hidden, T.smBlock, T.w40, T.h36, T.py4, T.pr4, T.flexShrink0 ] ]
                   [ HH.img
-                      [ HP.alt title
+                      [ HP.alt $ titleOrUrl resource
                       , HP.src u
                       , HP.classes
                           [ T.wFull

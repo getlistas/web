@@ -7,14 +7,17 @@ import Data.Codec.Argonaut as CA
 import Data.Codec.Argonaut.Compat as CAC
 import Data.Codec.Argonaut.Record as CAR
 import Data.DateTime (DateTime)
-import Data.Maybe (Maybe)
+import Data.Maybe (Maybe(..))
+import Data.String (Pattern(..), Replacement(..), replace)
+import Data.String.CodePoints (take)
+import Data.String.Utils (startsWith)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 
 type ResourceRep row
   = ( url :: String
-    , title :: String
+    , title :: Maybe String
     , list :: ID
     , description :: Maybe String
     , thumbnail :: Maybe String
@@ -41,7 +44,7 @@ resourceCodec :: JsonCodec Resource
 resourceCodec =
   CAR.object "Resource"
     { url: CA.string
-    , title: CA.string
+    , title: CAC.maybe CA.string
     , description: CAC.maybe CA.string
     , thumbnail: CAC.maybe CA.string
     , list: ID.codec
@@ -55,7 +58,7 @@ listResourceCodec =
     , list: ID.codec
     , user: CA.string
     , url: CA.string
-    , title: CA.string
+    , title: CAC.maybe CA.string
     , description: CAC.maybe CA.string
     , thumbnail: CAC.maybe CA.string
     , position: CA.int
@@ -91,3 +94,10 @@ toggleFilterByDone _ = ShowDone
 toggleFilterByPending :: FilterByDone -> FilterByDone
 toggleFilterByPending ShowPending = ShowAll
 toggleFilterByPending _ = ShowPending
+
+titleOrUrl :: forall r. {| ResourceRep r} -> String
+titleOrUrl {title: Just title} = title
+titleOrUrl {url}
+  | startsWith "https://" url = take 50 $ replace (Pattern "https://") (Replacement "") url
+  | startsWith "http://" url = take 50 $ replace (Pattern "http://") (Replacement "") url
+  | otherwise = url

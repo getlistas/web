@@ -222,11 +222,11 @@ textarea sym form groupProps =
     , whenElem (not hasError) \_ ->
         maybeElem groupProps.message \message ->
           HH.p
-            [ HP.classes [ T.mt2, T.textSm, T.textGray500 ] ]
+            [ HP.classes [ T.mt1, T.textSm, T.textGray500 ] ]
             [ HH.text message ]
     , maybeElem mbError \error ->
           HH.p
-            [ HP.classes [ T.mt2, T.textSm, T.textManzana ] ]
+            [ HP.classes [ T.mt1, T.textSm, T.textManzana ] ]
             [ HH.text $ errorToString error ]
     ]
   where

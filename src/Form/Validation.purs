@@ -34,9 +34,9 @@ data FormError
 
 errorToString :: FormError -> String
 errorToString = case _ of
-  Required -> "This field is required."
-  TooShort _ -> "Not enough characters entered"
-  TooLong _ -> "Too many characters entered"
+  Required -> "Don't forget this one"
+  TooShort n -> "Too short (min. " <> show n <> ")"
+  TooLong n -> "Too long (max. " <> show n <> ")"
   TooMany n -> "Cannot have more than " <> show n
   InvalidEmail -> "Invalid email address"
   InvalidUsername -> "Invalid username"

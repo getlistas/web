@@ -175,11 +175,13 @@ formComponent =
         { label = Just "Tags"
         , id = Just "tags"
         , placeholder = Just "videos, chill" -- TODO better placeholder
+        , message = Just "Comma separated list"
         }
 
     description =
       Field.textarea proxies.description form $ Field.textareaDefaultProps
         { label = Just "Description"
         , id = Just "description"
+        , placeholder = Just "Such description. Much wow."
         , props = [HP.rows 3]
         }

@@ -35,7 +35,7 @@ import Listasio.Data.ID as ID
 import Listasio.Data.Lens (_completed_count, _confirmDelete, _count, _isProcessingAction, _last_completed_at, _next, _resource_metadata, _resources, _showMenu)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
-import Listasio.Data.Resource (ListResource)
+import Listasio.Data.Resource (ListResource, titleOrUrl)
 import Listasio.Data.Route (Route(..), routeCodec)
 import Listasio.Store as Store
 import Network.RemoteData (RemoteData(..), _Success)
@@ -230,7 +230,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
       for_ state.confirmDelete \_ -> do
         H.modify_
-          $ over (_resources <<< _Success) (fromMaybe [] <<< A.init)
+          $ over (_resources <<< _Success) (A.drop 1)
               <<< set _isProcessingAction true
 
         let nextResource = preview (_resources <<< _Success <<< ix 1) state
@@ -239,7 +239,6 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
           $ updateListById state.list.id
           $ over (_resource_metadata <<< _count) (_ - 1)
               <<< set (_resource_metadata <<< _next) nextResource
-
 
         result <- deleteResource toDelete
 
@@ -389,7 +388,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                           , T.lineClamp2
                           ]
                       ]
-                      [ HH.text next.title ]
+                      [ HH.text $ titleOrUrl next ]
                 , nextLink next $
                     HH.div [ HP.classes [ T.mt2 ] ] [ shortUrl next.url ]
                 , maybeElem (NEA.fromArray next.tags) \ts ->
