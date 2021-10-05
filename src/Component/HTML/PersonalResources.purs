@@ -10,7 +10,6 @@ import Data.Enum (toEnum)
 import Data.Lens (lastOf, over, preview, set, traversed)
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing, maybe)
 import Data.String (null, trim)
-import Type.Proxy (Proxy(..))
 import Data.Traversable (for_)
 import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
@@ -31,12 +30,13 @@ import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 import Listasio.Data.Lens (_isProcessingAction, _resources)
-import Listasio.Data.Resource (FilterByDone(..), ListResource)
+import Listasio.Data.Resource (FilterByDone(..), ListResource, titleOrUrl)
 import Listasio.Data.Route (Route(..), routeCodec)
 import Network.RemoteData (RemoteData(..), _Success)
 import Network.RemoteData as RemoteData
 import Routing.Duplex (print)
 import Tailwind as T
+import Type.Proxy (Proxy(..))
 import Util (takeDomain)
 import Web.HTML (window) as Window
 import Web.HTML.Location as Location
@@ -375,7 +375,7 @@ component = H.mkComponent
         [ icon [ Icons.classes [ T.h5, T.w5 ] ] ]
 
     listResource :: Int -> ListResource -> Tuple String _
-    listResource i resource@{id, url, thumbnail, title, completed_at, created_at, description} =
+    listResource i resource@{id, url, thumbnail, completed_at, created_at, description} =
       Tuple (ID.toString id)
         $ HH.div
             [ HP.classes
@@ -400,7 +400,7 @@ component = H.mkComponent
                         , HP.target "_blank"
                         , HP.rel "noreferrer noopener nofollow"
                         ]
-                        [ HH.text title ]
+                        [ HH.text $ titleOrUrl resource ]
 
                     , maybeElem (takeDomain url) \short ->
                         HH.div
@@ -495,7 +495,7 @@ component = H.mkComponent
                 HH.div
                   [ HP.classes [ T.hidden, T.smBlock, T.w40, T.h36, T.py4, T.pr4, T.flexShrink0 ] ]
                   [ HH.img
-                      [ HP.alt title
+                      [ HP.alt $ titleOrUrl resource
                       , HP.src u
                       , HP.classes
                           [ T.wFull

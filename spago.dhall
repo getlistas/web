@@ -48,6 +48,7 @@
   , "safe-coerce"
   , "string-parsers"
   , "strings"
+  , "stringutils"
   , "tailrec"
   , "transformers"
   , "tuples"

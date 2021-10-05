@@ -23,7 +23,6 @@ import Halogen.HTML.Properties as HP
 import Halogen.Store.Monad (class MonadStore, updateStore)
 import Listasio.Capability.Resource.Resource (class ManageResource, createResource, getMeta)
 import Listasio.Component.HTML.Dropdown as DD
-import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Resource as ResourceComponent
 import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Data.ID (ID)
@@ -147,7 +146,7 @@ derive instance Newtype (CreateResourceForm r f) _
 
 type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
 type FormRow f =
-  ( title :: f V.FormError String String
+  ( title :: f V.FormError String (Maybe String)
   , url :: f V.FormError String String
   , description :: f V.FormError String (Maybe String)
   , thumbnail :: f V.FormError (Maybe String) (Maybe String)
@@ -202,7 +201,7 @@ formComponent = F.component formInput $ F.defaultSpec
   formInput {lists, url, title, text, selectedList} =
     { validators:
         CreateResourceForm
-          { title: V.required >>> V.maxLength 150
+          { title: V.toOptional $ V.maxLength 150
           , url: V.required >>> V.maxLength 500 -- TODO URL validation ???
           , description:  V.toOptional $ V.maxLength 500
           , thumbnail: F.noValidation
@@ -339,59 +338,15 @@ formComponent = F.component formInput $ F.defaultSpec
               ]
 
           , HH.div
-              [ HP.classes [ T.grid, T.gridCols1, T.smGridCols5, T.gap4, T.mt4 ] ]
-              [ HH.div
-                  [ HP.classes[ T.wFull, T.hFull, T.hidden, T.smBlock, T.colSpan2 ] ]
-                  [ case meta of
-                      Success {thumbnail: Just thumbnail} ->
-                        HH.img
-                          [ HP.src thumbnail
-                          , HP.classes [ T.wFull, T.hFull, T.objectCover, T.roundedLg ]
-                          ]
-
-                      Loading ->
-                        HH.div
-                          [ HP.classes
-                              [ T.wFull
-                              , T.hFull
-                              , T.flex
-                              , T.flexCol
-                              , T.justifyCenter
-                              , T.itemsCenter
-                              , T.textGray200
-                              , T.bgGray100
-                              , T.roundedLg
-                              ]
-                          ]
-                          [ Icons.loader [ Icons.classes [ T.animateSpinSlow, T.h10, T.w10 ] ] ]
-
-                      _ ->
-                        HH.div
-                          [ HP.classes
-                              [ T.wFull
-                              , T.hFull
-                              , T.flex
-                              , T.flexCol
-                              , T.justifyCenter
-                              , T.itemsCenter
-                              , T.textGray200
-                              , T.bgGray100
-                              , T.roundedLg
-                              ]
-                          ]
-                          [ Icons.photo [ Icons.classes [ T.h20, T.w20 ] ] ]
-                  ]
-              , HH.div
-                  [ HP.classes [ T.colSpan1, T.smColSpan3 ] ]
-                  [ HH.div [] [ titleField ]
-                  , HH.div [ HP.classes [ T.mt4 ] ] [ tagsField ]
-                  , HH.div [ HP.classes [ T.mt4 ] ] [ description ]
-                  ]
+              [ HP.classes [ T.flex, T.flexCol, T.gap4, T.mt4 ] ]
+              [ HH.div [] [ titleField ]
+              , HH.div [] [ tagsField ]
+              , HH.div [] [ description ]
               ]
 
           , whenElem (isFailure status) \_ ->
               HH.div
-                [ HP.classes [ T.textRed500, T.my4 ] ]
+                [ HP.classes [ T.textManzana, T.my4 ] ]
                 [ HH.text "Could not create resource :(" ]
 
           , HH.div
@@ -422,7 +377,6 @@ formComponent = F.component formInput $ F.defaultSpec
         { label = Just "Title"
         , id = Just "title"
         , placeholder = Just "Some blogpost"
-        , required = true
         }
 
     description =
@@ -438,6 +392,7 @@ formComponent = F.component formInput $ F.defaultSpec
         { label = Just "Tags"
         , id = Just "tags"
         , placeholder = Just "videos, chill" -- TODO better placeholder
+        , message = Just "Comma separated list"
         }
 
   listToItem {id, title} = DDItem {value: id, label: title}

@@ -11,10 +11,6 @@ absolute = ClassName "absolute"
 alignBottom :: ClassName
 alignBottom = ClassName "align-bottom"
 
--- | animateSpinSlow
-animateSpinSlow :: ClassName
-animateSpinSlow = ClassName "animate-spin-slow"
-
 -- | appearanceNone
 appearanceNone :: ClassName
 appearanceNone = ClassName "appearance-none"
@@ -202,14 +198,6 @@ bottom4 = ClassName "bottom-4"
 -- | checkedBgKiwi
 checkedBgKiwi :: ClassName
 checkedBgKiwi = ClassName "checked:bg-kiwi"
-
--- | colSpan1
-colSpan1 :: ClassName
-colSpan1 = ClassName "col-span-1"
-
--- | colSpan2
-colSpan2 :: ClassName
-colSpan2 = ClassName "col-span-2"
 
 -- | container
 container :: ClassName
@@ -506,10 +494,6 @@ h12 = ClassName "h-12"
 -- | h16
 h16 :: ClassName
 h16 = ClassName "h-16"
-
--- | h20
-h20 :: ClassName
-h20 = ClassName "h-20"
 
 -- | h24
 h24 :: ClassName
@@ -1243,6 +1227,10 @@ pl10 = ClassName "pl-10"
 pl3 :: ClassName
 pl3 = ClassName "pl-3"
 
+-- | placeholderGray200
+placeholderGray200 :: ClassName
+placeholderGray200 = ClassName "placeholder-gray-200"
+
 -- | placeholderGray400
 placeholderGray400 :: ClassName
 placeholderGray400 = ClassName "placeholder-gray-400"
@@ -1471,10 +1459,6 @@ smAlignMiddle = ClassName "sm:align-middle"
 smBlock :: ClassName
 smBlock = ClassName "sm:block"
 
--- | smColSpan3
-smColSpan3 :: ClassName
-smColSpan3 = ClassName "sm:col-span-3"
-
 -- | smFlex1
 smFlex1 :: ClassName
 smFlex1 = ClassName "sm:flex-1"
@@ -1506,10 +1490,6 @@ smGrid = ClassName "sm:grid"
 -- | smGridCols2
 smGridCols2 :: ClassName
 smGridCols2 = ClassName "sm:grid-cols-2"
-
--- | smGridCols5
-smGridCols5 :: ClassName
-smGridCols5 = ClassName "sm:grid-cols-5"
 
 -- | smH32
 smH32 :: ClassName
@@ -1942,10 +1922,6 @@ w11d12 = ClassName "w-11/12"
 -- | w12
 w12 :: ClassName
 w12 = ClassName "w-12"
-
--- | w20
-w20 :: ClassName
-w20 = ClassName "w-20"
 
 -- | w24
 w24 :: ClassName

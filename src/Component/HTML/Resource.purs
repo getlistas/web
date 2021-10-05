@@ -2,21 +2,21 @@ module Listasio.Component.HTML.Resource where
 
 import Prelude
 
-import Listasio.Component.HTML.Icons as Icons
 import Data.Array (find)
 import Data.Array.NonEmpty as NEA
 import Data.Maybe (isJust)
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
+import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (maybeElem)
 import Listasio.Data.List (ListWithIdUserAndMeta)
-import Listasio.Data.Resource (ListResource)
+import Listasio.Data.Resource (ListResource, titleOrUrl)
 import Tailwind as T
 import Util (takeDomain)
 
 resource :: forall i p. Array ListWithIdUserAndMeta -> ListResource -> HH.HTML i p
-resource lists {url, title, list, completed_at, tags} =
+resource lists r@{url, list, completed_at, tags} =
   HH.div
     [ HP.classes
         [ T.roundedMd
@@ -46,7 +46,7 @@ resource lists {url, title, list, completed_at, tags} =
                 , T.truncate
                 ]
             ]
-            [ HH.text title ]
+            [ HH.text $ titleOrUrl r ]
         ]
     , shortUrl url
     , HH.div
