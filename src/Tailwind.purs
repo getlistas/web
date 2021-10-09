@@ -351,6 +351,10 @@ focusRingOffsetGray10 = ClassName "focus:ring-offset-gray-10"
 focusRingWhite :: ClassName
 focusRingWhite = ClassName "focus:ring-white"
 
+-- | focusUnderline
+focusUnderline :: ClassName
+focusUnderline = ClassName "focus:underline"
+
 -- | focusZ10
 focusZ10 :: ClassName
 focusZ10 = ClassName "focus:z-10"
