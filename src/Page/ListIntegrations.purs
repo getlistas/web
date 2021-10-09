@@ -27,7 +27,6 @@ import Listasio.Component.HTML.ListForm as ListForm
 import Listasio.Component.HTML.Utils (safeHref)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
-import Listasio.Data.ID as ID
 import Listasio.Data.Integration (Integration(..), ListSubscription, RssIntegration)
 import Listasio.Data.Lens (_id, _list, _newRss, _rss, _rssResult, _subscriptions)
 import Listasio.Data.List (ListWithIdUserAndMeta)
@@ -183,7 +182,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
           Just _ -> pure unit
 
   render :: State -> H.ComponentHTML Action Slots m
-  render {subscriptions, newRss, rss, rssResult, list: mbList, listSlug, userSlug} =
+  render {newRss, rss, rssResult, list: mbList, listSlug, userSlug} =
     HH.div [] [ header, content ]
 
     where
@@ -263,35 +262,60 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                         _ -> HH.text ""
                     ]
               }
+            -- TODO: add back when list follow is reworked
+            -- , { cta: Nothing
+            --   , title: "Following lists"
+            --   , description: Nothing
+            --   , content:
+            --       HH.div
+            --         []
+            --         [ case subscriptions of
+            --             Success [] ->
+            --               HH.div
+            --                 [ HP.classes
+            --                     [ T.textGray300
+            --                     , T.textSm
+            --                     ]
+            --                 ]
+            --                 [ HH.text "Find lists to follow on "
+            --                 , HH.a
+            --                     [ HE.onClick $ Navigate Discover <<< Mouse.toEvent
+            --                     , safeHref Discover
+            --                     , HP.classes [ T.textKiwi ]
+            --                     ]
+            --                     [ HH.text "Discover" ]
+            --                 ]
+            --             Success items ->
+            --               HH.ul
+            --                 [ HP.classes [ T.spaceY4, T.mt8 ] ]
+            --                 $ map subscriptionIntegrationEl items
+
+            --             Failure msg -> HH.div [ HP.classes [ T.textManzana ] ] [ HH.text msg ]
+            --             _ -> HH.text ""
+            --         ]
+            --   }
             , { cta: Nothing
-              , title: "Following lists"
+              , title: "More integrations comming soon"
               , description: Nothing
               , content:
                   HH.div
                     []
-                    [ case subscriptions of
-                        Success [] ->
-                          HH.div
-                            [ HP.classes
-                                [ T.textGray300
-                                , T.textSm
+                    [ HH.p
+                        [ HP.classes [ T.textGray400 ] ]
+                        [ HH.text "If you have an integration in mind let as know on Twitter "
+                        , HH.a
+                            [ HP.href "https://twitter.com/getlistas"
+                            , HP.target "_blank"
+                            , HP.rel "noreferrer noopener nofollow"
+                            , HP.classes
+                                [ T.textKiwi
+                                , T.hoverUnderline
+                                , T.focusOutlineNone
+                                , T.focusUnderline
                                 ]
                             ]
-                            [ HH.text "Find lists to follow on "
-                            , HH.a
-                                [ HE.onClick $ Navigate Discover <<< Mouse.toEvent
-                                , safeHref Discover
-                                , HP.classes [ T.textKiwi ]
-                                ]
-                                [ HH.text "Discover" ]
-                            ]
-                        Success items ->
-                          HH.ul
-                            [ HP.classes [ T.spaceY4, T.mt8 ] ]
-                            $ map subscriptionIntegrationEl items
-
-                        Failure msg -> HH.div [ HP.classes [ T.textManzana ] ] [ HH.text msg ]
-                        _ -> HH.text ""
+                            [ HH.text "@getlistas" ]
+                        ]
                     ]
               }
             ]
@@ -398,69 +422,69 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             ]
         ]
 
-    subscriptionIntegrationEl :: ListSubscription -> _
-    subscriptionIntegrationEl i =
-      HH.li
-        [ HP.classes
-            [ T.group
-            , T.relative
-            , T.bgWhite
-            , T.roundedLg
-            , T.shadowSm
-            , T.hoverRing1
-            , T.hoverRingKiwi
-            ]
-        ]
-        [ HH.div
-            [ HP.classes
-                [ T.roundedLg
-                , T.border
-                , T.borderGray300
-                , T.hoverBorderKiwi
-                , T.bgWhite
-                , T.px6
-                , T.py4
-                , T.hoverBorderGray400
-                , T.smFlex
-                , T.smJustifyBetween
-                ]
-            ]
-            [ HH.div
-                [ HP.classes [ T.flex, T.itemsCenter ] ]
-                [ HH.div
-                    [ HP.classes [ T.textSm ] ]
-                    [ HH.p
-                        [ HP.classes [ T.fontMedium, T.textGray400 ] ]
-                        [ HH.text $ "List " <> ID.toString i.listas_subscription.list ]
-                    , HH.div
-                        [ HP.classes [ T.textGray500 ] ]
-                        [ HH.p
-                            [ HP.classes [ T.smInline ] ]
-                            [ HH.text $ "Followed " <> DateTime.toDisplayMonthDayYear i.created_at ]
-                        ]
-                    ]
-                ]
-            , HH.div
-                [ HP.classes
-                    [ T.mt2
-                    , T.flex
-                    , T.textSm
-                    , T.smMt0
-                    , T.smBlock
-                    , T.smMl4
-                    , T.smTextRight
-                    ]
-                ]
-                [ HH.div
-                    [ HP.classes [ T.flex ] ]
-                    [ HH.button
-                        [ HE.onClick $ const $ DeleteSubscription i.id
-                        , HP.classes [ T.cursorPointer ]
-                        , HP.type_ HP.ButtonButton
-                        ]
-                        [ Icons.trash [ Icons.classes [ T.w6, T.h6, T.textGray400, T.hoverTextManzana ] ]
-                        ]
-                    ]
-                ]
-            ]
-        ]
+    -- subscriptionIntegrationEl :: ListSubscription -> _
+    -- subscriptionIntegrationEl i =
+    --   HH.li
+    --     [ HP.classes
+    --         [ T.group
+    --         , T.relative
+    --         , T.bgWhite
+    --         , T.roundedLg
+    --         , T.shadowSm
+    --         , T.hoverRing1
+    --         , T.hoverRingKiwi
+    --         ]
+    --     ]
+    --     [ HH.div
+    --         [ HP.classes
+    --             [ T.roundedLg
+    --             , T.border
+    --             , T.borderGray300
+    --             , T.hoverBorderKiwi
+    --             , T.bgWhite
+    --             , T.px6
+    --             , T.py4
+    --             , T.hoverBorderGray400
+    --             , T.smFlex
+    --             , T.smJustifyBetween
+    --             ]
+    --         ]
+    --         [ HH.div
+    --             [ HP.classes [ T.flex, T.itemsCenter ] ]
+    --             [ HH.div
+    --                 [ HP.classes [ T.textSm ] ]
+    --                 [ HH.p
+    --                     [ HP.classes [ T.fontMedium, T.textGray400 ] ]
+    --                     [ HH.text $ "List " <> ID.toString i.listas_subscription.list ]
+    --                 , HH.div
+    --                     [ HP.classes [ T.textGray500 ] ]
+    --                     [ HH.p
+    --                         [ HP.classes [ T.smInline ] ]
+    --                         [ HH.text $ "Followed " <> DateTime.toDisplayMonthDayYear i.created_at ]
+    --                     ]
+    --                 ]
+    --             ]
+    --         , HH.div
+    --             [ HP.classes
+    --                 [ T.mt2
+    --                 , T.flex
+    --                 , T.textSm
+    --                 , T.smMt0
+    --                 , T.smBlock
+    --                 , T.smMl4
+    --                 , T.smTextRight
+    --                 ]
+    --             ]
+    --             [ HH.div
+    --                 [ HP.classes [ T.flex ] ]
+    --                 [ HH.button
+    --                     [ HE.onClick $ const $ DeleteSubscription i.id
+    --                     , HP.classes [ T.cursorPointer ]
+    --                     , HP.type_ HP.ButtonButton
+    --                     ]
+    --                     [ Icons.trash [ Icons.classes [ T.w6, T.h6, T.textGray400, T.hoverTextManzana ] ]
+    --                     ]
+    --                 ]
+    --             ]
+    --         ]
+    --     ]
