@@ -180,7 +180,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
         H.modify_ $ over _actionInProgress $ filter (_ /= list.id)
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render state@{currentUser, lists, isLast} =
+  render {currentUser, lists, isLast} =
     HH.div
       []
       [ HH.div
@@ -275,15 +275,16 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
               You, Just me -> [ authorEl {slug: me.slug, name: me.name, avatar: _.avatar =<< currentUser} ]
               Other user, Just _ ->
                 [ authorEl user
-                , HH.div
-                    [ HP.classes [ T.flex ] ]
-                    [ HH.div
-                        [ HP.classes [ T.mr2 ] ]
-                        [ button "Copy" (ForkList list) $ hasActionInProgress list state ]
-                    , HH.div
-                        []
-                        [ button "Follow" (SubscribeToList list) $ hasActionInProgress list state ]
-                    ]
+                -- TODO: add back when Copy/Follow are reworked
+                -- , HH.div
+                --     [ HP.classes [ T.flex ] ]
+                --     [ HH.div
+                --         [ HP.classes [ T.mr2 ] ]
+                --         [ button "Copy" (ForkList list) $ hasActionInProgress list state ]
+                --     , HH.div
+                --         []
+                --         [ button "Follow" (SubscribeToList list) $ hasActionInProgress list state ]
+                --     ]
                 ]
               Other user, Nothing -> [ authorEl user ]
               _, _ -> [ HH.text "" ]
