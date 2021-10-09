@@ -50,7 +50,7 @@ data FormAction
 type FormInput
   = {list :: Maybe ListWithIdUserAndMeta}
 
-type ListState
+type FormState
   = ( status :: RemoteData String Unit
     , isNew :: Boolean
     , initialList :: Maybe ListWithIdUserAndMeta
@@ -69,7 +69,7 @@ formComponent =
         , handleAction = handleAction
         }
   where
-  formInput :: FormInput -> F.Input ListForm ListState m
+  formInput :: FormInput -> F.Input ListForm FormState m
   formInput {list} =
     { validators:
         ListForm
