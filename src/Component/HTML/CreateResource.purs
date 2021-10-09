@@ -2,46 +2,25 @@ module Listasio.Component.HTML.CreateResource where
 
 import Prelude
 
-import Control.Alt ((<|>))
-import Data.Array (sortWith, find, filter) as A
+import Data.Array (filter, sortWith) as A
 import Data.CodePoint.Unicode (isAlphaNum)
-import Data.Filterable (filter)
 import Data.Lens (over, set)
-import Data.Maybe (Maybe(..), fromMaybe)
-import Data.MediaType.Common as MediaType
-import Data.Newtype (class Newtype, unwrap)
-import Data.String (Pattern(..), Replacement(..))
-import Data.String (fromCodePointArray, null, replace, take, toCodePointArray) as String
-import Data.String.Common (split, trim)
-import Data.Traversable (for_, traverse)
+import Data.Maybe (Maybe(..))
+import Data.String (fromCodePointArray, toCodePointArray) as String
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
-import Halogen.HTML.Events as HE
-import Halogen.HTML.Properties as HP
 import Halogen.Store.Monad (class MonadStore, updateStore)
-import Listasio.Capability.Resource.Resource (class ManageResource, createResource, getMeta)
-import Listasio.Component.HTML.Dropdown as DD
-import Listasio.Component.HTML.Resource as ResourceComponent
-import Listasio.Component.HTML.Utils (maybeElem, whenElem)
+import Listasio.Capability.Resource.Resource (class ManageResource, createResource)
+import Listasio.Component.HTML.ResourceForm as ResourceForm
 import Listasio.Data.ID (ID)
 import Listasio.Data.Lens (_count, _next, _resource_metadata)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Resource (Resource, ListResource)
-import Listasio.Data.ResourceMetadata (ResourceMeta)
-import Listasio.Form.Field as Field
-import Listasio.Form.Validation (class ToText, (<?>))
-import Listasio.Form.Validation as V
 import Listasio.Store as Store
-import Network.RemoteData (RemoteData(..), isFailure, isLoading, isSuccess)
-import Select as Select
-import Tailwind as T
+import Network.RemoteData (RemoteData(..))
 import Type.Proxy (Proxy(..))
-import Util as Util
-import Web.Clipboard.ClipboardEvent as Clipboard
-import Web.Event.Event as Event
-import Web.HTML.Event.DataTransfer as DataTransfer
 
 type Slot = forall query. H.Slot query Output Unit
 
@@ -70,7 +49,7 @@ data Output
   = Created ListResource
 
 type ChildSlots
-  = ( formless :: FormSlot )
+  = ( formless :: ResourceForm.Slot )
 
 filterNonAlphanum :: String -> String
 filterNonAlphanum =
@@ -111,288 +90,25 @@ component = H.mkComponent
   handleAction :: Action -> H.HalogenM State Action ChildSlots Output m Unit
   handleAction = case _ of
     HandleFormMessage newResource -> do
-      void $ H.query F._formless unit $ F.injQuery $ SetCreateStatus Loading unit
+      void $ H.query F._formless unit $ F.injQuery $ ResourceForm.SetCreateStatus Loading unit
 
       mbNewResource <- createResource newResource
 
       case mbNewResource of
         Just resource -> do
           H.raise $ Created resource
-          void $ H.query F._formless unit $ F.injQuery $ SetCreateStatus (Success unit) unit
+          void $ H.query F._formless unit $ F.injQuery $ ResourceForm.SetCreateStatus (Success resource) unit
           updateStore $ Store.OverLists $ map $ addResourceToList resource
 
         Nothing ->
-          void $ H.query F._formless unit $ F.injQuery $ SetCreateStatus (Failure "Could not create resource") unit
+          void $ H.query F._formless unit $ F.injQuery $ ResourceForm.SetCreateStatus (Failure "Could not create resource") unit
 
   render :: State -> HH.ComponentHTML Action ChildSlots m
-  render state =
+  render {lists, selectedList, url, title, text} =
     HH.div
       []
-      [ HH.slot F._formless unit formComponent state HandleFormMessage ]
-
-newtype DDItem = DDItem {label :: String, value :: ID}
-
-derive instance eqDDItem :: Eq DDItem
-derive instance newtypeDDItem :: Newtype DDItem _
-
-instance toTextDDItem :: ToText DDItem where
-  toText = _.label <<< unwrap
-
-type FormSlot
-  = F.Slot CreateResourceForm FormQuery FormChildSlots Resource Unit
-
-newtype CreateResourceForm (r :: Row Type -> Type) f = CreateResourceForm (r (FormRow f))
-derive instance Newtype (CreateResourceForm r f) _
-
-type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
-type FormRow f =
-  ( title :: f V.FormError String (Maybe String)
-  , url :: f V.FormError String String
-  , description :: f V.FormError String (Maybe String)
-  , thumbnail :: f V.FormError (Maybe String) (Maybe String)
-  , list :: f V.FormError (Maybe ID) ID
-  , tags :: f V.FormError String (Array String)
-  )
-
-data FormQuery a
-  = SetCreateStatus (RemoteData String Unit) a
-
-derive instance functorFormQuery :: Functor FormQuery
-
-data FormAction
-  = FormInitialize
-  | Submit Event.Event
-  | HandleDropdown (DD.Message DDItem)
-  | FetchMeta String
-  | PasteUrl Clipboard.ClipboardEvent
-
-type FormInput
-  = { lists :: Array ListWithIdUserAndMeta
-    , selectedList :: Maybe ID
-    , url :: Maybe String
-    , title :: Maybe String
-    , text :: Maybe String
-    }
-
-type FormChildSlots = ( dropdown :: DD.Slot DDItem Unit )
-
-type FormState =
-  ( status :: RemoteData String Unit
-  , meta :: RemoteData String ResourceMeta
-  , pastedUrl :: Maybe String
-  , lists :: Array ListWithIdUserAndMeta
-  , selectedList :: Maybe ID
-  )
-
-formComponent ::
-  forall m.
-  MonadAff m =>
-  ManageResource m =>
-  F.Component CreateResourceForm FormQuery FormChildSlots FormInput Resource m
-formComponent = F.component formInput $ F.defaultSpec
-  { render = renderCreateResource
-  , handleEvent = handleEvent
-  , handleQuery = handleQuery
-  , handleAction = handleAction
-  , initialize = Just FormInitialize
-  }
-  where
-  formInput :: FormInput -> F.Input CreateResourceForm FormState m
-  formInput {lists, url, title, text, selectedList} =
-    { validators:
-        CreateResourceForm
-          { title: V.toOptional $ V.maxLength 150
-          , url: V.required >>> V.maxLength 500 -- TODO URL validation ???
-          , description:  V.toOptional $ V.maxLength 500
-          , thumbnail: F.noValidation
-          , list: V.requiredFromOptional F.noValidation
-                   <?> V.WithMsg "Please select a list"
-          , tags: V.maxLengthArr 4
-                    <<< F.hoistFn_ (filter (not <<< String.null) <<< map trim <<< split (Pattern ","))
-                    <?> V.WithMsg "Cannot have more than 4 tags"
-          }
-    , initialInputs: Just $ initialInputs {url, title, text}
-    , status: NotAsked
-    , meta: NotAsked
-    , lists
-    , pastedUrl: url <|> (filter Util.isUrl text)
-    , selectedList
-    }
-
-  initialInputs  {url, title, text} = F.wrapInputFields
-    { url: fromMaybe "" $ url <|> (filter Util.isUrl text)
-      -- On Android PWA share the title sometimes has `+` instead of spaces
-    , title: fromMaybe "" $ String.replace (Pattern "+") (Replacement " ") <$> String.take 500 <$> title
-    , description: fromMaybe "" $ filter (not <<< Util.isUrl) text
-    , thumbnail: Nothing
-    , list: Nothing
-    , tags: ""
-    }
-
-  handleEvent = F.raiseResult
-
-  handleAction = case _ of
-    FormInitialize -> do
-      {pastedUrl, selectedList, lists} <- H.get
-
-      let mbSelectedItem = listToItem <$> ((\id -> A.find ((id == _) <<< _.id) lists) =<< selectedList)
-
-      for_ mbSelectedItem \item ->
-        H.query DD._dropdown unit (DD.select item)
-
-      void $ H.fork $ for_ pastedUrl \url -> handleAction $ FetchMeta url
-
-    PasteUrl event -> do
-      mbUrl <- H.liftEffect $ filter Util.isUrl <$> traverse (DataTransfer.getData MediaType.textPlain) (Clipboard.clipboardData event)
-      case mbUrl of
-        Just url -> handleAction $ FetchMeta url
-        Nothing -> pure unit
-
-    FetchMeta url -> do
-      H.modify_ _ {meta = Loading}
-      mbMeta <- getMeta url
-      case mbMeta of
-        Just meta -> do
-          H.modify_ _ {meta = Success meta}
-          eval $ F.setValidate proxies.thumbnail meta.thumbnail
-          {form} <- H.get
-          for_
-            (filter (const $ String.null $ F.getInput proxies.title form) meta.title)
-            (eval <<< F.setValidate proxies.title)
-          for_
-            (filter (const $ String.null $ F.getInput proxies.description form) meta.description)
-            (eval <<< F.setValidate proxies.description)
-        Nothing ->
-          H.modify_ _ {meta = Failure "Couldn't get suggestions"}
-
-    Submit event -> do
-      H.liftEffect $ Event.preventDefault event
-      {status} <- H.get
-      when (not $ isLoading status) do eval F.submit
-
-    HandleDropdown (DD.Selected (DDItem {value})) ->
-      eval $ F.setValidate proxies.list (Just value)
-
-    HandleDropdown DD.Cleared ->
-      eval $ F.setValidate proxies.list Nothing
-
+      [ HH.slot F._formless unit ResourceForm.formComponent formInput HandleFormMessage ]
     where
-    eval act = F.handleAction handleAction handleEvent act
+    formInput = {lists, selectedList, initialInput}
+    initialInput = ResourceForm.InputToCreate {url, title, text}
 
-  handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
-  handleQuery = case _ of
-    SetCreateStatus status a -> do
-      H.modify_ _ {status = status}
-      when (isSuccess status) do
-        eval F.resetAll
-        void $ H.query DD._dropdown unit DD.clear
-      pure $ Just a
-
-    where
-    eval act = F.handleAction handleAction handleEvent act
-
-  proxies = F.mkSProxies (Proxy :: Proxy CreateResourceForm)
-
-  renderCreateResource {form, status, lists, submitting, meta} =
-    HH.form
-      [ HE.onSubmit $ F.injAction <<< Submit
-      , HP.noValidate true
-      ]
-      [ whenElem (isFailure status) \_ ->
-          HH.div
-            []
-            [ HH.text "Failed to add resource" ]
-      , HH.fieldset
-          []
-          [ url
-          , case meta of
-              Success {can_resolve} | not can_resolve -> HH.text ""
-
-              Success {resource: Just resource} ->
-                HH.div
-                  [ HP.classes [ T.mt2, T.mb4 ] ]
-                  [ HH.div
-                      [ HP.classes [ T.textManzana, T.textSm, T.mb2 ] ]
-                      [ HH.text "This resource already exists. Are you sure you want to add it again?" ]
-                  , ResourceComponent.resource lists resource
-                  ]
-
-              _ -> HH.text ""
-
-          , HH.div
-              [ HP.classes [ T.mt4 ] ]
-              [ HH.div
-                  [ HP.classes [ T.mb1 ] ]
-                  [ HH.label
-                      [ HP.classes [ T.block, T.textSm, T.fontMedium, T.textGray400 ] ]
-                      [ HH.text "List" ]
-                  ]
-
-              , HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput handler
-
-              , let mbError = filter (const $ F.getTouched proxies.list form) $ F.getError proxies.list form
-                 in maybeElem mbError \err ->
-                      HH.div
-                        [ HP.classes [ T.textManzana, T.mt2 ] ]
-                        [ HH.text $ V.errorToString err ]
-              ]
-
-          , HH.div
-              [ HP.classes [ T.flex, T.flexCol, T.gap4, T.mt4 ] ]
-              [ HH.div [] [ titleField ]
-              , HH.div [] [ tagsField ]
-              , HH.div [] [ description ]
-              ]
-
-          , whenElem (isFailure status) \_ ->
-              HH.div
-                [ HP.classes [ T.textManzana, T.my4 ] ]
-                [ HH.text "Could not create resource :(" ]
-
-          , HH.div
-              [ HP.classes [ T.mt4 ] ]
-              [ Field.submit "Add resource" (submitting || isLoading status) ]
-          ]
-      ]
-    where
-    handler = F.injAction <<< HandleDropdown
-    ddInput = {placeholder: "Choose a list", items: map listToItem lists}
-
-    url =
-      Field.input proxies.url form $ Field.defaultProps
-        { label = Just "Link"
-        , id = Just "url"
-        , placeholder = Just "https://blog.com/some-blogpost"
-        , required = true
-        , props = [ HE.onPaste $ F.injAction <<< PasteUrl ]
-        , message = case meta of
-            Loading -> Just "Fetching title and description ..."
-            Success {can_resolve} | not can_resolve -> Just "Failed to load metadata for this link"
-            _ -> Nothing
-        }
-
-
-    titleField =
-      Field.input proxies.title form $ Field.defaultProps
-        { label = Just "Title"
-        , id = Just "title"
-        , placeholder = Just "Some blogpost"
-        }
-
-    description =
-      Field.textarea proxies.description form $ Field.textareaDefaultProps
-        { label = Just "Description"
-        , id = Just "description"
-        , placeholder = Just "Such description. Much wow."
-        , props = [HP.rows 3]
-        }
-
-    tagsField =
-      Field.input proxies.tags form $ Field.defaultProps
-        { label = Just "Tags"
-        , id = Just "tags"
-        , placeholder = Just "videos, chill" -- TODO better placeholder
-        , message = Just "Comma separated list"
-        }
-
-  listToItem {id, title} = DDItem {value: id, label: title}
