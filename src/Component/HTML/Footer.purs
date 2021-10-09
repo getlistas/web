@@ -36,10 +36,10 @@ footer navigate =
             , externalLink
                 "https://www.notion.so/gillchristian/8178e02c59604fc88bb5dc91358c736f"
                 "Roadmap"
-            , link Changelog "Changelog"
+            -- , link Changelog "Changelog"
             , externalLink "https://collectednotes.com/getlistas" "Blog"
-            , link Terms "Terms"
-            , link Policy "Data Policy"
+            -- , link Terms "Terms"
+            -- , link Policy "Data Policy"
             , externalLink "mailto:hi@listas.io" "Contact us"
             ]
         , HH.div
