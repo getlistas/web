@@ -4901,6 +4901,10 @@ select{
   text-decoration: underline;
 }
 
+.focus\:underline:focus {
+  text-decoration: underline;
+}
+
 .tracking-tight {
   letter-spacing: -0.025em;
 }
