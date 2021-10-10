@@ -96,6 +96,10 @@ resourceFromInput :: InitialInput -> Maybe ListResource
 resourceFromInput (InputToEdit resource) = Just resource
 resourceFromInput _ = Nothing
 
+isEdit :: InitialInput -> Boolean
+isEdit (InputToEdit _) = true
+isEdit _ = false
+
 type FormInput
   = { lists :: Array ListWithIdUserAndMeta
     , selectedList :: Maybe ID
@@ -111,6 +115,7 @@ type FormState =
   , selectedList :: Maybe ID
   , pastedUrl :: Maybe String
   , initialResource :: Maybe ListResource
+  , isNew :: Boolean
   )
 
 formComponent ::
@@ -147,6 +152,7 @@ formComponent = F.component formInput $ F.defaultSpec
     , pastedUrl: urlFromInput initialInput <|> (filter Util.isUrl $ textFromInput initialInput)
     , selectedList
     , initialResource: resourceFromInput initialInput
+    , isNew: not $ isEdit initialInput
     }
 
   initialInputs (InputToCreate {url, title, text}) = F.wrapInputFields
@@ -233,7 +239,7 @@ formComponent = F.component formInput $ F.defaultSpec
 
   proxies = F.mkSProxies (Proxy :: Proxy ResourceForm)
 
-  renderCreateResource {form, status, lists, submitting, meta} =
+  renderCreateResource {form, status, lists, submitting, meta, isNew} =
     HH.form
       [ HE.onSubmit $ F.injAction <<< Submit
       , HP.noValidate true
@@ -291,7 +297,10 @@ formComponent = F.component formInput $ F.defaultSpec
 
           , HH.div
               [ HP.classes [ T.mt4 ] ]
-              [ Field.submit "Add resource" (submitting || isLoading status) ]
+              [ Field.submit
+                  (if isNew then "Add resource" else "Save")
+                  (submitting || isLoading status)
+              ]
           ]
       ]
     where

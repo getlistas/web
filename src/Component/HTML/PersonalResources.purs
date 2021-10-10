@@ -18,21 +18,29 @@ import Halogen.HTML as HH
 import Halogen.HTML.Elements.Keyed as HK
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore, updateStore)
+import Halogen.Store.Select (selectEq)
 import Listasio.Api.Endpoint (SortingResources(..), defaultSearch)
 import Listasio.Capability.Clipboard (class Clipboard, writeText)
 import Listasio.Capability.Navigate (class Navigate)
 import Listasio.Capability.Now (class Now, nowDateTime, nowDate)
+import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource, changePosition, completeResource, deleteResource, getListResources, searchResources, uncompleteResource)
+import Listasio.Component.HTML.EditResource as EditResource
 import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Modal as Modal
 import Listasio.Component.HTML.ToggleGroup as ToggleGroup
 import Listasio.Component.HTML.Utils (maybeElem)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 import Listasio.Data.Lens (_isProcessingAction, _resources)
+import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Resource (FilterByDone(..), ListResource, titleOrUrl)
 import Listasio.Data.Route (Route(..), routeCodec)
-import Network.RemoteData (RemoteData(..), _Success)
+import Listasio.Store as Store
+import Network.RemoteData (RemoteData(..), _Success, toMaybe)
 import Network.RemoteData as RemoteData
 import Routing.Duplex (print)
 import Tailwind as T
@@ -49,10 +57,21 @@ _slot = Proxy :: Proxy "personalResources"
 
 type Input = {list :: ID}
 
+type Lists = RemoteData String (Array ListWithIdUserAndMeta)
+
+type StoreState
+  = {lists :: Lists}
+
 data Action
   = Initialize
+  | Receive (Connected StoreState Input)
   | SearchChange String
   | LoadResources
+  | LoadLists
+    -- editing resources
+  | Edit ListResource
+  | ResourceEdited EditResource.Output
+  | CloseEditModal
     -- resources actions
   | CopyToShare ListResource
   | CopyResourceURL ListResource
@@ -73,13 +92,19 @@ data Query a
 
 type State
   = { list :: ID
+    , lists :: Lists
     , resources :: RemoteData String (Array ListResource)
     , isProcessingAction :: Boolean
     , confirmDelete :: Maybe ID
     , year :: Maybe Year
     , filterByStatus :: FilterByDone
     , searchQuery :: String
+    , toEdit :: Maybe ListResource
     }
+
+type ChildSlots
+  = ( editResource :: EditResource.Slot
+    )
 
 insertResourceAt :: Int -> ListResource -> State -> State
 insertResourceAt i resource =
@@ -95,35 +120,43 @@ modifyResourceById :: ID -> (ListResource -> ListResource) -> State -> State
 modifyResourceById id f =
   over (_resources <<< _Success) (map (\r -> if r.id == id then f r else r))
 
+select :: Store.Store -> StoreState
+select {lists} = {lists}
+
 component
   :: forall o m
    . MonadAff m
+  => MonadStore Store.Action Store.Store m
+  => ManageList m
   => ManageResource m
   => Navigate m
   => Clipboard m
   => Now m
   => H.Component Query Input o m
-component = H.mkComponent
+component = connect (selectEq select) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
       { handleAction = handleAction
       , handleQuery = handleQuery
+      , receive = Just <<< Receive
       , initialize = Just Initialize
       }
   }
   where
-  initialState {list} =
-    { list
+  initialState {context: {lists}, input: {list}} =
+    { lists
+    , list
     , resources: NotAsked
     , isProcessingAction: false
     , confirmDelete: Nothing
     , year: toEnum 0
     , filterByStatus: ShowAll
     , searchQuery: ""
+    , toEdit: Nothing
     }
 
-  handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
+  handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
     Initialize -> do
       year <- Date.year <$> nowDate
@@ -158,6 +191,28 @@ component = H.mkComponent
 
         H.modify_ _ {resources = resources}
 
+    Receive {context: {lists}} -> H.modify_ _ {lists = lists}
+
+    LoadLists -> do
+      result <- RemoteData.fromEither <$> note "Could not fetch your lists" <$> getLists
+      updateStore $ Store.SetLists result
+
+    -- editing resource
+
+    Edit resource -> do
+      {toEdit} <- H.get
+      when (isNothing toEdit) do H.modify_ _ {toEdit = Just resource}
+
+    ResourceEdited (EditResource.Updated updated@{id}) -> do
+      handleAction CloseEditModal
+      {list} <- H.get
+      when (updated.list == list) do H.modify_ $ modifyResourceById id (const updated)
+      when (updated.list /= list) do H.modify_ $ removeResourceById id
+
+    CloseEditModal -> H.modify_ _ {toEdit = Nothing}
+
+    -- resources actions
+
     CopyToShare {url} -> do
       host <- H.liftEffect $ Location.host =<< Window.location =<< Window.window
       void $ writeText $ host <> print routeCodec (CreateResource {url: Just url, text: Nothing, title: Nothing})
@@ -179,6 +234,7 @@ component = H.mkComponent
             result <- completeResource toComplete
 
             when (isNothing result) $ H.modify_ $ insertResourceAt i toComplete
+            when (isJust result) $ void $ H.fork $ handleAction LoadLists
 
             H.modify_ $ set _isProcessingAction false
           Nothing -> pure unit
@@ -196,6 +252,7 @@ component = H.mkComponent
             result <- uncompleteResource toUndo
 
             when (isNothing result) $ H.modify_ $ insertResourceAt i toUndo
+            when (isJust result) $ void $ H.fork $ handleAction LoadLists
 
             H.modify_ $ set _isProcessingAction false
           Nothing -> pure unit
@@ -211,6 +268,7 @@ component = H.mkComponent
       result <- changePosition toSkip {previus: lastId}
 
       when (isNothing result) $ H.modify_ $ insertResourceAt i toSkip <<< removeResourceById id
+      when (isJust result) $ void $ H.fork $ handleAction LoadLists
 
       H.modify_ $ set _isProcessingAction false
 
@@ -229,6 +287,7 @@ component = H.mkComponent
           result <- deleteResource toDelete
 
           when (isNothing result) $ H.modify_ $ insertResourceAt i toDelete
+          when (isJust result) $ void $ H.fork $ handleAction LoadLists
 
           H.modify_ $ set _isProcessingAction false
 
@@ -246,15 +305,15 @@ component = H.mkComponent
 
     NoOp -> pure unit
 
-  handleQuery :: forall slots a. Query a -> H.HalogenM State Action slots o m (Maybe a)
+  handleQuery :: forall a. Query a -> H.HalogenM State Action ChildSlots o m (Maybe a)
   handleQuery = case _ of
     ResourceAdded resource a -> do
       H.modify_ $ over (_resources <<< _Success) (flip A.snoc resource)
 
       pure $ Just a
 
-  render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {isProcessingAction, resources, confirmDelete, year, filterByStatus, searchQuery} =
+  render :: State -> H.ComponentHTML Action ChildSlots m
+  render {lists, isProcessingAction, resources, confirmDelete, year, filterByStatus, searchQuery, toEdit} =
     HH.div
       []
       [ HH.div
@@ -341,6 +400,16 @@ component = H.mkComponent
 
           -- TODO: error message element
           Failure msg -> HH.text msg
+     , Modal.modal (isJust toEdit) ({onClose: CloseEditModal, noOp: NoOp}) $
+        HH.div
+          []
+          [ HH.div
+              [ HP.classes [ T.textCenter, T.textGray400, T.text2xl, T.fontBold, T.mb4 ] ]
+              [ HH.text "Edit resource" ]
+          , maybeElem toEdit \resource ->
+              let input = {lists: fromMaybe [] $ toMaybe lists, resource}
+                in HH.slot EditResource._slot unit EditResource.component input ResourceEdited
+          ]
       ]
 
     where
@@ -487,6 +556,13 @@ component = H.mkComponent
                         , action: CopyToShare resource
                         , hoverColor: T.hoverTextKiwi
                         , title: "Copy share link"
+                        , disabled: false
+                        }
+                    , iconAction
+                        { icon: Icons.pencil
+                        , action: Edit resource
+                        , hoverColor: T.hoverTextKiwi
+                        , title: "Edit"
                         , disabled: false
                         }
                     ]
