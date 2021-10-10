@@ -2,10 +2,12 @@ module Util where
 
 import Prelude
 
+import Data.CodePoint.Unicode (isAlphaNum)
+import Data.Array (filter) as A
 import Data.Array.NonEmpty as NEA
 import Data.Either (Either(..), hush)
 import Data.Maybe (Maybe(..), fromMaybe)
-import Data.String (Pattern(..), Replacement(..), contains, replace)
+import Data.String (Pattern(..), Replacement(..), contains, replace, fromCodePointArray, toCodePointArray)
 import Data.String.Regex (regex, match, test) as Regex
 import Data.String.Regex.Flags (noFlags) as Regex
 
@@ -48,3 +50,8 @@ toWebsiteName = case _ of
 
 fromPredicate :: forall a. (a -> Boolean) -> a -> Maybe a
 fromPredicate pred a = if pred a then Just a else Nothing
+
+filterNonAlphanum :: String -> String
+filterNonAlphanum =
+  fromCodePointArray <<< A.filter isAlphaNum <<< toCodePointArray
+

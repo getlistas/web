@@ -206,6 +206,12 @@ instance manageResourceAppM :: ManageResource AppM where
           conf = {endpoint: Resources, method}
           codec = Resource.listResourceCodec
 
+  updateResource id newResource =
+    hush <$> mkAuthRequest conf codec
+    where method = Put $ Just $ Codec.encode Resource.resourceCodec newResource
+          conf = {endpoint: Resource id, method}
+          codec = Resource.listResourceCodec
+
   completeResource {id} =
     map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
     where conf = {endpoint: CompleteResource id, method: Post Nothing}

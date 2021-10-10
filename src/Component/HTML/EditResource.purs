@@ -1,31 +1,29 @@
-module Listasio.Component.HTML.CreateResource where
+module Listasio.Component.HTML.EditResource where
 
 import Prelude
 
-import Data.Array (filter, sortWith) as A
-import Data.CodePoint.Unicode (isAlphaNum)
+import Data.Array (sortWith) as A
 import Data.Either (note)
 import Data.Maybe (Maybe(..))
-import Data.String (fromCodePointArray, toCodePointArray) as String
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.Store.Monad (class MonadStore, updateStore)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
-import Listasio.Capability.Resource.Resource (class ManageResource, createResource)
+import Listasio.Capability.Resource.Resource (class ManageResource, updateResource)
 import Listasio.Component.HTML.ResourceForm as ResourceForm
-import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Resource (Resource, ListResource)
 import Listasio.Store as Store
 import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
 import Type.Proxy (Proxy(..))
+import Util (filterNonAlphanum)
 
 type Slot = forall query. H.Slot query Output Unit
 
-_slot = Proxy :: Proxy "createResource"
+_slot = Proxy :: Proxy "editResource"
 
 data Action
   = HandleFormMessage Resource
@@ -33,35 +31,25 @@ data Action
 
 type State
   = { lists :: Array ListWithIdUserAndMeta
-    , selectedList :: Maybe ID
-    , url :: Maybe String
-    , title :: Maybe String
-    , text :: Maybe String
+    , resource :: ListResource
     }
 
 type Input
   = { lists :: Array ListWithIdUserAndMeta
-    , selectedList :: Maybe ID
-    , url :: Maybe String
-    , title :: Maybe String
-    , text :: Maybe String
+    , resource :: ListResource
     }
 
 data Output
-  = Created ListResource
+  = Updated ListResource
 
 type ChildSlots
   = ( formless :: ResourceForm.Slot )
 
-filterNonAlphanum :: String -> String
-filterNonAlphanum =
-  String.fromCodePointArray <<< A.filter isAlphaNum <<< String.toCodePointArray
-
 component :: forall query m.
      MonadAff m
   => MonadStore Store.Action Store.Store m
-  => ManageList m
   => ManageResource m
+  => ManageList m
   => H.Component query Input Output m
 component = H.mkComponent
   { initialState
@@ -71,24 +59,22 @@ component = H.mkComponent
       }
   }
   where
-  initialState {lists, selectedList, url, title, text} =
+  initialState {lists, resource} =
     { lists: A.sortWith (filterNonAlphanum <<< _.title) lists
-    , selectedList
-    , url
-    , title
-    , text
+    , resource
     }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots Output m Unit
   handleAction = case _ of
-    HandleFormMessage newResource -> do
+    HandleFormMessage updated -> do
+      {resource: saved} <- H.get
       void $ H.query F._formless unit $ F.injQuery $ ResourceForm.SetCreateStatus Loading unit
 
-      mbNewResource <- createResource newResource
+      mbUpdated <- updateResource saved.id updated
 
-      case mbNewResource of
+      case mbUpdated of
         Just resource -> do
-          H.raise $ Created resource
+          H.raise $ Updated resource
           void $ H.query F._formless unit $ F.injQuery $ ResourceForm.SetCreateStatus (Success resource) unit
           handleAction LoadLists
 
@@ -100,11 +86,11 @@ component = H.mkComponent
       updateStore $ Store.SetLists result
 
   render :: State -> HH.ComponentHTML Action ChildSlots m
-  render {lists, selectedList, url, title, text} =
+  render {lists, resource} =
     HH.div
       []
       [ HH.slot F._formless unit ResourceForm.formComponent formInput HandleFormMessage ]
     where
-    formInput = {lists, selectedList, initialInput}
-    initialInput = ResourceForm.InputToCreate {url, title, text}
+    formInput = {lists, selectedList: Just resource.list, initialInput}
+    initialInput = ResourceForm.InputToEdit resource
 

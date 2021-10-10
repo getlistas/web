@@ -15,12 +15,12 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Query.Event as HES
 import Halogen.Store.Connect (Connected, connect)
-import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Monad (class MonadStore, updateStore)
 import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Clipboard (class Clipboard)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Now (class Now)
-import Listasio.Capability.Resource.List (class ManageList, getPublicListBySlug)
+import Listasio.Capability.Resource.List (class ManageList, getLists, getPublicListBySlug)
 import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Capability.Resource.User (class ManageUser, userBySlug)
 import Listasio.Component.HTML.CreateResource as CreateResource
@@ -58,12 +58,19 @@ _slot = Proxy
 type Input
   = {user :: Slug, list :: Slug}
 
+type Lists = RemoteData String (Array ListWithIdUserAndMeta)
+
+type StoreState
+  = { currentUser :: Maybe ProfileWithIdAndEmail
+    , lists :: Lists
+    }
+
 data Action
   = Initialize
-    -- TODO: use global list instead ?
-  | Receive (Connected (Maybe ProfileWithIdAndEmail) Input)
+  | Receive (Connected StoreState Input)
   | LoadList
   | LoadAuthor
+  | LoadLists
     -- Adding resources
   | ToggleAddResource
   | PasteUrl Clipboard.ClipboardEvent
@@ -80,6 +87,7 @@ type State
     , author :: RemoteData String PublicProfile
     , showAddResource :: Boolean
     , pastedUrl :: Maybe String
+    , lists :: Lists
     }
 
 type ChildSlots
@@ -92,6 +100,9 @@ isAuthor :: State -> Boolean
 isAuthor {authorSlug, currentUser} =
   isJust $ filter ((_ == authorSlug) <<< _.slug) currentUser
 
+select :: Store.Store -> StoreState
+select {lists, currentUser} = {lists, currentUser}
+
 component
   :: forall q o m
    . MonadAff m
@@ -103,7 +114,7 @@ component
   => Now m
   => Navigate m
   => H.Component q Input o m
-component = connect (selectEq _.currentUser) $ H.mkComponent
+component = connect (selectEq select) $ H.mkComponent
   { initialState
   , render
   , eval: H.mkEval $ H.defaultEval
@@ -113,7 +124,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       }
   }
   where
-  initialState {context: currentUser, input: {list, user}} =
+  initialState {context: {lists, currentUser}, input: {list, user}} =
     { listSlug: list
     , authorSlug: user
     , currentUser
@@ -121,12 +132,14 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
     , author: NotAsked
     , showAddResource: false
     , pastedUrl: Nothing
+    , lists
     }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
     Initialize -> do
       void $ H.fork $ handleAction LoadList
+      void $ H.fork $ handleAction LoadLists
       void $ H.fork $ handleAction LoadAuthor
 
       document <- H.liftEffect $ HTMLDocument.toEventTarget <$> (Web.document =<< Web.window)
@@ -149,6 +162,13 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       H.modify_ _ {author = Loading}
       author <- RemoteData.fromEither <$> note "Failed to fetch list author" <$> userBySlug authorSlug
       H.modify_ _ {author = author}
+
+    LoadLists -> do
+      {lists, currentUser} <- H.get
+      when (isJust currentUser && RemoteData.isNotAsked lists) do
+        updateStore $ Store.SetLists Loading
+        result <- RemoteData.fromEither <$> note "Could not fetch your lists" <$> getLists
+        updateStore $ Store.SetLists result
 
     PasteUrl event -> do
       st@{showAddResource, list} <- H.get
@@ -173,8 +193,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
         H.tell PersonalResources._slot unit $ PersonalResources.ResourceAdded resource
         H.modify_ _ {showAddResource = false, pastedUrl = Nothing}
 
-    Receive {context: currentUser} ->
-      H.modify_ _ {currentUser = currentUser}
+    Receive {context: {lists, currentUser}} ->
+      H.modify_ _ {currentUser = currentUser, lists = lists}
 
     Navigate route e -> navigate_ e route
 
