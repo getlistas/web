@@ -5,7 +5,7 @@ import Prelude
 import Data.Array (null, snoc)
 import Data.Either (Either, note)
 import Data.Filterable (filter)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), isJust, isNothing)
 import Data.MediaType.Common as MediaType
 import Data.Traversable (for_, traverse)
 import Effect.Aff.Class (class MonadAff)
@@ -23,12 +23,14 @@ import Listasio.Capability.Now (class Now)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource)
 import Listasio.Component.HTML.CreateResource as CreateResource
+import Listasio.Component.HTML.EditResource as EditResource
 import Listasio.Component.HTML.List as List
 import Listasio.Component.HTML.Modal as Modal
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
 import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
+import Listasio.Data.Resource (ListResource)
 import Listasio.Data.Route (Route(..))
 import Listasio.Store as Store
 import Network.RemoteData (RemoteData(..))
@@ -63,7 +65,9 @@ data Action
   | PasteUrl Clipboard.ClipboardEvent
   | ToggleAddResource
   | ResourceAdded CreateResource.Output
-  | ShowAddResourceForList List.Output
+  | HandleListOutput List.Output
+  | CloseEditModal
+  | ResourceEdited EditResource.Output
     -- meta actions
   | Navigate Route Event
   | NoOp
@@ -72,12 +76,14 @@ type State
   = { currentUser :: Maybe ProfileWithIdAndEmail
     , lists :: Lists
     , showAddResource :: Boolean
+    , showEditResource :: Maybe ListResource
     , pastedUrl :: Maybe String
     , listToAddResource :: Maybe ID
     }
 
 type ChildSlots
   = ( createResource :: CreateResource.Slot
+    , editResource :: EditResource.Slot
     , list :: List.Slot
     )
 
@@ -111,6 +117,7 @@ component = connect (selectEq select) $ H.mkComponent
     { currentUser
     , lists
     , showAddResource: false
+    , showEditResource: Nothing
     , pastedUrl: Nothing
     , listToAddResource: Nothing
     }
@@ -141,19 +148,34 @@ component = connect (selectEq select) $ H.mkComponent
       H.tell List._slot resource.list $ List.ResourceAdded resource
       H.modify_ _ {showAddResource = false, pastedUrl = Nothing}
 
-    ShowAddResourceForList (List.CreateResourceForList id) -> do
-      H.modify_ _ {listToAddResource = Just id, showAddResource = true}
+    HandleListOutput (List.CreateResourceForList id) -> do
+      {showEditResource} <- H.get
+      when (isNothing showEditResource) do H.modify_ _ {listToAddResource = Just id, showAddResource = true}
 
-    ToggleAddResource ->
-      H.modify_ \s -> s
-        { showAddResource = not s.showAddResource
-        , pastedUrl = filter (const $ not s.showAddResource) s.pastedUrl
-        , listToAddResource = Nothing
-        }
+    HandleListOutput (List.EditResource resource) -> do
+      {showAddResource} <- H.get
+      when (not showAddResource) do H.modify_ _ {showEditResource = Just resource}
+
+    CloseEditModal -> H.modify_ _ {showEditResource = Nothing}
+
+    ResourceEdited (EditResource.Updated update@{old, new}) -> do
+      H.tell List._slot old.list $ List.ResourceEdited update
+      when (old.list /= new.list) do
+        H.tell List._slot old.list $ List.ResourceEdited update
+      H.modify_ _ {showEditResource = Nothing}
+
+    ToggleAddResource -> do
+      {showEditResource} <- H.get
+      when (isNothing showEditResource) do
+        H.modify_ \s -> s
+          { showAddResource = not s.showAddResource
+          , pastedUrl = filter (const $ not s.showAddResource) s.pastedUrl
+          , listToAddResource = Nothing
+          }
 
     PasteUrl event -> do
-      {showAddResource, lists} <- H.get
-      when (not showAddResource && RemoteData.isSuccess lists) do
+      {showAddResource, lists, showEditResource} <- H.get
+      when (not showAddResource && isNothing showEditResource && RemoteData.isSuccess lists) do
         mbUrl <- H.liftEffect $ filter Util.isUrl <$> traverse (DataTransfer.getData MediaType.textPlain) (Clipboard.clipboardData event)
         for_ mbUrl \url -> H.modify_ _ {showAddResource = true, pastedUrl = Just url}
 
@@ -211,7 +233,7 @@ component = connect (selectEq select) $ H.mkComponent
               [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.xlGridCols3, T.gap4, T.itemsStart ] ]
               $ snoc
                   ( map
-                      (\list -> HH.slot List._slot list.id List.component {list} ShowAddResourceForList)
+                      (\list -> HH.slot List._slot list.id List.component {list} HandleListOutput)
                       lists
                   )
                   listCreateCard
@@ -224,6 +246,15 @@ component = connect (selectEq select) $ H.mkComponent
                 , whenElem st.showAddResource \_ ->
                     let input = {lists, url: st.pastedUrl, selectedList: st.listToAddResource, text: Nothing, title: Nothing}
                       in HH.slot CreateResource._slot unit CreateResource.component input ResourceAdded
+                ]
+          , Modal.modal (isJust st.showEditResource) ({onClose: CloseEditModal, noOp: NoOp}) $
+              HH.div
+                []
+                [ HH.div
+                    [ HP.classes [ T.textCenter, T.textGray400, T.text2xl, T.fontBold, T.mb4 ] ]
+                    [ HH.text "Edit resource" ]
+                , maybeElem st.showEditResource \resource ->
+                    HH.slot EditResource._slot unit EditResource.component {lists, resource} ResourceEdited
                 ]
           ]
 

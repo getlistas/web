@@ -40,7 +40,7 @@ type Input
     }
 
 data Output
-  = Updated ListResource
+  = Updated {old :: ListResource, new :: ListResource}
 
 type ChildSlots
   = ( formless :: ResourceForm.Slot )
@@ -74,7 +74,7 @@ component = H.mkComponent
 
       case mbUpdated of
         Just resource -> do
-          H.raise $ Updated resource
+          H.raise $ Updated {old: saved, new: resource}
           void $ H.query F._formless unit $ F.injQuery $ ResourceForm.SetCreateStatus (Success resource) unit
           handleAction LoadLists
 
