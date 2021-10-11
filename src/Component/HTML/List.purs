@@ -7,7 +7,7 @@ import Data.Array.NonEmpty (cons')
 import Data.Array.NonEmpty as NEA
 import Data.DateTime (DateTime)
 import Data.Either (note)
-import Data.Lens (firstOf, lastOf, lengthOf, over, preview, set, traversed)
+import Data.Lens (lastOf, lengthOf, over, preview, set, traversed)
 import Data.Lens.Index (ix)
 import Data.Maybe (Maybe(..), fromMaybe, isNothing, maybe)
 import Data.Traversable (for_)
@@ -32,7 +32,7 @@ import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
-import Listasio.Data.Lens (_completed_count, _confirmDelete, _count, _isProcessingAction, _last_completed_at, _next, _resource_metadata, _resources, _showMenu)
+import Listasio.Data.Lens (_completed_count, _confirmDelete, _count, _isProcessingAction, _last_completed_at, _list, _next, _resource_metadata, _resources, _showMenu)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Resource (ListResource, titleOrUrl)
@@ -65,12 +65,13 @@ data Action
   | ToggleShowNextMenu
   | CopyToShare ListResource
   | CopyResourceURL ListResource
-    -- UpdateResources
+    -- update resources
   | CompleteResource ListResource
   | SkipResource ListResource
   | DeleteResource
   | ConfirmDeleteResource ListResource
   | RaiseCreateResource ID
+  | RaiseEditResource ListResource
     -- meta actions
   | Navigate Route Event
   | Receive (Connected StoreState Input)
@@ -79,9 +80,11 @@ data Action
 
 data Query a
   = ResourceAdded ListResource a
+  | ResourceEdited {old :: ListResource, new:: ListResource} a
 
 data Output
   = CreateResourceForList ID
+  | EditResource ListResource
 
 updateListById :: ID -> (ListWithIdUserAndMeta -> ListWithIdUserAndMeta) -> ListWithIdUserAndMeta -> ListWithIdUserAndMeta
 updateListById id f list
@@ -131,9 +134,9 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       }
   }
   where
-  initialState {context: currentUser, input} =
-    { list: input.list
-    , resources: A.singleton <$> RemoteData.fromMaybe input.list.resource_metadata.next
+  initialState {context: currentUser, input: {list}} =
+    { list
+    , resources: A.singleton <$> RemoteData.fromMaybe list.resource_metadata.next
     , isProcessingAction: false
     , showMenu: false
     , confirmDelete: Nothing
@@ -255,12 +258,44 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
     RaiseCreateResource id -> H.raise $ CreateResourceForList id
 
+    RaiseEditResource resources -> H.raise $ EditResource resources
+
     Navigate route e -> navigate_ e route
 
+  -- TODO: all external changes are done to the resources, and not to the meta
+  --       but when refetching only the meta is loaded, however the next
+  --       resources is displayed from the list of resources xD
   handleQuery :: forall slots a. Query a -> H.HalogenM State Action slots Output m (Maybe a)
   handleQuery = case _ of
     ResourceAdded resource a -> do
       H.modify_ $ over (_resources <<< _Success) (flip A.snoc resource)
+
+      pure $ Just a
+
+    ResourceEdited {old, new} a -> do
+      st <- H.get
+
+      let listChanged = old.list /= new.list
+          onThisList = new.list == st.list.id
+          moveToOtherList = listChanged && not onThisList
+          addedToThisList = listChanged && onThisList
+          onlyUpdated = not listChanged && onThisList
+          nextInList = preview (_resources <<< _Success <<< ix 1) st
+
+      when moveToOtherList do
+        H.modify_ $ over (_resources <<< _Success) (A.drop 1)
+                      <<< set (_list <<< _resource_metadata <<< _next) nextInList
+
+      when addedToThisList do
+        H.modify_ $ over (_resources <<< _Success) (flip A.snoc new)
+        when (isNothing st.list.resource_metadata.next) do
+          H.modify_ $  set (_list <<< _resource_metadata <<< _next) (Just new)
+
+      when onlyUpdated do
+        H.modify_ $ over (_resources <<< _Success) (A.cons new)
+                      <<< over (_resources <<< _Success) (A.drop 1)
+        when (isNothing st.list.resource_metadata.next) do
+          H.modify_ $  set (_list <<< _resource_metadata <<< _next) (Just new)
 
       pure $ Just a
 
@@ -287,11 +322,11 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
           , HH.span [ HP.classes [ T.truncate ] ] [ HH.text short ]
           ]
 
-    toRead = case list.resource_metadata, firstOf (_resources <<< _Success <<< traversed) state of
-      _, Just next ->
+    toRead = case list.resource_metadata of
+      {next: Just next} ->
         nextEl next $ lengthOf (_resources <<< _Success <<< traversed) state == 1
 
-      {count: 0}, _ ->
+      {count: 0} ->
         HH.div
           [ HP.classes
               [ T.px4
@@ -326,7 +361,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
               ]
           ]
 
-      {count, completed_count}, _ | count == completed_count ->
+      {count, completed_count} | count == completed_count ->
         HH.div
           [ HP.classes
               [ T.px4
@@ -344,7 +379,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
           , Icons.celebrate []
           ]
 
-      _, _ ->
+      _ ->
         HH.div
           [ HP.classes
               [ T.px4
@@ -409,15 +444,23 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                         , disabled: isProcessingAction
                         }
                         $ cons'
-                            { action: AndCloseNextMenu $ CopyResourceURL next
+                            { action: WhenNotProcessingAction $ AndCloseNextMenu $ RaiseEditResource next
                             , label: HH.div
                                        [ HP.classes [ T.flex, T.itemsCenter ] ]
-                                       [ Icons.clipboardCopy [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
-                                       , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy link" ]
+                                       [ Icons.pencil [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
+                                       , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Edit" ]
                                        ]
                             , disabled: false
                             }
-                            [ { action: AndCloseNextMenu $ CopyToShare next
+                            [ { action: AndCloseNextMenu $ CopyResourceURL next
+                              , label: HH.div
+                                        [ HP.classes [ T.flex, T.itemsCenter ] ]
+                                        [ Icons.clipboardCopy [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
+                                        , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy link" ]
+                                        ]
+                              , disabled: false
+                              }
+                            , { action: AndCloseNextMenu $ CopyToShare next
                               , label: HH.div
                                          [ HP.classes [ T.flex, T.itemsCenter ] ]
                                          [ Icons.share [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]

@@ -203,7 +203,7 @@ component = connect (selectEq select) $ H.mkComponent
       {toEdit} <- H.get
       when (isNothing toEdit) do H.modify_ _ {toEdit = Just resource}
 
-    ResourceEdited (EditResource.Updated updated@{id}) -> do
+    ResourceEdited (EditResource.Updated {new: updated@{id}}) -> do
       handleAction CloseEditModal
       {list} <- H.get
       when (updated.list == list) do H.modify_ $ modifyResourceById id (const updated)
