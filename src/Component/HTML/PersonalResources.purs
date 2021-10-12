@@ -3,6 +3,7 @@ module Listasio.Component.HTML.PersonalResources where
 import Prelude
 
 import Data.Array as A
+import Data.Array.NonEmpty as NEA
 import Data.Date (Year)
 import Data.Date (year) as Date
 import Data.Either (note)
@@ -30,6 +31,7 @@ import Listasio.Capability.Resource.Resource (class ManageResource, changePositi
 import Listasio.Component.HTML.EditResource as EditResource
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Modal as Modal
+import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.ToggleGroup as ToggleGroup
 import Listasio.Component.HTML.Utils (maybeElem)
 import Listasio.Data.DateTime as DateTime
@@ -444,7 +446,7 @@ component = connect (selectEq select) $ H.mkComponent
         [ icon [ Icons.classes [ T.h5, T.w5 ] ] ]
 
     listResource :: Int -> ListResource -> Tuple String _
-    listResource i resource@{id, url, thumbnail, completed_at, created_at, description} =
+    listResource i resource@{id, url, thumbnail, completed_at, created_at, description, tags} =
       Tuple (ID.toString id)
         $ HH.div
             [ HP.classes
@@ -455,7 +457,7 @@ component = connect (selectEq select) $ H.mkComponent
                 , T.roundedLg
                 , T.bgWhite
                 , T.group
-                , T.h36
+                , T.h44
                 ]
             , HE.onMouseLeave $ const CancelDeleteResource
             ]
@@ -484,6 +486,11 @@ component = connect (selectEq select) $ H.mkComponent
                         HH.div
                           [ HP.classes [ T.mt2, T.truncate, T.textGray400, T.textSm ] ]
                           [ HH.text d ]
+                    , maybeElem (NEA.fromArray tags) \ts ->
+                        HH.div
+                          [ HP.classes [ T.mt2, T.flex ] ]
+                          $ NEA.toArray
+                          $ map Tag.tag ts
                     ]
                     , HH.div
                         [ HP.classes [ T.flex, T.itemsCenter, T.groupHoverHidden, T.groupFocusHidden, T.groupFocusWithinHidden, T.mt2 ] ]
@@ -569,7 +576,7 @@ component = connect (selectEq select) $ H.mkComponent
                 ]
             , maybeElem thumbnail \u ->
                 HH.div
-                  [ HP.classes [ T.hidden, T.smBlock, T.w40, T.h36, T.py4, T.pr4, T.flexShrink0 ] ]
+                  [ HP.classes [ T.hidden, T.smBlock, T.w44, T.h44, T.py4, T.pr4, T.flexShrink0 ] ]
                   [ HH.img
                       [ HP.alt $ titleOrUrl resource
                       , HP.src u

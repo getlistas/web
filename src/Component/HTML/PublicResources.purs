@@ -2,6 +2,7 @@ module Listasio.Component.HTML.PublicResources where
 
 import Prelude
 
+import Data.Array.NonEmpty as NEA
 import Data.Either (note)
 import Data.Maybe (Maybe(..))
 import Data.String (null, trim)
@@ -17,6 +18,7 @@ import Listasio.Capability.Clipboard (class Clipboard, writeText)
 import Listasio.Capability.Navigate (class Navigate)
 import Listasio.Capability.Resource.Resource (class ManageResource, getPublicListResources, searchResources)
 import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (maybeElem)
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
@@ -214,7 +216,7 @@ component = H.mkComponent
         [ icon [ Icons.classes [ T.h5, T.w5 ] ] ]
 
     listResource :: ListResource -> Tuple String _
-    listResource resource@{id, url, thumbnail, description} =
+    listResource resource@{id, url, thumbnail, description, tags} =
       Tuple (ID.toString id)
         $ HH.div
             [ HP.classes
@@ -225,7 +227,7 @@ component = H.mkComponent
                 , T.roundedLg
                 , T.bgWhite
                 , T.group
-                , T.h36
+                , T.h44
                 ]
             ]
             [ HH.div
@@ -253,6 +255,11 @@ component = H.mkComponent
                         HH.div
                           [ HP.classes [ T.mt2, T.truncate, T.textGray400, T.textSm ] ]
                           [ HH.text d ]
+                    , maybeElem (NEA.fromArray tags) \ts ->
+                        HH.div
+                          [ HP.classes [ T.mt2, T.flex ] ]
+                          $ NEA.toArray
+                          $ map Tag.tag ts
                     ]
                 , HH.div
                     [ HP.classes [ T.hidden, T.groupHoverFlex, T.groupFocusFlex, T.groupFocusWithinFlex, T.mt1 ] ]
@@ -274,7 +281,7 @@ component = H.mkComponent
                 ]
             , maybeElem thumbnail \u ->
                 HH.div
-                  [ HP.classes [ T.hidden, T.smBlock, T.w40, T.h36, T.py4, T.pr4, T.flexShrink0 ] ]
+                  [ HP.classes [ T.hidden, T.smBlock, T.w44, T.h44, T.py4, T.pr4, T.flexShrink0 ] ]
                   [ HH.img
                       [ HP.alt $ titleOrUrl resource
                       , HP.src u
