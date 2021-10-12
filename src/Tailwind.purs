@@ -519,6 +519,10 @@ h3 = ClassName "h-3"
 h40 :: ClassName
 h40 = ClassName "h-40"
 
+-- | h44
+h44 :: ClassName
+h44 = ClassName "h-44"
+
 -- | h4
 h4 :: ClassName
 h4 = ClassName "h-4"
@@ -1942,6 +1946,10 @@ w3 = ClassName "w-3"
 -- | w40
 w40 :: ClassName
 w40 = ClassName "w-40"
+
+-- | w44
+w44 :: ClassName
+w44 = ClassName "w-44"
 
 -- | w48
 w48 :: ClassName
