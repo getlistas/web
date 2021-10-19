@@ -85,6 +85,7 @@ data Endpoint
   | Integrations IntegrationsArgs
   | RssIntegrations
   | ListSubscriptionIntegrations
+  | ImportResources
 
 derive instance genericEndpoint :: Generic Endpoint _
 
@@ -129,6 +130,7 @@ endpointCodec =
             ? {list: id, kind: optional <<< integrationKind}
         , "RssIntegrations": "integrations" / "rss" / noArgs
         , "ListSubscriptionIntegrations": "integrations" / "listas-subscription" / noArgs
+        , "ImportResources": "import-resources" / noArgs
         }
 
 id :: RouteDuplex' String -> RouteDuplex' ID
