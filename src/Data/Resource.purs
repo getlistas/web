@@ -101,3 +101,15 @@ titleOrUrl {url}
   | startsWith "https://" url = take 50 $ replace (Pattern "https://") (Replacement "") url
   | startsWith "http://" url = take 50 $ replace (Pattern "http://") (Replacement "") url
   | otherwise = url
+
+type ImportResourcesBody
+  = { list :: ID
+    , payload :: String
+    }
+
+importResourcesCodec :: JsonCodec ImportResourcesBody
+importResourcesCodec =
+  CAR.object "ImportResourcesBody"
+    { list: ID.codec
+    , payload: CA.string
+    }

@@ -4,10 +4,10 @@ import Prelude
 
 import Data.Maybe (Maybe)
 import Halogen (HalogenM, lift)
-import Listasio.Data.ID (ID)
-import Listasio.Data.Resource (ListResource, Resource)
-import Listasio.Data.ResourceMetadata (ResourceMeta)
 import Listasio.Api.Endpoint (SearchResourcesArgs)
+import Listasio.Data.ID (ID)
+import Listasio.Data.Resource (ListResource, Resource, ImportResourcesBody)
+import Listasio.Data.ResourceMetadata (ResourceMeta)
 import Slug (Slug)
 
 type PositionChangeBody = { previus :: Maybe ID }
@@ -27,6 +27,7 @@ class Monad m <= ManageResource m where
   uncompleteResource :: ListResource -> m (Maybe Unit)
   deleteResource :: ListResource -> m (Maybe Unit)
   changePosition :: ListResource -> PositionChangeBody -> m (Maybe Unit)
+  importResources :: ImportResourcesBody -> m (Maybe Unit)
 
 instance manageResourceHalogenM :: ManageResource m => ManageResource (HalogenM st act slots msg m) where
   getMeta = lift <<< getMeta
@@ -40,3 +41,4 @@ instance manageResourceHalogenM :: ManageResource m => ManageResource (HalogenM 
   uncompleteResource = lift <<< uncompleteResource
   deleteResource = lift <<< deleteResource
   changePosition id = lift <<< changePosition id
+  importResources = lift <<< importResources

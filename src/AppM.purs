@@ -229,6 +229,11 @@ instance manageResourceAppM :: ManageResource AppM where
     where body = Codec.encode Resource.positionChangeBodyCodec {list, previus}
           conf = {endpoint: PositionResource id, method: Put $ Just body}
 
+  importResources payload =
+    map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
+    where body = Codec.encode Resource.importResourcesCodec payload
+          conf = {endpoint: ImportResources, method: Post $ Just body}
+
 instance manageIntegrationAppM :: ManageIntegration AppM where
   createRssIntegration fields = do
     hush <$> mkAuthRequest conf codec
