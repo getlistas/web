@@ -50,9 +50,7 @@ type State
     , status :: RemoteData String Unit
     }
 
-type Input
-  = { redirect :: Boolean
-    }
+type Input = {redirect :: Boolean}
 
 component ::
   forall q m.
@@ -79,10 +77,10 @@ component =
       void $ H.liftAff $ initGoogleAuth
 
     HandleLoginForm fields -> do
-      { status } <- H.get
+      {status} <- H.get
       when (not $ isLoading status) $ do
         void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus Loading unit
-        H.modify_ _ { status = Loading }
+        H.modify_ _ {status = Loading}
 
         mbProfile <- loginUser fields
 
@@ -94,27 +92,27 @@ component =
           Just {email, id} -> do
             userSet {email: unwrap email, userId: ID.toString id}
             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Success unit) unit
-            H.modify_ _ { status = Success unit }
+            H.modify_ _ {status = Success unit}
             st <- H.get
             when st.redirect (navigate Dashboard)
 
     HandleGoogleLogin -> do
-      { status } <- H.get
+      {status} <- H.get
       when (not $ isLoading status) do
         void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus Loading unit
-        H.modify_ _ { status = Loading }
+        H.modify_ _ {status = Loading}
 
         mbProfile <- googleLoginUser
 
         case mbProfile of
           Nothing -> do
             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus NotAsked unit
-            H.modify_ _ { status = NotAsked }
+            H.modify_ _ {status = NotAsked}
 
           Just {email, id} -> do
             userSet {email: unwrap email, userId: ID.toString id}
             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Success unit) unit
-            H.modify_ _ { status = Success unit }
+            H.modify_ _ {status = Success unit}
             st <- H.get
             when st.redirect (navigate Dashboard)
 
@@ -125,7 +123,7 @@ component =
       H.raise GoToRegister
 
   render :: State -> H.ComponentHTML Action ChildSlots m
-  render { status } =
+  render {status} =
     HH.div
       [ HP.classes [ T.flex, T.flexCol, T.itemsCenter ] ]
       [ HH.button
@@ -222,7 +220,7 @@ formComponent =
   handleAction = case _ of
     Submit event -> do
       H.liftEffect $ Event.preventDefault event
-      { status } <- H.get
+      {status} <- H.get
       when (not $ isLoading status) do eval F.submit
 
     where
@@ -231,12 +229,12 @@ formComponent =
   handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
     SetLoginStatus status a -> do
-      H.modify_ _ { status = status }
+      H.modify_ _ {status = status}
       pure (Just a)
 
   proxies = F.mkSProxies (Proxy :: Proxy LoginForm)
 
-  renderLogin { form, status, submitting } =
+  renderLogin {form, status, submitting} =
     HH.form
       [ HE.onSubmit $ F.injAction <<< Submit
       , HP.noValidate true

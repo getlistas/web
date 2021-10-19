@@ -159,6 +159,7 @@ type TextareaProps form act
     , props :: Array (HH.IProp HTMLtextarea (F.Action form act))
     , message :: Maybe String
     , label :: Maybe String
+    , rows :: Maybe Int
     }
 
 textareaDefaultProps :: forall form act. TextareaProps form act
@@ -170,6 +171,7 @@ textareaDefaultProps
     , props: []
     , message: Nothing
     , label: Nothing
+    , rows: Nothing
     }
 
 textarea ::
@@ -200,6 +202,7 @@ textarea sym form groupProps =
                     , HP.id <$> groupProps.id
                     , HP.name <$> groupProps.id
                     , HP.placeholder <$> groupProps.placeholder
+                    , HP.rows <$> groupProps.rows
                     ]
                 )
                 groupProps.props
