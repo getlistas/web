@@ -41,6 +41,7 @@ import Listasio.Page.EditList as EditList
 import Listasio.Page.History as History
 import Listasio.Page.Home as Home
 import Listasio.Page.ListIntegrations as ListIntegrations
+import Listasio.Page.ListResourcesImport as ListResourcesImport
 import Listasio.Page.Login as Login
 import Listasio.Page.Policy as Policy
 import Listasio.Page.Pricing as Pricing
@@ -96,6 +97,7 @@ type ChildSlots =
   , viewList :: OpaqueSlot Unit
   , editList :: OpaqueSlot Unit
   , listIntegrations :: OpaqueSlot Unit
+  , listResourcesImport :: OpaqueSlot Unit
   )
 
 component
@@ -268,6 +270,11 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                 -- TODO: validate that the current user is accessing this list
                 IntegrationsList user list ->
                   HH.slot_ ListIntegrations._slot unit ListIntegrations.component {user, list}
+                    # authorizeList currentUser user
+
+                -- TODO: validate that the current user is accessing this list
+                ImportResourcesList user list ->
+                  HH.slot_ ListResourcesImport._slot unit ListResourcesImport.component {user, list}
                     # authorizeList currentUser user
 
                 -- This shouldn't happend, as is already pattern matched above

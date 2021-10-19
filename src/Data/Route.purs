@@ -35,6 +35,7 @@ data Route
   | ViewList Slug
   | EditList Slug Slug
   | IntegrationsList Slug Slug
+  | ImportResourcesList Slug Slug
 
 derive instance genericRoute :: Generic Route _
 derive instance eqRoute :: Eq Route
@@ -75,4 +76,5 @@ routeCodec =
         , "ViewList": "list" / Slug.term segment
         , "EditList": "l" / Slug.term segment / Slug.term segment / "edit"
         , "IntegrationsList": "l" / Slug.term segment / Slug.term segment / "integrations"
+        , "ImportResourcesList": "l" / Slug.term segment / Slug.term segment / "import"
         }

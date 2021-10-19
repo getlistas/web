@@ -223,6 +223,15 @@ component = connect (selectEq select) $ H.mkComponent
                 , route: IntegrationsList userSlug listSlug
                 }
           }
+        , { active: false
+          , icon: Icons.documentAdd
+          , label: "Import"
+          , link:
+              Just
+                { action: Navigate (ImportResourcesList userSlug listSlug)
+                , route: ImportResourcesList userSlug listSlug
+                }
+          }
         ]
         cards
 
