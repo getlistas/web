@@ -958,8 +958,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                 , HH.div
                     [ HP.classes [ T.negMt6, T.aspectW5, T.aspectH3, T.mdAspectW2, T.mdAspectH1 ] ]
                     [ HH.img
-                        [ HP.alt "App screenshot"
-                        , HP.src "https://i.imgur.com/2UGt2Ko.png"
+                        [ HP.alt "Listas Up Next page"
+                        , HP.src "https://i.imgur.com/N0uKvkd.png"
                         , HP.classes
                             [ T.transform
                             , T.translateX6
@@ -1003,9 +1003,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                 [ HH.div
                     [ HP.classes [ T.negMt6, T.aspectW5, T.aspectH3, T.mdAspectW2, T.mdAspectH1 ] ]
                     [ HH.img
-                        [ HP.alt "Listas dashboard screenshot"
-                          -- Source https://imgur.com/a/V4mRN1f
-                        , HP.src "https://i.imgur.com/IZs2gRv.png"
+                        [ HP.alt "Listas Up Next page"
+                        , HP.src "https://i.imgur.com/N0uKvkd.png"
                         , HP.classes
                             [ T.transform
                             , T.roundedMd
