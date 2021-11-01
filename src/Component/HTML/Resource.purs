@@ -4,19 +4,24 @@ import Prelude
 
 import Data.Array (find)
 import Data.Array.NonEmpty as NEA
-import Data.Maybe (isJust)
+import Data.Maybe (Maybe(..), isJust)
 import Halogen.HTML as HH
+import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Tag as Tag
-import Listasio.Component.HTML.Utils (maybeElem)
+import Listasio.Component.HTML.Utils (maybeElem, safeHref)
 import Listasio.Data.List (ListWithIdUserAndMeta)
+import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Resource (ListResource, titleOrUrl)
+import Listasio.Data.Route (Route(..))
 import Tailwind as T
 import Util (takeDomain)
+import Web.Event.Event (Event)
+import Web.UIEvent.MouseEvent as Mouse
 
-resource :: forall i p. Array ListWithIdUserAndMeta -> ListResource -> HH.HTML i p
-resource lists r@{url, list, completed_at, tags} =
+resource :: forall i p. Maybe ProfileWithIdAndEmail -> Maybe (Route -> Event -> p) -> Array ListWithIdUserAndMeta -> ListResource -> HH.HTML i p
+resource currentUser navigate lists r@{url, list, completed_at, tags} =
   HH.div
     [ HP.classes
         [ T.roundedMd
@@ -75,8 +80,18 @@ resource lists r@{url, list, completed_at, tags} =
         , maybeElem (find ((list == _) <<< _.id) lists) \l ->
             HH.div
               [ HP.classes [ T.textXs, T.mr2 ] ]
-              [ HH.span [ HP.classes [ T.textGray200 ] ] [ HH.text "List: " ]
-              , HH.span [ HP.classes [ T.textGray300, T.fontMedium ] ] [ HH.text l.title ]
+              [ case currentUser, navigate of
+                  Just u, Just nav ->
+                    HH.a
+                      [ HP.classes [ T.textGray300, T.fontMedium ]
+                      , safeHref $ ViewList l.slug
+                      , HE.onClick $ nav (PublicList u.slug l.slug) <<< Mouse.toEvent
+                      ]
+                      [ HH.text l.title ]
+                  _, _ ->
+                    HH.span
+                      [ HP.classes [ T.textGray300, T.fontMedium ] ]
+                      [ HH.text l.title ]
               ]
         ]
     ]
