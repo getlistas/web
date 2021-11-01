@@ -260,7 +260,7 @@ formComponent = F.component formInput $ F.defaultSpec
                   [ HH.div
                       [ HP.classes [ T.textManzana, T.textSm, T.mb2 ] ]
                       [ HH.text "This resource already exists. Are you sure you want to add it again?" ]
-                  , ResourceComponent.resource lists resource
+                  , ResourceComponent.resource Nothing Nothing lists resource
                   ]
 
               _ -> HH.text ""

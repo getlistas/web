@@ -32,6 +32,7 @@ data Route
   | Settings
   | CreateList
   | CreateResource {url :: Maybe String, title :: Maybe String, text :: Maybe String}
+    -- List
   | ViewList Slug
   | EditList Slug Slug
   | IntegrationsList Slug Slug
