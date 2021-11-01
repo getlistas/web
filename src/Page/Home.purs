@@ -336,6 +336,12 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                       ]
                   , whenElem showSettingsMenu \_ ->
                       HH.div
+                        [ HE.onClick $ const ToggleSettingsMenu
+                        , HP.classes [ T.fixed, T.inset0 ]
+                        ]
+                        [ HH.div [ HP.classes [ T.absolute, T.inset0 ] ] [] ]
+                  , whenElem showSettingsMenu \_ ->
+                      HH.div
                         [ HP.classes
                             [ T.originTopRight
                             , T.absolute
