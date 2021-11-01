@@ -28,7 +28,7 @@ data Route
   | VerifyEmailFailure
     -- Private
   | Dashboard
-  | History
+  | Library
   | Settings
   | CreateList
   | CreateResource {url :: Maybe String, title :: Maybe String, text :: Maybe String}
@@ -63,7 +63,7 @@ routeCodec =
         , "VerifyEmailFailure": "verify-email" / "failure" / noArgs
           -- Private
         , "Dashboard": "dashboard" / noArgs
-        , "History": "history" / noArgs
+        , "Library": "library" / noArgs
         , "Settings": "settings" / noArgs
         , "CreateList": "list" / "create" / noArgs
         , "CreateResource": "resources" / "create"

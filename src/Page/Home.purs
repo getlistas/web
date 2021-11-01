@@ -294,7 +294,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                 [ whenElem (hasUser authStatus) \_ ->
                     desktopLink Dashboard "Up next"
                 , whenElem (hasUser authStatus) \_ ->
-                    desktopLink History "History"
+                    desktopLink Library "Library"
                 , desktopLink Discover "Discover"
                 ]
             ]
@@ -517,7 +517,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                       [ HH.div
                           [ HP.classes [ T.px2, T.py4, T.spaceY1 ] ]
                           [ mobileLink Dashboard "Up next"
-                          , mobileLink History "History"
+                          , mobileLink Library "Library"
                           , mobileLink Discover "Discover"
                           ]
                       , HH.div
@@ -875,7 +875,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                     ]
                     [ feature
                         Icons.bookmark
-                        "History"
+                        "Library"
                         "Keep track of everything you consumed. You’ll never know when you’ll need it again."
                         false
                     , feature

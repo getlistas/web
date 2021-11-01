@@ -1,4 +1,4 @@
-module Listasio.Page.History where
+module Listasio.Page.Library where
 
 import Prelude
 
@@ -43,7 +43,7 @@ import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
 import Web.UIEvent.MouseEvent as Mouse
 
-_slot :: Proxy "history"
+_slot :: Proxy "library"
 _slot = Proxy
 
 type Lists = RemoteData String (Array ListWithIdUserAndMeta)
@@ -124,7 +124,7 @@ type State
     }
 
 noteError :: forall a. Maybe a -> Either String a
-noteError = note "Failed to load history"
+noteError = note "Failed to load your library contents"
 
 select :: Store.Store -> StoreState
 select {lists, currentUser} = {lists, currentUser}
@@ -191,7 +191,7 @@ component = connect (selectEq select) $ H.mkComponent
           [ HP.classes [ T.pt2 ] ]
           [ HH.h1
               [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-              [ HH.text "History" ]
+              [ HH.text "Library" ]
           ]
       , settings
       , feed

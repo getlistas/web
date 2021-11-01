@@ -38,7 +38,7 @@ import Listasio.Page.CreateResource as CreateResource
 import Listasio.Page.Dashboard as Dashboard
 import Listasio.Page.Discover as Discover
 import Listasio.Page.EditList as EditList
-import Listasio.Page.History as History
+import Listasio.Page.Library as Library
 import Listasio.Page.Home as Home
 import Listasio.Page.ListIntegrations as ListIntegrations
 import Listasio.Page.ListResourcesImport as ListResourcesImport
@@ -90,7 +90,7 @@ type ChildSlots =
   , verifyFailure :: OpaqueSlot Unit
     -- Private
   , dashboard :: OpaqueSlot Unit
-  , history :: OpaqueSlot Unit
+  , library :: OpaqueSlot Unit
   , settings :: OpaqueSlot Unit
   , createList :: OpaqueSlot Unit
   , createResource :: OpaqueSlot Unit
@@ -244,8 +244,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                   HH.slot_ Dashboard._slot unit Dashboard.component unit
                     # authorize currentUser
 
-                History ->
-                  HH.slot_ History._slot unit History.component unit
+                Library ->
+                  HH.slot_ Library._slot unit Library.component unit
                     # authorize currentUser
 
                 Settings ->

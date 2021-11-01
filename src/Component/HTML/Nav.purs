@@ -232,7 +232,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                 case currentUser of
                   Just _ ->
                     [ desktopLink Dashboard "Up next"
-                    , desktopLink History "History"
+                    , desktopLink Library "Library"
                     , desktopLink Discover "Discover"
                     ]
 
@@ -280,7 +280,6 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                           ]
 
                       ]
-
                   , whenElem showSettingsMenu \_ ->
                       HH.div
                         [ HE.onClick $ const ToggleSettingsMenu
@@ -464,7 +463,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                       [ HH.div
                           [ HP.classes [ T.px2, T.py4, T.spaceY1 ] ]
                           [ mobileLink Dashboard "Up next"
-                          , mobileLink History "History"
+                          , mobileLink Library "Library"
                           , mobileLink Discover "Discover"
                           ]
                       , HH.div
