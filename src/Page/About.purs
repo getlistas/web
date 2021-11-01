@@ -84,7 +84,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                 , {icon: Icons.website, url: "https://gillchristian.xyz"}
                 ]
             }
-          , { avatar: "https://pbs.twimg.com/profile_images/1194743088373219330/10-3KEsy_400x400.jpg"
+          , { avatar: "https://avatars.githubusercontent.com/u/23080631?v=4"
             , name: "Nahuel"
             , role: "Design"
             , icon: Icons.photo
