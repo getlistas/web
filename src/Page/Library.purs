@@ -2,26 +2,30 @@ module Listasio.Page.Library where
 
 import Prelude
 
-import Data.Array (groupBy, sortWith)
+import Data.Array (groupBy, sortBy, sortWith)
 import Data.Array.NonEmpty (NonEmptyArray)
 import Data.Array.NonEmpty as NEA
+import Data.String.NonEmpty as NES
 import Data.Either (Either, note)
 import Data.FunctorWithIndex (mapWithIndex)
 import Data.Map (Map)
 import Data.Map as Map
 import Data.Maybe (Maybe(..))
+import Data.String as S
 import Data.Ord.Down (Down(..))
 import Data.Tuple (Tuple(..), snd)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
+import Halogen.HTML.Events as HE
 import Halogen.Store.Connect (Connected, connect)
 import Halogen.Store.Monad (class MonadStore, updateStore)
 import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource, searchResources)
+import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Message as Message
 import Listasio.Component.HTML.Resource (resource)
 import Listasio.Component.HTML.ToggleGroup as ToggleGroup
@@ -36,6 +40,7 @@ import Network.RemoteData (RemoteData(..), fromEither, isLoading, isNotAsked, wi
 import Tailwind as T
 import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
+import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
 _slot :: Proxy "library"
 _slot = Proxy
@@ -54,6 +59,8 @@ data Action
   | LoadLists
   | Navigate Route Event
   | ToggleFilterByDone FilterByDone
+  | SearchChange String
+  | NoOp
 
 filterByMsg :: FilterByDone -> String
 filterByMsg = case _ of
@@ -67,21 +74,27 @@ type GroupedResources
 byCompletedAt :: ListResource -> ListResource -> Ordering
 byCompletedAt {completed_at: Nothing} {completed_at: Just _} = LT
 byCompletedAt {completed_at: Just _} {completed_at: Nothing} = GT
-byCompletedAt {completed_at: Just a} {completed_at: Just b} = compare a b
 byCompletedAt {created_at: a} {created_at: b} = compare a b
 
 byCreatedAt :: ListResource -> ListResource -> Ordering
 byCreatedAt {created_at: a} {created_at: b} = compare a b
 
 -- TODO: group by completed_at on Done
-groupResources :: Array ListResource -> GroupedResources
-groupResources items =
+groupResources :: FilterByDone -> Array ListResource -> GroupedResources
+groupResources ShowDone items =
+  items
+    # sortBy byCompletedAt
+    # groupBy createdOnSameMonth
+    # map monthItemsPair
+    # Map.fromFoldable
+    # map (NEA.sortBy byCompletedAt)
+groupResources _ items =
   items
     # sortWith _.created_at
     # groupBy createdOnSameMonth
     # map monthItemsPair
     # Map.fromFoldable
-    # map (NEA.sortBy byCompletedAt)
+    # map (NEA.sortWith _.created_at)
 
 createdOnSameMonth :: ListResource -> ListResource -> Boolean
 createdOnSameMonth {created_at: a} {created_at: b} =
@@ -95,6 +108,7 @@ type State
     , resources :: RemoteData String GroupedResources
     , lists :: Lists
     , filterBy :: FilterByDone
+    , searchQuery :: String
     }
 
 noteError :: forall a. Maybe a -> Either String a
@@ -131,6 +145,7 @@ component = connect (selectEq select) $ H.mkComponent
     , resources: NotAsked
     , lists
     , filterBy: ShowDone
+    , searchQuery: ""
     }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
@@ -141,10 +156,11 @@ component = connect (selectEq select) $ H.mkComponent
 
     LoadResources -> do
       H.modify_ _ {resources = Loading}
-      {filterBy} <- H.get
+      {filterBy, searchQuery} <- H.get
       let completed = queryParamFilterBy filterBy
-          search = {list: Nothing, completed, sort: Nothing, search_text: Nothing, limit: Nothing, skip: Nothing}
-      resources <- map groupResources <$> fromEither <$> noteError <$> searchResources search
+          search_text = NES.fromString $ S.trim searchQuery
+          search = {list: Nothing, completed, sort: Nothing, search_text, limit: Nothing, skip: Nothing}
+      resources <- map (groupResources filterBy) <$> fromEither <$> noteError <$> searchResources search
       H.modify_ _ {resources = resources}
 
     LoadLists -> do
@@ -162,8 +178,17 @@ component = connect (selectEq select) $ H.mkComponent
       H.modify_ _ {filterBy = filterBy}
       handleAction LoadResources
 
+    SearchChange newQuery -> do
+      {searchQuery: oldQuery} <- H.get
+
+      when (newQuery /= oldQuery) do
+        H.modify_ _ {searchQuery = newQuery}
+        handleAction LoadResources
+
+    NoOp -> pure unit
+
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {currentUser, resources, lists: mbLists, filterBy} =
+  render {currentUser, resources, lists: mbLists, filterBy, searchQuery} =
     HH.div
       []
       [ HH.div
@@ -183,12 +208,61 @@ component = connect (selectEq select) $ H.mkComponent
       HH.div
         [ HP.classes [ T.flex, T.itemsStart, T.flexWrap, T.my6 ] ]
         [ HH.div
-            [ HP.classes [ T.wFull , T.smWAuto ] ]
+            [ HP.classes [ T.flex, T.flexCol, T.smFlexRow, T.justifyBetween, T.gap4, T.mb4 ] ]
             [ ToggleGroup.toggleGroup
                 (isLoading resources)
                 [ {label: "All", action: ToggleFilterByDone ShowAll, active: filterBy == ShowAll}
                 , {label: "Done", action: ToggleFilterByDone ShowDone, active: filterBy == ShowDone}
                 , {label: "Pending", action: ToggleFilterByDone ShowPending, active: filterBy == ShowPending}
+                ]
+            , HH.div
+                [ HP.classes [ T.wFull, T.flex, T.roundedLg ] ]
+                [ HH.input
+                    [ HP.placeholder "Search resources"
+                    , HP.classes
+                        [ T.wFull
+                        , T.roundedNone
+                        , T.roundedLLg
+                        , T.smTextSm
+                        , T.border
+                        , T.borderGray300
+                        , T.px4
+                        , T.focusRing2
+                        , T.focusRingKiwi
+                        , T.focusOutlineNone
+                        , T.focusBorderKiwi
+                        , T.focusZ10
+                        ]
+                    , HP.value searchQuery
+                    , HE.onValueInput $ SearchChange
+                    , HE.onKeyDown \e ->
+                        case KeyboardEvent.code e of
+                          "Escape" -> SearchChange ""
+                          _ -> NoOp
+                    ]
+                , HH.button
+                    [ HP.classes
+                        [ T.negMlPx
+                        , T.flex
+                        , T.itemsCenter
+                        , T.p2
+                        , T.border
+                        , T.borderGray300
+                        , T.roundedRLg
+                        , T.textGray300
+                        , T.hoverTextKiwi
+                        , T.bgGray100
+                        , T.focusOutlineNone
+                        , T.focusRing2
+                        , T.focusRingKiwi
+                        , T.focusBorderKiwi
+                        ]
+                    , HE.onClick $ const $ SearchChange ""
+                    , HP.disabled $ S.null searchQuery
+                    ]
+                    [ Icons.x
+                        [ Icons.classes [ T.h5, T.w5 ] ]
+                    ]
                 ]
             ]
         ]
@@ -198,9 +272,10 @@ component = connect (selectEq select) $ H.mkComponent
         Success grouped | Map.isEmpty grouped ->
           HH.div
             [ HP.classes [ T.textGray300, T.text2xl, T.mt10 ] ]
-            [ HH.text $ case filterBy of
-                ShowDone -> "No completed resources yet 😅"
-                _ -> "You haven't added any resource yet 😅"
+            [ HH.text $ case filterBy, S.null $ S.trim searchQuery of
+                _, false -> "No results found 😅"
+                ShowDone, _ -> "No completed resources yet 😅"
+                _, _ -> "You haven't added any resource yet 😅"
             ]
 
         Success grouped ->

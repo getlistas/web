@@ -8,10 +8,12 @@ import Prelude hiding ((/))
 import Data.Either (Either(..), note)
 import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe(..))
+import Data.String.NonEmpty (NonEmptyString)
+import Data.String.NonEmpty as NES
 import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 import Listasio.Data.Integration (IntegrationKind(..))
-import Routing.Duplex (RouteDuplex', as, boolean, int, optional, root, segment, string)
+import Routing.Duplex (RouteDuplex', as, boolean, int, optional, root, segment)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/), (?))
 import Slug (Slug)
@@ -34,7 +36,7 @@ type SearchResourcesArgs
       ( list :: Maybe ID
       , completed :: Maybe Boolean
       , sort :: Maybe SortingResources
-      , search_text :: Maybe String
+      , search_text :: Maybe NonEmptyString
       )
     }
 
@@ -116,7 +118,7 @@ endpointCodec =
             ? { list: optional <<< id
               , completed: optional <<< boolean
               , sort: optional <<< sortingResources
-              , search_text: optional <<< string
+              , search_text: optional <<< nonEmptyString
               , skip: optional <<< int
               , limit: optional <<< int
               }
@@ -158,4 +160,10 @@ sortingResources = as toString parse
     "position_asc" -> Right PositionAsc
     "position_des" -> Right PositionDes
     s -> Left $ "Bad SortingResources '" <> s <> "'"
+
+
+nonEmptyString :: RouteDuplex' String -> RouteDuplex' NonEmptyString
+nonEmptyString = as NES.toString parse
+  where
+  parse = note "Empty string" <<< NES.fromString
 
