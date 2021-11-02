@@ -11,6 +11,7 @@ import Data.Enum (toEnum)
 import Data.Lens (lastOf, over, preview, set, traversed)
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing, maybe)
 import Data.String (null, trim)
+import Data.String.NonEmpty as NES
 import Data.Traversable (for_)
 import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
@@ -185,7 +186,7 @@ component = connect (selectEq select) $ H.mkComponent
       when (not $ null newQuery) do
         {list} <- H.get
 
-        let search = defaultSearch {list = Just list, search_text = Just newQuery, sort = Just PositionAsc}
+        let search = defaultSearch {list = Just list, search_text = NES.fromString newQuery, sort = Just PositionAsc}
 
         H.modify_ _ {resources = Loading}
 
@@ -319,7 +320,7 @@ component = connect (selectEq select) $ H.mkComponent
     HH.div
       []
       [ HH.div
-        [ HP.classes [ T.flex, T.flexCol, T.smFlexRow, T.justifyBetween, T.gap4, T.mb4 ] ]
+          [ HP.classes [ T.flex, T.flexCol, T.smFlexRow, T.justifyBetween, T.gap4, T.mb4 ] ]
           [ HH.div
               [ HP.classes [ T.wFull, T.flex, T.roundedLg ] ]
               [ HH.input

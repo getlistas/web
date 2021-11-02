@@ -6,6 +6,7 @@ import Data.Array.NonEmpty as NEA
 import Data.Either (note)
 import Data.Maybe (Maybe(..))
 import Data.String (null, trim)
+import Data.String.NonEmpty as NES
 import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -98,7 +99,7 @@ component = H.mkComponent
       when (not $ null newQuery) do
         {listId} <- H.get
 
-        let search = defaultSearch {list = Just listId, search_text = Just newQuery, sort = Just PositionAsc}
+        let search = defaultSearch {list = Just listId, search_text = NES.fromString newQuery, sort = Just PositionAsc}
 
         H.modify_ _ {resources = Loading}
 
