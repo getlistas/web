@@ -191,6 +191,10 @@ borderTransparent = ClassName "border-transparent"
 borderWhite :: ClassName
 borderWhite = ClassName "border-white"
 
+-- | bottom2
+bottom2 :: ClassName
+bottom2 = ClassName "bottom-2"
+
 -- | bottom4
 bottom4 :: ClassName
 bottom4 = ClassName "bottom-4"
@@ -506,10 +510,6 @@ h24 = ClassName "h-24"
 -- | h32
 h32 :: ClassName
 h32 = ClassName "h-32"
-
--- | h36
-h36 :: ClassName
-h36 = ClassName "h-36"
 
 -- | h3
 h3 :: ClassName
@@ -1015,10 +1015,6 @@ ml4 = ClassName "ml-4"
 ml6 :: ClassName
 ml6 = ClassName "ml-6"
 
--- | mr0
-mr0 :: ClassName
-mr0 = ClassName "mr-0"
-
 -- | mr1
 mr1 :: ClassName
 mr1 = ClassName "mr-1"
@@ -1367,6 +1363,10 @@ relative = ClassName "relative"
 right0 :: ClassName
 right0 = ClassName "right-0"
 
+-- | right2
+right2 :: ClassName
+right2 = ClassName "right-2"
+
 -- | ring1
 ring1 :: ClassName
 ring1 = ClassName "ring-1"
@@ -1574,10 +1574,6 @@ smMl4 = ClassName "sm:ml-4"
 -- | smMl6
 smMl6 :: ClassName
 smMl6 = ClassName "sm:ml-6"
-
--- | smMr4
-smMr4 :: ClassName
-smMr4 = ClassName "sm:mr-4"
 
 -- | smMt0
 smMt0 :: ClassName
@@ -1866,6 +1862,10 @@ top0 = ClassName "top-0"
 -- | top1
 top1 :: ClassName
 top1 = ClassName "top-1"
+
+-- | top2
+top2 :: ClassName
+top2 = ClassName "top-2"
 
 -- | trackingTight
 trackingTight :: ClassName

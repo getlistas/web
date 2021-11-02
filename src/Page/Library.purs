@@ -2,41 +2,46 @@ module Listasio.Page.Library where
 
 import Prelude
 
-import Data.Array (groupBy, sortBy, sortWith)
+import Data.Array as A
 import Data.Array.NonEmpty (NonEmptyArray)
 import Data.Array.NonEmpty as NEA
-import Data.String.NonEmpty as NES
 import Data.Either (Either, note)
 import Data.FunctorWithIndex (mapWithIndex)
 import Data.Map (Map)
 import Data.Map as Map
-import Data.Maybe (Maybe(..))
-import Data.String as S
+import Data.Maybe (Maybe(..), isJust)
+import Data.Newtype (class Newtype, unwrap)
 import Data.Ord.Down (Down(..))
+import Data.String as S
+import Data.String.NonEmpty as NES
 import Data.Tuple (Tuple(..), snd)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
-import Halogen.HTML.Properties as HP
 import Halogen.HTML.Events as HE
+import Halogen.HTML.Properties as HP
 import Halogen.Store.Connect (Connected, connect)
 import Halogen.Store.Monad (class MonadStore, updateStore)
 import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource, searchResources)
+import Listasio.Component.HTML.Dropdown as DD
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Message as Message
 import Listasio.Component.HTML.Resource (resource)
 import Listasio.Component.HTML.ToggleGroup as ToggleGroup
+import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Resource (FilterByDone(..), ListResource)
 import Listasio.Data.Route (Route)
 import Listasio.Data.YearMonth (YearMonth)
 import Listasio.Data.YearMonth as YearMonth
+import Listasio.Form.Validation (class ToText)
 import Listasio.Store as Store
 import Network.RemoteData (RemoteData(..), fromEither, isLoading, isNotAsked, withDefault)
+import Select as Select
 import Tailwind as T
 import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
@@ -44,6 +49,9 @@ import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
 _slot :: Proxy "library"
 _slot = Proxy
+
+type ChildSlots
+  = ( dropdown :: DD.Slot DDItem Unit )
 
 type Lists = RemoteData String (Array ListWithIdUserAndMeta)
 
@@ -58,8 +66,11 @@ data Action
   | LoadResources
   | LoadLists
   | Navigate Route Event
+    -- query
   | ToggleFilterByDone FilterByDone
   | SearchChange String
+  | HandleListSelection (DD.Message DDItem)
+    -- Meta
   | NoOp
 
 filterByMsg :: FilterByDone -> String
@@ -83,15 +94,15 @@ byCreatedAt {created_at: a} {created_at: b} = compare a b
 groupResources :: FilterByDone -> Array ListResource -> GroupedResources
 groupResources ShowDone items =
   items
-    # sortBy byCompletedAt
-    # groupBy createdOnSameMonth
+    # A.sortBy byCompletedAt
+    # A.groupBy createdOnSameMonth
     # map monthItemsPair
     # Map.fromFoldable
     # map (NEA.sortBy byCompletedAt)
 groupResources _ items =
   items
-    # sortWith _.created_at
-    # groupBy createdOnSameMonth
+    # A.sortWith _.created_at
+    # A.groupBy createdOnSameMonth
     # map monthItemsPair
     # Map.fromFoldable
     # map (NEA.sortWith _.created_at)
@@ -109,6 +120,7 @@ type State
     , lists :: Lists
     , filterBy :: FilterByDone
     , searchQuery :: String
+    , list :: Maybe ID
     }
 
 noteError :: forall a. Maybe a -> Either String a
@@ -121,6 +133,14 @@ queryParamFilterBy :: FilterByDone -> Maybe Boolean
 queryParamFilterBy ShowAll = Nothing
 queryParamFilterBy ShowDone = Just true
 queryParamFilterBy ShowPending = Just false
+
+newtype DDItem = DDItem {label :: String, value :: ID}
+
+derive instance eqDDItem :: Eq DDItem
+derive instance newtypeDDItem :: Newtype DDItem _
+
+instance toTextDDItem :: ToText DDItem where
+  toText = _.label <<< unwrap
 
 component
   :: forall q o m
@@ -146,9 +166,10 @@ component = connect (selectEq select) $ H.mkComponent
     , lists
     , filterBy: ShowDone
     , searchQuery: ""
+    , list: Nothing
     }
 
-  handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
+  handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
     Initialize -> do
       void $ H.fork $ handleAction LoadResources
@@ -156,10 +177,10 @@ component = connect (selectEq select) $ H.mkComponent
 
     LoadResources -> do
       H.modify_ _ {resources = Loading}
-      {filterBy, searchQuery} <- H.get
+      {filterBy, searchQuery, list} <- H.get
       let completed = queryParamFilterBy filterBy
           search_text = NES.fromString $ S.trim searchQuery
-          search = {list: Nothing, completed, sort: Nothing, search_text, limit: Nothing, skip: Nothing}
+          search = {list, completed, sort: Nothing, search_text, limit: Nothing, skip: Nothing}
       resources <- map (groupResources filterBy) <$> fromEither <$> noteError <$> searchResources search
       H.modify_ _ {resources = resources}
 
@@ -185,9 +206,23 @@ component = connect (selectEq select) $ H.mkComponent
         H.modify_ _ {searchQuery = newQuery}
         handleAction LoadResources
 
+    HandleListSelection (DD.Selected (DDItem {value: list})) -> do
+      {list: prevList} <- H.get
+
+      when (prevList /= Just list) do
+        H.modify_ _ {list = Just list}
+        handleAction LoadResources
+
+    HandleListSelection DD.Cleared -> do
+      {list: prevList} <- H.get
+
+      when (isJust prevList) do
+        H.modify_ _ {list = Nothing}
+        handleAction LoadResources
+
     NoOp -> pure unit
 
-  render :: forall slots. State -> H.ComponentHTML Action slots m
+  render :: State -> H.ComponentHTML Action ChildSlots m
   render {currentUser, resources, lists: mbLists, filterBy, searchQuery} =
     HH.div
       []
@@ -208,13 +243,18 @@ component = connect (selectEq select) $ H.mkComponent
       HH.div
         [ HP.classes [ T.flex, T.itemsStart, T.flexWrap, T.my6 ] ]
         [ HH.div
-            [ HP.classes [ T.flex, T.flexCol, T.smFlexRow, T.justifyBetween, T.gap4, T.mb4 ] ]
+            [ HP.classes [ T.flex, T.flexCol, T.smFlexRow, T.justifyBetween, T.itemsCenter, T.gap4, T.mb4 ] ]
             [ ToggleGroup.toggleGroup
                 (isLoading resources)
                 [ {label: "All", action: ToggleFilterByDone ShowAll, active: filterBy == ShowAll}
                 , {label: "Done", action: ToggleFilterByDone ShowDone, active: filterBy == ShowDone}
                 , {label: "Pending", action: ToggleFilterByDone ShowPending, active: filterBy == ShowPending}
                 ]
+            , let ddInput = {placeholder: "Choose a list", items: map listToItem lists}
+                  listToItem {id, title} = DDItem {value: id, label: title}
+               in HH.div
+                    [ HP.classes [ T.wFull ] ]
+                    [ HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput HandleListSelection ]
             , HH.div
                 [ HP.classes [ T.wFull, T.flex, T.roundedLg ] ]
                 [ HH.input
