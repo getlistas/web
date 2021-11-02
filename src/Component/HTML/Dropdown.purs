@@ -4,13 +4,17 @@ import Prelude
 
 import DOM.HTML.Indexed (HTMLbutton)
 import Data.Array (difference, length, mapWithIndex, null, (!!))
+import Data.Array as A
+import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
 import Data.Traversable (for_)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Listasio.Component.HTML.Utils (cx)
+import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Utils (cx, maybeElem)
 import Listasio.Form.Validation (class ToText, toText)
 import Select as Select
 import Select.Setters as Setters
@@ -21,6 +25,10 @@ type Slot item =
   H.Slot (Select.Query (Query item) ()) (Message item)
 
 _dropdown = Proxy :: Proxy "dropdown"
+
+data Action item
+  = Receive (Input item)
+  | ClearSelection
 
 data Query item a
   = Clear a
@@ -61,15 +69,17 @@ data Message item
   | Cleared
 
 spec
-  :: forall item m i
+  :: forall item m
    . MonadAff m
   => ToText item
   => Eq item
-  => Select.Spec (State item) (Query item) Void () i (Message item) m
+  => Select.Spec (State item) (Query item) (Action item) () (Input item) (Message item) m
 spec = Select.defaultSpec
   { render = render
   , handleQuery = handleQuery
   , handleEvent = handleEvent
+  , handleAction = handleAction
+  , receive = Just <<< Receive
   }
   where
   render st =
@@ -88,14 +98,22 @@ spec = Select.defaultSpec
   handleQuery :: forall a. Query item a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
     Clear a -> do
-      H.modify_ \st -> st {selected = Nothing, available = st.items}
-      H.raise Cleared
+      handleAction ClearSelection
       pure (Just a)
 
     Select item a -> do
       H.modify_ \st -> st {selected = Just item, available = difference st.items [ item ]}
       H.raise $ Selected item
       pure (Just a)
+
+  handleAction :: Action item -> H.HalogenM _ _ _ _ _ Unit
+  handleAction = case _ of
+    Receive {items} -> do
+      H.modify_ \st -> st {items = items, available = if A.null st.items then items else st.available}
+
+    ClearSelection -> do
+      H.modify_ \st -> st {selected = Nothing, available = st.items}
+      H.raise Cleared
 
   handleEvent = case _ of
     Select.Selected ix -> do
@@ -111,40 +129,48 @@ spec = Select.defaultSpec
     _ -> pure unit
 
 toggle
-  :: forall item act ps m st
+  :: forall item ps m st
    . ToText item
-  => Array (HH.IProp HTMLbutton (Select.Action act))
-  -> Select.State (placeholder :: String, selected :: Maybe item | st)
-  -> H.ComponentHTML (Select.Action act) ps m
+  => Array (HH.IProp HTMLbutton (Select.Action (Action item)))
+  -> Select.State (placeholder :: String, items :: Array item, selected :: Maybe item | st)
+  -> H.ComponentHTML (Select.Action (Action item)) ps m
 toggle props st =
   HH.div
-    []
+    [ HP.classes [ T.relative ] ]
     [ HH.button
-      ( Setters.setToggleProps props
-      <> [ HP.type_ HP.ButtonButton
-         , HP.classes
-             [ T.appearanceNone
-             , T.borderNone
-             , T.wFull
-             , T.py2
-             , T.px4
-             , T.bgGray100
-             , cx T.textGray400 $ isJust st.selected
-             , cx T.textGray300 $ isNothing st.selected
-             , T.placeholderGray400
-             , T.roundedMd
-             , T.textBase
-             , T.focusOutlineNone
-             ]
-         ]
-      )
-      [ HH.text $ fromMaybe st.placeholder (toText <$> st.selected) ]
+        ( Setters.setToggleProps props
+            <> [ HP.type_ HP.ButtonButton
+               , HP.classes
+                   [ T.appearanceNone
+                   , T.borderNone
+                   , T.wFull
+                   , T.py2
+                   , T.px4
+                   , T.bgGray100
+                   , cx T.textGray400 $ isJust st.selected
+                   , cx T.textGray300 $ isNothing st.selected
+                   , T.placeholderGray400
+                   , T.roundedMd
+                   , T.textBase
+                   , T.focusOutlineNone
+                   ]
+               ]
+        )
+        [ HH.text $ fromMaybe st.placeholder (toText <$> st.selected) ]
+    , maybeElem (filter (const $ A.length st.items > 1) st.selected) \_ ->
+        HH.button
+          [ HP.classes [ T.absolute, T.right2, T.top2, T.bottom2, T.textGray400, T.cursorPointer ]
+          , HE.onClick $ const $ Select.Action ClearSelection
+          ]
+          [ Icons.x
+              [ Icons.classes [ T.h4, T.w4 ] ]
+          ]
     ]
 
 menu
   :: forall item st act ps m
    . ToText item
-  => Select.State (available :: Array item | st)
+  => Select.State ( available :: Array item | st )
   -> H.ComponentHTML (Select.Action act) ps m
 menu st =
   HH.div
