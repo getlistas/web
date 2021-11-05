@@ -18,7 +18,6 @@ import Data.Tuple (Tuple(..), snd)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
-import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Store.Connect (Connected, connect)
 import Halogen.Store.Monad (class MonadStore, updateStore)
@@ -27,7 +26,7 @@ import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource, searchResources)
 import Listasio.Component.HTML.Dropdown as DD
-import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Input as Input
 import Listasio.Component.HTML.Message as Message
 import Listasio.Component.HTML.Resource (resource)
 import Listasio.Component.HTML.ToggleGroup as ToggleGroup
@@ -45,7 +44,6 @@ import Select as Select
 import Tailwind as T
 import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
-import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
 _slot :: Proxy "library"
 _slot = Proxy
@@ -90,7 +88,6 @@ byCompletedAt {created_at: a} {created_at: b} = compare a b
 byCreatedAt :: ListResource -> ListResource -> Ordering
 byCreatedAt {created_at: a} {created_at: b} = compare a b
 
--- TODO: group by completed_at on Done
 groupResources :: FilterByDone -> Array ListResource -> GroupedResources
 groupResources ShowDone items =
   items
@@ -256,53 +253,14 @@ component = connect (selectEq select) $ H.mkComponent
                     [ HP.classes [ T.wFull ] ]
                     [ HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput HandleListSelection ]
             , HH.div
-                [ HP.classes [ T.wFull, T.flex, T.roundedLg ] ]
-                [ HH.input
-                    [ HP.placeholder "Search resources"
-                    , HP.classes
-                        [ T.wFull
-                        , T.roundedNone
-                        , T.roundedLLg
-                        , T.smTextSm
-                        , T.border
-                        , T.borderGray300
-                        , T.px4
-                        , T.focusRing2
-                        , T.focusRingKiwi
-                        , T.focusOutlineNone
-                        , T.focusBorderKiwi
-                        , T.focusZ10
-                        ]
-                    , HP.value searchQuery
-                    , HE.onValueInput $ SearchChange
-                    , HE.onKeyDown \e ->
-                        case KeyboardEvent.code e of
-                          "Escape" -> SearchChange ""
-                          _ -> NoOp
-                    ]
-                , HH.button
-                    [ HP.classes
-                        [ T.negMlPx
-                        , T.flex
-                        , T.itemsCenter
-                        , T.p2
-                        , T.border
-                        , T.borderGray300
-                        , T.roundedRLg
-                        , T.textGray300
-                        , T.hoverTextKiwi
-                        , T.bgGray100
-                        , T.focusOutlineNone
-                        , T.focusRing2
-                        , T.focusRingKiwi
-                        , T.focusBorderKiwi
-                        ]
-                    , HE.onClick $ const $ SearchChange ""
-                    , HP.disabled $ S.null searchQuery
-                    ]
-                    [ Icons.x
-                        [ Icons.classes [ T.h5, T.w5 ] ]
-                    ]
+                [ HP.classes [ T.wFull ] ]
+                [ Input.search
+                    { value: searchQuery
+                    , placeholder: Just "Search resources"
+                    , onValueInput: SearchChange
+                    , onEscape: SearchChange ""
+                    , noOp: NoOp
+                    }
                 ]
             ]
         ]
