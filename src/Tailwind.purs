@@ -1231,6 +1231,10 @@ pl10 = ClassName "pl-10"
 pl3 :: ClassName
 pl3 = ClassName "pl-3"
 
+-- | pl4
+pl4 :: ClassName
+pl4 = ClassName "pl-4"
+
 -- | placeholderGray200
 placeholderGray200 :: ClassName
 placeholderGray200 = ClassName "placeholder-gray-200"
@@ -1266,6 +1270,10 @@ pr3 = ClassName "pr-3"
 -- | pr4
 pr4 :: ClassName
 pr4 = ClassName "pr-4"
+
+-- | pr8
+pr8 :: ClassName
+pr8 = ClassName "pr-8"
 
 -- | pt10
 pt10 :: ClassName

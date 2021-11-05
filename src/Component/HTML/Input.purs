@@ -4,7 +4,8 @@ import Prelude
 
 import DOM.HTML.Indexed (HTMLinput)
 import Data.Array (catMaybes)
-import Data.Maybe (Maybe(..), isJust)
+import Data.Maybe (Maybe(..), fromMaybe, isJust)
+import Data.String as S
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -14,6 +15,7 @@ import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
 import Listasio.Form.Validation (errorToString)
 import Listasio.Form.Validation as V
 import Tailwind as T
+import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
 type SimpleInputProps act
   = { error :: Maybe V.FormError
@@ -186,3 +188,62 @@ fieldInputClasses { hasError, iconBefore, iconAfter } =
   , cx T.placeholderRed300 hasError
   , cx T.placeholderGray200 $ not hasError
   ]
+
+type SearchProps i =
+  { value :: String
+  , placeholder :: Maybe String
+  , onValueInput :: String -> i
+  , onEscape :: i
+  , noOp :: i
+  }
+
+search :: forall i p. SearchProps i -> HH.HTML p i
+search props =
+  HH.div
+    [ HP.classes [ T.relative ] ]
+    [ HH.input
+        [ HP.placeholder $ fromMaybe "" props.placeholder
+        , HP.classes
+            [ T.wFull
+            , T.roundedLg
+            , T.smTextSm
+            , T.border
+            , T.borderGray300
+            , T.pl4
+            , T.pr8
+            , T.py2
+            , T.focusRing2
+            , T.focusRingKiwi
+            , T.focusOutlineNone
+            , T.focusBorderKiwi
+            , T.focusZ10
+            ]
+        , HP.value props.value
+        , HE.onValueInput props.onValueInput
+        , HE.onKeyDown \e ->
+            case KeyboardEvent.code e of
+              "Escape" -> props.onEscape
+              _ -> props.noOp
+        ]
+    , HH.button
+        [ HP.classes
+            [ T.absolute
+            , T.right2
+            , T.top2
+            , T.bottom2
+            , T.roundedMd
+            , T.textGray300
+            , T.hoverTextKiwi
+            , T.cursorPointer
+            , T.focusOutlineNone
+            , T.focusRing2
+            , T.focusRingKiwi
+            , T.focusBorderKiwi
+            ]
+        , HE.onClick $ const props.onEscape
+        , HP.disabled $ S.null props.value
+        ]
+        [ Icons.x
+            [ Icons.classes [ T.h4, T.w4 ] ]
+        ]
+    ]

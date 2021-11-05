@@ -31,6 +31,7 @@ import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource, changePosition, completeResource, deleteResource, getListResources, searchResources, uncompleteResource)
 import Listasio.Component.HTML.EditResource as EditResource
 import Listasio.Component.HTML.Icons as Icons
+import Listasio.Component.HTML.Input as Input
 import Listasio.Component.HTML.Modal as Modal
 import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.ToggleGroup as ToggleGroup
@@ -52,7 +53,6 @@ import Util (takeDomain)
 import Web.HTML (window) as Window
 import Web.HTML.Location as Location
 import Web.HTML.Window (location) as Window
-import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
 type Slot id = H.Slot Query Void id
 
@@ -322,53 +322,14 @@ component = connect (selectEq select) $ H.mkComponent
       [ HH.div
           [ HP.classes [ T.flex, T.flexCol, T.smFlexRow, T.justifyBetween, T.gap4, T.mb4 ] ]
           [ HH.div
-              [ HP.classes [ T.wFull, T.flex, T.roundedLg ] ]
-              [ HH.input
-                  [ HP.placeholder "Search resources"
-                  , HP.classes
-                      [ T.wFull
-                      , T.roundedNone
-                      , T.roundedLLg
-                      , T.smTextSm
-                      , T.border
-                      , T.borderGray300
-                      , T.px4
-                      , T.focusRing2
-                      , T.focusRingKiwi
-                      , T.focusOutlineNone
-                      , T.focusBorderKiwi
-                      , T.focusZ10
-                      ]
-                  , HP.value searchQuery
-                  , HE.onValueInput $ SearchChange
-                  , HE.onKeyDown \e ->
-                      case KeyboardEvent.code e of
-                        "Escape" -> SearchChange ""
-                        _ -> NoOp
-                  ]
-              , HH.button
-                  [ HP.classes
-                      [ T.negMlPx
-                      , T.flex
-                      , T.itemsCenter
-                      , T.p2
-                      , T.border
-                      , T.borderGray300
-                      , T.roundedRLg
-                      , T.textGray300
-                      , T.hoverTextKiwi
-                      , T.bgGray100
-                      , T.focusOutlineNone
-                      , T.focusRing2
-                      , T.focusRingKiwi
-                      , T.focusBorderKiwi
-                      ]
-                  , HE.onClick $ const $ SearchChange ""
-                  , HP.disabled $ null searchQuery
-                  ]
-                  [ Icons.x
-                      [ Icons.classes [ T.h5, T.w5 ] ]
-                  ]
+              [ HP.classes [ T.wFull ] ]
+              [ Input.search
+                  { value: searchQuery
+                  , placeholder: Just "Search resources"
+                  , onValueInput: SearchChange
+                  , onEscape: SearchChange ""
+                  , noOp: NoOp
+                  }
               ]
           , HH.div
               [ HP.classes [ T.wFull , T.smWAuto ] ]

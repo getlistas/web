@@ -159,7 +159,20 @@ toggle props st =
         [ HH.text $ fromMaybe st.placeholder (toText <$> st.selected) ]
     , maybeElem (filter (const $ A.length st.items > 1) st.selected) \_ ->
         HH.button
-          [ HP.classes [ T.absolute, T.right2, T.top2, T.bottom2, T.textGray400, T.cursorPointer ]
+          [ HP.classes
+              [ T.absolute
+              , T.right2
+              , T.top2
+              , T.bottom2
+              , T.textGray400
+              , T.hoverTextKiwi
+              , T.cursorPointer
+              , T.roundedMd
+              , T.focusOutlineNone
+              , T.focusRing2
+              , T.focusRingKiwi
+              , T.focusBorderKiwi
+              ]
           , HE.onClick $ const $ Select.Action ClearSelection
           ]
           [ Icons.x
