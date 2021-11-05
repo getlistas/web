@@ -243,7 +243,8 @@ search props =
         , HE.onClick $ const props.onEscape
         , HP.disabled $ S.null props.value
         ]
-        [ Icons.x
-            [ Icons.classes [ T.h4, T.w4 ] ]
+        [ case props.value of
+           "" -> Icons.search [ Icons.classes [ T.h4, T.w4 ] ]
+           _ -> Icons.x [ Icons.classes [ T.h4, T.w4 ] ]
         ]
     ]
