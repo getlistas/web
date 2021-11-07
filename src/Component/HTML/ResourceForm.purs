@@ -320,19 +320,18 @@ formComponent = F.component formInput $ F.defaultSpec
             _ -> Nothing
         }
 
-
     titleField =
       Field.input proxies.title form $ Field.defaultProps
         { label = Just "Title"
         , id = Just "title"
-        , placeholder = Just "Some blogpost"
+        , placeholder = Nothing
         }
 
     description =
       Field.textarea proxies.description form $ Field.textareaDefaultProps
         { label = Just "Description"
         , id = Just "description"
-        , placeholder = Just "Such description. Much wow."
+        , placeholder = Nothing
         , props = [HP.rows 3]
         }
 
@@ -340,8 +339,8 @@ formComponent = F.component formInput $ F.defaultSpec
       Field.input proxies.tags form $ Field.defaultProps
         { label = Just "Tags"
         , id = Just "tags"
-        , placeholder = Just "videos, chill" -- TODO better placeholder
-        , message = Just "Comma separated list"
+        , placeholder = Nothing
+        , message = Just "Separated by commas"
         }
 
   listToItem {id, title} = DDItem {value: id, label: title}

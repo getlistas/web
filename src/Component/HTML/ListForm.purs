@@ -166,7 +166,7 @@ formComponent =
       Field.input proxies.title form $ Field.defaultProps
         { label = Just "Title"
         , id = Just "title"
-        , placeholder = Just "YouTube videos" -- TODO better placeholder
+        , placeholder = Just "Learning How to Cook"
         , required = true
         }
 
@@ -174,14 +174,12 @@ formComponent =
       Field.input proxies.tags form $ Field.defaultProps
         { label = Just "Tags"
         , id = Just "tags"
-        , placeholder = Just "videos, chill" -- TODO better placeholder
-        , message = Just "Comma separated list"
+        , message = Just "Separated by commas"
         }
 
     description =
       Field.textarea proxies.description form $ Field.textareaDefaultProps
         { label = Just "Description"
         , id = Just "description"
-        , placeholder = Just "Such description. Much wow."
         , props = [HP.rows 3]
         }

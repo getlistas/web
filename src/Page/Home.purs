@@ -239,7 +239,9 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                     , T.xlTextXl
                     ]
                 ]
-                [ HH.text "Your reading lists under control. Keep a reference and stats of any article, podcast, or video you have consumed. Discover, copy, and follow content from others." ]
+                -- TODO: enable when Discover is back
+                -- [ HH.text "Your reading lists under control. Keep a reference and stats of any article, podcast, or video you have consumed. Discover, copy, and follow content from others." ]
+                [ HH.text "Your reading lists under control. Keep a reference and stats of any article, podcast, or video you have consumed." ]
             ]
         ]
 
@@ -875,19 +877,19 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                     ]
                     [ feature
                         Icons.bookmark
-                        "Library"
+                        "History"
                         "Keep track of everything you consumed. You’ll never know when you’ll need it again."
+                        false
+                    , feature
+                        Icons.rss
+                        "RSS"
+                        "Bring outside content automatically to Listas using the RSS integration."
                         false
                     , feature
                         Icons.search
                         "Full text search"
                         "Find any saved resource by their content, search more than just titles and tags."
                         true
-                    , feature
-                        Icons.rss
-                        "RSS"
-                        "Bring outside content automatically to Listas using the RSS integration."
-                        false
                     , feature
                         Icons.duplicate
                         "Copy"

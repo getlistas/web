@@ -319,27 +319,51 @@ component = connect (selectEq select) $ H.mkComponent
 
               ]
         , whenElem isOwnList \_ ->
-            HH.button
-              [ HE.onClick $ const ToggleAddResource
-              , HP.classes
-                  [ T.flex
-                  , T.itemsCenter
-                  , T.justifyCenter
-                  , T.textWhite
-                  , T.wFull
-                  , T.py2
-                  , T.bgKiwi
-                  , T.hoverBgKiwiDark
-                  , T.focusOutlineNone
-                  , T.focusRing2
-                  , T.focusRingKiwiDark
-                  , T.focusRingOffset2
-                  , T.roundedMd
-                  , T.mt8
+            HH.div
+              [ HP.classes [ T.flex, T.gap4, T.mt8 ] ]
+              [ HH.button
+                  [ HE.onClick $ const ToggleAddResource
+                  , HP.classes
+                      [ T.flex
+                      , T.itemsCenter
+                      , T.justifyCenter
+                      , T.textWhite
+                      , T.wFull
+                      , T.py2
+                      , T.bgKiwi
+                      , T.hoverBgKiwiDark
+                      , T.focusOutlineNone
+                      , T.focusRing2
+                      , T.focusRingKiwiDark
+                      , T.focusRingOffset2
+                      , T.roundedMd
+                      ]
                   ]
-              ]
-              [ Icons.plus [ Icons.classes [ T.h6, T.w6, T.mr2 ] ]
-              , HH.text "Add Resource"
+                  [ Icons.plus [ Icons.classes [ T.h6, T.w6, T.mr2 ] ]
+                  , HH.text "Add"
+                  ]
+              , HH.a
+                  [ safeHref $ ImportResourcesList authorSlug slug
+                  , HE.onClick $ Navigate (ImportResourcesList authorSlug slug) <<< Mouse.toEvent
+                  , HP.classes
+                      [ T.flex
+                      , T.itemsCenter
+                      , T.justifyCenter
+                      , T.textWhite
+                      , T.wFull
+                      , T.py2
+                      , T.bgKiwi
+                      , T.hoverBgKiwiDark
+                      , T.focusOutlineNone
+                      , T.focusRing2
+                      , T.focusRingKiwiDark
+                      , T.focusRingOffset2
+                      , T.roundedMd
+                      ]
+                  ]
+                  [ Icons.documentAdd [ Icons.classes [ T.h6, T.w6, T.mr2 ] ]
+                  , HH.text "Import"
+                  ]
               ]
         , whenElem isOwnList \_ ->
             HH.a

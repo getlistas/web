@@ -173,6 +173,7 @@ toggle props st =
               , T.focusRingKiwi
               , T.focusBorderKiwi
               ]
+          , HP.type_ HP.ButtonButton
           , HE.onClick $ const $ Select.Action ClearSelection
           ]
           [ Icons.x

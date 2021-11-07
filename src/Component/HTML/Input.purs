@@ -212,7 +212,7 @@ search props =
             , T.pl4
             , T.pr8
             , T.py2
-            , T.focusRing2
+            , T.focusRing1
             , T.focusRingKiwi
             , T.focusOutlineNone
             , T.focusBorderKiwi

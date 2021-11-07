@@ -110,7 +110,7 @@ buttonGroupMenu {mainAction, label, toggleMenu, isOpen, disabled} menuItems =
               , T.left12
               , T.top1
               , T.mt8
-              , T.w40
+              , T.w44
               , T.roundedMd
               , T.shadowLg
               , T.bgWhite

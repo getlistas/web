@@ -324,6 +324,6 @@ formComponent =
         , id = Just "urls"
         , placeholder = Just "https://blog.com/post-1\nhttps://blog.com/post-2"
         , rows = Just 4
-        , message = Just "One link per line"
+        , message = Just "One link per line. Duplicated links will not be imported."
         }
 
