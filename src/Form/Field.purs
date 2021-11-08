@@ -160,6 +160,7 @@ type TextareaProps form act
     , message :: Maybe String
     , label :: Maybe String
     , rows :: Maybe Int
+    , disabled :: Boolean
     }
 
 textareaDefaultProps :: forall form act. TextareaProps form act
@@ -172,6 +173,7 @@ textareaDefaultProps
     , message: Nothing
     , label: Nothing
     , rows: Nothing
+    , disabled: false
     }
 
 textarea ::
@@ -203,6 +205,7 @@ textarea sym form groupProps =
                     , HP.name <$> groupProps.id
                     , HP.placeholder <$> groupProps.placeholder
                     , HP.rows <$> groupProps.rows
+                    , Just $ HP.disabled groupProps.disabled
                     ]
                 )
                 groupProps.props
