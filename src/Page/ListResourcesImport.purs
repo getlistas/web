@@ -29,7 +29,7 @@ import Listasio.Data.Route (Route(..))
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation as V
 import Listasio.Store as Store
-import Network.RemoteData (RemoteData(..), fromEither, isLoading, toMaybe)
+import Network.RemoteData (RemoteData(..), fromEither, isLoading, isSuccess, toMaybe)
 import Network.RemoteData as RemoteData
 import Slug (Slug)
 import Tailwind as T
@@ -288,22 +288,22 @@ formComponent =
 
   handleEvent = F.raiseResult
 
+  eval act = F.handleAction handleAction handleEvent act
+
   handleAction = case _ of
     Submit event -> do
       H.liftEffect $ Event.preventDefault event
-      { status } <- H.get
+      {status} <- H.get
       when (not $ isLoading status) do eval F.submit
-
-    where
-    eval act = F.handleAction handleAction handleEvent act
 
   handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
     SetSubmitStatus status a -> do
       H.modify_ _ {status = status}
+      when (isSuccess status) do eval F.resetAll
       pure (Just a)
 
-  renderForm {form, submitting} =
+  renderForm {form, submitting, status} =
     HH.form
       [ HE.onSubmit $ F.injAction <<< Submit
       , HP.noValidate true
@@ -312,7 +312,7 @@ formComponent =
           [ urls
           , HH.div
               [ HP.classes [ T.mt4 ] ]
-              [ Field.submit "Save" submitting ]
+              [ Field.submit "Save" (submitting || isSuccess status) ]
           ]
       ]
     where
@@ -324,6 +324,9 @@ formComponent =
         , id = Just "urls"
         , placeholder = Just "https://blog.com/post-1\nhttps://blog.com/post-2"
         , rows = Just 4
-        , message = Just "One link per line. Duplicated links will not be imported."
+        , message = Just $ case status, F.getTouched proxies.urls form of
+            Success _, false -> "We are importing your links. It can take a few seconds to process all of them"
+            _, _ -> "One link per line. Duplicated links will not be imported."
+        , disabled = isLoading status
         }
 
