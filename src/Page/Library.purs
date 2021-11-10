@@ -302,7 +302,7 @@ component = connect (selectEq select) $ H.mkComponent
             [ HP.classes [ T.textXl, T.textGray400, T.mt6, T.mb4 ] ]
             [ HH.text $ show yearMonth ]
         , HH.div
-            [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.lgGridCols3, T.xlGridCols4, T.gap4 ] ]
+            [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.lgGridCols3, T.xlGridCols4, T.gap4, T.itemsStart ] ]
             $ map (resource currentUser (Just Navigate) lists)
             $ NEA.toArray items
         ]

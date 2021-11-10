@@ -32,6 +32,7 @@ resource currentUser navigate lists r@{url, list, completed_at, tags} =
         , T.flex
         , T.flexCol
         , T.justifyBetween
+        , T.relative
         ]
     ]
     [ HH.a
@@ -54,45 +55,39 @@ resource currentUser navigate lists r@{url, list, completed_at, tags} =
             [ HH.text $ titleOrUrl r ]
         ]
     , shortUrl url
+    , maybeElem (NEA.fromArray tags) \ts ->
+        HH.div
+          [ HP.classes [ T.flex, T.flexWrap, T.gap1, T.mt2, T.ml7 ] ]
+          $ NEA.toArray
+          $ map Tag.tag ts
+    , maybeElem (find ((list == _) <<< _.id) lists) \l ->
+        HH.div
+          [ HP.classes [ T.textXs, T.ml7, T.mt2, T.truncate ] ]
+          [ case currentUser, navigate of
+              Just u, Just nav ->
+                HH.a
+                  [ HP.classes [ T.textGray300, T.fontMedium ]
+                  , safeHref $ PublicList u.slug l.slug
+                  , HE.onClick $ nav (PublicList u.slug l.slug) <<< Mouse.toEvent
+                  ]
+                  [ HH.text l.title ]
+              _, _ ->
+                HH.span
+                  [ HP.classes [ T.textGray300, T.fontMedium ] ]
+                  [ HH.text l.title ]
+          ]
     , HH.div
-        [ HP.classes [ T.flex, T.justifyBetween, T.itemsCenter, T.mt2 ] ]
-        [ HH.div
-            [ HP.classes [ T.flex ] ]
-            [ HH.div
-                [ HP.classes
-                    [ T.textSm
-                    , T.fontBold
-                    , T.mr2
-                    , T.w4
-                    , T.textCenter
-                    ]
-                ]
-                [ if isJust completed_at
-                    then Icons.check [ Icons.classes [ T.textKiwi, T.h5, T.w5 ] ]
-                    else HH.text ""
-                ]
-            , maybeElem (NEA.fromArray tags) \ts ->
-                HH.div
-                  [ HP.classes [ T.flex ] ]
-                  $ NEA.toArray
-                  $ map Tag.tag ts
+        [ HP.classes
+            [ T.w5
+            , T.h5
+            , T.absolute
+            , T.left2
+            , T.bottom1
             ]
-        , maybeElem (find ((list == _) <<< _.id) lists) \l ->
-            HH.div
-              [ HP.classes [ T.textXs, T.mr2 ] ]
-              [ case currentUser, navigate of
-                  Just u, Just nav ->
-                    HH.a
-                      [ HP.classes [ T.textGray300, T.fontMedium ]
-                      , safeHref $ ViewList l.slug
-                      , HE.onClick $ nav (PublicList u.slug l.slug) <<< Mouse.toEvent
-                      ]
-                      [ HH.text l.title ]
-                  _, _ ->
-                    HH.span
-                      [ HP.classes [ T.textGray300, T.fontMedium ] ]
-                      [ HH.text l.title ]
-              ]
+        ]
+        [ if isJust completed_at
+            then Icons.check [ Icons.classes [ T.textKiwi, T.h5, T.w5 ] ]
+            else HH.text ""
         ]
     ]
 
@@ -100,5 +95,5 @@ shortUrl :: forall i p. String -> HH.HTML i p
 shortUrl u =
   maybeElem (takeDomain u) \short ->
     HH.div
-      [ HP.classes [ T.textGray300, T.textXs, T.mt2, T.ml6 ] ]
+      [ HP.classes [ T.textGray300, T.textXs, T.mt2, T.ml7 ] ]
       [ HH.text short ]

@@ -1,3 +1,4 @@
+
 module Listasio.Component.HTML.Dropdown where
 
 import Prelude
@@ -6,7 +7,7 @@ import DOM.HTML.Indexed (HTMLbutton)
 import Data.Array (difference, length, mapWithIndex, null, (!!))
 import Data.Array as A
 import Data.Filterable (filter)
-import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
+import Data.Maybe (Maybe(..), fromMaybe, isJust)
 import Data.Traversable (for_)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -143,12 +144,13 @@ toggle props st =
                , HP.classes
                    [ T.appearanceNone
                    , T.borderNone
-                   , T.wFull
                    , T.py2
                    , T.px4
+                   , cx T.pr8 selected
+                   , T.wFull
+                   , cx T.textGray400 selected
+                   , cx T.textGray300 $ not selected
                    , T.bgGray100
-                   , cx T.textGray400 $ isJust st.selected
-                   , cx T.textGray300 $ isNothing st.selected
                    , T.placeholderGray400
                    , T.roundedMd
                    , T.textBase
@@ -161,9 +163,9 @@ toggle props st =
         HH.button
           [ HP.classes
               [ T.absolute
-              , T.right2
               , T.top2
               , T.bottom2
+              , T.right2
               , T.textGray400
               , T.hoverTextKiwi
               , T.cursorPointer
@@ -180,6 +182,7 @@ toggle props st =
               [ Icons.classes [ T.h4, T.w4 ] ]
           ]
     ]
+  where selected = isJust st.selected
 
 menu
   :: forall item st act ps m
@@ -225,6 +228,7 @@ menu st =
                         , cx T.textWhite $ Just ix == st.highlightedIndex
                         , cx T.textGray400 $ Just ix /= st.highlightedIndex
                         , cx T.bgDurazno $ Just ix == st.highlightedIndex
+                        , T.truncate
                         ]
                     ]
                 )

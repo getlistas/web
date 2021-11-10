@@ -266,7 +266,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
         , maybeElem description \des -> HH.div [ HP.classes [ T.textSm, T.mb4 ] ] [ HH.text des ]
         , whenElem (not $ null tags) \_ ->
             HH.div
-              [ HP.classes [ T.flex, T.textSm ] ]
+              [ HP.classes [ T.flex, T.gap1, T.textSm ] ]
               $ map Tag.tag tags
 
         , HH.div

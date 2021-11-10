@@ -239,9 +239,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                     , T.xlTextXl
                     ]
                 ]
-                -- TODO: enable when Discover is back
-                -- [ HH.text "Your reading lists under control. Keep a reference and stats of any article, podcast, or video you have consumed. Discover, copy, and follow content from others." ]
-                [ HH.text "Your reading lists under control. Keep a reference and stats of any article, podcast, or video you have consumed." ]
+                -- TODO: add when Discover is back => "Discover, copy, and follow content from others."
+                [ HH.text "Organize your reading lists. Keep a reference and stats of any article, podcast, or video you have consumed." ]
             ]
         ]
 
@@ -297,7 +296,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                     desktopLink Dashboard "Up next"
                 , whenElem (hasUser authStatus) \_ ->
                     desktopLink Library "Library"
-                , desktopLink Discover "Discover"
+                -- , desktopLink Discover "Discover"
                 ]
             ]
           , case authStatus of
@@ -520,7 +519,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                           [ HP.classes [ T.px2, T.py4, T.spaceY1 ] ]
                           [ mobileLink Dashboard "Up next"
                           , mobileLink Library "Library"
-                          , mobileLink Discover "Discover"
+                          -- , mobileLink Discover "Discover"
                           ]
                       , HH.div
                           [ HP.classes [ T.px2, T.py4 ] ]
@@ -586,7 +585,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                   Nothing ->
                     HH.div
                       [ HP.classes [ T.px2, T.pt2, T.pb3, T.spaceY1 ] ]
-                      [ mobileLink Discover "Discover"
+                      [ -- mobileLink Discover "Discover"
                       ]
               , case authStatus of
                   ShowUser _ -> HH.text ""
@@ -693,7 +692,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                       , T.bgKiwi
                       , T.hoverBgKiwiDark
                       ]
-                  , safeHref Discover
+                  , safeHref Dashboard
                   , HE.onClick $ onNavigate Dashboard
                   ]
                   [ HH.text "Go to Dashboard" ]

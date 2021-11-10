@@ -191,6 +191,10 @@ borderTransparent = ClassName "border-transparent"
 borderWhite :: ClassName
 borderWhite = ClassName "border-white"
 
+-- | bottom1
+bottom1 :: ClassName
+bottom1 = ClassName "bottom-1"
+
 -- | bottom2
 bottom2 :: ClassName
 bottom2 = ClassName "bottom-2"
@@ -715,6 +719,10 @@ left12 = ClassName "left-12"
 left1d2 :: ClassName
 left1d2 = ClassName "left-1/2"
 
+-- | left2
+left2 :: ClassName
+left2 = ClassName "left-2"
+
 -- | lgColSpan2
 lgColSpan2 :: ClassName
 lgColSpan2 = ClassName "lg:col-span-2"
@@ -1015,6 +1023,10 @@ ml4 = ClassName "ml-4"
 ml6 :: ClassName
 ml6 = ClassName "ml-6"
 
+-- | ml7
+ml7 :: ClassName
+ml7 = ClassName "ml-7"
+
 -- | mr1
 mr1 :: ClassName
 mr1 = ClassName "mr-1"
@@ -1098,10 +1110,6 @@ my6 = ClassName "my-6"
 -- | negMl1
 negMl1 :: ClassName
 negMl1 = ClassName "-ml-1"
-
--- | negMlPx
-negMlPx :: ClassName
-negMlPx = ClassName "-ml-px"
 
 -- | negMr2
 negMr2 :: ClassName
@@ -1399,10 +1407,6 @@ ringWhite = ClassName "ring-white"
 roundedFull :: ClassName
 roundedFull = ClassName "rounded-full"
 
--- | roundedLLg
-roundedLLg :: ClassName
-roundedLLg = ClassName "rounded-l-lg"
-
 -- | roundedLMd
 roundedLMd :: ClassName
 roundedLMd = ClassName "rounded-l-md"
@@ -1414,14 +1418,6 @@ roundedLg = ClassName "rounded-lg"
 -- | roundedMd
 roundedMd :: ClassName
 roundedMd = ClassName "rounded-md"
-
--- | roundedNone
-roundedNone :: ClassName
-roundedNone = ClassName "rounded-none"
-
--- | roundedRLg
-roundedRLg :: ClassName
-roundedRLg = ClassName "rounded-r-lg"
 
 -- | roundedRMd
 roundedRMd :: ClassName

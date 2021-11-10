@@ -450,7 +450,7 @@ component = connect (selectEq select) $ H.mkComponent
                           [ HH.text d ]
                     , maybeElem (NEA.fromArray tags) \ts ->
                         HH.div
-                          [ HP.classes [ T.mt2, T.flex ] ]
+                          [ HP.classes [ T.mt2, T.flex, T.flexWrap, T.gap1 ] ]
                           $ NEA.toArray
                           $ map Tag.tag ts
                     ]

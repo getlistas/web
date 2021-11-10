@@ -426,11 +426,6 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                       [ HH.text $ titleOrUrl next ]
                 , nextLink next $
                     HH.div [ HP.classes [ T.mt2 ] ] [ shortUrl next.url ]
-                , maybeElem (NEA.fromArray next.tags) \ts ->
-                    HH.div
-                      [ HP.classes [ T.mt2, T.flex ] ]
-                      $ NEA.toArray
-                      $ map Tag.tag ts
                 ]
             , HK.div
                 [ HP.classes [ T.mt2 ] ]

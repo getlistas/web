@@ -313,7 +313,7 @@ component = connect (selectEq select) $ H.mkComponent
                       [ HH.text " Tags:" ]
                   ]
               , HH.div
-                  [ HP.classes [ T.flex ] ]
+                  [ HP.classes [ T.flex, T.flexWrap, T.gap1 ] ]
                   $ map Tag.tag
                   $ NEA.toArray ts
 
