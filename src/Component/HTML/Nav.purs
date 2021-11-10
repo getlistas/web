@@ -233,11 +233,11 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                   Just _ ->
                     [ desktopLink Dashboard "Up next"
                     , desktopLink Library "Library"
-                    , desktopLink Discover "Discover"
+                    -- , desktopLink Discover "Discover"
                     ]
 
                   Nothing ->
-                    [ desktopLink Discover "Discover"
+                    [ -- desktopLink Discover "Discover"
                     ]
             ]
           , case authStatus of
@@ -464,7 +464,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                           [ HP.classes [ T.px2, T.py4, T.spaceY1 ] ]
                           [ mobileLink Dashboard "Up next"
                           , mobileLink Library "Library"
-                          , mobileLink Discover "Discover"
+                          -- , mobileLink Discover "Discover"
                           ]
                       , HH.div
                           [ HP.classes [ T.px2, T.py4 ] ]
@@ -532,7 +532,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                   Nothing ->
                     HH.div
                       [ HP.classes [ T.px2, T.pt2, T.pb3, T.spaceY1 ] ]
-                      [ mobileLink Discover "Discover"
+                      [ -- mobileLink Discover "Discover"
                       ]
               , case authStatus of
                   ShowUser _ -> HH.text ""

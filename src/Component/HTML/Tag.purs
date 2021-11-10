@@ -9,8 +9,6 @@ tag text =
   HH.span
     [ HP.classes
         [ T.leadingNormal
-        , T.mr1
-        , T.mb1
         , T.px1
         , T.textGray400
         , T.textXs
