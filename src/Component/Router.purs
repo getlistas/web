@@ -32,6 +32,7 @@ import Listasio.Component.Utils (OpaqueSlot)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route(..), routeCodec)
 import Listasio.Page.About as About
+import Listasio.Page.HowTo as HowTo
 import Listasio.Page.Changelog as Changelog
 import Listasio.Page.CreateList as CreateList
 import Listasio.Page.CreateResource as CreateResource
@@ -74,12 +75,14 @@ data Action
 type ChildSlots =
   ( nav :: Nav.Slot
   , home :: OpaqueSlot Unit
-  , about :: OpaqueSlot Unit
   , discover :: OpaqueSlot Unit
-  , pricing :: OpaqueSlot Unit
   , profile :: OpaqueSlot Unit
   , publicList :: OpaqueSlot Unit
+    -- Info
+  , about :: OpaqueSlot Unit
+  , pricing :: OpaqueSlot Unit
   , changelog :: OpaqueSlot Unit
+  , howTo :: OpaqueSlot Unit
     -- Legal
   , terms :: OpaqueSlot Unit
   , policy :: OpaqueSlot Unit
@@ -201,11 +204,18 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
               (Just r)
               case r of
                 -- PUBLIC ----------------------------------------------------------------
-                About ->
-                  HH.slot_ About._slot unit About.component unit
-
                 Discover ->
                   HH.slot_ Discover._slot unit Discover.component unit
+
+                Profile slug ->
+                  HH.slot_ Profile._slot unit Profile.component {slug}
+
+                PublicList user list ->
+                  HH.slot_ PublicList._slot unit PublicList.component {user, list}
+
+                -- INFO ------------------------------------------------------------------
+                About ->
+                  HH.slot_ About._slot unit About.component unit
 
                 Pricing ->
                   HH.slot_ Pricing._slot unit Pricing.component unit
@@ -213,11 +223,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                 Changelog ->
                   HH.slot_ Changelog._slot unit Changelog.component unit
 
-                Profile slug ->
-                  HH.slot_ Profile._slot unit Profile.component {slug}
-
-                PublicList user list ->
-                  HH.slot_ PublicList._slot unit PublicList.component {user, list}
+                HowTo ->
+                  HH.slot_ HowTo._slot unit HowTo.component unit
 
                 -- LEGAL -----------------------------------------------------------------
                 Terms ->

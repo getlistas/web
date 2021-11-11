@@ -18,14 +18,17 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Listasio.Capability.Navigate (class Navigate, navigate_)
 import Listasio.Capability.Resource.Resource (class ManageResource, getMeta)
 import Listasio.Component.HTML.Dropdown as DD
+import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Resource as ResourceComponent
-import Listasio.Component.HTML.Utils (maybeElem, whenElem)
+import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
 import Listasio.Data.ID (ID)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Resource (Resource, ListResource)
 import Listasio.Data.ResourceMetadata (ResourceMeta)
+import Listasio.Data.Route (Route(..))
 import Listasio.Form.Field as Field
 import Listasio.Form.Validation (class ToText, (<?>))
 import Listasio.Form.Validation as V
@@ -37,6 +40,7 @@ import Util as Util
 import Web.Clipboard.ClipboardEvent as Clipboard
 import Web.Event.Event as Event
 import Web.HTML.Event.DataTransfer as DataTransfer
+import Web.UIEvent.MouseEvent as Mouse
 
 newtype DDItem = DDItem {label :: String, value :: ID}
 
@@ -73,6 +77,7 @@ data FormAction
   | HandleDropdown (DD.Message DDItem)
   | FetchMeta String
   | PasteUrl Clipboard.ClipboardEvent
+  | Navigate Route Event.Event
 
 type CreateInput
   = { url :: Maybe String
@@ -122,6 +127,7 @@ formComponent ::
   forall m.
   MonadAff m =>
   ManageResource m =>
+  Navigate m =>
   F.Component ResourceForm FormQuery FormChildSlots FormInput Resource m
 formComponent = F.component formInput $ F.defaultSpec
   { render = renderCreateResource
@@ -176,6 +182,8 @@ formComponent = F.component formInput $ F.defaultSpec
   handleEvent = F.raiseResult
 
   handleAction = case _ of
+    Navigate route e -> navigate_ e route
+
     FormInitialize -> do
       {pastedUrl, selectedList, lists} <- H.get
 
@@ -300,6 +308,23 @@ formComponent = F.component formInput $ F.defaultSpec
               [ Field.submit
                   (if isNew then "Add resource" else "Save")
                   (submitting || isLoading status)
+              ]
+          ]
+      , HH.div
+          [ HP.classes [ T.mt4 ] ]
+          [ HH.a
+              [ safeHref HowTo
+              , HE.onClick $ F.injAction <<< Navigate HowTo <<< Mouse.toEvent
+              , HP.classes
+                  [ T.textGray300
+                  , T.hoverTextKiwi
+                  , T.textSm
+                  , T.flex
+                  , T.gap2
+                  ]
+              ]
+              [ Icons.info [ Icons.classes [ T.h5, T.w5 ] ]
+              , HH.text "How to add resources"
               ]
           ]
       ]

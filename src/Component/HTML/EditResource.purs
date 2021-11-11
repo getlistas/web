@@ -10,6 +10,7 @@ import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.Store.Monad (class MonadStore, updateStore)
+import Listasio.Capability.Navigate (class Navigate)
 import Listasio.Capability.Resource.List (class ManageList, getLists)
 import Listasio.Capability.Resource.Resource (class ManageResource, updateResource)
 import Listasio.Component.HTML.ResourceForm as ResourceForm
@@ -50,6 +51,7 @@ component :: forall query m.
   => MonadStore Store.Action Store.Store m
   => ManageResource m
   => ManageList m
+  => Navigate m
   => H.Component query Input Output m
 component = H.mkComponent
   { initialState
