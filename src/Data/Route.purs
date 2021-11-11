@@ -12,12 +12,14 @@ import Slug as Slug
 
 data Route
   = Home
-  | About
   | Discover
-  | Pricing
-  | Changelog
   | Profile Slug
   | PublicList Slug Slug
+    -- Info
+  | About
+  | Pricing
+  | Changelog
+  | HowTo
     -- Legal
   | Terms
   | Policy
@@ -48,12 +50,14 @@ routeCodec =
   root
     $ sum
         { "Home": noArgs
-        , "About": "about" / noArgs
         , "Discover": "discover" / noArgs
-        , "Pricing": "pricing" / noArgs
-        , "Changelog": "changelog" / noArgs
         , "Profile": "u" / Slug.term segment
         , "PublicList": "l" / Slug.term segment / Slug.term segment
+          -- Info
+        , "About": "about" / noArgs
+        , "Pricing": "pricing" / noArgs
+        , "Changelog": "changelog" / noArgs
+        , "HowTo": "how-to" / noArgs
           -- Legal
         , "Terms": "terms" / noArgs
         , "Policy": "policy" / noArgs

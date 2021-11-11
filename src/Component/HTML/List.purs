@@ -4,7 +4,6 @@ import Prelude
 
 import Data.Array as A
 import Data.Array.NonEmpty (cons')
-import Data.Array.NonEmpty as NEA
 import Data.DateTime (DateTime)
 import Data.Either (note)
 import Data.Lens (lastOf, lengthOf, over, preview, set, traversed)
@@ -27,7 +26,6 @@ import Listasio.Capability.Now (class Now, nowDateTime)
 import Listasio.Capability.Resource.Resource (class ManageResource, changePosition, completeResource, deleteResource, getListResources)
 import Listasio.Component.HTML.ButtonGroupMenu as ButtonGroupMenu
 import Listasio.Component.HTML.Icons as Icons
-import Listasio.Component.HTML.Tag as Tag
 import Listasio.Component.HTML.Utils (maybeElem, safeHref, whenElem)
 import Listasio.Data.DateTime as DateTime
 import Listasio.Data.ID (ID)

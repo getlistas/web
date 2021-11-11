@@ -399,6 +399,10 @@ fromDurazno = ClassName "from-durazno"
 gap1 :: ClassName
 gap1 = ClassName "gap-1"
 
+-- | gap2
+gap2 :: ClassName
+gap2 = ClassName "gap-2"
+
 -- | gap4
 gap4 :: ClassName
 gap4 = ClassName "gap-4"
@@ -871,6 +875,14 @@ lgW44 = ClassName "lg:w-44"
 lineClamp2 :: ClassName
 lineClamp2 = ClassName "line-clamp-2"
 
+-- | listDisc
+listDisc :: ClassName
+listDisc = ClassName "list-disc"
+
+-- | listInside
+listInside :: ClassName
+listInside = ClassName "list-inside"
+
 -- | m1
 m1 :: ClassName
 m1 = ClassName "m-1"
@@ -1182,6 +1194,10 @@ overflowHidden = ClassName "overflow-hidden"
 -- | overflowYAuto
 overflowYAuto :: ClassName
 overflowYAuto = ClassName "overflow-y-auto"
+
+-- | p1
+p1 :: ClassName
+p1 = ClassName "p-1"
 
 -- | p2
 p2 :: ClassName
