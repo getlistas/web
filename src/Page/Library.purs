@@ -49,14 +49,15 @@ _slot :: Proxy "library"
 _slot = Proxy
 
 type ChildSlots
-  = ( dropdown :: DD.Slot DDItem Unit )
+  = (dropdown :: DD.Slot DDItem Unit)
 
 type Lists = RemoteData String (Array ListWithIdUserAndMeta)
 
 type StoreState
-  = { currentUser :: Maybe ProfileWithIdAndEmail
-    , lists :: Lists
-    }
+  =
+  { currentUser :: Maybe ProfileWithIdAndEmail
+  , lists :: Lists
+  }
 
 data Action
   = Initialize
@@ -64,11 +65,11 @@ data Action
   | LoadResources
   | LoadLists
   | Navigate Route Event
-    -- query
+  -- query
   | ToggleFilterByDone FilterByDone
   | SearchChange String
   | HandleListSelection (DD.Message DDItem)
-    -- Meta
+  -- Meta
   | NoOp
 
 filterByMsg :: FilterByDone -> String
@@ -81,12 +82,12 @@ type GroupedResources
   = Map (Down YearMonth) (NonEmptyArray ListResource)
 
 byCompletedAt :: ListResource -> ListResource -> Ordering
-byCompletedAt {completed_at: Nothing} {completed_at: Just _} = LT
-byCompletedAt {completed_at: Just _} {completed_at: Nothing} = GT
-byCompletedAt {created_at: a} {created_at: b} = compare a b
+byCompletedAt { completed_at: Nothing } { completed_at: Just _ } = LT
+byCompletedAt { completed_at: Just _ } { completed_at: Nothing } = GT
+byCompletedAt { created_at: a } { created_at: b } = compare a b
 
 byCreatedAt :: ListResource -> ListResource -> Ordering
-byCreatedAt {created_at: a} {created_at: b} = compare a b
+byCreatedAt { created_at: a } { created_at: b } = compare a b
 
 groupResources :: FilterByDone -> Array ListResource -> GroupedResources
 groupResources ShowDone items =
@@ -105,33 +106,34 @@ groupResources _ items =
     # map (NEA.sortWith _.created_at)
 
 createdOnSameMonth :: ListResource -> ListResource -> Boolean
-createdOnSameMonth {created_at: a} {created_at: b} =
+createdOnSameMonth { created_at: a } { created_at: b } =
   YearMonth.fromDateTime a == YearMonth.fromDateTime b
 
 monthItemsPair :: NonEmptyArray ListResource -> Tuple (Down YearMonth) (NonEmptyArray ListResource)
 monthItemsPair is = Tuple (Down $ YearMonth.fromDateTime $ _.created_at $ NEA.head is) is
 
 type State
-  = { currentUser :: Maybe ProfileWithIdAndEmail
-    , resources :: RemoteData String GroupedResources
-    , lists :: Lists
-    , filterBy :: FilterByDone
-    , searchQuery :: String
-    , list :: Maybe ID
-    }
+  =
+  { currentUser :: Maybe ProfileWithIdAndEmail
+  , resources :: RemoteData String GroupedResources
+  , lists :: Lists
+  , filterBy :: FilterByDone
+  , searchQuery :: String
+  , list :: Maybe ID
+  }
 
 noteError :: forall a. Maybe a -> Either String a
 noteError = note "Failed to load your library contents"
 
 select :: Store.Store -> StoreState
-select {lists, currentUser} = {lists, currentUser}
+select { lists, currentUser } = { lists, currentUser }
 
 queryParamFilterBy :: FilterByDone -> Maybe Boolean
 queryParamFilterBy ShowAll = Nothing
 queryParamFilterBy ShowDone = Just true
 queryParamFilterBy ShowPending = Just false
 
-newtype DDItem = DDItem {label :: String, value :: ID}
+newtype DDItem = DDItem { label :: String, value :: ID }
 
 derive instance eqDDItem :: Eq DDItem
 derive instance newtypeDDItem :: Newtype DDItem _
@@ -157,7 +159,7 @@ component = connect (selectEq select) $ H.mkComponent
       }
   }
   where
-  initialState {context: {lists, currentUser}} =
+  initialState { context: { lists, currentUser } } =
     { currentUser
     , resources: NotAsked
     , lists
@@ -173,54 +175,55 @@ component = connect (selectEq select) $ H.mkComponent
       void $ H.fork $ handleAction LoadLists
 
     LoadResources -> do
-      H.modify_ _ {resources = Loading}
-      {filterBy, searchQuery, list} <- H.get
-      let completed = queryParamFilterBy filterBy
-          search_text = NES.fromString $ S.trim searchQuery
-          search = {list, completed, sort: Nothing, search_text, limit: Nothing, skip: Nothing}
+      H.modify_ _ { resources = Loading }
+      { filterBy, searchQuery, list } <- H.get
+      let
+        completed = queryParamFilterBy filterBy
+        search_text = NES.fromString $ S.trim searchQuery
+        search = { list, completed, sort: Nothing, search_text, limit: Nothing, skip: Nothing }
       resources <- map (groupResources filterBy) <$> fromEither <$> noteError <$> searchResources search
-      H.modify_ _ {resources = resources}
+      H.modify_ _ { resources = resources }
 
     LoadLists -> do
-      {lists} <- H.get
+      { lists } <- H.get
       when (isNotAsked lists) do updateStore $ Store.SetLists Loading
       result <- fromEither <$> noteError <$> getLists
       updateStore $ Store.SetLists result
 
-    Receive {context: {currentUser, lists}} ->
-      H.modify_ _ {currentUser = currentUser, lists = lists}
+    Receive { context: { currentUser, lists } } ->
+      H.modify_ _ { currentUser = currentUser, lists = lists }
 
     Navigate route e -> navigate_ e route
 
     ToggleFilterByDone filterBy -> do
-      H.modify_ _ {filterBy = filterBy}
+      H.modify_ _ { filterBy = filterBy }
       handleAction LoadResources
 
     SearchChange newQuery -> do
-      {searchQuery: oldQuery} <- H.get
+      { searchQuery: oldQuery } <- H.get
 
       when (newQuery /= oldQuery) do
-        H.modify_ _ {searchQuery = newQuery}
+        H.modify_ _ { searchQuery = newQuery }
         handleAction LoadResources
 
-    HandleListSelection (DD.Selected (DDItem {value: list})) -> do
-      {list: prevList} <- H.get
+    HandleListSelection (DD.Selected (DDItem { value: list })) -> do
+      { list: prevList } <- H.get
 
       when (prevList /= Just list) do
-        H.modify_ _ {list = Just list}
+        H.modify_ _ { list = Just list }
         handleAction LoadResources
 
     HandleListSelection DD.Cleared -> do
-      {list: prevList} <- H.get
+      { list: prevList } <- H.get
 
       when (isJust prevList) do
-        H.modify_ _ {list = Nothing}
+        H.modify_ _ { list = Nothing }
         handleAction LoadResources
 
     NoOp -> pure unit
 
   render :: State -> H.ComponentHTML Action ChildSlots m
-  render {currentUser, resources, lists: mbLists, filterBy, searchQuery} =
+  render { currentUser, resources, lists: mbLists, filterBy, searchQuery } =
     HH.div
       []
       [ HH.div
@@ -243,15 +246,17 @@ component = connect (selectEq select) $ H.mkComponent
             [ HP.classes [ T.flex, T.flexCol, T.smFlexRow, T.justifyBetween, T.itemsCenter, T.gap4, T.mb4 ] ]
             [ ToggleGroup.toggleGroup
                 (isLoading resources)
-                [ {label: "All", action: ToggleFilterByDone ShowAll, active: filterBy == ShowAll}
-                , {label: "Done", action: ToggleFilterByDone ShowDone, active: filterBy == ShowDone}
-                , {label: "Pending", action: ToggleFilterByDone ShowPending, active: filterBy == ShowPending}
+                [ { label: "All", action: ToggleFilterByDone ShowAll, active: filterBy == ShowAll }
+                , { label: "Done", action: ToggleFilterByDone ShowDone, active: filterBy == ShowDone }
+                , { label: "Pending", action: ToggleFilterByDone ShowPending, active: filterBy == ShowPending }
                 ]
-            , let ddInput = {placeholder: "Choose a list", items: map listToItem lists}
-                  listToItem {id, title} = DDItem {value: id, label: title}
-               in HH.div
-                    [ HP.classes [ T.wFull ] ]
-                    [ HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput HandleListSelection ]
+            , let
+                ddInput = { placeholder: "Choose a list", items: map listToItem lists }
+                listToItem { id, title } = DDItem { value: id, label: title }
+              in
+                HH.div
+                  [ HP.classes [ T.wFull ] ]
+                  [ HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput HandleListSelection ]
             , HH.div
                 [ HP.classes [ T.wFull ] ]
                 [ Input.search

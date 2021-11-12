@@ -56,14 +56,15 @@ _slot :: Proxy "publicList"
 _slot = Proxy
 
 type Input
-  = {user :: Slug, list :: Slug}
+  = { user :: Slug, list :: Slug }
 
 type Lists = RemoteData String (Array ListWithIdUserAndMeta)
 
 type StoreState
-  = { currentUser :: Maybe ProfileWithIdAndEmail
-    , lists :: Lists
-    }
+  =
+  { currentUser :: Maybe ProfileWithIdAndEmail
+  , lists :: Lists
+  }
 
 data Action
   = Initialize
@@ -71,37 +72,39 @@ data Action
   | LoadList
   | LoadAuthor
   | LoadLists
-    -- Adding resources
+  -- Adding resources
   | ToggleAddResource
   | PasteUrl Clipboard.ClipboardEvent
   | ResourceAdded CreateResource.Output
-    -- Meta
+  -- Meta
   | Navigate Route Event
   | NoOp
 
 type State
-  = { authorSlug :: Slug
-    , listSlug :: Slug
-    , currentUser :: Maybe ProfileWithIdAndEmail
-    , list :: RemoteData String ListWithIdUserAndMeta
-    , author :: RemoteData String PublicProfile
-    , showAddResource :: Boolean
-    , pastedUrl :: Maybe String
-    , lists :: Lists
-    }
+  =
+  { authorSlug :: Slug
+  , listSlug :: Slug
+  , currentUser :: Maybe ProfileWithIdAndEmail
+  , list :: RemoteData String ListWithIdUserAndMeta
+  , author :: RemoteData String PublicProfile
+  , showAddResource :: Boolean
+  , pastedUrl :: Maybe String
+  , lists :: Lists
+  }
 
 type ChildSlots
-  = ( publicResources :: PublicResources.Slot Unit
-    , personalResources :: PersonalResources.Slot Unit
-    , createResource :: CreateResource.Slot
-    )
+  =
+  ( publicResources :: PublicResources.Slot Unit
+  , personalResources :: PersonalResources.Slot Unit
+  , createResource :: CreateResource.Slot
+  )
 
 isAuthor :: State -> Boolean
-isAuthor {authorSlug, currentUser} =
+isAuthor { authorSlug, currentUser } =
   isJust $ filter ((_ == authorSlug) <<< _.slug) currentUser
 
 select :: Store.Store -> StoreState
-select {lists, currentUser} = {lists, currentUser}
+select { lists, currentUser } = { lists, currentUser }
 
 component
   :: forall q o m
@@ -124,7 +127,7 @@ component = connect (selectEq select) $ H.mkComponent
       }
   }
   where
-  initialState {context: {lists, currentUser}, input: {list, user}} =
+  initialState { context: { lists, currentUser }, input: { list, user } } =
     { listSlug: list
     , authorSlug: user
     , currentUser
@@ -150,32 +153,32 @@ component = connect (selectEq select) $ H.mkComponent
       void $ H.subscribe $ HES.eventListener Clipboard.paste document (Just <<< PasteUrl <<< unsafeCoerce)
 
     LoadList -> do
-      {authorSlug, listSlug} <- H.get
+      { authorSlug, listSlug } <- H.get
 
-      H.modify_ _ {list = Loading}
-      list <- RemoteData.fromEither <$> note "Failed to fetch list" <$> getPublicListBySlug {user: authorSlug, list: listSlug}
-      H.modify_ _ {list = list}
+      H.modify_ _ { list = Loading }
+      list <- RemoteData.fromEither <$> note "Failed to fetch list" <$> getPublicListBySlug { user: authorSlug, list: listSlug }
+      H.modify_ _ { list = list }
 
     LoadAuthor -> do
-      {authorSlug} <- H.get
+      { authorSlug } <- H.get
 
-      H.modify_ _ {author = Loading}
+      H.modify_ _ { author = Loading }
       author <- RemoteData.fromEither <$> note "Failed to fetch list author" <$> userBySlug authorSlug
-      H.modify_ _ {author = author}
+      H.modify_ _ { author = author }
 
     LoadLists -> do
-      {lists, currentUser} <- H.get
+      { lists, currentUser } <- H.get
       when (isJust currentUser && RemoteData.isNotAsked lists) do
         updateStore $ Store.SetLists Loading
         result <- RemoteData.fromEither <$> note "Could not fetch your lists" <$> getLists
         updateStore $ Store.SetLists result
 
     PasteUrl event -> do
-      st@{showAddResource, list} <- H.get
+      st@{ showAddResource, list } <- H.get
 
       when (isAuthor st && not showAddResource && RemoteData.isSuccess list) do
         mbUrl <- H.liftEffect $ filter Util.isUrl <$> traverse (DataTransfer.getData MediaType.textPlain) (Clipboard.clipboardData event)
-        for_ mbUrl \url -> H.modify_ _ {showAddResource = true, pastedUrl = Just url}
+        for_ mbUrl \url -> H.modify_ _ { showAddResource = true, pastedUrl = Just url }
 
     ToggleAddResource -> do
       isOwnList <- H.gets isAuthor
@@ -191,17 +194,17 @@ component = connect (selectEq select) $ H.mkComponent
       isOwnList <- H.gets isAuthor
       when isOwnList do
         H.tell PersonalResources._slot unit $ PersonalResources.ResourceAdded resource
-        H.modify_ _ {showAddResource = false, pastedUrl = Nothing}
+        H.modify_ _ { showAddResource = false, pastedUrl = Nothing }
 
-    Receive {context: {lists, currentUser}} ->
-      H.modify_ _ {currentUser = currentUser, lists = lists}
+    Receive { context: { lists, currentUser } } ->
+      H.modify_ _ { currentUser = currentUser, lists = lists }
 
     Navigate route e -> navigate_ e route
 
     NoOp -> pure unit
 
   render :: State -> H.ComponentHTML Action ChildSlots m
-  render st@{list, author, listSlug, authorSlug, showAddResource, pastedUrl} =
+  render st@{ list, author, listSlug, authorSlug, showAddResource, pastedUrl } =
     HH.div
       []
       [ case list of
@@ -220,23 +223,23 @@ component = connect (selectEq select) $ H.mkComponent
     isOwnList = isAuthor st
 
     listCols :: ListWithIdUserAndMeta -> _
-    listCols l@{title, is_public} =
+    listCols l@{ title, is_public } =
       HH.div
         []
         [ HH.div
             [ HP.classes [ T.flex, T.itemsCenter, T.justifyBetween, T.smJustifyStart, T.flexWrap, T.smFlexNowrap, T.gap4, T.mb8 ] ]
             [ HH.a
-                (case author of
-                  Success {slug} ->
-                    [ safeHref $ Profile slug
-                    , HE.onClick $ Navigate (Profile slug) <<< Mouse.toEvent
-                    ]
-                  _ -> []
+                ( case author of
+                    Success { slug } ->
+                      [ safeHref $ Profile slug
+                      , HE.onClick $ Navigate (Profile slug) <<< Mouse.toEvent
+                      ]
+                    _ -> []
                 )
                 [ Avatar.renderWithDefault Avatar.Sm
-                  $ _.avatar =<< RemoteData.toMaybe author
+                    $ _.avatar =<< RemoteData.toMaybe author
                 ]
-              , HH.h1
+            , HH.h1
                 [ HP.classes [ T.text3xl, T.fontBold, T.textGray400, T.orderLast, T.smOrderNone ] ]
                 [ HH.text title ]
             , whenElem (not is_public) \_ ->
@@ -257,25 +260,26 @@ component = connect (selectEq select) $ H.mkComponent
                 [ listDetails l ]
             , HH.div
                 [ HP.classes [ T.lgColSpan2 ] ]
-                [ if isOwnList
-                    then HH.slot PersonalResources._slot unit PersonalResources.component {list: l.id} absurd
-                    else HH.slot PublicResources._publicResources unit PublicResources.component {listId: l.id, listSlug, authorSlug} absurd
+                [ if isOwnList then HH.slot PersonalResources._slot unit PersonalResources.component { list: l.id } absurd
+                  else HH.slot PublicResources._publicResources unit PublicResources.component { listId: l.id, listSlug, authorSlug } absurd
                 ]
             , whenElem isOwnList \_ ->
-                Modal.modal showAddResource ({onClose: ToggleAddResource, noOp: NoOp}) $
+                Modal.modal showAddResource ({ onClose: ToggleAddResource, noOp: NoOp }) $
                   HH.div
                     []
                     [ HH.div
                         [ HP.classes [ T.textCenter, T.textGray400, T.text2xl, T.fontBold, T.mb4 ] ]
                         [ HH.text "Add new resource" ]
                     , whenElem showAddResource \_ ->
-                        let input = {lists: [l], url: pastedUrl, selectedList: Just l.id, text: Nothing, title: Nothing}
-                          in HH.slot CreateResource._slot unit CreateResource.component input ResourceAdded
+                        let
+                          input = { lists: [ l ], url: pastedUrl, selectedList: Just l.id, text: Nothing, title: Nothing }
+                        in
+                          HH.slot CreateResource._slot unit CreateResource.component input ResourceAdded
                     ]
             ]
         ]
 
-    listDetails {slug, description, resource_metadata, tags, updated_at, forks_count, likes_count, subscriptions_count} =
+    listDetails { slug, description, resource_metadata, tags, updated_at, forks_count, likes_count, subscriptions_count } =
       HH.div
         [ HP.classes
             [ T.bgWhite
@@ -287,10 +291,10 @@ component = connect (selectEq select) $ H.mkComponent
         ]
         [ maybeElem description \d ->
             HH.div [ HP.classes [ T.textSm, T.textGray400, T.mb4 ] ] [ HH.text d ]
-        , stat {count: resource_metadata.count, icon: Icons.document, one: "Resource", many: "Resources"}
-        , stat {count: likes_count, icon: Icons.star, one: "Like", many: "Likes"}
-        , stat {count: forks_count, icon: Icons.duplicate, one: "Copy", many: "Copies"}
-        , stat {count: subscriptions_count, icon: Icons.userAdd, one: "Follow", many: "Follows"}
+        , stat { count: resource_metadata.count, icon: Icons.document, one: "Resource", many: "Resources" }
+        , stat { count: likes_count, icon: Icons.star, one: "Like", many: "Likes" }
+        , stat { count: forks_count, icon: Icons.duplicate, one: "Copy", many: "Copies" }
+        , stat { count: subscriptions_count, icon: Icons.userAdd, one: "Follow", many: "Follows" }
         , HH.div
             [ HP.classes [ T.flex, T.itemsCenter, T.mb4 ] ]
             [ Icons.clock
@@ -391,8 +395,7 @@ component = connect (selectEq select) $ H.mkComponent
               ]
         ]
 
-
-    stat {count, icon, one, many} =
+    stat { count, icon, one, many } =
       whenElem (count > 0) \_ ->
         HH.div
           [ HP.classes [ T.flex, T.itemsCenter, T.mb4 ] ]

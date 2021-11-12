@@ -30,9 +30,10 @@ integrationKindCodec =
   toString KindListSubscription = "listas-subscription"
 
 type RssIntegrationFields
-  = { url :: String
-    , list :: ID
-    }
+  =
+  { url :: String
+  , list :: ID
+  }
 
 rssIntegrationFieldsCodec :: JsonCodec RssIntegrationFields
 rssIntegrationFieldsCodec =
@@ -42,9 +43,10 @@ rssIntegrationFieldsCodec =
     }
 
 type ListSubscriptionFields
-  = { subscribe_from :: ID
-    , subscribe_to :: ID
-    }
+  =
+  { subscribe_from :: ID
+  , subscribe_to :: ID
+  }
 
 listSubscriptionFieldsCodec :: JsonCodec ListSubscriptionFields
 listSubscriptionFieldsCodec =
@@ -54,30 +56,32 @@ listSubscriptionFieldsCodec =
     }
 
 type IntegrationRep row
-  = ( id :: ID
-    , user :: ID
-    , list :: ID
-    , created_at :: DateTime
-    , updated_at :: DateTime
-    | row
-    )
+  =
+  ( id :: ID
+  , user :: ID
+  , list :: ID
+  , created_at :: DateTime
+  , updated_at :: DateTime
+  | row
+  )
 
 type RssBody
-  = { url :: String
-    , subscription_id :: String
-    , status :: String
-    , feed_type :: String
-    , metadata :: Maybe String
-    }
+  =
+  { url :: String
+  , subscription_id :: String
+  , status :: String
+  , feed_type :: String
+  , metadata :: Maybe String
+  }
 
 type RssIntegration
-  = { | IntegrationRep ( rss :: RssBody ) }
+  = { | IntegrationRep (rss :: RssBody) }
 
 type ListSubscriptionBody
-  = {list :: ID}
+  = { list :: ID }
 
 type ListSubscription
-  = { | IntegrationRep ( listas_subscription :: ListSubscriptionBody ) }
+  = { | IntegrationRep (listas_subscription :: ListSubscriptionBody) }
 
 data Integration
   = RssIntegration RssIntegration
@@ -106,7 +110,7 @@ rssIntegrationCodec =
 
 listSubscriptionBodyCodec :: JsonCodec ListSubscriptionBody
 listSubscriptionBodyCodec =
-  CAR.object "ListSubscriptionBody" {list: ID.codec}
+  CAR.object "ListSubscriptionBody" { list: ID.codec }
 
 listSubscriptionCodec :: JsonCodec ListSubscription
 listSubscriptionCodec =
@@ -119,7 +123,7 @@ listSubscriptionCodec =
     , listas_subscription: listSubscriptionBodyCodec
     }
 
-integrationCodec  :: JsonCodec Integration
+integrationCodec :: JsonCodec Integration
 integrationCodec = mapCodec to from codec
   where
   codec =
@@ -134,30 +138,30 @@ integrationCodec = mapCodec to from codec
       , listas_subscription: CAC.maybe listSubscriptionBodyCodec
       }
 
-  to ::
-     { | IntegrationRep
-          ( kind :: IntegrationKind
-          , rss :: Maybe RssBody
-          , listas_subscription :: Maybe ListSubscriptionBody
-          )
-     }
-     -> Either JsonDecodeError Integration
-  to {kind: KindRss, rss: Just rss, id, user, list, created_at, updated_at} =
-    Right $ RssIntegration {id, user, list, created_at, updated_at, rss}
-  to {kind: KindListSubscription, listas_subscription: Just listas_subscription, id, user, list, created_at, updated_at} =
-    Right $ ListSubscription {id, user, list, created_at, updated_at, listas_subscription}
-  to {kind: KindRss, rss: Nothing} = Left $ AtKey "rss" MissingValue
-  to {kind: KindListSubscription, listas_subscription: Nothing} = Left $ AtKey "listas_subscription" MissingValue
+  to
+    :: { | IntegrationRep
+           ( kind :: IntegrationKind
+           , rss :: Maybe RssBody
+           , listas_subscription :: Maybe ListSubscriptionBody
+           )
+       }
+    -> Either JsonDecodeError Integration
+  to { kind: KindRss, rss: Just rss, id, user, list, created_at, updated_at } =
+    Right $ RssIntegration { id, user, list, created_at, updated_at, rss }
+  to { kind: KindListSubscription, listas_subscription: Just listas_subscription, id, user, list, created_at, updated_at } =
+    Right $ ListSubscription { id, user, list, created_at, updated_at, listas_subscription }
+  to { kind: KindRss, rss: Nothing } = Left $ AtKey "rss" MissingValue
+  to { kind: KindListSubscription, listas_subscription: Nothing } = Left $ AtKey "listas_subscription" MissingValue
 
-  from ::
-       Integration
-       -> { | IntegrationRep
-                ( kind :: IntegrationKind
-                , rss :: Maybe RssBody
-                , listas_subscription :: Maybe ListSubscriptionBody
-                )
-          }
-  from (RssIntegration {id, user, list, created_at, updated_at, rss}) =
-    {id, user, list, created_at, updated_at, kind: KindRss, rss: Just rss, listas_subscription: Nothing}
-  from (ListSubscription {id, user, list, created_at, updated_at, listas_subscription}) =
-    {id, user, list, created_at, updated_at, kind: KindListSubscription, rss: Nothing, listas_subscription: Just listas_subscription}
+  from
+    :: Integration
+    -> { | IntegrationRep
+           ( kind :: IntegrationKind
+           , rss :: Maybe RssBody
+           , listas_subscription :: Maybe ListSubscriptionBody
+           )
+       }
+  from (RssIntegration { id, user, list, created_at, updated_at, rss }) =
+    { id, user, list, created_at, updated_at, kind: KindRss, rss: Just rss, listas_subscription: Nothing }
+  from (ListSubscription { id, user, list, created_at, updated_at, listas_subscription }) =
+    { id, user, list, created_at, updated_at, kind: KindListSubscription, rss: Nothing, listas_subscription: Just listas_subscription }

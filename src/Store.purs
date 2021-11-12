@@ -36,23 +36,23 @@ type Store =
   }
 
 data Action
-    -- Session
+  -- Session
   = LoginUser ProfileWithIdAndEmail
   | LogoutUser
-    -- My Lists
+  -- My Lists
   | SetLists RD_Lists
   | OverLists (Lists -> Lists)
 
 reduce :: Store -> Action -> Store
 reduce store = case _ of
   LoginUser profile ->
-    store {currentUser = Just profile}
+    store { currentUser = Just profile }
 
   LogoutUser ->
-    store {currentUser = Nothing}
+    store { currentUser = Nothing }
 
   SetLists lists ->
-    store {lists = lists}
+    store { lists = lists }
 
   OverLists f ->
     over (_lists <<< _Success) f store

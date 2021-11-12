@@ -1,4 +1,3 @@
-
 module Listasio.Component.HTML.Dropdown where
 
 import Prelude
@@ -54,7 +53,7 @@ type Input item =
   }
 
 input :: forall item. Input item -> Select.Input (State item)
-input {items, placeholder} =
+input { items, placeholder } =
   { inputType: Select.Toggle
   , search: Nothing
   , debounceTime: Nothing
@@ -103,17 +102,17 @@ spec = Select.defaultSpec
       pure (Just a)
 
     Select item a -> do
-      H.modify_ \st -> st {selected = Just item, available = difference st.items [ item ]}
+      H.modify_ \st -> st { selected = Just item, available = difference st.items [ item ] }
       H.raise $ Selected item
       pure (Just a)
 
   handleAction :: Action item -> H.HalogenM _ _ _ _ _ Unit
   handleAction = case _ of
-    Receive {items} -> do
-      H.modify_ \st -> st {items = items, available = if A.null st.items then items else st.available}
+    Receive { items } -> do
+      H.modify_ \st -> st { items = items, available = if A.null st.items then items else st.available }
 
     ClearSelection -> do
-      H.modify_ \st -> st {selected = Nothing, available = st.items}
+      H.modify_ \st -> st { selected = Nothing, available = st.items }
       H.raise Cleared
 
   handleEvent = case _ of
@@ -140,23 +139,24 @@ toggle props st =
     [ HP.classes [ T.relative ] ]
     [ HH.button
         ( Setters.setToggleProps props
-            <> [ HP.type_ HP.ButtonButton
-               , HP.classes
-                   [ T.appearanceNone
-                   , T.borderNone
-                   , T.py2
-                   , T.px4
-                   , cx T.pr8 selected
-                   , T.wFull
-                   , cx T.textGray400 selected
-                   , cx T.textGray300 $ not selected
-                   , T.bgGray100
-                   , T.placeholderGray400
-                   , T.roundedMd
-                   , T.textBase
-                   , T.focusOutlineNone
-                   ]
-               ]
+            <>
+              [ HP.type_ HP.ButtonButton
+              , HP.classes
+                  [ T.appearanceNone
+                  , T.borderNone
+                  , T.py2
+                  , T.px4
+                  , cx T.pr8 selected
+                  , T.wFull
+                  , cx T.textGray400 selected
+                  , cx T.textGray300 $ not selected
+                  , T.bgGray100
+                  , T.placeholderGray400
+                  , T.roundedMd
+                  , T.textBase
+                  , T.focusOutlineNone
+                  ]
+              ]
         )
         [ HH.text $ fromMaybe st.placeholder (toText <$> st.selected) ]
     , maybeElem (filter (const $ A.length st.items > 1) st.selected) \_ ->
@@ -182,61 +182,61 @@ toggle props st =
               [ Icons.classes [ T.h4, T.w4 ] ]
           ]
     ]
-  where selected = isJust st.selected
+  where
+  selected = isJust st.selected
 
 menu
   :: forall item st act ps m
    . ToText item
-  => Select.State ( available :: Array item | st )
+  => Select.State (available :: Array item | st)
   -> H.ComponentHTML (Select.Action act) ps m
 menu st =
   HH.div
-  [ HP.classes
-      [ cx T.pt1 isOn
-      , cx T.pb2 isOn
-      , cx T.px4 isOn
-      , cx T.borderT2 isOn
-      , cx T.borderWhite isOn
-      , cx T.bgWhite isOn
-      , cx T.shadowLg isOn
-      , T.absolute
-      , T.maxH44
-      , T.w11d12
-      , T.mxAuto
-      , T.right0
-      , T.left0
-      , T.overflowYAuto
-      , T.z10
-      ]
-  ]
-  [ if isOn
-      then
+    [ HP.classes
+        [ cx T.pt1 isOn
+        , cx T.pb2 isOn
+        , cx T.px4 isOn
+        , cx T.borderT2 isOn
+        , cx T.borderWhite isOn
+        , cx T.bgWhite isOn
+        , cx T.shadowLg isOn
+        , T.absolute
+        , T.maxH44
+        , T.w11d12
+        , T.mxAuto
+        , T.right0
+        , T.left0
+        , T.overflowYAuto
+        , T.z10
+        ]
+    ]
+    [ if isOn then
         HH.div
           (Setters.setContainerProps [ HP.classes [ T.flex, T.flexCol ] ])
-          (mapWithIndex
-            (\ix item ->
-              HH.span
-                ( Setters.setItemProps
-                    ix
-                    [ HP.classes
-                        [ T.textCenter
-                        , T.cursorPointer
-                        , T.py1
-                        , T.px2
-                        , T.roundedSm
-                        , T.textSm
-                        , cx T.textWhite $ Just ix == st.highlightedIndex
-                        , cx T.textGray400 $ Just ix /= st.highlightedIndex
-                        , cx T.bgDurazno $ Just ix == st.highlightedIndex
-                        , T.truncate
+          ( mapWithIndex
+              ( \ix item ->
+                  HH.span
+                    ( Setters.setItemProps
+                        ix
+                        [ HP.classes
+                            [ T.textCenter
+                            , T.cursorPointer
+                            , T.py1
+                            , T.px2
+                            , T.roundedSm
+                            , T.textSm
+                            , cx T.textWhite $ Just ix == st.highlightedIndex
+                            , cx T.textGray400 $ Just ix /= st.highlightedIndex
+                            , cx T.bgDurazno $ Just ix == st.highlightedIndex
+                            , T.truncate
+                            ]
                         ]
-                    ]
-                )
-                [ HH.text (toText item) ]
-            )
-            st.available
+                    )
+                    [ HH.text (toText item) ]
+              )
+              st.available
           )
       else HH.text ""
-  ]
+    ]
   where
   isOn = st.visibility == Select.On && not (null st.available)

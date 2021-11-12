@@ -16,21 +16,23 @@ import Listasio.Data.ID (ID)
 import Listasio.Data.ID as ID
 
 type ResourceRep row
-  = ( url :: String
-    , title :: Maybe String
-    , list :: ID
-    , description :: Maybe String
-    , thumbnail :: Maybe String
-    , tags :: Array String
-    | row
-    )
+  =
+  ( url :: String
+  , title :: Maybe String
+  , list :: ID
+  , description :: Maybe String
+  , thumbnail :: Maybe String
+  , tags :: Array String
+  | row
+  )
 
 type Resource
   = { | ResourceRep () }
 
 type ListResource
-  = {
-    | ResourceRep
+  =
+  {
+  | ResourceRep
       ( id :: ID
       , user :: String
       , created_at :: DateTime
@@ -38,7 +40,7 @@ type ListResource
       , completed_at :: Maybe DateTime
       , position :: Int
       )
-    }
+  }
 
 resourceCodec :: JsonCodec Resource
 resourceCodec =
@@ -69,9 +71,10 @@ listResourceCodec =
     }
 
 type PositionChangeBody
-  = { list :: ID
-    , previus :: Maybe ID
-    }
+  =
+  { list :: ID
+  , previus :: Maybe ID
+  }
 
 positionChangeBodyCodec :: JsonCodec PositionChangeBody
 positionChangeBodyCodec =
@@ -95,17 +98,18 @@ toggleFilterByPending :: FilterByDone -> FilterByDone
 toggleFilterByPending ShowPending = ShowAll
 toggleFilterByPending _ = ShowPending
 
-titleOrUrl :: forall r. {| ResourceRep r} -> String
-titleOrUrl {title: Just title} = title
-titleOrUrl {url}
+titleOrUrl :: forall r. { | ResourceRep r } -> String
+titleOrUrl { title: Just title } = title
+titleOrUrl { url }
   | startsWith "https://" url = take 50 $ replace (Pattern "https://") (Replacement "") url
   | startsWith "http://" url = take 50 $ replace (Pattern "http://") (Replacement "") url
   | otherwise = url
 
 type ImportResourcesBody
-  = { list :: ID
-    , payload :: String
-    }
+  =
+  { list :: ID
+  , payload :: String
+  }
 
 importResourcesCodec :: JsonCodec ImportResourcesBody
 importResourcesCodec =

@@ -25,7 +25,6 @@ import Text.Parsing.StringParser (Parser, ParseError, runParser, try)
 import Text.Parsing.StringParser.Combinators (lookAhead, many, manyTill, option, sepEndBy)
 import Text.Parsing.StringParser.CodeUnits (anyChar, regex, skipSpaces, string, whiteSpace)
 
-
 -- | A SVG node can be one of the three: SvgElement, SvgText or SvgComment.
 data SvgNode
   = SvgElement Element
@@ -34,7 +33,8 @@ data SvgNode
 
 derive instance eqSvgNode :: Eq SvgNode
 derive instance genericRepSvgNode :: Generic SvgNode _
-instance showSvgNode :: Show SvgNode where show = defer \_ -> genericShow
+instance showSvgNode :: Show SvgNode where
+  show = defer \_ -> genericShow
 
 -- | An Element consists of a tag name, a list of attributes, a list of children nodes.
 -- |
@@ -58,7 +58,8 @@ data SvgAttribute = SvgAttribute String String
 
 derive instance eqSvgAttribute :: Eq SvgAttribute
 derive instance genericRepSvgAttribute :: Generic SvgAttribute _
-instance showSvgAttribute :: Show SvgAttribute where show = genericShow
+instance showSvgAttribute :: Show SvgAttribute where
+  show = genericShow
 
 mkElement :: String -> List SvgAttribute -> List SvgNode -> Element
 mkElement =
@@ -86,28 +87,26 @@ openingParser = do
 closingOrChildrenParser :: Element -> Parser Element
 closingOrChildrenParser element = defer \_ ->
   try (skipSpaces *> string "/>" *> pure element) <|>
-  childrenParser
+    childrenParser
   where
-    childrenParser = do
-      void $ skipSpaces *> string ">"
-      children <- many $ try nodeParser
-      void $ skipSpaces *> string ("</" <> element.name <> ">")
-      pure $ element { children = children }
-
+  childrenParser = do
+    void $ skipSpaces *> string ">"
+    children <- many $ try nodeParser
+    void $ skipSpaces *> string ("</" <> element.name <> ">")
+    pure $ element { children = children }
 
 elementParser :: Parser SvgNode
 elementParser = defer \_ -> do
   skipSpaces
-  openingParser >>=
-    closingOrChildrenParser >>=
-    pure <<< SvgElement
-
+  openingParser
+    >>= closingOrChildrenParser
+    >>=
+      pure <<< SvgElement
 
 textParser :: Parser SvgNode
 textParser = do
   skipSpaces
   SvgText <$> regex "[^<]+"
-
 
 commentParser :: Parser SvgNode
 commentParser = do
@@ -115,12 +114,12 @@ commentParser = do
   comment <- string "<!--" *> manyTill anyChar (string "-->")
   pure $ SvgComment $ charListToString comment
 
-
 nodeParser :: Parser SvgNode
 nodeParser = defer \_ ->
-  try textParser <|>
-  try commentParser <|>
-  elementParser
+  try textParser
+    <|> try commentParser
+    <|>
+      elementParser
 
 xmlDeclarationParser :: Parser String
 xmlDeclarationParser = do

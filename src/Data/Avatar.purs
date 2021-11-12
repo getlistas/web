@@ -38,7 +38,9 @@ toString :: Avatar -> String
 toString (Avatar str) = str
 
 data Size
-  = Xs | Sm | Full
+  = Xs
+  | Sm
+  | Full
 
 h :: Size -> ClassName
 h Xs = T.h8

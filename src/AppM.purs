@@ -70,7 +70,7 @@ instance nowAppM :: Now AppM where
 
 instance logMessagesAppM :: LogMessages AppM where
   logMessage log = do
-    {env} <- getStore
+    { env } <- getStore
     liftEffect case env, Log.reason log of
       Store.Prod, Log.Debug -> pure unit
       _, _ -> Console.log $ Log.message log
@@ -79,8 +79,8 @@ instance navigateAppM :: Navigate AppM where
   locationState = liftEffect =<< _.nav.locationState <$> getStore
 
   navigate route = do
-    {nav} <- getStore
-    {state} <- locationState
+    { nav } <- getStore
+    { state } <- locationState
     liftEffect $ nav.pushState state $ print Route.routeCodec $ route
 
   navigate_ event route = do
@@ -93,7 +93,7 @@ instance navigateAppM :: Navigate AppM where
     navigate Route.Home
 
 instance analyticsAppM :: Analytics AppM where
-  init = liftEffect $ Splitbee.init {scriptUrl: ConfigProvider.splitbeeUrl}
+  init = liftEffect $ Splitbee.init { scriptUrl: ConfigProvider.splitbeeUrl }
 
   userSet = liftEffect <<< Splitbee.userSet <<< encodeJson
 
@@ -107,14 +107,14 @@ instance manageUserAppM :: ManageUser AppM where
   googleLoginUser = authenticate Request.googleLogin unit
 
   registerUser fields = do
-    {baseUrl} <- getStore
+    { baseUrl } <- getStore
     res <- Request.register baseUrl fields
     case res of
       Left err -> logError err *> pure Nothing
       Right profile -> pure $ Just profile
 
   getCurrentUser =
-    hush <$> mkAuthRequest {endpoint: Me, method: Get} Profile.profileWithIdAndEmailCodec
+    hush <$> mkAuthRequest { endpoint: Me, method: Get } Profile.profileWithIdAndEmailCodec
 
   updateUser fields =
     void $ mkAuthRequest
@@ -125,133 +125,159 @@ instance manageUserAppM :: ManageUser AppM where
 
   userBySlug slug =
     hush <$> mkRequest conf Profile.publicProfileCodec
-    where conf = {endpoint: UserBySlug slug, method: Get}
+    where
+    conf = { endpoint: UserBySlug slug, method: Get }
 
   userMetrics slug =
     hush <$> mkRequest conf (CAC.array Metrics.metricCodec)
-    where conf = {endpoint: UserMetrics slug, method: Get}
+    where
+    conf = { endpoint: UserMetrics slug, method: Get }
 
 instance manageListAppM :: ManageList AppM where
   createList list =
     hush <$> mkAuthRequest conf List.listWitIdUserAndMetaCodec
-    where method = Post $ Just $ Codec.encode List.createListFieldsCodec list
-          conf = {endpoint: Lists, method}
+    where
+    method = Post $ Just $ Codec.encode List.createListFieldsCodec list
+    conf = { endpoint: Lists, method }
 
   getList id =
     hush <$> mkAuthRequest conf List.listWitIdUserAndMetaCodec
-    where conf = {endpoint: List id, method: Get}
+    where
+    conf = { endpoint: List id, method: Get }
 
-  getListBySlug {list, user} =
+  getListBySlug { list, user } =
     hush <$> mkAuthRequest conf List.listWitIdUserAndMetaCodec
-    where conf = {endpoint: ListBySlug user list, method: Get}
+    where
+    conf = { endpoint: ListBySlug user list, method: Get }
 
-  getPublicListBySlug {list, user} =
+  getPublicListBySlug { list, user } =
     hush <$> mkAuthRequest conf List.listWitIdUserAndMetaCodec
-    where conf = {endpoint: ListBySlug user list, method: Get}
+    where
+    conf = { endpoint: ListBySlug user list, method: Get }
 
   getLists =
     hush <$> mkAuthRequest conf (CAC.array List.listWitIdUserAndMetaCodec)
-    where conf = {endpoint: Lists, method: Get}
+    where
+    conf = { endpoint: Lists, method: Get }
 
   updateList id list =
     hush <$> mkAuthRequest conf List.listWitIdUserAndMetaCodec
-    where method = Put $ Just $ Codec.encode List.createListFieldsCodec list
-          conf = {endpoint: List id, method}
+    where
+    method = Put $ Just $ Codec.encode List.createListFieldsCodec list
+    conf = { endpoint: List id, method }
 
   deleteList id =
-    hush <$> map (const unit) <$> mkAuthRequest {endpoint: List id, method: Delete} Codec.json
+    hush <$> map (const unit) <$> mkAuthRequest { endpoint: List id, method: Delete } Codec.json
 
   forkList id =
     hush <$> mkAuthRequest conf List.listWitIdAndUserCodec
-    where conf = {endpoint: ListFork id, method: Post Nothing}
+    where
+    conf = { endpoint: ListFork id, method: Post Nothing }
 
   discoverLists pagination = do
     res <- hush <$> mkRequest conf (CAC.array List.publicListCodec)
     mbId <- map _.id <$> _.currentUser <$> getStore
     pure $ map (List.publicListUserToAuthor mbId) <$> res
-    where conf = {endpoint: Discover pagination, method: Get}
+    where
+    conf = { endpoint: Discover pagination, method: Get }
 
 instance manageResourceAppM :: ManageResource AppM where
   getMeta url = do
     hush <$> mkAuthRequest conf codec
-    where method = Post $ Just $ Codec.encode (CAR.object "Url" {url: Codec.string}) {url}
-          conf = {endpoint: ResourceMeta, method}
-          codec = ResourceMeta.metaCodec
+    where
+    method = Post $ Just $ Codec.encode (CAR.object "Url" { url: Codec.string }) { url }
+    conf = { endpoint: ResourceMeta, method }
+    codec = ResourceMeta.metaCodec
 
   getResources = do
     hush <$> mkAuthRequest conf codec
-    where conf = {endpoint: Resources, method: Get}
-          codec = CAC.array Resource.listResourceCodec
+    where
+    conf = { endpoint: Resources, method: Get }
+    codec = CAC.array Resource.listResourceCodec
 
-  getListResources {list, completed} = do
+  getListResources { list, completed } = do
     hush <$> mkAuthRequest conf codec
-    where conf = {endpoint, method: Get}
-          endpoint = ResourcesByList {list, sort: PositionAsc, completed}
-          codec = CAC.array Resource.listResourceCodec
+    where
+    conf = { endpoint, method: Get }
+    endpoint = ResourcesByList { list, sort: PositionAsc, completed }
+    codec = CAC.array Resource.listResourceCodec
 
-  getPublicListResources {user, list} = do
+  getPublicListResources { user, list } = do
     hush <$> mkAuthRequest conf codec
-    where conf = {endpoint, method: Get}
-          endpoint = ListResourcesBySlug user list
-          codec = CAC.array Resource.listResourceCodec
+    where
+    conf = { endpoint, method: Get }
+    endpoint = ListResourcesBySlug user list
+    codec = CAC.array Resource.listResourceCodec
 
   searchResources args = do
     hush <$> mkAuthRequest conf codec
-    where conf = {endpoint: SearchResources args, method: Get}
-          codec = CAC.array Resource.listResourceCodec
+    where
+    conf = { endpoint: SearchResources args, method: Get }
+    codec = CAC.array Resource.listResourceCodec
 
   createResource newResource =
     hush <$> mkAuthRequest conf codec
-    where method = Post $ Just $ Codec.encode Resource.resourceCodec newResource
-          conf = {endpoint: Resources, method}
-          codec = Resource.listResourceCodec
+    where
+    method = Post $ Just $ Codec.encode Resource.resourceCodec newResource
+    conf = { endpoint: Resources, method }
+    codec = Resource.listResourceCodec
 
   updateResource id newResource =
     hush <$> mkAuthRequest conf codec
-    where method = Put $ Just $ Codec.encode Resource.resourceCodec newResource
-          conf = {endpoint: Resource id, method}
-          codec = Resource.listResourceCodec
+    where
+    method = Put $ Just $ Codec.encode Resource.resourceCodec newResource
+    conf = { endpoint: Resource id, method }
+    codec = Resource.listResourceCodec
 
-  completeResource {id} =
+  completeResource { id } =
     map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
-    where conf = {endpoint: CompleteResource id, method: Post Nothing}
+    where
+    conf = { endpoint: CompleteResource id, method: Post Nothing }
 
-  uncompleteResource {id} =
+  uncompleteResource { id } =
     map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
-    where conf = {endpoint: UncompleteResource id, method: Post Nothing}
+    where
+    conf = { endpoint: UncompleteResource id, method: Post Nothing }
 
-  deleteResource {id} =
+  deleteResource { id } =
     map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
-    where conf = {endpoint: Resource id, method: Delete}
+    where
+    conf = { endpoint: Resource id, method: Delete }
 
-  changePosition {id, list} {previus} =
+  changePosition { id, list } { previus } =
     map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
-    where body = Codec.encode Resource.positionChangeBodyCodec {list, previus}
-          conf = {endpoint: PositionResource id, method: Put $ Just body}
+    where
+    body = Codec.encode Resource.positionChangeBodyCodec { list, previus }
+    conf = { endpoint: PositionResource id, method: Put $ Just body }
 
   importResources payload =
     map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
-    where body = Codec.encode Resource.importResourcesCodec payload
-          conf = {endpoint: ImportResources, method: Post $ Just body}
+    where
+    body = Codec.encode Resource.importResourcesCodec payload
+    conf = { endpoint: ImportResources, method: Post $ Just body }
 
 instance manageIntegrationAppM :: ManageIntegration AppM where
   createRssIntegration fields = do
     hush <$> mkAuthRequest conf codec
-    where body = Codec.encode Integration.rssIntegrationFieldsCodec fields
-          conf = {endpoint: RssIntegrations, method: Post $ Just body}
-          codec = Integration.rssIntegrationCodec
+    where
+    body = Codec.encode Integration.rssIntegrationFieldsCodec fields
+    conf = { endpoint: RssIntegrations, method: Post $ Just body }
+    codec = Integration.rssIntegrationCodec
 
   subscribeToList fields = do
     hush <$> mkAuthRequest conf codec
-    where body = Codec.encode Integration.listSubscriptionFieldsCodec fields
-          conf = {endpoint: ListSubscriptionIntegrations, method: Post $ Just body}
-          codec = Integration.listSubscriptionCodec
+    where
+    body = Codec.encode Integration.listSubscriptionFieldsCodec fields
+    conf = { endpoint: ListSubscriptionIntegrations, method: Post $ Just body }
+    codec = Integration.listSubscriptionCodec
 
   deleteIntegration id =
     map (const unit) <$> hush <$> mkAuthRequest conf Codec.json
-    where conf = {endpoint: Integration id, method: Delete}
+    where
+    conf = { endpoint: Integration id, method: Delete }
 
   getListIntegrations list =
     hush <$> mkAuthRequest conf codec
-    where conf = {endpoint: Integrations {list, kind: Nothing}, method: Get}
-          codec = CAC.array $ Integration.integrationCodec
+    where
+    conf = { endpoint: Integrations { list, kind: Nothing }, method: Get }
+    codec = CAC.array $ Integration.integrationCodec

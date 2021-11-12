@@ -31,23 +31,26 @@ data Action
   | LoadLists
 
 type State
-  = { lists :: Array ListWithIdUserAndMeta
-    , resource :: ListResource
-    }
+  =
+  { lists :: Array ListWithIdUserAndMeta
+  , resource :: ListResource
+  }
 
 type Input
-  = { lists :: Array ListWithIdUserAndMeta
-    , resource :: ListResource
-    }
+  =
+  { lists :: Array ListWithIdUserAndMeta
+  , resource :: ListResource
+  }
 
 data Output
-  = Updated {old :: ListResource, new :: ListResource}
+  = Updated { old :: ListResource, new :: ListResource }
 
 type ChildSlots
-  = ( formless :: ResourceForm.Slot )
+  = (formless :: ResourceForm.Slot)
 
-component :: forall query m.
-     MonadAff m
+component
+  :: forall query m
+   . MonadAff m
   => MonadStore Store.Action Store.Store m
   => ManageResource m
   => ManageList m
@@ -61,7 +64,7 @@ component = H.mkComponent
       }
   }
   where
-  initialState {lists, resource} =
+  initialState { lists, resource } =
     { lists: A.sortWith (filterNonAlphanum <<< _.title) lists
     , resource
     }
@@ -69,14 +72,14 @@ component = H.mkComponent
   handleAction :: Action -> H.HalogenM State Action ChildSlots Output m Unit
   handleAction = case _ of
     HandleFormMessage updated -> do
-      {resource: saved} <- H.get
+      { resource: saved } <- H.get
       void $ H.query F._formless unit $ F.injQuery $ ResourceForm.SetCreateStatus Loading unit
 
       mbUpdated <- updateResource saved.id updated
 
       case mbUpdated of
         Just resource -> do
-          H.raise $ Updated {old: saved, new: resource}
+          H.raise $ Updated { old: saved, new: resource }
           void $ H.query F._formless unit $ F.injQuery $ ResourceForm.SetCreateStatus (Success resource) unit
           handleAction LoadLists
 
@@ -88,11 +91,11 @@ component = H.mkComponent
       updateStore $ Store.SetLists result
 
   render :: State -> HH.ComponentHTML Action ChildSlots m
-  render {lists, resource} =
+  render { lists, resource } =
     HH.div
       []
       [ HH.slot F._formless unit ResourceForm.formComponent formInput HandleFormMessage ]
     where
-    formInput = {lists, selectedList: Just resource.list, initialInput}
+    formInput = { lists, selectedList: Just resource.list, initialInput }
     initialInput = ResourceForm.InputToEdit resource
 

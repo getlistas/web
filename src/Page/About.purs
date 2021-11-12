@@ -28,7 +28,7 @@ data Action
   | Navigate Route Event
 
 type State
-  = {currentUser :: Maybe ProfileWithIdAndEmail}
+  = { currentUser :: Maybe ProfileWithIdAndEmail }
 
 component
   :: forall q o m
@@ -45,12 +45,12 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       }
   }
   where
-  initialState {context: currentUser} = {currentUser}
+  initialState { context: currentUser } = { currentUser }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
-    Receive {context: currentUser} ->
-      H.modify_ _ {currentUser = currentUser}
+    Receive { context: currentUser } ->
+      H.modify_ _ { currentUser = currentUser }
 
     Navigate route e -> navigate_ e route
 
@@ -70,8 +70,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             , role: "Backend"
             , icon: Icons.terminal
             , links:
-                [ {icon: Icons.twitter, url: "https://twitter.com/delvallenicolas"}
-                , {icon: Icons.github, url: "https://github.com/ndelvalle"}
+                [ { icon: Icons.twitter, url: "https://twitter.com/delvallenicolas" }
+                , { icon: Icons.github, url: "https://github.com/ndelvalle" }
                 ]
             }
           , { avatar: "https://avatars.githubusercontent.com/u/8309423?s=460&u=0f306a70fdcc2359d21b4918efaabf617a396c91&v=4"
@@ -79,9 +79,9 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             , role: "Frontend"
             , icon: Icons.code
             , links:
-                [ {icon: Icons.twitter, url: "https://twitter.com/gillchristian"}
-                , {icon: Icons.github, url: "https://github.com/gillchristian"}
-                , {icon: Icons.website, url: "https://gillchristian.xyz"}
+                [ { icon: Icons.twitter, url: "https://twitter.com/gillchristian" }
+                , { icon: Icons.github, url: "https://github.com/gillchristian" }
+                , { icon: Icons.website, url: "https://gillchristian.xyz" }
                 ]
             }
           , { avatar: "https://avatars.githubusercontent.com/u/23080631?v=4"
@@ -89,8 +89,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             , role: "Design"
             , icon: Icons.photo
             , links:
-                [ {icon: Icons.twitter, url: "https://twitter.com/DvNahuel"}
-                , {icon: Icons.website, url: "https://dvnahuel.website/"}
+                [ { icon: Icons.twitter, url: "https://twitter.com/DvNahuel" }
+                , { icon: Icons.website, url: "https://dvnahuel.website/" }
                 ]
             }
           ]
@@ -111,7 +111,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
         ]
         $ map memberEl members
 
-    memberEl {avatar, name, role,icon,  links} =
+    memberEl { avatar, name, role, icon, links } =
       HH.li
         [ HP.classes
             [ T.py10
@@ -149,7 +149,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             ]
         ]
 
-    socialEl {icon, url} =
+    socialEl { icon, url } =
       HH.li
         []
         [ HH.a

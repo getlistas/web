@@ -19,7 +19,7 @@ _slot :: Proxy "register"
 _slot = Proxy
 
 type ChildSlots
-  = ( register :: Register.Slot )
+  = (register :: Register.Slot)
 
 type State = Unit
 
@@ -27,13 +27,13 @@ data Action
   = Navigate Route Event.Event
   | GoToSignin Register.Output
 
-component ::
-  forall q o m.
-  MonadAff m =>
-  ManageUser m =>
-  Navigate m =>
-  Analytics m =>
-  H.Component q Unit o m
+component
+  :: forall q o m
+   . MonadAff m
+  => ManageUser m
+  => Navigate m
+  => Analytics m
+  => H.Component q Unit o m
 component =
   H.mkComponent
     { initialState: const unit

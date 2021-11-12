@@ -42,28 +42,30 @@ type Slot id = forall query. H.Slot query Void id
 _publicResources = Proxy :: Proxy "publicResources"
 
 type Input
-  = { listSlug :: Slug
-    , listId :: ID
-    , authorSlug :: Slug
-    }
+  =
+  { listSlug :: Slug
+  , listId :: ID
+  , authorSlug :: Slug
+  }
 
 data Action
   = Initialize
   | SearchChange String
   | LoadResources
-    -- resources actions
+  -- resources actions
   | CopyToShare ListResource
   | CopyResourceURL ListResource
-    -- meta actions
+  -- meta actions
   | NoOp
 
 type State
-  = { authorSlug :: Slug
-    , listSlug :: Slug
-    , listId :: ID
-    , resources :: RemoteData String (Array ListResource)
-    , searchQuery :: String
-    }
+  =
+  { authorSlug :: Slug
+  , listSlug :: Slug
+  , listId :: ID
+  , resources :: RemoteData String (Array ListResource)
+  , searchQuery :: String
+  }
 
 component
   :: forall q o m
@@ -81,8 +83,8 @@ component = H.mkComponent
       }
   }
   where
-  initialState {authorSlug, listSlug, listId} =
-    {authorSlug, listSlug, listId, resources: NotAsked, searchQuery: ""}
+  initialState { authorSlug, listSlug, listId } =
+    { authorSlug, listSlug, listId, resources: NotAsked, searchQuery: "" }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
@@ -90,47 +92,47 @@ component = H.mkComponent
       handleAction LoadResources
 
     SearchChange newQuery -> do
-      {searchQuery: oldQuery} <- H.get
-      H.modify_ _ {searchQuery = newQuery}
+      { searchQuery: oldQuery } <- H.get
+      H.modify_ _ { searchQuery = newQuery }
 
       when (null newQuery && (oldQuery /= newQuery)) do
         handleAction LoadResources
 
       when (not $ null newQuery) do
-        {listId} <- H.get
+        { listId } <- H.get
 
-        let search = defaultSearch {list = Just listId, search_text = NES.fromString newQuery, sort = Just PositionAsc}
+        let search = defaultSearch { list = Just listId, search_text = NES.fromString newQuery, sort = Just PositionAsc }
 
-        H.modify_ _ {resources = Loading}
+        H.modify_ _ { resources = Loading }
 
         resources <- RemoteData.fromEither <$> note "Failed to load resources" <$> searchResources search
 
-        H.modify_ _ {resources = resources}
+        H.modify_ _ { resources = resources }
 
     LoadResources -> do
-      {authorSlug, listSlug} <- H.get
+      { authorSlug, listSlug } <- H.get
 
-      H.modify_ _ {resources = Loading}
+      H.modify_ _ { resources = Loading }
 
-      resources <- RemoteData.fromEither <$> note "Failed to load resources" <$> getPublicListResources {user: authorSlug, list: listSlug}
+      resources <- RemoteData.fromEither <$> note "Failed to load resources" <$> getPublicListResources { user: authorSlug, list: listSlug }
 
-      H.modify_ _ {resources = resources}
+      H.modify_ _ { resources = resources }
 
-    CopyToShare {url} -> do
+    CopyToShare { url } -> do
       host <- H.liftEffect $ Location.host =<< Window.location =<< Window.window
-      void $ writeText $ host <> print routeCodec (CreateResource {url: Just url, text: Nothing, title: Nothing})
+      void $ writeText $ host <> print routeCodec (CreateResource { url: Just url, text: Nothing, title: Nothing })
 
-    CopyResourceURL {url} -> void $ writeText url
+    CopyResourceURL { url } -> void $ writeText url
 
     NoOp -> pure unit
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {resources, searchQuery} =
+  render { resources, searchQuery } =
     HH.div
       []
       [ HH.div
-        [ HP.classes [ T.mb4 ] ]
-        [ HH.div
+          [ HP.classes [ T.mb4 ] ]
+          [ HH.div
               [ HP.classes [ T.wFull ] ]
               [ Input.search
                   { value: searchQuery
@@ -140,7 +142,7 @@ component = H.mkComponent
                   , noOp: NoOp
                   }
               ]
-        ]
+          ]
       , case resources of
           NotAsked -> HH.text ""
 
@@ -162,7 +164,7 @@ component = H.mkComponent
       ]
 
     where
-    iconAction {icon, action, hoverColor, title} =
+    iconAction { icon, action, hoverColor, title } =
       HH.button
         [ HE.onClick $ const action
         , HP.classes
@@ -179,7 +181,7 @@ component = H.mkComponent
         [ icon [ Icons.classes [ T.h5, T.w5 ] ] ]
 
     listResource :: ListResource -> Tuple String _
-    listResource resource@{id, url, thumbnail, description, tags} =
+    listResource resource@{ id, url, thumbnail, description, tags } =
       Tuple (ID.toString id)
         $ HH.div
             [ HP.classes
@@ -256,5 +258,5 @@ component = H.mkComponent
                           , T.roundedMd
                           ]
                       ]
-                ]
+                  ]
             ]

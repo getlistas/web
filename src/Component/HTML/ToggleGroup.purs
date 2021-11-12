@@ -9,10 +9,11 @@ import Listasio.Component.HTML.Utils (cx)
 import Tailwind as T
 
 type ButtonSpec p
-  = { action :: p
-    , label :: String
-    , active :: Boolean
-    }
+  =
+  { action :: p
+  , label :: String
+  , active :: Boolean
+  }
 
 toggleGroup :: forall i p. Boolean -> Array (ButtonSpec p) -> HH.HTML i p
 toggleGroup disabled btns =

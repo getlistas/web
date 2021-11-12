@@ -42,7 +42,7 @@ import Web.Event.Event as Event
 import Web.HTML.Event.DataTransfer as DataTransfer
 import Web.UIEvent.MouseEvent as Mouse
 
-newtype DDItem = DDItem {label :: String, value :: ID}
+newtype DDItem = DDItem { label :: String, value :: ID }
 
 derive instance eqDDItem :: Eq DDItem
 derive instance newtypeDDItem :: Newtype DDItem _
@@ -54,6 +54,7 @@ type Slot
   = F.Slot ResourceForm FormQuery FormChildSlots Resource Unit
 
 newtype ResourceForm (r :: Row Type -> Type) f = ResourceForm (r (FormRow f))
+
 derive instance Newtype (ResourceForm r f) _
 
 type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
@@ -80,21 +81,22 @@ data FormAction
   | Navigate Route Event.Event
 
 type CreateInput
-  = { url :: Maybe String
-    , title :: Maybe String
-    , text :: Maybe String
-    }
+  =
+  { url :: Maybe String
+  , title :: Maybe String
+  , text :: Maybe String
+  }
 
 data InitialInput
   = InputToCreate CreateInput
   | InputToEdit ListResource
 
 urlFromInput :: InitialInput -> Maybe String
-urlFromInput (InputToCreate {url}) = url
+urlFromInput (InputToCreate { url }) = url
 urlFromInput _ = Nothing
 
 textFromInput :: InitialInput -> Maybe String
-textFromInput (InputToCreate {text}) = text
+textFromInput (InputToCreate { text }) = text
 textFromInput _ = Nothing
 
 resourceFromInput :: InitialInput -> Maybe ListResource
@@ -106,12 +108,13 @@ isEdit (InputToEdit _) = true
 isEdit _ = false
 
 type FormInput
-  = { lists :: Array ListWithIdUserAndMeta
-    , selectedList :: Maybe ID
-    , initialInput :: InitialInput
-    }
+  =
+  { lists :: Array ListWithIdUserAndMeta
+  , selectedList :: Maybe ID
+  , initialInput :: InitialInput
+  }
 
-type FormChildSlots = ( dropdown :: DD.Slot DDItem Unit )
+type FormChildSlots = (dropdown :: DD.Slot DDItem Unit)
 
 type FormState =
   ( status :: RemoteData String Unit
@@ -123,12 +126,12 @@ type FormState =
   , isNew :: Boolean
   )
 
-formComponent ::
-  forall m.
-  MonadAff m =>
-  ManageResource m =>
-  Navigate m =>
-  F.Component ResourceForm FormQuery FormChildSlots FormInput Resource m
+formComponent
+  :: forall m
+   . MonadAff m
+  => ManageResource m
+  => Navigate m
+  => F.Component ResourceForm FormQuery FormChildSlots FormInput Resource m
 formComponent = F.component formInput $ F.defaultSpec
   { render = renderCreateResource
   , handleEvent = handleEvent
@@ -138,18 +141,18 @@ formComponent = F.component formInput $ F.defaultSpec
   }
   where
   formInput :: FormInput -> F.Input ResourceForm FormState m
-  formInput {lists, selectedList, initialInput} =
+  formInput { lists, selectedList, initialInput } =
     { validators:
         ResourceForm
           { title: V.toOptional $ V.maxLength 150
           , url: V.required >>> V.maxLength 500 -- TODO URL validation ???
-          , description:  V.toOptional $ V.maxLength 500
+          , description: V.toOptional $ V.maxLength 500
           , thumbnail: F.noValidation
           , list: V.requiredFromOptional F.noValidation
-                   <?> V.WithMsg "Please select a list"
+              <?> V.WithMsg "Please select a list"
           , tags: V.maxLengthArr 4
-                    <<< F.hoistFn_ (filter (not <<< String.null) <<< map trim <<< split (Pattern ","))
-                    <?> V.WithMsg "Cannot have more than 4 tags"
+              <<< F.hoistFn_ (filter (not <<< String.null) <<< map trim <<< split (Pattern ","))
+                <?> V.WithMsg "Cannot have more than 4 tags"
           }
     , initialInputs: Just $ initialInputs initialInput
     , status: NotAsked
@@ -161,16 +164,16 @@ formComponent = F.component formInput $ F.defaultSpec
     , isNew: not $ isEdit initialInput
     }
 
-  initialInputs (InputToCreate {url, title, text}) = F.wrapInputFields
+  initialInputs (InputToCreate { url, title, text }) = F.wrapInputFields
     { url: fromMaybe "" $ url <|> (filter Util.isUrl text)
-      -- On Android PWA share the title sometimes has `+` instead of spaces
+    -- On Android PWA share the title sometimes has `+` instead of spaces
     , title: fromMaybe "" $ replaceAll (Pattern "+") (Replacement " ") <$> String.take 500 <$> title
     , description: fromMaybe "" $ filter (not <<< Util.isUrl) text
     , thumbnail: Nothing
     , list: Nothing
     , tags: ""
     }
-  initialInputs (InputToEdit {url, title, description, thumbnail, list, tags}) = F.wrapInputFields
+  initialInputs (InputToEdit { url, title, description, thumbnail, list, tags }) = F.wrapInputFields
     { url: url
     , title: fromMaybe "" title
     , description: fromMaybe "" description
@@ -185,7 +188,7 @@ formComponent = F.component formInput $ F.defaultSpec
     Navigate route e -> navigate_ e route
 
     FormInitialize -> do
-      {pastedUrl, selectedList, lists} <- H.get
+      { pastedUrl, selectedList, lists } <- H.get
 
       let mbSelectedItem = listToItem <$> ((\id -> A.find ((id == _) <<< _.id) lists) =<< selectedList)
 
@@ -201,13 +204,13 @@ formComponent = F.component formInput $ F.defaultSpec
         Nothing -> pure unit
 
     FetchMeta url -> do
-      H.modify_ _ {meta = Loading}
+      H.modify_ _ { meta = Loading }
       mbMeta <- getMeta url
       case mbMeta of
         Just meta -> do
-          H.modify_ _ {meta = Success meta}
+          H.modify_ _ { meta = Success meta }
           eval $ F.setValidate proxies.thumbnail meta.thumbnail
-          {form} <- H.get
+          { form } <- H.get
           for_
             (filter (const $ String.null $ F.getInput proxies.title form) meta.title)
             (eval <<< F.setValidate proxies.title)
@@ -215,14 +218,14 @@ formComponent = F.component formInput $ F.defaultSpec
             (filter (const $ String.null $ F.getInput proxies.description form) meta.description)
             (eval <<< F.setValidate proxies.description)
         Nothing ->
-          H.modify_ _ {meta = Failure "Couldn't get suggestions"}
+          H.modify_ _ { meta = Failure "Couldn't get suggestions" }
 
     Submit event -> do
       H.liftEffect $ Event.preventDefault event
-      {status} <- H.get
+      { status } <- H.get
       when (not $ isLoading status) do eval F.submit
 
-    HandleDropdown (DD.Selected (DDItem {value})) ->
+    HandleDropdown (DD.Selected (DDItem { value })) ->
       eval $ F.setValidate proxies.list (Just value)
 
     HandleDropdown DD.Cleared ->
@@ -234,12 +237,12 @@ formComponent = F.component formInput $ F.defaultSpec
   handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
     SetCreateStatus (Success newResource) a -> do
-      H.modify_ _ {status = Success unit, initialResource = Just newResource}
+      H.modify_ _ { status = Success unit, initialResource = Just newResource }
       eval $ F.loadForm $ initialInputs $ InputToEdit newResource
       pure (Just a)
 
     SetCreateStatus status a -> do
-      H.modify_ _ {status = map (const unit) status}
+      H.modify_ _ { status = map (const unit) status }
       pure $ Just a
 
     where
@@ -247,7 +250,7 @@ formComponent = F.component formInput $ F.defaultSpec
 
   proxies = F.mkSProxies (Proxy :: Proxy ResourceForm)
 
-  renderCreateResource {form, status, lists, submitting, meta, isNew} =
+  renderCreateResource { form, status, lists, submitting, meta, isNew } =
     HH.form
       [ HE.onSubmit $ F.injAction <<< Submit
       , HP.noValidate true
@@ -260,9 +263,9 @@ formComponent = F.component formInput $ F.defaultSpec
           []
           [ url
           , case meta of
-              Success {can_resolve} | not can_resolve -> HH.text ""
+              Success { can_resolve } | not can_resolve -> HH.text ""
 
-              Success {resource: Just resource} ->
+              Success { resource: Just resource } ->
                 HH.div
                   [ HP.classes [ T.mt2, T.mb4 ] ]
                   [ HH.div
@@ -284,11 +287,13 @@ formComponent = F.component formInput $ F.defaultSpec
 
               , HH.slot DD._dropdown unit (Select.component DD.input DD.spec) ddInput handler
 
-              , let mbError = filter (const $ F.getTouched proxies.list form) $ F.getError proxies.list form
-                 in maybeElem mbError \err ->
-                      HH.div
-                        [ HP.classes [ T.textManzana, T.mt2 ] ]
-                        [ HH.text $ V.errorToString err ]
+              , let
+                  mbError = filter (const $ F.getTouched proxies.list form) $ F.getError proxies.list form
+                in
+                  maybeElem mbError \err ->
+                    HH.div
+                      [ HP.classes [ T.textManzana, T.mt2 ] ]
+                      [ HH.text $ V.errorToString err ]
               ]
 
           , HH.div
@@ -330,7 +335,7 @@ formComponent = F.component formInput $ F.defaultSpec
       ]
     where
     handler = F.injAction <<< HandleDropdown
-    ddInput = {placeholder: "Choose a list", items: map listToItem lists}
+    ddInput = { placeholder: "Choose a list", items: map listToItem lists }
 
     url =
       Field.input proxies.url form $ Field.defaultProps
@@ -341,7 +346,7 @@ formComponent = F.component formInput $ F.defaultSpec
         , props = [ HE.onPaste $ F.injAction <<< PasteUrl ]
         , message = case meta of
             Loading -> Just "Fetching title and description ..."
-            Success {can_resolve} | not can_resolve -> Just "Failed to load metadata for this link"
+            Success { can_resolve } | not can_resolve -> Just "Failed to load metadata for this link"
             _ -> Nothing
         }
 
@@ -357,7 +362,7 @@ formComponent = F.component formInput $ F.defaultSpec
         { label = Just "Description"
         , id = Just "description"
         , placeholder = Nothing
-        , props = [HP.rows 3]
+        , props = [ HP.rows 3 ]
         }
 
     tagsField =
@@ -368,4 +373,4 @@ formComponent = F.component formInput $ F.defaultSpec
         , message = Just "Separated by commas"
         }
 
-  listToItem {id, title} = DDItem {value: id, label: title}
+  listToItem { id, title } = DDItem { value: id, label: title }

@@ -9,12 +9,13 @@ import Halogen.HTML.Properties as HP
 import Tailwind as T
 
 type DangerProps i p
-  = { label :: HH.HTML i p
-    , disabled :: Boolean
-    , action :: p
-    , props :: Array (HH.IProp HTMLbutton p)
-    , classes :: Array HH.ClassName
-    }
+  =
+  { label :: HH.HTML i p
+  , disabled :: Boolean
+  , action :: p
+  , props :: Array (HH.IProp HTMLbutton p)
+  , classes :: Array HH.ClassName
+  }
 
 dangerDefaultProps :: forall i p. p -> DangerProps i p
 dangerDefaultProps action =
@@ -26,10 +27,11 @@ dangerDefaultProps action =
   }
 
 danger :: forall i p. DangerProps i p -> HH.HTML i p
-danger {label, disabled, action, props, classes} =
+danger { label, disabled, action, props, classes } =
   HH.button
     ( props
-        <> [ HP.classes
+        <>
+          [ HP.classes
               ( classes
                   <>
                     [ T.inlineFlex

@@ -16,8 +16,8 @@ class Monad m <= ManageList m where
   -- TODO: these two endpoints should return a different type (ie. the private
   --       list has information that the public one should not in the meta).
   --       But is not yet supported by the backend
-  getListBySlug :: {user :: Slug, list :: Slug} -> m (Maybe ListWithIdUserAndMeta)
-  getPublicListBySlug :: {user :: Slug, list :: Slug} -> m (Maybe ListWithIdUserAndMeta)
+  getListBySlug :: { user :: Slug, list :: Slug } -> m (Maybe ListWithIdUserAndMeta)
+  getPublicListBySlug :: { user :: Slug, list :: Slug } -> m (Maybe ListWithIdUserAndMeta)
 
   getLists :: m (Maybe (Array ListWithIdUserAndMeta))
   updateList :: ID -> CreateListFields -> m (Maybe ListWithIdUserAndMeta)

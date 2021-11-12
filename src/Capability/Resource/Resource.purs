@@ -13,12 +13,12 @@ import Slug (Slug)
 type PositionChangeBody = { previus :: Maybe ID }
 
 type PublicResourcesArgs
-  = {user :: Slug, list :: Slug}
+  = { user :: Slug, list :: Slug }
 
 class Monad m <= ManageResource m where
   getMeta :: String -> m (Maybe ResourceMeta)
   getResources :: m (Maybe (Array ListResource))
-  getListResources :: {list :: ID, completed :: Maybe Boolean} -> m (Maybe (Array ListResource))
+  getListResources :: { list :: ID, completed :: Maybe Boolean } -> m (Maybe (Array ListResource))
   getPublicListResources :: PublicResourcesArgs -> m (Maybe (Array ListResource))
   searchResources :: SearchResourcesArgs -> m (Maybe (Array ListResource))
   createResource :: Resource -> m (Maybe ListResource)

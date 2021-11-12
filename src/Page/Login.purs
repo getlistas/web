@@ -22,29 +22,31 @@ _slot :: Proxy "login"
 _slot = Proxy
 
 type ChildSlots
-  = ( login :: Login.Slot )
+  = (login :: Login.Slot)
 
 data Action
   = Navigate Route Event.Event
   | GoToRegister Login.Output
 
 type State
-  = { redirect :: Boolean
-    , registerSuccess :: Boolean
-    }
+  =
+  { redirect :: Boolean
+  , registerSuccess :: Boolean
+  }
 
 type Input
-  = { redirect :: Boolean
-    , registerSuccess :: Boolean
-    }
+  =
+  { redirect :: Boolean
+  , registerSuccess :: Boolean
+  }
 
-component ::
-  forall q o m.
-  MonadAff m =>
-  Navigate m =>
-  ManageUser m =>
-  Analytics m =>
-  H.Component q Input o m
+component
+  :: forall q o m
+   . MonadAff m
+  => Navigate m
+  => ManageUser m
+  => Analytics m
+  => H.Component q Input o m
 component =
   H.mkComponent
     { initialState
@@ -64,7 +66,7 @@ component =
     GoToRegister Login.GoToRegister -> navigate Register
 
   render :: State -> H.ComponentHTML Action ChildSlots m
-  render {redirect, registerSuccess} =
+  render { redirect, registerSuccess } =
     HH.div
       [ HP.classes [ T.mt12, T.flex, T.flexCol, T.itemsCenter ] ]
       [ HH.h1
@@ -79,6 +81,6 @@ component =
             }
       , HH.div
           [ HP.classes [ T.w96, T.maxWFull ] ]
-          [ HH.slot Login._slot unit Login.component {redirect} GoToRegister
+          [ HH.slot Login._slot unit Login.component { redirect } GoToRegister
           ]
       ]

@@ -36,13 +36,13 @@ _slot = Proxy
 type Slot = forall query. H.Slot query Output Unit
 
 type ChildSlots
-  = ( registerForm :: F.Slot RegisterForm FormQuery () RegisterFields Unit )
+  = (registerForm :: F.Slot RegisterForm FormQuery () RegisterFields Unit)
 
 data Output
   = GoToSignin
 
 type State
-  = {status :: RemoteData String Unit}
+  = { status :: RemoteData String Unit }
 
 data Action
   = Initialize
@@ -51,16 +51,16 @@ data Action
   | Navigate Route Event.Event
   | SwitchToSignin Event.Event
 
-component ::
-  forall q m.
-  MonadAff m =>
-  ManageUser m =>
-  Navigate m =>
-  Analytics m =>
-  H.Component q Unit Output m
+component
+  :: forall q m
+   . MonadAff m
+  => ManageUser m
+  => Navigate m
+  => Analytics m
+  => H.Component q Unit Output m
 component =
   H.mkComponent
-    { initialState: const {status: NotAsked}
+    { initialState: const { status: NotAsked }
     , render
     , eval: H.mkEval $ H.defaultEval
         { handleAction = handleAction
@@ -74,31 +74,31 @@ component =
       void $ H.liftAff $ initGoogleAuth
 
     HandleRegisterForm fields -> do
-      {status} <- H.get
+      { status } <- H.get
       when (not $ isLoading status) do
         void $ H.query _form unit $ F.injQuery $ SetRegisterStatus Loading unit
-        H.modify_ _ {status = Loading}
+        H.modify_ _ { status = Loading }
 
         result <- fromEither <$> note "Failed to register" <$> registerUser fields
 
-        H.modify_ _ {status = unit <$ result}
+        H.modify_ _ { status = unit <$ result }
         void $ H.query _form unit $ F.injQuery $ SetRegisterStatus (unit <$ result) unit
 
     HandleGoogleLogin -> do
-      {status} <- H.get
+      { status } <- H.get
       when (not $ isLoading status) do
         void $ H.query _form unit $ F.injQuery $ SetRegisterStatus Loading unit
-        H.modify_ _ {status = Loading}
+        H.modify_ _ { status = Loading }
 
         mbProfile <- googleLoginUser
 
         case mbProfile of
           Nothing -> do
             void $ H.query _form unit $ F.injQuery $ SetRegisterStatus NotAsked unit
-            H.modify_ _ {status = NotAsked}
+            H.modify_ _ { status = NotAsked }
 
-          Just {email, id} -> do
-            userSet {email: unwrap email, userId: ID.toString id}
+          Just { email, id } -> do
+            userSet { email: unwrap email, userId: ID.toString id }
             navigate Dashboard
 
     Navigate route e -> navigate_ e route
@@ -108,7 +108,7 @@ component =
       H.raise GoToSignin
 
   render :: State -> H.ComponentHTML Action ChildSlots m
-  render {status} =
+  render { status } =
     case status of
       Success _ ->
         HH.div
@@ -160,7 +160,7 @@ component =
           , HH.slot _form unit formComponent unit HandleRegisterForm
           , HH.p
               [ HP.classes [ T.mt4 ] ]
-              [ HH.span [ HP.classes [ T.textGray400 ] ] [HH.text "Already have an account? " ]
+              [ HH.span [ HP.classes [ T.textGray400 ] ] [ HH.text "Already have an account? " ]
               , HH.a
                   [ HP.classes [ T.textDurazno ]
                   , safeHref Register
@@ -173,6 +173,7 @@ component =
 _form = Proxy :: Proxy "registerForm"
 
 newtype RegisterForm (r :: Row Type -> Type) f = RegisterForm (r (FormRow f))
+
 derive instance Newtype (RegisterForm r f) _
 
 type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
@@ -190,10 +191,10 @@ derive instance functorFormQuery :: Functor FormQuery
 data FormAction
   = Submit Event.Event
 
-formComponent ::
-  forall formSlots formInput m.
-  MonadAff m =>
-  F.Component RegisterForm FormQuery formSlots formInput RegisterFields m
+formComponent
+  :: forall formSlots formInput m
+   . MonadAff m
+  => F.Component RegisterForm FormQuery formSlots formInput RegisterFields m
 formComponent =
   F.component formInput $ F.defaultSpec
     { render = renderForm
@@ -202,7 +203,7 @@ formComponent =
     , handleAction = handleAction
     }
   where
-  formInput :: formInput -> F.Input RegisterForm ( status :: RemoteData String Unit ) m
+  formInput :: formInput -> F.Input RegisterForm (status :: RemoteData String Unit) m
   formInput _ =
     { validators:
         RegisterForm
@@ -219,7 +220,7 @@ formComponent =
   handleAction = case _ of
     Submit event -> do
       H.liftEffect $ Event.preventDefault event
-      {status} <- H.get
+      { status } <- H.get
       when (not $ isLoading status) do eval F.submit
 
     where
@@ -228,10 +229,10 @@ formComponent =
   handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
     SetRegisterStatus status a -> do
-      H.modify_ _ {status = status}
+      H.modify_ _ { status = status }
       pure (Just a)
 
-  renderForm {form, status, submitting} =
+  renderForm { form, status, submitting } =
     HH.form
       [ HE.onSubmit $ F.injAction <<< Submit
       , HP.noValidate true

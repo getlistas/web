@@ -41,14 +41,15 @@ _slot :: Proxy "editList"
 _slot = Proxy
 
 type Input
-  = {user :: Slug, list :: Slug}
+  = { user :: Slug, list :: Slug }
 
 type Lists = RemoteData String (Array ListWithIdUserAndMeta)
 
 type StoreState
-  = { currentUser :: Maybe ProfileWithIdAndEmail
-    , lists :: Lists
-    }
+  =
+  { currentUser :: Maybe ProfileWithIdAndEmail
+  , lists :: Lists
+  }
 
 data Action
   = Initialize
@@ -61,25 +62,26 @@ data Action
   | DeleteListConfirm
 
 type State
-  = { currentUser :: Maybe ProfileWithIdAndEmail
-    , list :: RemoteData String ListWithIdUserAndMeta
-    , listSlug :: Slug
-    , userSlug :: Slug
-    , confirmDelete :: Boolean
-    }
+  =
+  { currentUser :: Maybe ProfileWithIdAndEmail
+  , list :: RemoteData String ListWithIdUserAndMeta
+  , listSlug :: Slug
+  , userSlug :: Slug
+  , confirmDelete :: Boolean
+  }
 
 type Slots = (formless :: ListForm.Slot)
 
 failedToFetch :: forall a. Maybe a -> Either String a
 failedToFetch = note "Could not get list"
 
-replaceById :: forall r. {id :: ID | r} -> {id :: ID | r} -> {id :: ID | r}
+replaceById :: forall r. { id :: ID | r } -> { id :: ID | r } -> { id :: ID | r }
 replaceById new old
   | new.id == old.id = new
   | otherwise = old
 
 select :: Store.Store -> StoreState
-select {lists, currentUser} = {lists, currentUser}
+select { lists, currentUser } = { lists, currentUser }
 
 ensureList :: RemoteData String (Maybe ListWithIdUserAndMeta) -> RemoteData String ListWithIdUserAndMeta
 ensureList (Success (Just list)) = Success list
@@ -105,7 +107,7 @@ component = connect (selectEq select) $ H.mkComponent
       }
   }
   where
-  initialState {context: {lists, currentUser}, input: {list, user}} =
+  initialState { context: { lists, currentUser }, input: { list, user } } =
     { currentUser
     , list: ensureList $ A.find (eq list <<< _.slug) <$> lists
     , listSlug: list
@@ -121,21 +123,21 @@ component = connect (selectEq select) $ H.mkComponent
       st <- H.get
       case st.list of
         NotAsked -> do
-          H.modify_ _ {list = Loading}
+          H.modify_ _ { list = Loading }
 
-          list <- RemoteData.fromEither <$> failedToFetch <$> getListBySlug {list: st.listSlug, user: st.userSlug}
+          list <- RemoteData.fromEither <$> failedToFetch <$> getListBySlug { list: st.listSlug, user: st.userSlug }
 
           -- TODO: since we fetch only when missing, should update store as well?
-          H.modify_ _ {list = list}
+          H.modify_ _ { list = list }
 
         _ -> pure unit
 
-    Receive {context: {currentUser, lists}} -> do
-      {listSlug} <- H.get
+    Receive { context: { currentUser, lists } } -> do
+      { listSlug } <- H.get
 
       let list = ensureList $ A.find (eq listSlug <<< _.slug) <$> lists
 
-      H.modify_ _ {currentUser = currentUser, list = list}
+      H.modify_ _ { currentUser = currentUser, list = list }
 
       void $ H.fork $ handleAction LoadList
 
@@ -153,7 +155,7 @@ component = connect (selectEq select) $ H.mkComponent
             void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Success updatedList) unit
             -- We modify the local one in case there are no global lists
             -- Eg. when loading this page first
-            H.modify_ _ {list = Success updatedList}
+            H.modify_ _ { list = Success updatedList }
 
             updateStore $ Store.OverLists $ map $ replaceById updatedList
 
@@ -161,16 +163,16 @@ component = connect (selectEq select) $ H.mkComponent
             void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Failure "Could not update list") unit
 
     DeleteList ->
-      H.modify_ _ {confirmDelete = true}
+      H.modify_ _ { confirmDelete = true }
 
     DeleteListCancel ->
-      H.modify_ _ {confirmDelete = false}
+      H.modify_ _ { confirmDelete = false }
 
     DeleteListConfirm -> do
       mbList <- H.gets $ preview (_list <<< _Success)
 
       -- TODO: show toast on success
-      for_ mbList \{id} -> do
+      for_ mbList \{ id } -> do
         result <- deleteList id
         case result of
           -- TODO show error
@@ -180,7 +182,7 @@ component = connect (selectEq select) $ H.mkComponent
             navigate Dashboard
 
   render :: State -> H.ComponentHTML Action Slots m
-  render {list: mbList, confirmDelete, listSlug, userSlug} =
+  render { list: mbList, confirmDelete, listSlug, userSlug } =
     HH.div [] [ header, content ]
 
     where
@@ -191,7 +193,7 @@ component = connect (selectEq select) $ H.mkComponent
             [ HP.classes [ T.flex, T.itemsCenter, T.justifyBetween ] ]
             [ HH.h1
                 [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-                [ HH.text $ RemoteData.maybe "..." _.title mbList  ]
+                [ HH.text $ RemoteData.maybe "..." _.title mbList ]
             , HH.a
                 [ safeHref $ PublicList userSlug listSlug
                 , HE.onClick $ Navigate (PublicList userSlug listSlug) <<< Mouse.toEvent
@@ -240,7 +242,7 @@ component = connect (selectEq select) $ H.mkComponent
         Success list ->
           mkLayout
             [ { cta: Nothing
-              , content: HH.slot F._formless unit ListForm.formComponent {list: Just list} HandleListForm
+              , content: HH.slot F._formless unit ListForm.formComponent { list: Just list } HandleListForm
               , title: "Details"
               , description: Nothing
               }
@@ -315,18 +317,17 @@ component = connect (selectEq select) $ H.mkComponent
                     , T.z20
                     ]
                 ]
-                [ if confirmDelete
-                    then
-                      Button.danger $ (Button.dangerDefaultProps DeleteListConfirm)
-                        { label = HH.text "Confirm"
-                        , props = [ HE.onFocusOut $ const DeleteListCancel ]
-                        , classes = [ T.w32 ]
-                        }
-                    else
-                      Button.danger $ (Button.dangerDefaultProps DeleteList)
-                        { label = HH.text "Delete list"
-                        , classes = [ T.w32 ]
-                        }
+                [ if confirmDelete then
+                    Button.danger $ (Button.dangerDefaultProps DeleteListConfirm)
+                      { label = HH.text "Confirm"
+                      , props = [ HE.onFocusOut $ const DeleteListCancel ]
+                      , classes = [ T.w32 ]
+                      }
+                  else
+                    Button.danger $ (Button.dangerDefaultProps DeleteList)
+                      { label = HH.text "Delete list"
+                      , classes = [ T.w32 ]
+                      }
                 ]
             ]
         ]

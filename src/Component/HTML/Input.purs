@@ -18,39 +18,40 @@ import Tailwind as T
 import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
 type SimpleInputProps act
-  = { error :: Maybe V.FormError
-    , value :: String
-    , action :: String -> act
-    , required :: Boolean
-    , disabled :: Boolean
-    , hideOptional :: Boolean
-    , placeholder :: Maybe String
-    , id :: Maybe String
-    , props :: Array (HH.IProp HTMLinput act)
-    , type_ :: HP.InputType
-    , message :: Maybe String
-    , label :: Maybe String
-    , iconBefore :: Maybe Icons.Icon
-    , iconAfter :: Maybe Icons.Icon
-    }
+  =
+  { error :: Maybe V.FormError
+  , value :: String
+  , action :: String -> act
+  , required :: Boolean
+  , disabled :: Boolean
+  , hideOptional :: Boolean
+  , placeholder :: Maybe String
+  , id :: Maybe String
+  , props :: Array (HH.IProp HTMLinput act)
+  , type_ :: HP.InputType
+  , message :: Maybe String
+  , label :: Maybe String
+  , iconBefore :: Maybe Icons.Icon
+  , iconAfter :: Maybe Icons.Icon
+  }
 
 defaultProps :: forall act. (String -> act) -> SimpleInputProps act
-defaultProps action
-  = { value: ""
-    , error: Nothing
-    , action
-    , disabled: false
-    , required: false
-    , hideOptional: false
-    , placeholder: Nothing
-    , id: Nothing
-    , props: []
-    , type_: HP.InputText
-    , message: Nothing
-    , label: Nothing
-    , iconBefore: Nothing
-    , iconAfter: Nothing
-    }
+defaultProps action =
+  { value: ""
+  , error: Nothing
+  , action
+  , disabled: false
+  , required: false
+  , hideOptional: false
+  , placeholder: Nothing
+  , id: Nothing
+  , props: []
+  , type_: HP.InputText
+  , message: Nothing
+  , label: Nothing
+  , iconBefore: Nothing
+  , iconAfter: Nothing
+  }
 
 input :: forall p i. SimpleInputProps i -> HH.HTML p i
 input groupProps =
@@ -72,7 +73,7 @@ input groupProps =
                   ]
               ]
               [ icon [ Icons.classes [ T.h5, T.w5, T.textGray300 ] ] ]
-          , HH.input
+        , HH.input
             ( append
                 ( catMaybes
                     [ Just $ HP.type_ groupProps.type_
@@ -92,7 +93,7 @@ input groupProps =
                 )
                 groupProps.props
             )
-          -- TODO: extract as function for both input & textarea
+        -- TODO: extract as function for both input & textarea
         , case groupProps.error of
             Just _ ->
               HH.div
@@ -122,28 +123,28 @@ input groupProps =
                   ]
                   [ icon [ Icons.classes [ T.h5, T.w5, T.textGray300 ] ] ]
         ]
-      -- TODO: extract as function for both input & textarea
+    -- TODO: extract as function for both input & textarea
     , whenElem (not $ isJust groupProps.error) \_ ->
         maybeElem groupProps.message \message ->
           HH.p
             [ HP.classes [ T.mt1, T.textSm, T.textGray500 ] ]
             [ HH.text message ]
-      -- TODO: extract as function for both input & textarea
+    -- TODO: extract as function for both input & textarea
     , maybeElem groupProps.error \error ->
-          HH.p
-            [ HP.classes [ T.mt1, T.textSm, T.textManzana ] ]
-            [ HH.text $ errorToString error ]
+        HH.p
+          [ HP.classes [ T.mt1, T.textSm, T.textManzana ] ]
+          [ HH.text $ errorToString error ]
     ]
 
-fieldLabel ::
-  forall r i p.
-  { label :: Maybe String
-  , id :: Maybe String
-  , required :: Boolean
-  , hideOptional :: Boolean
-  | r
-  } ->
-  HH.HTML p i
+fieldLabel
+  :: forall r i p
+   . { label :: Maybe String
+     , id :: Maybe String
+     , required :: Boolean
+     , hideOptional :: Boolean
+     | r
+     }
+  -> HH.HTML p i
 fieldLabel props =
   maybeElem props.label \label ->
     HH.div
@@ -160,10 +161,11 @@ fieldLabel props =
       ]
 
 type ClassesArgs
-  = { hasError :: Boolean
-    , iconBefore :: Boolean
-    , iconAfter :: Boolean
-    }
+  =
+  { hasError :: Boolean
+  , iconBefore :: Boolean
+  , iconAfter :: Boolean
+  }
 
 fieldInputClasses :: ClassesArgs -> Array H.ClassName
 fieldInputClasses { hasError, iconBefore, iconAfter } =
@@ -244,7 +246,7 @@ search props =
         , HP.disabled $ S.null props.value
         ]
         [ case props.value of
-           "" -> Icons.search [ Icons.classes [ T.h4, T.w4 ] ]
-           _ -> Icons.x [ Icons.classes [ T.h4, T.w4 ] ]
+            "" -> Icons.search [ Icons.classes [ T.h4, T.w4 ] ]
+            _ -> Icons.x [ Icons.classes [ T.h4, T.w4 ] ]
         ]
     ]

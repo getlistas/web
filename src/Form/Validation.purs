@@ -117,7 +117,7 @@ avatarFormat = F.hoistFnE_ $ Either.note InvalidAvatar <<< Avatar.parse
 
 note :: forall form m a b. Monad m => F.Validation form m FormError a b -> FormError -> F.Validation form m FormError a b
 note v err = F.Validation \form value ->
- lmap (const err) <$> F.runValidation v form value
+  lmap (const err) <$> F.runValidation v form value
 
 infixl 4 note as <?>
 
@@ -125,7 +125,8 @@ cond :: forall a. (a -> Boolean) -> FormError -> a -> Either FormError a
 cond f err a = if f a then pure a else Left err
 
 -- | Validate an input only if it isn't empty.
-toOptional :: forall form m a b
+toOptional
+  :: forall form m a b
    . Monoid a
   => Eq a
   => Monad m
@@ -137,8 +138,9 @@ toOptional v = F.Validation \form value ->
     _ -> (map <<< map) Just (F.runValidation v form value)
 
 -- | Validate an input only if it isn't empty.
-requiredFromOptional :: forall form m a b.
-     Eq a
+requiredFromOptional
+  :: forall form m a b
+   . Eq a
   => Monad m
   => F.Validation form m FormError a b
   -> F.Validation form m FormError (Maybe a) b
