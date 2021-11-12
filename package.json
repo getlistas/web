@@ -19,6 +19,7 @@
     "css:lock:watch": "twpurs gen-purs --classes css/tailwind-classes.txt --watch",
     "css:purge": "twpurs gen-css --classes css/tailwind-classes.txt --css dev/tailwind.css -o prod/tailwind.css",
     "fixdist": "scripts/fix-dist.sh",
+    "fmt": "purs-tidy format-in-place 'src/**/*.purs'",
     "prep-prod": "rm -rf dist && git checkout dist/vercel.json",
     "pscid:build": "spago build",
     "serve-dev": "parcel dev/index.html --open -p 8080",

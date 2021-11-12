@@ -11,8 +11,8 @@ let
   pursPkgs = import (pkgs.fetchFromGitHub {
     owner = "justinwoo";
     repo = "easy-purescript-nix";
-    rev = "47bdc016c7d56e987ca1aca690b1d6c9816a8584";
-    sha256 = "051fzxd03y0c63sll2bhn0h66dywy9lw6ylyh5vq8fymvix20q94";
+    rev = "7802db65618c2ead3a55121355816b4c41d276d9";
+    sha256 = "0n99hxxcp9yc8yvx7bx4ac6askinfark7dnps3hzz5v9skrvq15q";
   }) { inherit pkgs; };
 
   twpurs = import (builtins.fetchGit {
@@ -29,6 +29,7 @@ in pkgs.stdenv.mkDerivation {
     pursPkgs.purs
     pursPkgs.spago
     pursPkgs.zephyr
+    pursPkgs.purs-tidy
     pkgs.nodejs-14_x
     twpurs
   ];
