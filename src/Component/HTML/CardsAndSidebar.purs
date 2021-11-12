@@ -14,18 +14,20 @@ import Web.Event.Event (Event)
 import Web.UIEvent.MouseEvent (toEvent)
 
 type SidebarItem p
-  = { active :: Boolean
-    , icon :: Icons.Icon
-    , label :: String
-    , link :: Maybe { action :: Event -> p, route :: Route }
-    }
+  =
+  { active :: Boolean
+  , icon :: Icons.Icon
+  , label :: String
+  , link :: Maybe { action :: Event -> p, route :: Route }
+  }
 
 type SectionCard i p
-  = { cta :: Maybe { label :: String, action :: p }
-    , content :: HH.HTML i p
-    , title :: String
-    , description :: Maybe String
-    }
+  =
+  { cta :: Maybe { label :: String, action :: p }
+  , content :: HH.HTML i p
+  , title :: String
+  , description :: Maybe String
+  }
 
 layout :: forall i p. Array (SidebarItem p) -> Array (SectionCard i p) -> HH.HTML i p
 layout items sections =
@@ -51,7 +53,7 @@ layout items sections =
     ]
   where
   cardEl :: SectionCard i p -> HH.HTML i p
-  cardEl {title, description, content, cta} =
+  cardEl { title, description, content, cta } =
     HH.div
       [ HP.classes [ T.shadow, T.smRoundedMd, T.smOverflowHidden ] ]
       [ HH.div
@@ -68,7 +70,7 @@ layout items sections =
               ]
           , content
           ]
-      , maybeElem cta \{action, label} ->
+      , maybeElem cta \{ action, label } ->
           HH.div
             [ HP.classes [ T.px4, T.py3, T.bgGray50, T.textRight, T.smPx6 ] ]
             [ HH.button
@@ -99,7 +101,7 @@ layout items sections =
       ]
 
   itemEl :: SidebarItem p -> HH.HTML i p
-  itemEl {label, icon, active, link} =
+  itemEl { label, icon, active, link } =
     case link, active of
       _, true ->
         HH.a
@@ -158,7 +160,7 @@ layout items sections =
           , HH.span [ HP.classes [ T.truncate ] ] [ HH.text label ]
           ]
 
-      Just {action, route}, _ ->
+      Just { action, route }, _ ->
         HH.a
           [ HP.classes
               [ T.textGray400

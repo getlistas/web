@@ -53,7 +53,7 @@ type Slot = H.Slot Query Output ID
 _slot = Proxy :: Proxy "list"
 
 type Input
-  = {list :: ListWithIdUserAndMeta}
+  = { list :: ListWithIdUserAndMeta }
 
 type StoreState
   = Maybe ProfileWithIdAndEmail
@@ -63,14 +63,14 @@ data Action
   | ToggleShowNextMenu
   | CopyToShare ListResource
   | CopyResourceURL ListResource
-    -- update resources
+  -- update resources
   | CompleteResource ListResource
   | SkipResource ListResource
   | DeleteResource
   | ConfirmDeleteResource ListResource
   | RaiseCreateResource ID
   | RaiseEditResource ListResource
-    -- meta actions
+  -- meta actions
   | Navigate Route Event
   | Receive (Connected StoreState Input)
   | AndCloseNextMenu Action
@@ -78,7 +78,7 @@ data Action
 
 data Query a
   = ResourceAdded ListResource a
-  | ResourceEdited {old :: ListResource, new:: ListResource} a
+  | ResourceEdited { old :: ListResource, new :: ListResource } a
 
 data Output
   = CreateResourceForList ID
@@ -98,23 +98,25 @@ onComplete now next =
 onReverseComplete :: ID -> Maybe DateTime -> Maybe ListResource -> ListWithIdUserAndMeta -> ListWithIdUserAndMeta
 onReverseComplete id date next list
   | id == list.id =
-    over (_resource_metadata <<< _completed_count) (_ - 1)
-      $ set (_resource_metadata <<< _last_completed_at) date
-      $ set (_resource_metadata <<< _next) next list
+      over (_resource_metadata <<< _completed_count) (_ - 1)
+        $ set (_resource_metadata <<< _last_completed_at) date
+        $ set (_resource_metadata <<< _next) next list
   | otherwise = list
 
 -- TODO: clean up actions & state to only operate on the "Next" (ie first) item
 type State
-  = { list :: ListWithIdUserAndMeta
-    , resources :: RemoteData String (Array ListResource)
-    , isProcessingAction :: Boolean
-    , confirmDelete :: Maybe Unit
-    , showMenu :: Boolean
-    , currentUser :: Maybe ProfileWithIdAndEmail
-    }
+  =
+  { list :: ListWithIdUserAndMeta
+  , resources :: RemoteData String (Array ListResource)
+  , isProcessingAction :: Boolean
+  , confirmDelete :: Maybe Unit
+  , showMenu :: Boolean
+  , currentUser :: Maybe ProfileWithIdAndEmail
+  }
 
-component :: forall m.
-     MonadAff m
+component
+  :: forall m
+   . MonadAff m
   => MonadStore Store.Action Store.Store m
   => ManageResource m
   => Clipboard m
@@ -132,7 +134,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       }
   }
   where
-  initialState {context: currentUser, input: {list}} =
+  initialState { context: currentUser, input: { list } } =
     { list
     , resources: A.singleton <$> RemoteData.fromMaybe list.resource_metadata.next
     , isProcessingAction: false
@@ -145,27 +147,27 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
   handleAction = case _ of
     Initialize -> do
       H.modify_ $ over _resources $ \rs -> if RemoteData.isSuccess rs then rs else Loading
-      {list} <- H.get
-      resources <- RemoteData.fromEither <$> note "Failed to load list resources" <$> getListResources {list: list.id, completed: Just false}
-      H.modify_ _ {resources = resources}
+      { list } <- H.get
+      resources <- RemoteData.fromEither <$> note "Failed to load list resources" <$> getListResources { list: list.id, completed: Just false }
+      H.modify_ _ { resources = resources }
 
-    Receive {context: currentUser, input} ->
-      H.modify_ _ {currentUser = currentUser, list = input.list}
+    Receive { context: currentUser, input } ->
+      H.modify_ _ { currentUser = currentUser, list = input.list }
 
     ToggleShowNextMenu -> H.modify_ $ over _showMenu not <<< set _confirmDelete Nothing
 
-    CopyToShare {url} -> do
+    CopyToShare { url } -> do
       host <- H.liftEffect $ Location.host =<< Window.location =<< Window.window
-      void $ writeText $ host <> print routeCodec (CreateResource {url: Just url, text: Nothing, title: Nothing})
+      void $ writeText $ host <> print routeCodec (CreateResource { url: Just url, text: Nothing, title: Nothing })
 
-    CopyResourceURL {url} -> void $ writeText url
+    CopyResourceURL { url } -> void $ writeText url
 
     AndCloseNextMenu action -> do
       void $ H.fork $ handleAction action
-      H.modify_ _ {showMenu = false, confirmDelete = Nothing}
+      H.modify_ _ { showMenu = false, confirmDelete = Nothing }
 
     WhenNotProcessingAction action -> do
-      {isProcessingAction} <- H.get
+      { isProcessingAction } <- H.get
       unless isProcessingAction $ void $ H.fork $ handleAction action
 
     CompleteResource toComplete -> do
@@ -180,7 +182,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       let nextResource = preview (_resources <<< _Success <<< ix 1) state
 
       updateStore $ Store.OverLists $ map
-        $ updateListById state.list.id $ onComplete now nextResource
+        $ updateListById state.list.id
+        $ onComplete now nextResource
 
       result <- completeResource toComplete
 
@@ -204,13 +207,15 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             <<< over (_resources <<< _Success) (flip A.snoc toSkip)
             <<< over (_resources <<< _Success) (fromMaybe [] <<< A.tail)
 
-      let nextResource = preview (_resources <<< _Success <<< ix 1) state
-          lastId = map _.id $ lastOf (_Success <<< traversed) state.resources
+      let
+        nextResource = preview (_resources <<< _Success <<< ix 1) state
+        lastId = map _.id $ lastOf (_Success <<< traversed) state.resources
 
       updateStore $ Store.OverLists $ map
-        $ updateListById state.list.id $ set (_resource_metadata <<< _next) nextResource
+        $ updateListById state.list.id
+        $ set (_resource_metadata <<< _next) nextResource
 
-      result <- changePosition toSkip {previus: lastId}
+      result <- changePosition toSkip { previus: lastId }
 
       -- Rollback
       when (isNothing result) do
@@ -219,12 +224,14 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             <<< over (_resources <<< _Success) (fromMaybe [] <<< A.init)
 
         updateStore $ Store.OverLists $ map
-          $ updateListById state.list.id $ set (_resource_metadata <<< _next) $ Just toSkip
+          $ updateListById state.list.id
+          $ set (_resource_metadata <<< _next)
+          $ Just toSkip
 
       H.modify_ $ set _isProcessingAction false
 
     DeleteResource -> do
-      H.modify_ _ {confirmDelete = Just unit}
+      H.modify_ _ { confirmDelete = Just unit }
 
     ConfirmDeleteResource toDelete -> do
       state <- H.get
@@ -270,35 +277,36 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
       pure $ Just a
 
-    ResourceEdited {old, new} a -> do
+    ResourceEdited { old, new } a -> do
       st <- H.get
 
-      let listChanged = old.list /= new.list
-          onThisList = new.list == st.list.id
-          moveToOtherList = listChanged && not onThisList
-          addedToThisList = listChanged && onThisList
-          onlyUpdated = not listChanged && onThisList
-          nextInList = preview (_resources <<< _Success <<< ix 1) st
+      let
+        listChanged = old.list /= new.list
+        onThisList = new.list == st.list.id
+        moveToOtherList = listChanged && not onThisList
+        addedToThisList = listChanged && onThisList
+        onlyUpdated = not listChanged && onThisList
+        nextInList = preview (_resources <<< _Success <<< ix 1) st
 
       when moveToOtherList do
         H.modify_ $ over (_resources <<< _Success) (A.drop 1)
-                      <<< set (_list <<< _resource_metadata <<< _next) nextInList
+          <<< set (_list <<< _resource_metadata <<< _next) nextInList
 
       when addedToThisList do
         H.modify_ $ over (_resources <<< _Success) (flip A.snoc new)
         when (isNothing st.list.resource_metadata.next) do
-          H.modify_ $  set (_list <<< _resource_metadata <<< _next) (Just new)
+          H.modify_ $ set (_list <<< _resource_metadata <<< _next) (Just new)
 
       when onlyUpdated do
         H.modify_ $ over (_resources <<< _Success) (A.cons new)
-                      <<< over (_resources <<< _Success) (A.drop 1)
+          <<< over (_resources <<< _Success) (A.drop 1)
         when (isNothing st.list.resource_metadata.next) do
-          H.modify_ $  set (_list <<< _resource_metadata <<< _next) (Just new)
+          H.modify_ $ set (_list <<< _resource_metadata <<< _next) (Just new)
 
       pure $ Just a
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render state@{list, showMenu, isProcessingAction, confirmDelete, currentUser} =
+  render state@{ list, showMenu, isProcessingAction, confirmDelete, currentUser } =
     HH.div
       [ HP.classes
           [ T.border2
@@ -321,10 +329,10 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
           ]
 
     toRead = case list.resource_metadata of
-      {next: Just next} ->
+      { next: Just next } ->
         nextEl next $ lengthOf (_resources <<< _Success <<< traversed) state == 1
 
-      {count: 0} ->
+      { count: 0 } ->
         HH.div
           [ HP.classes
               [ T.px4
@@ -359,7 +367,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
               ]
           ]
 
-      {count, completed_count} | count == completed_count ->
+      { count, completed_count } | count == completed_count ->
         HH.div
           [ HP.classes
               [ T.px4
@@ -393,7 +401,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
           ]
           [ HH.text "Something went wrong" ]
 
-    nextLink {url} content =
+    nextLink { url } content =
       HH.a
         [ HP.href url
         , HP.target "_blank"
@@ -436,51 +444,51 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                         , isOpen: showMenu
                         , disabled: isProcessingAction
                         }
-                        $ cons'
-                            { action: WhenNotProcessingAction $ AndCloseNextMenu $ RaiseEditResource next
-                            , label: HH.div
-                                       [ HP.classes [ T.flex, T.itemsCenter ] ]
-                                       [ Icons.pencil [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
-                                       , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Edit" ]
-                                       ]
-                            , disabled: false
-                            }
-                            [ { action: AndCloseNextMenu $ CopyResourceURL next
-                              , label: HH.div
-                                        [ HP.classes [ T.flex, T.itemsCenter ] ]
-                                        [ Icons.clipboardCopy [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
-                                        , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy link" ]
-                                        ]
-                              , disabled: false
-                              }
-                            , { action: AndCloseNextMenu $ CopyToShare next
-                              , label: HH.div
-                                         [ HP.classes [ T.flex, T.itemsCenter ] ]
-                                         [ Icons.share [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
-                                         , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy share link" ]
-                                         ]
-                              , disabled: false
-                              }
-                            , { action: WhenNotProcessingAction $ AndCloseNextMenu $ SkipResource next
-                              , label: HH.div
-                                         [ HP.classes [ T.flex, T.itemsCenter ] ]
-                                         [ Icons.sortDescending [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
-                                         , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Move to last" ]
-                                         ]
-                              , disabled: isLast || isProcessingAction
-                              }
-                            , { action: WhenNotProcessingAction $ maybe
-                                          DeleteResource
-                                          (const $ AndCloseNextMenu $ ConfirmDeleteResource next)
-                                          confirmDelete
-                              , label: HH.div
-                                         [ HP.classes [ T.flex, T.itemsCenter ] ]
-                                         [ Icons.trash [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
-                                         , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text $ maybe "Remove" (const "Confirm") confirmDelete ]
-                                         ]
-                              , disabled: isProcessingAction
-                              }
+                    $ cons'
+                        { action: WhenNotProcessingAction $ AndCloseNextMenu $ RaiseEditResource next
+                        , label: HH.div
+                            [ HP.classes [ T.flex, T.itemsCenter ] ]
+                            [ Icons.pencil [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
+                            , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Edit" ]
                             ]
+                        , disabled: false
+                        }
+                        [ { action: AndCloseNextMenu $ CopyResourceURL next
+                          , label: HH.div
+                              [ HP.classes [ T.flex, T.itemsCenter ] ]
+                              [ Icons.clipboardCopy [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
+                              , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy link" ]
+                              ]
+                          , disabled: false
+                          }
+                        , { action: AndCloseNextMenu $ CopyToShare next
+                          , label: HH.div
+                              [ HP.classes [ T.flex, T.itemsCenter ] ]
+                              [ Icons.share [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
+                              , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Copy share link" ]
+                              ]
+                          , disabled: false
+                          }
+                        , { action: WhenNotProcessingAction $ AndCloseNextMenu $ SkipResource next
+                          , label: HH.div
+                              [ HP.classes [ T.flex, T.itemsCenter ] ]
+                              [ Icons.sortDescending [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
+                              , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text "Move to last" ]
+                              ]
+                          , disabled: isLast || isProcessingAction
+                          }
+                        , { action: WhenNotProcessingAction $ maybe
+                              DeleteResource
+                              (const $ AndCloseNextMenu $ ConfirmDeleteResource next)
+                              confirmDelete
+                          , label: HH.div
+                              [ HP.classes [ T.flex, T.itemsCenter ] ]
+                              [ Icons.trash [ Icons.classes [ T.flexShrink0, T.h5, T.w5, T.textGray200 ] ]
+                              , HH.span [ HP.classes [ T.ml2 ] ] [ HH.text $ maybe "Remove" (const "Confirm") confirmDelete ]
+                              ]
+                          , disabled: isProcessingAction
+                          }
+                        ]
                 ]
 
             ]
@@ -494,7 +502,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
     listLinkProps route rest =
       case currentUser of
-        Just {slug} ->
+        Just { slug } ->
           [ safeHref $ route slug
           , HE.onClick (Navigate (route slug) <<< Mouse.toEvent)
           ]
@@ -508,15 +516,15 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             [ HP.classes [ T.flex, T.justifyBetween, T.itemsCenter ] ]
             [ HH.a
                 ( listLinkProps (flip PublicList list.slug)
-                  [ HP.classes
-                      [ T.textXl
-                      , T.textGray400
-                      , T.hoverTextKiwi
-                      , T.hoverUnderline
-                      , T.fontBold
-                      , T.truncate
-                      ]
-                  ]
+                    [ HP.classes
+                        [ T.textXl
+                        , T.textGray400
+                        , T.hoverTextKiwi
+                        , T.hoverUnderline
+                        , T.fontBold
+                        , T.truncate
+                        ]
+                    ]
                 )
                 [ HH.text list.title ]
             , HH.div
@@ -534,7 +542,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                     ]
                     [ Icons.plus [ Icons.classes [ T.h5, T.w5, T.textGray300, T.hoverTextGray400 ] ] ]
                 , HH.a
-                    ( listLinkProps (flip EditList list.slug) [ HP.classes [ T.ml2 ] ] )
+                    (listLinkProps (flip EditList list.slug) [ HP.classes [ T.ml2 ] ])
                     [ Icons.cog [ Icons.classes [ T.h5, T.w5, T.textGray300, T.hoverTextGray400 ] ] ]
                 ]
             ]

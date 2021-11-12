@@ -36,7 +36,7 @@ data Action
   | HandleCreateForm CreateListFields
   | Navigate Route Event.Event
 
-type State = {currentUser :: Maybe ProfileWithIdAndEmail}
+type State = { currentUser :: Maybe ProfileWithIdAndEmail }
 
 type ChildSlots
   = (formless :: ListForm.Slot)
@@ -57,12 +57,12 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       }
   }
   where
-  initialState {context: currentUser} = {currentUser}
+  initialState { context: currentUser } = { currentUser }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
-    Receive {context: currentUser} ->
-      H.modify_ _ {currentUser = currentUser}
+    Receive { context: currentUser } ->
+      H.modify_ _ { currentUser = currentUser }
 
     Navigate route e -> navigate_ e route
 
@@ -73,9 +73,9 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
       case mbCreatedList of
         Just createdList -> do
-           void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Success createdList) unit
-           updateStore $ Store.OverLists $ flip A.snoc createdList
-           navigate Dashboard
+          void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Success createdList) unit
+          updateStore $ Store.OverLists $ flip A.snoc createdList
+          navigate Dashboard
         Nothing ->
           void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Failure "Could not create list") unit
 
@@ -86,14 +86,14 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       [ title
       , HH.div
           [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2 ] ]
-          [ HH.slot F._formless unit ListForm.formComponent {list: Nothing} HandleCreateForm
+          [ HH.slot F._formless unit ListForm.formComponent { list: Nothing } HandleCreateForm
           ]
       ]
 
     where
     title =
       HH.div
-        [ HP.classes [ T.flex, T.itemsCenter, T.textGray400, T.mb6, T.text4xl, T.fontBold, T.pt2  ] ]
+        [ HP.classes [ T.flex, T.itemsCenter, T.textGray400, T.mb6, T.text4xl, T.fontBold, T.pt2 ] ]
         [ HH.a
             [ safeHref Dashboard
             , HE.onClick $ Navigate Dashboard <<< toEvent

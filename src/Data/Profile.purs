@@ -17,36 +17,39 @@ import Slug (Slug)
 import Slug as Slug
 
 type ProfileRep row
-  = ( name :: Username
-    , slug :: Slug
-    | row
-    )
+  =
+  ( name :: Username
+  , slug :: Slug
+  | row
+  )
 
 type Profile
   = { | ProfileRep () }
 
 type PublicProfile
-  = { | ProfileRep ( id :: ID, avatar :: Maybe Avatar ) }
+  = { | ProfileRep (id :: ID, avatar :: Maybe Avatar) }
 
 type ProfileWithEmail
-  = { | ProfileRep ( email :: Email ) }
+  = { | ProfileRep (email :: Email) }
 
 type ProfileWithIdAndEmail
-  = {
-    | ProfileRep
+  =
+  {
+  | ProfileRep
       ( email :: Email
       , id :: ID
       , avatar :: Maybe Avatar
       )
-    }
+  }
 
 type ProfileWithEmailPassword
-  = {
-    | ProfileRep
+  =
+  {
+  | ProfileRep
       ( email :: Email
       , password :: Maybe String -- TODO newtype with validation
       )
-    }
+  }
 
 profileCodec :: JsonCodec Profile
 profileCodec =

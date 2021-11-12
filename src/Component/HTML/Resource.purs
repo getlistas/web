@@ -21,7 +21,7 @@ import Web.Event.Event (Event)
 import Web.UIEvent.MouseEvent as Mouse
 
 resource :: forall i p. Maybe ProfileWithIdAndEmail -> Maybe (Route -> Event -> p) -> Array ListWithIdUserAndMeta -> ListResource -> HH.HTML i p
-resource currentUser navigate lists r@{url, list, completed_at, tags} =
+resource currentUser navigate lists r@{ url, list, completed_at, tags } =
   HH.div
     [ HP.classes
         [ T.roundedMd
@@ -85,9 +85,8 @@ resource currentUser navigate lists r@{url, list, completed_at, tags} =
             , T.bottom1
             ]
         ]
-        [ if isJust completed_at
-            then Icons.check [ Icons.classes [ T.textKiwi, T.h5, T.w5 ] ]
-            else HH.text ""
+        [ if isJust completed_at then Icons.check [ Icons.classes [ T.textKiwi, T.h5, T.w5 ] ]
+          else HH.text ""
         ]
     ]
 

@@ -10,8 +10,8 @@ import Listasio.Component.HTML.Utils (whenElem)
 import Tailwind as T
 import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
-modal :: forall i p. Boolean -> {noOp :: p, onClose :: p} -> HH.HTML i p -> HH.HTML i p
-modal show {noOp, onClose} content =
+modal :: forall i p. Boolean -> { noOp :: p, onClose :: p } -> HH.HTML i p -> HH.HTML i p
+modal show { noOp, onClose } content =
   whenElem show \_ ->
     HH.div
       [ HP.classes [ T.fixed, T.z10, T.inset0, T.overflowYAuto ]
@@ -33,7 +33,6 @@ modal show {noOp, onClose} content =
               ]
           ]
           [ -- Background overlay
-
             -- TODO
             -- Entering: "ease-out duration-300"
             --   From: "opacity-0"
@@ -47,18 +46,18 @@ modal show {noOp, onClose} content =
               , HP.classes [ T.fixed, T.inset0, T.transitionOpacity ]
               ]
               [ HH.div [ HP.classes [ T.absolute, T.inset0, T.bgGray200, T.opacity50 ] ] [] ]
-            -- This element is to trick the browser into centering the modal contents
+          -- This element is to trick the browser into centering the modal contents
           , HH.span [ HP.classes [ T.hidden, T.smInlineBlock, T.smAlignMiddle, T.smHScreen ] ] []
-            -- Modal panel
+          -- Modal panel
 
-            -- TODO
-            -- Entering: "ease-out duration-300"
-            --   From: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            --   To: "opacity-100 translate-y-0 sm:scale-100"
+          -- TODO
+          -- Entering: "ease-out duration-300"
+          --   From: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          --   To: "opacity-100 translate-y-0 sm:scale-100"
 
-            -- Leaving: "ease-in duration-200"
-            --   From: "opacity-100 translate-y-0 sm:scale-100"
-            --   To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          -- Leaving: "ease-in duration-200"
+          --   From: "opacity-100 translate-y-0 sm:scale-100"
+          --   To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           , whenElem show \_ ->
               HH.div
                 [ HP.classes

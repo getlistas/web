@@ -29,6 +29,7 @@ type Slot
   = F.Slot ListForm FormQuery () CreateListFields Unit
 
 newtype ListForm (r :: Row Type -> Type) f = ListForm (r (FormRow f))
+
 derive instance Newtype (ListForm r f) _
 
 type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
@@ -48,18 +49,19 @@ data FormAction
   = Submit Event.Event
 
 type FormInput
-  = {list :: Maybe ListWithIdUserAndMeta}
+  = { list :: Maybe ListWithIdUserAndMeta }
 
 type FormState
-  = ( status :: RemoteData String Unit
-    , isNew :: Boolean
-    , initialList :: Maybe ListWithIdUserAndMeta
-    )
+  =
+  ( status :: RemoteData String Unit
+  , isNew :: Boolean
+  , initialList :: Maybe ListWithIdUserAndMeta
+  )
 
-formComponent ::
-  forall slots m.
-  MonadAff m =>
-  F.Component ListForm FormQuery slots FormInput CreateListFields m
+formComponent
+  :: forall slots m
+   . MonadAff m
+  => F.Component ListForm FormQuery slots FormInput CreateListFields m
 formComponent =
   F.component formInput
     $ F.defaultSpec
@@ -70,14 +72,14 @@ formComponent =
         }
   where
   formInput :: FormInput -> F.Input ListForm FormState m
-  formInput {list} =
+  formInput { list } =
     { validators:
         ListForm
           { title: V.required >>> V.maxLength 100
           , description: V.toOptional $ V.maxLength 500
           , tags: V.maxLengthArr 4
-                    <<< F.hoistFn_ (filter (not <<< String.null) <<< map trim <<< split (Pattern ","))
-                    <?> V.WithMsg "Cannot have more than 4 tags"
+              <<< F.hoistFn_ (filter (not <<< String.null) <<< map trim <<< split (Pattern ","))
+                <?> V.WithMsg "Cannot have more than 4 tags"
           , is_public: F.noValidation
           }
     , initialInputs: map initialInputs list
@@ -86,7 +88,7 @@ formComponent =
     , isNew: isNothing list
     }
 
-  initialInputs {title, description, tags, is_public} = F.wrapInputFields
+  initialInputs { title, description, tags, is_public } = F.wrapInputFields
     { title
     , description: fromMaybe "" description
     , tags: joinWith ", " tags
@@ -100,24 +102,24 @@ formComponent =
   handleAction = case _ of
     Submit event -> do
       H.liftEffect $ Event.preventDefault event
-      {status, dirty} <- H.get
+      { status, dirty } <- H.get
       let shouldSubmit = dirty && not (isLoading status)
       when shouldSubmit do eval F.submit
 
   handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
     SetCreateStatus (Success newList) a -> do
-      H.modify_ _ {status = Success unit, initialList = Just newList}
+      H.modify_ _ { status = Success unit, initialList = Just newList }
       eval $ F.loadForm $ initialInputs newList
       pure (Just a)
 
     SetCreateStatus status a -> do
-      H.modify_ _ {status = map (const unit) status}
+      H.modify_ _ { status = map (const unit) status }
       pure (Just a)
 
   proxies = F.mkSProxies (Proxy :: Proxy ListForm)
 
-  render {dirty, form, status, submitting, isNew} =
+  render { dirty, form, status, submitting, isNew } =
     HH.form
       [ HE.onSubmit $ F.injAction <<< Submit
       , HP.noValidate true
@@ -181,5 +183,5 @@ formComponent =
       Field.textarea proxies.description form $ Field.textareaDefaultProps
         { label = Just "Description"
         , id = Just "description"
-        , props = [HP.rows 3]
+        , props = [ HP.rows 3 ]
         }

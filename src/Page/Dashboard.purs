@@ -54,9 +54,10 @@ _slot = Proxy
 type Lists = RemoteData String (Array ListWithIdUserAndMeta)
 
 type StoreState
-  = { currentUser :: Maybe ProfileWithIdAndEmail
-    , lists :: Lists
-    }
+  =
+  { currentUser :: Maybe ProfileWithIdAndEmail
+  , lists :: Lists
+  }
 
 data Action
   = Initialize
@@ -68,30 +69,32 @@ data Action
   | HandleListOutput List.Output
   | CloseEditModal
   | ResourceEdited EditResource.Output
-    -- meta actions
+  -- meta actions
   | Navigate Route Event
   | NoOp
 
 type State
-  = { currentUser :: Maybe ProfileWithIdAndEmail
-    , lists :: Lists
-    , showAddResource :: Boolean
-    , showEditResource :: Maybe ListResource
-    , pastedUrl :: Maybe String
-    , listToAddResource :: Maybe ID
-    }
+  =
+  { currentUser :: Maybe ProfileWithIdAndEmail
+  , lists :: Lists
+  , showAddResource :: Boolean
+  , showEditResource :: Maybe ListResource
+  , pastedUrl :: Maybe String
+  , listToAddResource :: Maybe ID
+  }
 
 type ChildSlots
-  = ( createResource :: CreateResource.Slot
-    , editResource :: EditResource.Slot
-    , list :: List.Slot
-    )
+  =
+  ( createResource :: CreateResource.Slot
+  , editResource :: EditResource.Slot
+  , list :: List.Slot
+  )
 
 noteError :: forall a. Maybe a -> Either String a
 noteError = note "Could not fetch your lists"
 
 select :: Store.Store -> StoreState
-select {lists, currentUser} = {lists, currentUser}
+select { lists, currentUser } = { lists, currentUser }
 
 component
   :: forall q o m
@@ -113,7 +116,7 @@ component = connect (selectEq select) $ H.mkComponent
       }
   }
   where
-  initialState {context: {currentUser, lists}} =
+  initialState { context: { currentUser, lists } } =
     { currentUser
     , lists
     , showAddResource: false
@@ -133,39 +136,39 @@ component = connect (selectEq select) $ H.mkComponent
       -- https://github.com/purescript-halogen/purescript-halogen/blob/2f8531168207cda5256dc64da60f791afe3855dc/src/Halogen/HTML/Events.purs#L151-L152
       void $ H.subscribe $ HES.eventListener Clipboard.paste document (Just <<< PasteUrl <<< unsafeCoerce)
 
-    Receive {context: {lists, currentUser}} ->
-      H.modify_ _ {currentUser = currentUser, lists = lists}
+    Receive { context: { lists, currentUser } } ->
+      H.modify_ _ { currentUser = currentUser, lists = lists }
 
     Navigate route e -> navigate_ e route
 
     LoadLists -> do
-      {lists} <- H.get
+      { lists } <- H.get
       when (RemoteData.isNotAsked lists) $ updateStore $ Store.SetLists Loading
       result <- RemoteData.fromEither <$> noteError <$> getLists
       updateStore $ Store.SetLists result
 
     ResourceAdded (CreateResource.Created resource) -> do
       H.tell List._slot resource.list $ List.ResourceAdded resource
-      H.modify_ _ {showAddResource = false, pastedUrl = Nothing}
+      H.modify_ _ { showAddResource = false, pastedUrl = Nothing }
 
     HandleListOutput (List.CreateResourceForList id) -> do
-      {showEditResource} <- H.get
-      when (isNothing showEditResource) do H.modify_ _ {listToAddResource = Just id, showAddResource = true}
+      { showEditResource } <- H.get
+      when (isNothing showEditResource) do H.modify_ _ { listToAddResource = Just id, showAddResource = true }
 
     HandleListOutput (List.EditResource resource) -> do
-      {showAddResource} <- H.get
-      when (not showAddResource) do H.modify_ _ {showEditResource = Just resource}
+      { showAddResource } <- H.get
+      when (not showAddResource) do H.modify_ _ { showEditResource = Just resource }
 
-    CloseEditModal -> H.modify_ _ {showEditResource = Nothing}
+    CloseEditModal -> H.modify_ _ { showEditResource = Nothing }
 
-    ResourceEdited (EditResource.Updated update@{old, new}) -> do
+    ResourceEdited (EditResource.Updated update@{ old, new }) -> do
       H.tell List._slot old.list $ List.ResourceEdited update
       when (old.list /= new.list) do
         H.tell List._slot old.list $ List.ResourceEdited update
-      H.modify_ _ {showEditResource = Nothing}
+      H.modify_ _ { showEditResource = Nothing }
 
     ToggleAddResource -> do
-      {showEditResource} <- H.get
+      { showEditResource } <- H.get
       when (isNothing showEditResource) do
         H.modify_ \s -> s
           { showAddResource = not s.showAddResource
@@ -174,10 +177,10 @@ component = connect (selectEq select) $ H.mkComponent
           }
 
     PasteUrl event -> do
-      {showAddResource, lists, showEditResource} <- H.get
+      { showAddResource, lists, showEditResource } <- H.get
       when (not showAddResource && isNothing showEditResource && RemoteData.isSuccess lists) do
         mbUrl <- H.liftEffect $ filter Util.isUrl <$> traverse (DataTransfer.getData MediaType.textPlain) (Clipboard.clipboardData event)
-        for_ mbUrl \url -> H.modify_ _ {showAddResource = true, pastedUrl = Just url}
+        for_ mbUrl \url -> H.modify_ _ { showAddResource = true, pastedUrl = Just url }
 
     NoOp -> pure unit
 
@@ -201,9 +204,8 @@ component = connect (selectEq select) $ H.mkComponent
               []
               [ HH.button
                   [ HE.onClick \_ ->
-                      if st.showAddResource
-                        then NoOp
-                        else ToggleAddResource
+                      if st.showAddResource then NoOp
+                      else ToggleAddResource
                   , HP.classes
                       [ T.flexNone
                       , T.cursorPointer
@@ -233,28 +235,30 @@ component = connect (selectEq select) $ H.mkComponent
               [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2, T.xlGridCols3, T.gap4, T.itemsStart ] ]
               $ snoc
                   ( map
-                      (\list -> HH.slot List._slot list.id List.component {list} HandleListOutput)
+                      (\list -> HH.slot List._slot list.id List.component { list } HandleListOutput)
                       lists
                   )
                   listCreateCard
-          , Modal.modal st.showAddResource ({onClose: ToggleAddResource, noOp: NoOp}) $
+          , Modal.modal st.showAddResource ({ onClose: ToggleAddResource, noOp: NoOp }) $
               HH.div
                 []
                 [ HH.div
                     [ HP.classes [ T.textCenter, T.textGray400, T.text2xl, T.fontBold, T.mb4 ] ]
                     [ HH.text "Add new resource" ]
                 , whenElem st.showAddResource \_ ->
-                    let input = {lists, url: st.pastedUrl, selectedList: st.listToAddResource, text: Nothing, title: Nothing}
-                      in HH.slot CreateResource._slot unit CreateResource.component input ResourceAdded
+                    let
+                      input = { lists, url: st.pastedUrl, selectedList: st.listToAddResource, text: Nothing, title: Nothing }
+                    in
+                      HH.slot CreateResource._slot unit CreateResource.component input ResourceAdded
                 ]
-          , Modal.modal (isJust st.showEditResource) ({onClose: CloseEditModal, noOp: NoOp}) $
+          , Modal.modal (isJust st.showEditResource) ({ onClose: CloseEditModal, noOp: NoOp }) $
               HH.div
                 []
                 [ HH.div
                     [ HP.classes [ T.textCenter, T.textGray400, T.text2xl, T.fontBold, T.mb4 ] ]
                     [ HH.text "Edit resource" ]
                 , maybeElem st.showEditResource \resource ->
-                    HH.slot EditResource._slot unit EditResource.component {lists, resource} ResourceEdited
+                    HH.slot EditResource._slot unit EditResource.component { lists, resource } ResourceEdited
                 ]
           ]
 

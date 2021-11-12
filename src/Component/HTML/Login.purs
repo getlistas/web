@@ -33,7 +33,7 @@ _slot = Proxy
 type Slot = forall query. H.Slot query Output Unit
 
 type ChildSlots
-  = ( formless :: F.Slot LoginForm FormQuery () LoginFields Unit )
+  = (formless :: F.Slot LoginForm FormQuery () LoginFields Unit)
 
 data Output
   = GoToRegister
@@ -46,19 +46,20 @@ data Action
   | SwitchToRegister Event.Event
 
 type State
-  = { redirect :: Boolean
-    , status :: RemoteData String Unit
-    }
+  =
+  { redirect :: Boolean
+  , status :: RemoteData String Unit
+  }
 
-type Input = {redirect :: Boolean}
+type Input = { redirect :: Boolean }
 
-component ::
-  forall q m.
-  MonadAff m =>
-  Navigate m =>
-  ManageUser m =>
-  Analytics m =>
-  H.Component q Input Output m
+component
+  :: forall q m
+   . MonadAff m
+  => Navigate m
+  => ManageUser m
+  => Analytics m
+  => H.Component q Input Output m
 component =
   H.mkComponent
     { initialState
@@ -69,7 +70,7 @@ component =
         }
     }
   where
-  initialState {redirect} = {redirect, status: NotAsked}
+  initialState { redirect } = { redirect, status: NotAsked }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots Output m Unit
   handleAction = case _ of
@@ -77,42 +78,42 @@ component =
       void $ H.liftAff $ initGoogleAuth
 
     HandleLoginForm fields -> do
-      {status} <- H.get
+      { status } <- H.get
       when (not $ isLoading status) $ do
         void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus Loading unit
-        H.modify_ _ {status = Loading}
+        H.modify_ _ { status = Loading }
 
         mbProfile <- loginUser fields
 
         case mbProfile of
           Nothing -> do
-             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Failure "Could not login") unit
-             H.modify_ _ {status = Failure "Could not login"}
+            void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Failure "Could not login") unit
+            H.modify_ _ { status = Failure "Could not login" }
 
-          Just {email, id} -> do
-            userSet {email: unwrap email, userId: ID.toString id}
+          Just { email, id } -> do
+            userSet { email: unwrap email, userId: ID.toString id }
             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Success unit) unit
-            H.modify_ _ {status = Success unit}
+            H.modify_ _ { status = Success unit }
             st <- H.get
             when st.redirect (navigate Dashboard)
 
     HandleGoogleLogin -> do
-      {status} <- H.get
+      { status } <- H.get
       when (not $ isLoading status) do
         void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus Loading unit
-        H.modify_ _ {status = Loading}
+        H.modify_ _ { status = Loading }
 
         mbProfile <- googleLoginUser
 
         case mbProfile of
           Nothing -> do
             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus NotAsked unit
-            H.modify_ _ {status = NotAsked}
+            H.modify_ _ { status = NotAsked }
 
-          Just {email, id} -> do
-            userSet {email: unwrap email, userId: ID.toString id}
+          Just { email, id } -> do
+            userSet { email: unwrap email, userId: ID.toString id }
             void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Success unit) unit
-            H.modify_ _ {status = Success unit}
+            H.modify_ _ { status = Success unit }
             st <- H.get
             when st.redirect (navigate Dashboard)
 
@@ -123,7 +124,7 @@ component =
       H.raise GoToRegister
 
   render :: State -> H.ComponentHTML Action ChildSlots m
-  render {status} =
+  render { status } =
     HH.div
       [ HP.classes [ T.flex, T.flexCol, T.itemsCenter ] ]
       [ HH.button
@@ -165,16 +166,18 @@ component =
       , HH.slot F._formless unit formComponent unit HandleLoginForm
       , HH.p
           [ HP.classes [ T.mt4 ] ]
-          [ HH.span [ HP.classes [ T.textGray400 ] ] [HH.text "Don't have an account? " ]
+          [ HH.span [ HP.classes [ T.textGray400 ] ] [ HH.text "Don't have an account? " ]
           , HH.a
               [ HP.classes [ T.textDurazno ]
-              , safeHref Register, HE.onClick $ SwitchToRegister <<< Mouse.toEvent
+              , safeHref Register
+              , HE.onClick $ SwitchToRegister <<< Mouse.toEvent
               ]
               [ HH.text "Sign up" ]
           ]
       ]
 
 newtype LoginForm (r :: Row Type -> Type) f = LoginForm (r (FormRow f))
+
 derive instance Newtype (LoginForm r f) _
 
 type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
@@ -191,10 +194,10 @@ derive instance functorFormQuery :: Functor FormQuery
 data FormAction
   = Submit Event.Event
 
-formComponent ::
-  forall i slots m.
-  MonadAff m =>
-  F.Component LoginForm FormQuery slots i LoginFields m
+formComponent
+  :: forall i slots m
+   . MonadAff m
+  => F.Component LoginForm FormQuery slots i LoginFields m
 formComponent =
   F.component formInput
     $ F.defaultSpec
@@ -204,7 +207,7 @@ formComponent =
         , handleAction = handleAction
         }
   where
-  formInput :: i -> F.Input LoginForm ( status :: RemoteData String Unit ) m
+  formInput :: i -> F.Input LoginForm (status :: RemoteData String Unit) m
   formInput _ =
     { validators:
         LoginForm
@@ -220,7 +223,7 @@ formComponent =
   handleAction = case _ of
     Submit event -> do
       H.liftEffect $ Event.preventDefault event
-      {status} <- H.get
+      { status } <- H.get
       when (not $ isLoading status) do eval F.submit
 
     where
@@ -229,12 +232,12 @@ formComponent =
   handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
   handleQuery = case _ of
     SetLoginStatus status a -> do
-      H.modify_ _ {status = status}
+      H.modify_ _ { status = status }
       pure (Just a)
 
   proxies = F.mkSProxies (Proxy :: Proxy LoginForm)
 
-  renderLogin {form, status, submitting} =
+  renderLogin { form, status, submitting } =
     HH.form
       [ HE.onSubmit $ F.injAction <<< Submit
       , HP.noValidate true

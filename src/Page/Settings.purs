@@ -38,6 +38,7 @@ _slot :: Proxy "settings"
 _slot = Proxy
 
 newtype Form (r :: Row Type -> Type) f = Form (r (FormRow f))
+
 derive instance Newtype (Form r f) _
 
 type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
@@ -53,15 +54,15 @@ data Action
   | Navigate Route Event
 
 type State
-  = {currentUser :: Maybe ProfileWithIdAndEmail}
+  = { currentUser :: Maybe ProfileWithIdAndEmail }
 
-component ::
-  forall q o m.
-  MonadAff m =>
-  MonadStore Store.Action Store.Store m =>
-  Navigate m =>
-  ManageUser m =>
-  H.Component q Unit o m
+component
+  :: forall q o m
+   . MonadAff m
+  => MonadStore Store.Action Store.Store m
+  => Navigate m
+  => ManageUser m
+  => H.Component q Unit o m
 component = connect (selectEq _.currentUser) $ H.mkComponent
   { initialState
   , render
@@ -73,11 +74,11 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             }
   }
   where
-  initialState {context: currentUser} = {currentUser}
+  initialState { context: currentUser } = { currentUser }
 
   handleAction = case _ of
-    Receive {context: currentUser} -> do
-      H.modify_ _ {currentUser = currentUser}
+    Receive { context: currentUser } -> do
+      H.modify_ _ { currentUser = currentUser }
       case currentUser of
         -- if we dont' have a profile something went completely wrong
         Nothing -> logout
@@ -87,11 +88,11 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             , slug: Slug.toString profile.slug
             }
 
-    HandleForm {name, slug} -> do
+    HandleForm { name, slug } -> do
       -- TODO: check response !!!
-      updateUser {name, slug}
+      updateUser { name, slug }
       H.modify_ $ set (_currentUser <<< _Just <<< _slug) slug
-                    <<< set (_currentUser <<< _Just <<< _name) name
+        <<< set (_currentUser <<< _Just <<< _name) name
 
     LogUserOut -> logout
 
@@ -144,9 +145,10 @@ _form = Proxy :: Proxy "settingsForm"
 data FormAction
   = Submit Event.Event
 
-formComponent :: forall m query slots.
-  MonadAff m =>
-  F.Component Form query slots Unit Profile m
+formComponent
+  :: forall m query slots
+   . MonadAff m
+  => F.Component Form query slots Unit Profile m
 formComponent =
   F.component formInput
     $ F.defaultSpec
@@ -175,7 +177,7 @@ formComponent =
     where
     eval act = F.handleAction handleAction handleEvent act
 
-  renderForm {form, submitting} =
+  renderForm { form, submitting } =
     HH.form
       [ HE.onSubmit $ F.injAction <<< Submit
       , HP.noValidate true

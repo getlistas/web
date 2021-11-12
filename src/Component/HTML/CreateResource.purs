@@ -33,33 +33,36 @@ data Action
   | LoadLists
 
 type State
-  = { lists :: Array ListWithIdUserAndMeta
-    , selectedList :: Maybe ID
-    , url :: Maybe String
-    , title :: Maybe String
-    , text :: Maybe String
-    }
+  =
+  { lists :: Array ListWithIdUserAndMeta
+  , selectedList :: Maybe ID
+  , url :: Maybe String
+  , title :: Maybe String
+  , text :: Maybe String
+  }
 
 type Input
-  = { lists :: Array ListWithIdUserAndMeta
-    , selectedList :: Maybe ID
-    , url :: Maybe String
-    , title :: Maybe String
-    , text :: Maybe String
-    }
+  =
+  { lists :: Array ListWithIdUserAndMeta
+  , selectedList :: Maybe ID
+  , url :: Maybe String
+  , title :: Maybe String
+  , text :: Maybe String
+  }
 
 data Output
   = Created ListResource
 
 type ChildSlots
-  = ( formless :: ResourceForm.Slot )
+  = (formless :: ResourceForm.Slot)
 
 filterNonAlphanum :: String -> String
 filterNonAlphanum =
   String.fromCodePointArray <<< A.filter isAlphaNum <<< String.toCodePointArray
 
-component :: forall query m.
-     MonadAff m
+component
+  :: forall query m
+   . MonadAff m
   => MonadStore Store.Action Store.Store m
   => ManageList m
   => ManageResource m
@@ -73,7 +76,7 @@ component = H.mkComponent
       }
   }
   where
-  initialState {lists, selectedList, url, title, text} =
+  initialState { lists, selectedList, url, title, text } =
     { lists: A.sortWith (filterNonAlphanum <<< _.title) lists
     , selectedList
     , url
@@ -102,11 +105,11 @@ component = H.mkComponent
       updateStore $ Store.SetLists result
 
   render :: State -> HH.ComponentHTML Action ChildSlots m
-  render {lists, selectedList, url, title, text} =
+  render { lists, selectedList, url, title, text } =
     HH.div
       []
       [ HH.slot F._formless unit ResourceForm.formComponent formInput HandleFormMessage ]
     where
-    formInput = {lists, selectedList, initialInput}
-    initialInput = ResourceForm.InputToCreate {url, title, text}
+    formInput = { lists, selectedList, initialInput }
+    initialInput = ResourceForm.InputToCreate { url, title, text }
 

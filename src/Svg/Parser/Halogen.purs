@@ -13,8 +13,17 @@ import Prelude
 import Data.Bifunctor (lmap)
 import Data.Array (fromFoldable)
 import Data.Either (Either(..))
-import Halogen.HTML (HTML, IProp, Namespace(Namespace), ElemName(ElemName),
-                     AttrName(AttrName), span, text, elementNS, attr)
+import Halogen.HTML
+  ( HTML
+  , IProp
+  , Namespace(Namespace)
+  , ElemName(ElemName)
+  , AttrName(AttrName)
+  , span
+  , text
+  , elementNS
+  , attr
+  )
 import Svg.Parser (SvgNode(..), Element, SvgAttribute(..), parseToSvgNode)
 
 ns :: Namespace
@@ -33,8 +42,8 @@ svgElementToHtmlWithAttrs :: forall p r i. Element -> Array (IProp r i) -> HTML 
 svgElementToHtmlWithAttrs ele newAttrs =
   elementNS ns (ElemName ele.name) (attrs <> newAttrs) children
   where
-    attrs = fromFoldable $ svgAttributeToProp <$> ele.attributes
-    children = fromFoldable $ svgNodeToHtml <$> ele.children
+  attrs = fromFoldable $ svgAttributeToProp <$> ele.attributes
+  children = fromFoldable $ svgNodeToHtml <$> ele.children
 
 -- | Convert `SvgNode` to `HTML`.
 svgNodeToHtml :: forall p i. SvgNode -> HTML p i
@@ -57,4 +66,4 @@ icon input attrs =
     Right (SvgElement element) -> svgElementToHtmlWithAttrs element attrs
     _ ->
       span [ attr (AttrName "style") "color: red;" ]
-      [ text "!SVG Parse Failed!" ]
+        [ text "!SVG Parse Failed!" ]

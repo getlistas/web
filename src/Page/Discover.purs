@@ -54,18 +54,20 @@ data Action
   | SubscribeToList PublicList
 
 type Items
-  = { refreshing :: Boolean
-    , items :: Array PublicList
-    }
+  =
+  { refreshing :: Boolean
+  , items :: Array PublicList
+  }
 
 type State
-  = { currentUser :: Maybe ProfileWithIdAndEmail
-    , lists :: RemoteData String Items
-    , ownLists :: RemoteData String (Array ListWithIdUserAndMeta)
-    , actionInProgress :: Array ID
-    , page :: Int
-    , isLast :: Boolean
-    }
+  =
+  { currentUser :: Maybe ProfileWithIdAndEmail
+  , lists :: RemoteData String Items
+  , ownLists :: RemoteData String (Array ListWithIdUserAndMeta)
+  , actionInProgress :: Array ID
+  , page :: Int
+  , isLast :: Boolean
+  }
 
 noteError :: forall a. Maybe a -> Either String a
 noteError = note "Could not fetch top lists"
@@ -77,7 +79,7 @@ limit :: Maybe Int
 limit = Just perPage
 
 hasActionInProgress :: PublicList -> State -> Boolean
-hasActionInProgress {id} =
+hasActionInProgress { id } =
   anyOf (_actionInProgress <<< traversed) (_ == id)
 
 component
@@ -98,7 +100,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       }
   }
   where
-  initialState {context: currentUser} =
+  initialState { context: currentUser } =
     { currentUser
     , lists: NotAsked
     , page: 1
@@ -113,42 +115,42 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       void $ H.fork $ handleAction LoadPublicLists
       void $ H.fork $ handleAction LoadOwnLists
 
-    Receive {context: currentUser} ->
-      H.modify_ _ {currentUser = currentUser}
+    Receive { context: currentUser } ->
+      H.modify_ _ { currentUser = currentUser }
 
     Navigate route e -> navigate_ e route
 
     LoadPublicLists -> do
-      H.modify_ _ {lists = Loading}
-      mbLists <- discoverLists {limit, skip: Nothing}
+      H.modify_ _ { lists = Loading }
+      mbLists <- discoverLists { limit, skip: Nothing }
 
       let
-        lists = {refreshing: false, items: _} <$> noteError mbLists
+        lists = { refreshing: false, items: _ } <$> noteError mbLists
         isLast = maybe false ((perPage > _) <<< length) mbLists
 
-      H.modify_ _ {lists = RemoteData.fromEither lists, isLast = isLast}
+      H.modify_ _ { lists = RemoteData.fromEither lists, isLast = isLast }
 
     LoadMore -> do
       state <- H.get
-      H.modify_ _ {lists = map (_ {refreshing = true}) state.lists}
+      H.modify_ _ { lists = map (_ { refreshing = true }) state.lists }
 
       let
         prev = fromMaybe [] $ _.items <$> RemoteData.toMaybe state.lists
-        pagination = {limit, skip: Just $ perPage * state.page}
+        pagination = { limit, skip: Just $ perPage * state.page }
 
       mbLists <- discoverLists pagination
 
       let
-        lists = noteError $ {refreshing: false, items: _} <$> (prev <> _) <$> mbLists
+        lists = noteError $ { refreshing: false, items: _ } <$> (prev <> _) <$> mbLists
         isLast = maybe false ((perPage > _) <<< length) mbLists
         newPage = maybe state.page (const (state.page + 1)) mbLists
 
-      H.modify_ _ {lists = RemoteData.fromEither lists, page = newPage, isLast = isLast}
+      H.modify_ _ { lists = RemoteData.fromEither lists, page = newPage, isLast = isLast }
 
     LoadOwnLists -> do
-      H.modify_ _ {ownLists = Loading}
+      H.modify_ _ { ownLists = Loading }
       lists <- RemoteData.fromEither <$> noteError <$> getLists
-      H.modify_ _ {ownLists = lists}
+      H.modify_ _ { ownLists = lists }
 
     ForkList list -> do
       isInProgress <- H.gets $ hasActionInProgress list
@@ -163,15 +165,15 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
           Just _forked -> pure unit
 
     -- TODO: MaybeT / EitherT !!!
-    SubscribeToList list@{id, title, tags, description} -> do
+    SubscribeToList list@{ id, title, tags, description } -> do
       isInProgress <- H.gets $ hasActionInProgress list
 
       when (not isInProgress) do
         H.modify_ $ over _actionInProgress $ cons id
-        mbList <- createList {title, tags, description, is_public: false}
+        mbList <- createList { title, tags, description, is_public: false }
 
         for_ mbList \newList -> do
-          mbFollowIntegration <- subscribeToList {subscribe_from: newList.id, subscribe_to: id}
+          mbFollowIntegration <- subscribeToList { subscribe_from: newList.id, subscribe_to: id }
           case mbFollowIntegration of
             -- TODO: show error ?
             Nothing -> pure unit
@@ -180,7 +182,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
         H.modify_ $ over _actionInProgress $ filter (_ /= list.id)
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {currentUser, lists, isLast} =
+  render { currentUser, lists, isLast } =
     HH.div
       []
       [ HH.div
@@ -195,7 +197,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
     where
     feed = case lists of
-      Success {refreshing, items} ->
+      Success { refreshing, items } ->
         HH.div
           [ HP.classes [ T.flex, T.flexCol ] ]
           [ HH.div
@@ -215,8 +217,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
       _ -> HH.div [ HP.classes [ T.pt4, T.textCenter ] ] [ HH.text "Loading ..." ]
 
-    authorEl :: forall row. {slug :: Slug, avatar :: Maybe Avatar, name :: Username | row} -> _
-    authorEl {slug, avatar, name} =
+    authorEl :: forall row. { slug :: Slug, avatar :: Maybe Avatar, name :: Username | row } -> _
+    authorEl { slug, avatar, name } =
       HH.a
         [ safeHref $ Profile slug
         , HE.onClick $ Navigate (Profile slug) <<< Mouse.toEvent
@@ -237,27 +239,27 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
         ]
 
     listInfo :: PublicList -> H.ComponentHTML Action slots m
-    listInfo list@{title, description, tags, author} =
+    listInfo list@{ title, description, tags, author } =
       HH.div
         [ HP.classes [ T.p2, T.border2, T.borderKiwi, T.roundedMd ] ]
         [ case authorSlug currentUser author of
             Just slug ->
               HH.a
-                  [ HP.classes [ T.cursorPointer ]
-                  , safeHref $ PublicList slug list.slug
-                  , HE.onClick $ Navigate (PublicList slug list.slug) <<< Mouse.toEvent
-                  ]
-                  [ HH.div
-                      [ HP.classes
-                          [ T.textLg
-                          , T.textGray400
-                          , T.hoverTextKiwi
-                          , T.hoverUnderline
-                          , T.mb4
-                          ]
-                      ]
-                      [ HH.text title ]
-                  ]
+                [ HP.classes [ T.cursorPointer ]
+                , safeHref $ PublicList slug list.slug
+                , HE.onClick $ Navigate (PublicList slug list.slug) <<< Mouse.toEvent
+                ]
+                [ HH.div
+                    [ HP.classes
+                        [ T.textLg
+                        , T.textGray400
+                        , T.hoverTextKiwi
+                        , T.hoverUnderline
+                        , T.mb4
+                        ]
+                    ]
+                    [ HH.text title ]
+                ]
             Nothing ->
               HH.div
                 [ HP.classes [ T.textLg, T.borderB2, T.borderGray200, T.textGray400, T.mb4 ] ]
@@ -272,7 +274,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
         , HH.div
             [ HP.classes [ T.mt4, T.flex, T.justifyBetween ] ]
             case author, currentUser of
-              You, Just me -> [ authorEl {slug: me.slug, name: me.name, avatar: _.avatar =<< currentUser} ]
+              You, Just me -> [ authorEl { slug: me.slug, name: me.name, avatar: _.avatar =<< currentUser } ]
               Other user, Just _ ->
                 [ authorEl user
                 -- TODO: add back when Copy/Follow are reworked

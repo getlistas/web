@@ -16,8 +16,9 @@ import Data.RFC3339String (RFC3339String(..))
 
 codec :: JsonCodec DateTime
 codec = CA.prismaticCodec "DateTime" from to CA.string
-  where from = map PDT.toDateTimeLossy <<< PDT.fromRFC3339String <<< RFC3339String
-        to = unwrap <<< PDT.toRFC3339String <<< PDT.fromDateTime
+  where
+  from = map PDT.toDateTimeLossy <<< PDT.fromRFC3339String <<< RFC3339String
+  to = unwrap <<< PDT.toRFC3339String <<< PDT.fromDateTime
 
 -- | Display a month and year
 -- |
@@ -99,6 +100,5 @@ toDisplayDayMonthYear = format dateFormatter
 -- | Example: "Nov 5, 2020"
 toDisplayDayMonthRelative :: DateTime -> Year -> String
 toDisplayDayMonthRelative date currentYear =
-  if currentYear < Date.year (Date.date date)
-    then toDisplayDayMonthYear date
-    else toDisplayDayMonth date
+  if currentYear < Date.year (Date.date date) then toDisplayDayMonthYear date
+  else toDisplayDayMonth date

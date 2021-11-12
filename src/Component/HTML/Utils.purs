@@ -11,7 +11,7 @@ import Routing.Duplex (print)
 
 -- | We must provide a `String` to the "href" attribute, but we represent routes with the much
 -- | better `Route` type. This utility is a drop-in replacement for `href` that uses `Route`.
-safeHref :: forall r i. Route -> HH.IProp ( href :: String | r) i
+safeHref :: forall r i. Route -> HH.IProp (href :: String | r) i
 safeHref = HP.href <<< print routeCodec
 
 -- | Sometimes we need to deal with elements which may or may not exist. This function lets us

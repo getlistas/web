@@ -27,7 +27,7 @@ data Action
   | Navigate Route Event
 
 type State
-  = {currentUser :: Maybe ProfileWithIdAndEmail}
+  = { currentUser :: Maybe ProfileWithIdAndEmail }
 
 component
   :: forall q o m
@@ -45,12 +45,12 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
   }
 
   where
-  initialState {context: currentUser} = {currentUser}
+  initialState { context: currentUser } = { currentUser }
 
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
-    Receive {context: currentUser} ->
-      H.modify_ _ {currentUser = currentUser}
+    Receive { context: currentUser } ->
+      H.modify_ _ { currentUser = currentUser }
 
     Navigate route e -> navigate_ e route
 

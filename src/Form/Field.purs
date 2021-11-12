@@ -79,27 +79,28 @@ cancel buttonText disabled action =
 
 -- TODO: unify with SimpleInputProps using Row Type Maaaagic!!!
 type InputProps form act
-  = { required :: Boolean
-    , hideOptional :: Boolean
-    , placeholder :: Maybe String
-    , id :: Maybe String
-    , props :: Array (HH.IProp HTMLinput (F.Action form act))
-    , type_ :: HP.InputType
-    , message :: Maybe String
-    , label :: Maybe String
-    }
+  =
+  { required :: Boolean
+  , hideOptional :: Boolean
+  , placeholder :: Maybe String
+  , id :: Maybe String
+  , props :: Array (HH.IProp HTMLinput (F.Action form act))
+  , type_ :: HP.InputType
+  , message :: Maybe String
+  , label :: Maybe String
+  }
 
 defaultProps :: forall form act. InputProps form act
-defaultProps
-  = { required: false
-    , hideOptional: false
-    , placeholder: Nothing
-    , id: Nothing
-    , props: []
-    , type_: HP.InputText
-    , message: Nothing
-    , label: Nothing
-    }
+defaultProps =
+  { required: false
+  , hideOptional: false
+  , placeholder: Nothing
+  , id: Nothing
+  , props: []
+  , type_: HP.InputText
+  , message: Nothing
+  , label: Nothing
+  }
 
 -- | This helper function creates an input field hooked up with Formless, including styles,
 -- | events, error handling, and more. The function ensures at compile-time that the field we
@@ -125,18 +126,18 @@ defaultProps
 -- | type `String` at the label `sym` in the row `fields`. In short, we require at compile-time
 -- | that an input field of the correct type exists in our form state at the key we provided as
 -- | the function's first argument.
-input ::
-  forall form act slots m sym fields inputs out t0 t1.
-  IsSymbol sym =>
-  Newtype (form Record F.FormField) { | fields } =>
-  Newtype (form Variant F.InputFunction) (Variant inputs) =>
-  Row.Cons sym (F.FormField V.FormError String out) t0 fields =>
-  Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs =>
-  Proxy sym ->
-  form Record F.FormField ->
-  InputProps form act ->
-  F.ComponentHTML form act slots m
-input sym form {required, hideOptional, placeholder, id, props, type_, message, label} =
+input
+  :: forall form act slots m sym fields inputs out t0 t1
+   . IsSymbol sym
+  => Newtype (form Record F.FormField) { | fields }
+  => Newtype (form Variant F.InputFunction) (Variant inputs)
+  => Row.Cons sym (F.FormField V.FormError String out) t0 fields
+  => Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs
+  => Proxy sym
+  -> form Record F.FormField
+  -> InputProps form act
+  -> F.ComponentHTML form act slots m
+input sym form { required, hideOptional, placeholder, id, props, type_, message, label } =
   Input.input $ defProps
     { value = F.getInput sym form
     , error = filter (const $ F.getTouched sym form) $ F.getError sym form
@@ -149,44 +150,46 @@ input sym form {required, hideOptional, placeholder, id, props, type_, message, 
     , required = required
     , label = label
     }
-  where defProps = Input.defaultProps (F.setValidate sym)
+  where
+  defProps = Input.defaultProps (F.setValidate sym)
 
 type TextareaProps form act
-  = { required :: Boolean
-    , hideOptional :: Boolean
-    , placeholder :: Maybe String
-    , id :: Maybe String
-    , props :: Array (HH.IProp HTMLtextarea (F.Action form act))
-    , message :: Maybe String
-    , label :: Maybe String
-    , rows :: Maybe Int
-    , disabled :: Boolean
-    }
+  =
+  { required :: Boolean
+  , hideOptional :: Boolean
+  , placeholder :: Maybe String
+  , id :: Maybe String
+  , props :: Array (HH.IProp HTMLtextarea (F.Action form act))
+  , message :: Maybe String
+  , label :: Maybe String
+  , rows :: Maybe Int
+  , disabled :: Boolean
+  }
 
 textareaDefaultProps :: forall form act. TextareaProps form act
-textareaDefaultProps
-  = { required: false
-    , hideOptional: false
-    , placeholder: Nothing
-    , id: Nothing
-    , props: []
-    , message: Nothing
-    , label: Nothing
-    , rows: Nothing
-    , disabled: false
-    }
+textareaDefaultProps =
+  { required: false
+  , hideOptional: false
+  , placeholder: Nothing
+  , id: Nothing
+  , props: []
+  , message: Nothing
+  , label: Nothing
+  , rows: Nothing
+  , disabled: false
+  }
 
-textarea ::
-  forall form act slots m sym fields inputs out t0 t1.
-  IsSymbol sym =>
-  Newtype (form Record F.FormField) { | fields } =>
-  Newtype (form Variant F.InputFunction) (Variant inputs) =>
-  Row.Cons sym (F.FormField V.FormError String out) t0 fields =>
-  Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs =>
-  Proxy sym ->
-  form Record F.FormField ->
-  TextareaProps form act ->
-  F.ComponentHTML form act slots m
+textarea
+  :: forall form act slots m sym fields inputs out t0 t1
+   . IsSymbol sym
+  => Newtype (form Record F.FormField) { | fields }
+  => Newtype (form Variant F.InputFunction) (Variant inputs)
+  => Row.Cons sym (F.FormField V.FormError String out) t0 fields
+  => Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs
+  => Proxy sym
+  -> form Record F.FormField
+  -> TextareaProps form act
+  -> F.ComponentHTML form act slots m
 textarea sym form groupProps =
   HH.fieldset
     [ HP.classes [ T.wFull ] ]
@@ -231,9 +234,9 @@ textarea sym form groupProps =
             [ HP.classes [ T.mt1, T.textSm, T.textGray500 ] ]
             [ HH.text message ]
     , maybeElem mbError \error ->
-          HH.p
-            [ HP.classes [ T.mt1, T.textSm, T.textManzana ] ]
-            [ HH.text $ errorToString error ]
+        HH.p
+          [ HP.classes [ T.mt1, T.textSm, T.textManzana ] ]
+          [ HH.text $ errorToString error ]
     ]
   where
   mbError = filter (const $ F.getTouched sym form) $ F.getError sym form

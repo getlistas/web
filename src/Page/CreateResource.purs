@@ -33,10 +33,11 @@ _slot :: Proxy "createResource"
 _slot = Proxy
 
 type Input
-  = { url :: Maybe String
-    , title :: Maybe String
-    , text :: Maybe String
-    }
+  =
+  { url :: Maybe String
+  , title :: Maybe String
+  , text :: Maybe String
+  }
 
 data Action
   = Initialize
@@ -46,16 +47,18 @@ data Action
   | HandleCreateResource CreateResource.Output
 
 type State
-  = { currentUser :: Maybe ProfileWithIdAndEmail
-    , lists :: RemoteData String (Array ListWithIdUserAndMeta)
-    , url :: Maybe String
-    , title :: Maybe String
-    , text :: Maybe String
-    }
+  =
+  { currentUser :: Maybe ProfileWithIdAndEmail
+  , lists :: RemoteData String (Array ListWithIdUserAndMeta)
+  , url :: Maybe String
+  , title :: Maybe String
+  , text :: Maybe String
+  }
 
 type ChildSlots
-  = ( createResource :: CreateResource.Slot
-    )
+  =
+  ( createResource :: CreateResource.Slot
+  )
 
 noteError :: forall a. Maybe a -> Either String a
 noteError = note "Could not fetch your lists"
@@ -78,21 +81,21 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       }
   }
   where
-  initialState {context: currentUser, input: {url, title, text}} =
-    {currentUser, lists: NotAsked, url, title, text}
+  initialState { context: currentUser, input: { url, title, text } } =
+    { currentUser, lists: NotAsked, url, title, text }
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots o m Unit
   handleAction = case _ of
     Initialize -> void $ H.fork $ handleAction LoadLists
 
-    Receive {context: currentUser} -> H.modify_ _ {currentUser = currentUser}
+    Receive { context: currentUser } -> H.modify_ _ { currentUser = currentUser }
 
     Navigate route e -> navigate_ e route
 
     LoadLists -> do
-      H.modify_ _ {lists = Loading}
+      H.modify_ _ { lists = Loading }
       lists <- RemoteData.fromEither <$> noteError <$> getLists
-      H.modify_ _ {lists = lists}
+      H.modify_ _ { lists = lists }
 
     HandleCreateResource (CreateResource.Created _) ->
       navigate Dashboard
@@ -108,7 +111,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
     where
     header =
       HH.div
-        [ HP.classes [ T.flex, T.itemsCenter, T.textGray400, T.mb6, T.text4xl, T.fontBold, T.pt2  ] ]
+        [ HP.classes [ T.flex, T.itemsCenter, T.textGray400, T.mb6, T.text4xl, T.fontBold, T.pt2 ] ]
         [ HH.a
             [ safeHref Dashboard
             , HE.onClick $ Navigate Dashboard <<< Mouse.toEvent
@@ -122,8 +125,10 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       Success lists ->
         HH.div
           [ HP.classes [ T.wFull, T.maxWLg ] ]
-          [ let input = {lists, url: st.url, title: st.title, text: st.text, selectedList: Nothing}
-             in HH.slot CreateResource._slot unit CreateResource.component input HandleCreateResource
+          [ let
+              input = { lists, url: st.url, title: st.title, text: st.text, selectedList: Nothing }
+            in
+              HH.slot CreateResource._slot unit CreateResource.component input HandleCreateResource
           ]
 
       Failure msg ->

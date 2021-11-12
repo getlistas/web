@@ -48,7 +48,7 @@ _slot :: Proxy "listIntegrations"
 _slot = Proxy
 
 type Input
-  = {user :: Slug, list :: Slug}
+  = { user :: Slug, list :: Slug }
 
 data Action
   = Initialize
@@ -62,15 +62,16 @@ data Action
   | DeleteSubscription ID
 
 type State
-  = { currentUser :: Maybe ProfileWithIdAndEmail
-    , list :: RemoteData String ListWithIdUserAndMeta
-    , rss :: RemoteData String (Array RssIntegration)
-    , subscriptions :: RemoteData String (Array ListSubscription)
-    , rssResult :: RemoteData String Unit
-    , newRss :: String
-    , listSlug :: Slug
-    , userSlug :: Slug
-    }
+  =
+  { currentUser :: Maybe ProfileWithIdAndEmail
+  , list :: RemoteData String ListWithIdUserAndMeta
+  , rss :: RemoteData String (Array RssIntegration)
+  , subscriptions :: RemoteData String (Array ListSubscription)
+  , rssResult :: RemoteData String Unit
+  , newRss :: String
+  , listSlug :: Slug
+  , userSlug :: Slug
+  }
 
 type Slots = (formless :: ListForm.Slot)
 
@@ -101,7 +102,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       }
   }
   where
-  initialState {context: currentUser, input: {list, user}} =
+  initialState { context: currentUser, input: { list, user } } =
     { currentUser
     , userSlug: user
     , listSlug: list
@@ -119,38 +120,39 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
     LoadList -> do
       st <- H.get
-      H.modify_ _ {list = Loading}
-      list <- RemoteData.fromEither <$> note "Could not get list" <$> getListBySlug {list: st.listSlug, user: st.userSlug}
-      H.modify_ _ {list = list}
+      H.modify_ _ { list = Loading }
+      list <- RemoteData.fromEither <$> note "Could not get list" <$> getListBySlug { list: st.listSlug, user: st.userSlug }
+      H.modify_ _ { list = list }
 
       void $ H.fork $ handleAction LoadIntegrations
 
     LoadIntegrations -> do
-      mbId <- H.gets $ preview ( _list <<< _Success <<< _id)
+      mbId <- H.gets $ preview (_list <<< _Success <<< _id)
 
       for_ mbId \listId -> do
-        H.modify_ _ {rss = Loading, subscriptions = Loading}
+        H.modify_ _ { rss = Loading, subscriptions = Loading }
         res <- RemoteData.fromEither <$> note "Could not get RSS integrations" <$> getListIntegrations listId
-        H.modify_ _ {rss = Array.mapMaybe getRss <$> res, subscriptions = Array.mapMaybe getSubscription <$> res}
+        H.modify_ _ { rss = Array.mapMaybe getRss <$> res, subscriptions = Array.mapMaybe getSubscription <$> res }
 
-    Receive {context: currentUser} -> do
-      H.modify_ _ {currentUser = currentUser}
+    Receive { context: currentUser } -> do
+      H.modify_ _ { currentUser = currentUser }
 
     Navigate route e -> navigate_ e route
 
     OnNewChange url -> do
       loading <- H.gets $ RemoteData.isLoading <<< _.rssResult
-      unless loading do H.modify_ _ {newRss = url, rssResult = NotAsked}
+      unless loading do H.modify_ _ { newRss = url, rssResult = NotAsked }
 
     SaveRss -> do
-      {newRss, rssResult, list} <- H.get
-      let mbList =
-            fromPredicate (not <<< String.null) newRss
-              *> preview _NotAsked rssResult
-              *> preview _Success list
-      for_ mbList \{id} -> do
-        H.modify_ _ {rssResult = Loading}
-        result <- RemoteData.fromEither <$> note "Failed to create RSS integration" <$> createRssIntegration {url: newRss, list: id}
+      { newRss, rssResult, list } <- H.get
+      let
+        mbList =
+          fromPredicate (not <<< String.null) newRss
+            *> preview _NotAsked rssResult
+            *> preview _Success list
+      for_ mbList \{ id } -> do
+        H.modify_ _ { rssResult = Loading }
+        result <- RemoteData.fromEither <$> note "Failed to create RSS integration" <$> createRssIntegration { url: newRss, list: id }
         case result of
           Success newIntegration ->
             H.modify_
@@ -161,9 +163,10 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
     DeleteRssIntegration id -> do
       mbRss <- H.gets $ preview (_rss <<< _Success)
-      let shouldDelete = (_ == id) <<< _.id
-          toDelete = Array.find shouldDelete =<< mbRss
-      for_ ({rss: _, deleted: _} <$> mbRss <*> toDelete) $ \{deleted} -> do
+      let
+        shouldDelete = (_ == id) <<< _.id
+        toDelete = Array.find shouldDelete =<< mbRss
+      for_ ({ rss: _, deleted: _ } <$> mbRss <*> toDelete) $ \{ deleted } -> do
         H.modify_ $ over (_rss <<< _Success) (Array.filter (not <<< shouldDelete))
         result <- deleteIntegration id
         case result of
@@ -172,9 +175,10 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
     DeleteSubscription id -> do
       mbSubscriptions <- H.gets $ preview (_subscriptions <<< _Success)
-      let shouldDelete = (_ == id) <<< _.id
-          toDelete = Array.find shouldDelete =<< mbSubscriptions
-      for_ ({subscriptions: _, deleted: _} <$> mbSubscriptions <*> toDelete) $ \{deleted} -> do
+      let
+        shouldDelete = (_ == id) <<< _.id
+        toDelete = Array.find shouldDelete =<< mbSubscriptions
+      for_ ({ subscriptions: _, deleted: _ } <$> mbSubscriptions <*> toDelete) $ \{ deleted } -> do
         H.modify_ $ over (_subscriptions <<< _Success) (Array.filter (not <<< shouldDelete))
         result <- deleteIntegration id
         case result of
@@ -182,7 +186,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
           Just _ -> pure unit
 
   render :: State -> H.ComponentHTML Action Slots m
-  render {newRss, rss, rssResult, list: mbList, listSlug, userSlug} =
+  render { newRss, rss, rssResult, list: mbList, listSlug, userSlug } =
     HH.div [] [ header, content ]
 
     where
@@ -193,7 +197,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             [ HP.classes [ T.flex, T.itemsCenter, T.justifyBetween ] ]
             [ HH.h1
                 [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
-                [ HH.text $ RemoteData.maybe "..." _.title mbList  ]
+                [ HH.text $ RemoteData.maybe "..." _.title mbList ]
             , HH.a
                 [ safeHref $ PublicList userSlug listSlug
                 , HE.onClick $ Navigate (PublicList userSlug listSlug) <<< Mouse.toEvent
@@ -431,69 +435,69 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             ]
         ]
 
-    -- subscriptionIntegrationEl :: ListSubscription -> _
-    -- subscriptionIntegrationEl i =
-    --   HH.li
-    --     [ HP.classes
-    --         [ T.group
-    --         , T.relative
-    --         , T.bgWhite
-    --         , T.roundedLg
-    --         , T.shadowSm
-    --         , T.hoverRing1
-    --         , T.hoverRingKiwi
-    --         ]
-    --     ]
-    --     [ HH.div
-    --         [ HP.classes
-    --             [ T.roundedLg
-    --             , T.border
-    --             , T.borderGray300
-    --             , T.hoverBorderKiwi
-    --             , T.bgWhite
-    --             , T.px6
-    --             , T.py4
-    --             , T.hoverBorderGray400
-    --             , T.smFlex
-    --             , T.smJustifyBetween
-    --             ]
-    --         ]
-    --         [ HH.div
-    --             [ HP.classes [ T.flex, T.itemsCenter ] ]
-    --             [ HH.div
-    --                 [ HP.classes [ T.textSm ] ]
-    --                 [ HH.p
-    --                     [ HP.classes [ T.fontMedium, T.textGray400 ] ]
-    --                     [ HH.text $ "List " <> ID.toString i.listas_subscription.list ]
-    --                 , HH.div
-    --                     [ HP.classes [ T.textGray500 ] ]
-    --                     [ HH.p
-    --                         [ HP.classes [ T.smInline ] ]
-    --                         [ HH.text $ "Followed " <> DateTime.toDisplayMonthDayYear i.created_at ]
-    --                     ]
-    --                 ]
-    --             ]
-    --         , HH.div
-    --             [ HP.classes
-    --                 [ T.mt2
-    --                 , T.flex
-    --                 , T.textSm
-    --                 , T.smMt0
-    --                 , T.smBlock
-    --                 , T.smMl4
-    --                 , T.smTextRight
-    --                 ]
-    --             ]
-    --             [ HH.div
-    --                 [ HP.classes [ T.flex ] ]
-    --                 [ HH.button
-    --                     [ HE.onClick $ const $ DeleteSubscription i.id
-    --                     , HP.classes [ T.cursorPointer ]
-    --                     , HP.type_ HP.ButtonButton
-    --                     ]
-    --                     [ Icons.trash [ Icons.classes [ T.w6, T.h6, T.textGray400, T.hoverTextManzana ] ]
-    --                     ]
-    --                 ]
-    --             ]
-    --         ]
-    --     ]
+-- subscriptionIntegrationEl :: ListSubscription -> _
+-- subscriptionIntegrationEl i =
+--   HH.li
+--     [ HP.classes
+--         [ T.group
+--         , T.relative
+--         , T.bgWhite
+--         , T.roundedLg
+--         , T.shadowSm
+--         , T.hoverRing1
+--         , T.hoverRingKiwi
+--         ]
+--     ]
+--     [ HH.div
+--         [ HP.classes
+--             [ T.roundedLg
+--             , T.border
+--             , T.borderGray300
+--             , T.hoverBorderKiwi
+--             , T.bgWhite
+--             , T.px6
+--             , T.py4
+--             , T.hoverBorderGray400
+--             , T.smFlex
+--             , T.smJustifyBetween
+--             ]
+--         ]
+--         [ HH.div
+--             [ HP.classes [ T.flex, T.itemsCenter ] ]
+--             [ HH.div
+--                 [ HP.classes [ T.textSm ] ]
+--                 [ HH.p
+--                     [ HP.classes [ T.fontMedium, T.textGray400 ] ]
+--                     [ HH.text $ "List " <> ID.toString i.listas_subscription.list ]
+--                 , HH.div
+--                     [ HP.classes [ T.textGray500 ] ]
+--                     [ HH.p
+--                         [ HP.classes [ T.smInline ] ]
+--                         [ HH.text $ "Followed " <> DateTime.toDisplayMonthDayYear i.created_at ]
+--                     ]
+--                 ]
+--             ]
+--         , HH.div
+--             [ HP.classes
+--                 [ T.mt2
+--                 , T.flex
+--                 , T.textSm
+--                 , T.smMt0
+--                 , T.smBlock
+--                 , T.smMl4
+--                 , T.smTextRight
+--                 ]
+--             ]
+--             [ HH.div
+--                 [ HP.classes [ T.flex ] ]
+--                 [ HH.button
+--                     [ HE.onClick $ const $ DeleteSubscription i.id
+--                     , HP.classes [ T.cursorPointer ]
+--                     , HP.type_ HP.ButtonButton
+--                     ]
+--                     [ Icons.trash [ Icons.classes [ T.w6, T.h6, T.textGray400, T.hoverTextManzana ] ]
+--                     ]
+--                 ]
+--             ]
+--         ]
+--     ]

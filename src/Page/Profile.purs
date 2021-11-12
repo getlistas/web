@@ -44,7 +44,7 @@ _slot :: Proxy "profile"
 _slot = Proxy
 
 type Input
-  = {slug :: Slug}
+  = { slug :: Slug }
 
 data Action
   = Initialize
@@ -54,12 +54,13 @@ data Action
   | Navigate Route Event
 
 type State
-  = { slug :: Slug
-    , currentUser :: Maybe ProfileWithIdAndEmail
-    , profile :: RemoteData String PublicProfile
-    , metrics :: RemoteData String (Map Date CountScale)
-    , time :: Maybe Time
-    }
+  =
+  { slug :: Slug
+  , currentUser :: Maybe ProfileWithIdAndEmail
+  , profile :: RemoteData String PublicProfile
+  , metrics :: RemoteData String (Map Date CountScale)
+  , time :: Maybe Time
+  }
 
 data Scale
   = Highest
@@ -69,25 +70,25 @@ data Scale
   | Lowest
 
 type CountScale
-  = Maybe {color :: Scale, count :: Int}
+  = Maybe { color :: Scale, count :: Int }
 
 scaleColor :: CountScale -> H.ClassName
 scaleColor Nothing = T.bgGray100
-scaleColor (Just {color: Highest}) = T.bgGreen800
-scaleColor (Just {color: High}) = T.bgGreen700
-scaleColor (Just {color: Mid}) = T.bgGreen500
-scaleColor (Just {color: Low}) = T.bgGreen300
-scaleColor (Just {color: Lowest}) = T.bgGreen200
+scaleColor (Just { color: Highest }) = T.bgGreen800
+scaleColor (Just { color: High }) = T.bgGreen700
+scaleColor (Just { color: Mid }) = T.bgGreen500
+scaleColor (Just { color: Low }) = T.bgGreen300
+scaleColor (Just { color: Lowest }) = T.bgGreen200
 
 toScale :: Int -> Int -> CountScale
 toScale _ 0 = Nothing
 toScale max n =
   case toNumber n / toNumber max of
-    r | r == 1.0 -> Just {color: Highest, count: n}
-    r | r > 0.75 -> Just {color: High, count: n}
-    r | r > 0.5 -> Just {color: Mid, count: n}
-    r | r > 0.25 -> Just {color: Low, count: n}
-    _ -> Just {color: Lowest, count: n}
+    r | r == 1.0 -> Just { color: Highest, count: n }
+    r | r > 0.75 -> Just { color: High, count: n }
+    r | r > 0.5 -> Just { color: Mid, count: n }
+    r | r > 0.25 -> Just { color: Low, count: n }
+    _ -> Just { color: Lowest, count: n }
 
 metricToTuple :: Int -> Metric -> Tuple Date CountScale
 metricToTuple max m = Tuple (date m.date) $ toScale max m.completed_count
@@ -138,7 +139,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       }
   }
   where
-  initialState {context: currentUser, input: {slug}} =
+  initialState { context: currentUser, input: { slug } } =
     { slug
     , currentUser
     , profile: NotAsked
@@ -150,42 +151,42 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
   handleAction = case _ of
     Initialize -> do
       time <- nowTime
-      H.modify_ _ {time = Just time}
+      H.modify_ _ { time = Just time }
 
       void $ H.fork $ handleAction LoadUser
       void $ H.fork $ handleAction LoadMetrics
 
-    Receive {context: currentUser} -> do
-      H.modify_ _ {currentUser = currentUser}
+    Receive { context: currentUser } -> do
+      H.modify_ _ { currentUser = currentUser }
 
     LoadUser -> do
-      {slug} <- H.get
-      H.modify_ _ {profile = Loading}
+      { slug } <- H.get
+      H.modify_ _ { profile = Loading }
       profile <- RemoteData.fromEither <$> note "Could not fetch user profile" <$> userBySlug slug
-      H.modify_ _ {profile = profile}
+      H.modify_ _ { profile = profile }
 
     LoadMetrics -> do
-      {slug} <- H.get
+      { slug } <- H.get
 
-      H.modify_ _ {metrics = Loading}
+      H.modify_ _ { metrics = Loading }
       metrics <- RemoteData.fromEither <$> note "Could not fetch user metrics" <$> userMetrics slug
       year <- allDaysPastYear <$> nowDate
 
       let max = fromMaybe 0 $ join $ RemoteData.toMaybe $ maximum <$> map _.completed_count <$> metrics
 
       H.modify_ _
-        {metrics = flip Map.union year <<< Map.fromFoldable <<< map (metricToTuple max)  <$> metrics}
+        { metrics = flip Map.union year <<< Map.fromFoldable <<< map (metricToTuple max) <$> metrics }
 
     Navigate route e -> navigate_ e route
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {profile, metrics, time} =
+  render { profile, metrics, time } =
     HH.div
       []
       [ Wip.elem
       , case profile of
-          Success {name, avatar} ->
-            profileHeader {name: Username.toString name, avatar}
+          Success { name, avatar } ->
+            profileHeader { name: Username.toString name, avatar }
 
           Failure _ -> HH.text "User Profile"
 
@@ -337,7 +338,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
             ]
         ]
 
-    profileHeader {name, avatar} =
+    profileHeader { name, avatar } =
       HH.div
         []
         [ HH.div

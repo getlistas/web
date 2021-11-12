@@ -8,12 +8,13 @@ import Data.Maybe (Maybe)
 import Listasio.Data.Resource (ListResource, listResourceCodec)
 
 type ResourceMeta
-  = { can_resolve :: Boolean
-    , title :: Maybe String
-    , description :: Maybe String
-    , thumbnail :: Maybe String
-    , resource :: Maybe ListResource
-    }
+  =
+  { can_resolve :: Boolean
+  , title :: Maybe String
+  , description :: Maybe String
+  , thumbnail :: Maybe String
+  , resource :: Maybe ListResource
+  }
 
 metaCodec :: JsonCodec ResourceMeta
 metaCodec =

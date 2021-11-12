@@ -15,12 +15,13 @@ data Style
   | Success
 
 type Props
-  = { style :: Style
-    , title :: Maybe String
-    , text  :: Maybe String
-    , icon :: Maybe String
-    , classes :: Array ClassName
-    }
+  =
+  { style :: Style
+  , title :: Maybe String
+  , text :: Maybe String
+  , icon :: Maybe String
+  , classes :: Array ClassName
+  }
 
 props :: Props
 props =
@@ -36,21 +37,21 @@ message { classes, style, title: mbTitle, text: mbText, icon: mbIcon } =
   HH.div
     [ HP.classes
         $ classes <>
-          [ T.m1
-          , T.py2
-          , T.px6
-          , T.roundedMd
-          , case style of
-              Alert -> T.bgManzana
-              Success -> T.bgKiwi
-              Warning -> T.bgDuraznoLight
-          , case style of
-              Warning -> T.textGray300
-              _ -> T.textWhite
-          , T.flex
-          , T.itemsCenter
-          -- , T.justifyBetween
-          ]
+            [ T.m1
+            , T.py2
+            , T.px6
+            , T.roundedMd
+            , case style of
+                Alert -> T.bgManzana
+                Success -> T.bgKiwi
+                Warning -> T.bgDuraznoLight
+            , case style of
+                Warning -> T.textGray300
+                _ -> T.textWhite
+            , T.flex
+            , T.itemsCenter
+            -- , T.justifyBetween
+            ]
     ]
     [ HH.div
         []

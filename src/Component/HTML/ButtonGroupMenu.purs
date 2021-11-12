@@ -11,15 +11,16 @@ import Listasio.Component.HTML.Utils (whenElem)
 import Tailwind as T
 
 type Props i p
-  = { mainAction :: p
-    , toggleMenu :: p
-    , label :: HH.HTML i p
-    , isOpen :: Boolean
-    , disabled :: Boolean
-    }
+  =
+  { mainAction :: p
+  , toggleMenu :: p
+  , label :: HH.HTML i p
+  , isOpen :: Boolean
+  , disabled :: Boolean
+  }
 
-props :: forall i p. {mainAction :: p, toggleMenu :: p} -> Props i p
-props {mainAction, toggleMenu} =
+props :: forall i p. { mainAction :: p, toggleMenu :: p } -> Props i p
+props { mainAction, toggleMenu } =
   { mainAction
   , toggleMenu
   , label: HH.text ""
@@ -28,13 +29,14 @@ props {mainAction, toggleMenu} =
   }
 
 type MenuItem i p
-  = { action :: p
-    , label :: HH.HTML i p
-    , disabled :: Boolean
-    }
+  =
+  { action :: p
+  , label :: HH.HTML i p
+  , disabled :: Boolean
+  }
 
 buttonGroupMenu :: forall i p. Props i p -> NonEmptyArray (MenuItem i p) -> HH.HTML i p
-buttonGroupMenu {mainAction, label, toggleMenu, isOpen, disabled} menuItems =
+buttonGroupMenu { mainAction, label, toggleMenu, isOpen, disabled } menuItems =
   HH.span
     [ HP.classes
         [ T.relative
@@ -90,11 +92,11 @@ buttonGroupMenu {mainAction, label, toggleMenu, isOpen, disabled} menuItems =
             , T.focusRingOffset1
             ]
         ]
-        [ HH.span [ HP.classes [ T.srOnly] ] [ HH.text "Open options" ]
+        [ HH.span [ HP.classes [ T.srOnly ] ] [ HH.text "Open options" ]
         , Icons.dotsVertical [ Icons.classes [ T.h4, T.w4 ] ]
         ]
 
-      -- Invisible overlay to close on outside click
+    -- Invisible overlay to close on outside click
     , whenElem isOpen \_ ->
         HH.div
           [ HE.onClick $ const toggleMenu
@@ -118,34 +120,34 @@ buttonGroupMenu {mainAction, label, toggleMenu, isOpen, disabled} menuItems =
               , T.ringBlack
               , T.ringOpacity5
               , T.z20
-            ]
+              ]
           ]
           [ HH.div
               [ HP.classes [ T.py1 ] ]
               $ map
-                  (\i ->
-                    HH.button
-                      [ HP.classes
-                          [ T.block
-                          , T.px4
-                          , T.py2
-                          , T.textSm
-                          , T.textGray700
-                          , T.hoverBgGray100
-                          , T.hoverTextGray900
-                          , T.cursorPointer
-                          , T.wFull
-                          , T.disabledTextGray200
-                          , T.disabledCursorNotAllowed
-                          , T.focusOutlineNone
-                          , T.focusRing2
-                          , T.focusRingGray300
-                          ]
-                      , HP.type_ HP.ButtonButton
-                      , HE.onClick $ const i.action
-                      , HP.disabled i.disabled
-                      ]
-                      [ i.label ]
+                  ( \i ->
+                      HH.button
+                        [ HP.classes
+                            [ T.block
+                            , T.px4
+                            , T.py2
+                            , T.textSm
+                            , T.textGray700
+                            , T.hoverBgGray100
+                            , T.hoverTextGray900
+                            , T.cursorPointer
+                            , T.wFull
+                            , T.disabledTextGray200
+                            , T.disabledCursorNotAllowed
+                            , T.focusOutlineNone
+                            , T.focusRing2
+                            , T.focusRingGray300
+                            ]
+                        , HP.type_ HP.ButtonButton
+                        , HE.onClick $ const i.action
+                        , HP.disabled i.disabled
+                        ]
+                        [ i.label ]
                   )
               $ toArray menuItems
           ]

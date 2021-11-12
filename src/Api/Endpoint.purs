@@ -20,25 +20,27 @@ import Slug (Slug)
 import Slug as Slug
 
 type PaginationRep row
-  = ( limit :: Maybe Int
-    , skip :: Maybe Int
-    | row
-    )
+  =
+  ( limit :: Maybe Int
+  , skip :: Maybe Int
+  | row
+  )
 
 type Pagination
-  = {| PaginationRep ()}
+  = { | PaginationRep () }
 
 data SortingResources = PositionAsc | PositionDes
 
 type SearchResourcesArgs
-  = {
-    | PaginationRep
+  =
+  {
+  | PaginationRep
       ( list :: Maybe ID
       , completed :: Maybe Boolean
       , sort :: Maybe SortingResources
       , search_text :: Maybe NonEmptyString
       )
-    }
+  }
 
 defaultSearch :: SearchResourcesArgs
 defaultSearch =
@@ -51,15 +53,17 @@ defaultSearch =
   }
 
 type ResourcesByListArgs
-  = { list :: ID
-    , sort :: SortingResources
-    , completed :: Maybe Boolean
-    }
+  =
+  { list :: ID
+  , sort :: SortingResources
+  , completed :: Maybe Boolean
+  }
 
 type IntegrationsArgs
-  = { list :: ID
-    , kind :: Maybe IntegrationKind
-    }
+  =
+  { list :: ID
+  , kind :: Maybe IntegrationKind
+  }
 
 data Endpoint
   = Login
@@ -113,9 +117,10 @@ endpointCodec =
             }
         , "Resources": "resources" / noArgs
         , "ResourcesByList": "resources"
-            ? {list: id, sort: sortingResources, completed: optional <<< boolean}
+            ? { list: id, sort: sortingResources, completed: optional <<< boolean }
         , "SearchResources": "resources"
-            ? { list: optional <<< id
+            ?
+              { list: optional <<< id
               , completed: optional <<< boolean
               , sort: optional <<< sortingResources
               , search_text: optional <<< nonEmptyString
@@ -129,7 +134,7 @@ endpointCodec =
         , "ResourceMeta": "resource-metadata" / noArgs
         , "Integration": "integrations" / id segment
         , "Integrations": "integrations"
-            ? {list: id, kind: optional <<< integrationKind}
+            ? { list: id, kind: optional <<< integrationKind }
         , "RssIntegrations": "integrations" / "rss" / noArgs
         , "ListSubscriptionIntegrations": "integrations" / "listas-subscription" / noArgs
         , "ImportResources": "import-resources" / noArgs
@@ -149,7 +154,6 @@ integrationKind = as toString parse
     "listas-subscription" -> Right KindListSubscription
     s -> Left $ "Bad IntegrationKind '" <> s <> "'"
 
-
 sortingResources :: RouteDuplex' String -> RouteDuplex' SortingResources
 sortingResources = as toString parse
   where
@@ -160,7 +164,6 @@ sortingResources = as toString parse
     "position_asc" -> Right PositionAsc
     "position_des" -> Right PositionDes
     s -> Left $ "Bad SortingResources '" <> s <> "'"
-
 
 nonEmptyString :: RouteDuplex' String -> RouteDuplex' NonEmptyString
 nonEmptyString = as NES.toString parse

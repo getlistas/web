@@ -21,10 +21,10 @@ log reason = logMessage <=< mkLog reason
 logDebug :: forall m. LogMessages m => Now m => String -> m Unit
 logDebug = log Debug
 
-logInfo :: forall m. LogMessages m =>  Now m =>String -> m Unit
+logInfo :: forall m. LogMessages m => Now m => String -> m Unit
 logInfo = log Info
 
-logWarn :: forall m. LogMessages m =>  Now m =>String -> m Unit
+logWarn :: forall m. LogMessages m => Now m => String -> m Unit
 logWarn = log Warn
 
 logError :: forall m. LogMessages m => Now m => String -> m Unit

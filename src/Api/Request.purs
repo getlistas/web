@@ -55,10 +55,11 @@ import Web.HTML.Window (localStorage)
 import Web.Storage.Storage (getItem, removeItem, setItem)
 
 type GoogleAuthResult
-  = { success :: Boolean
-    , token :: Nullable String
-    , image_url :: Nullable String
-    }
+  =
+  { success :: Boolean
+  , token :: Nullable String
+  , image_url :: Nullable String
+  }
 
 foreign import googleAuth_ :: Effect (Promise GoogleAuthResult)
 
@@ -91,9 +92,10 @@ data RequestMethod
   | Delete
 
 type RequestOptions
-  = { endpoint :: Endpoint
-    , method :: RequestMethod
-    }
+  =
+  { endpoint :: Endpoint
+  , method :: RequestMethod
+  }
 
 defaultRequest :: BaseURL -> Maybe Token -> RequestOptions -> Fetch.Request Json
 defaultRequest (BaseURL baseUrl) auth { endpoint, method } =
@@ -116,10 +118,11 @@ defaultRequest (BaseURL baseUrl) auth { endpoint, method } =
     Delete -> Tuple DELETE Nothing
 
 type RegisterFields
-  = { email :: Email
-    , password :: String
-    , name :: Username
-    }
+  =
+  { email :: Email
+  , password :: String
+  , name :: Username
+  }
 
 registerCodec :: JsonCodec RegisterFields
 registerCodec =
@@ -135,9 +138,10 @@ registerCodec =
 -- | We can't create or manipulate the `Token` type outside this module!
 -- | These requests will be the only way to create an auth token in the system.
 type LoginFields
-  = { email :: Email
-    , password :: String
-    }
+  =
+  { email :: Email
+  , password :: String
+  }
 
 loginCodec :: JsonCodec LoginFields
 loginCodec =
@@ -146,7 +150,7 @@ loginCodec =
     , password: CA.string
     }
 
-type CreatedProfile = { | ProfileRep (email :: Email , id :: ID) }
+type CreatedProfile = { | ProfileRep (email :: Email, id :: ID) }
 
 type User
   = { user :: CreatedProfile }
@@ -160,12 +164,12 @@ createdProfileCodec =
     , slug: Slug.codec
     }
 
-userCodec ::  JsonCodec User
-userCodec = CAR.object "TokenUser" {user: createdProfileCodec}
+userCodec :: JsonCodec User
+userCodec = CAR.object "TokenUser" { user: createdProfileCodec }
 
 addAvatarField :: CreatedProfile -> ProfileWithIdAndEmail
-addAvatarField {email, name, id, slug} =
-  {email, name, id, slug, avatar: Nothing}
+addAvatarField { email, name, id, slug } =
+  { email, name, id, slug, avatar: Nothing }
 
 login :: forall m. MonadAff m => BaseURL -> LoginFields -> m (Either String (Tuple Token ProfileWithIdAndEmail))
 login baseUrl fields = do
@@ -173,8 +177,9 @@ login baseUrl fields = do
   case res of
     Left e -> pure $ Left $ Fetch.printError e
     Right v -> pure $ lmap printJwtError $ decodeAuthProfileFromToken =<< decode v.body
-  where conf = { endpoint: Login, method: Post $ Just $ Codec.encode loginCodec fields }
-        decode = lmap Jwt.JsonDecodeError <<< Codec.decode CA.json
+  where
+  conf = { endpoint: Login, method: Post $ Just $ Codec.encode loginCodec fields }
+  decode = lmap Jwt.JsonDecodeError <<< Codec.decode CA.json
 
 type GoogleLoginFields = { token :: String }
 
@@ -190,14 +195,14 @@ googleLogin baseUrl _ = do
     { token: Nothing } ->
       pure $ Left "Failed to login with Google"
     { token: Just googleToken } -> do
-      let conf = { endpoint: GoogleLogin, method: Post $ Just $ body }
-          body = Codec.encode googleLoginCodec { token: googleToken }
-          decode = lmap Jwt.JsonDecodeError <<< Codec.decode CA.json
+      let
+        conf = { endpoint: GoogleLogin, method: Post $ Just $ body }
+        body = Codec.encode googleLoginCodec { token: googleToken }
+        decode = lmap Jwt.JsonDecodeError <<< Codec.decode CA.json
       res <- liftAff $ Fetch.request $ defaultRequest baseUrl Nothing conf
       case res of
         Left e -> pure $ Left $ Fetch.printError e
         Right v -> pure $ lmap printJwtError $ decodeAuthProfileFromToken =<< decode v.body
-
 
 printJwtError :: Jwt.JwtError JsonDecodeError -> String
 printJwtError = case _ of
@@ -214,21 +219,23 @@ decodeAuthProfileFromToken payload = do
   { access_token } <- lmap Jwt.JsonDecodeError $ Codec.decode tokenCodec payload
   user <- addAvatarField <$> _.user <$> Jwt.decodeWith (Codec.decode userCodec) access_token
   pure $ Tuple (Token access_token) user
-  where tokenCodec = CAR.object "access_token" { access_token: CA.string }
+  where
+  tokenCodec = CAR.object "access_token" { access_token: CA.string }
 
 register :: forall m. MonadAff m => BaseURL -> RegisterFields -> m (Either String ProfileWithIdAndEmail)
 register baseUrl fields = do
   res <- liftAff $ Fetch.request $ defaultRequest baseUrl Nothing conf
   pure $ decode <$> _.body =<< lmap Fetch.printError res
-  where method = Post $ Just $ Codec.encode registerCodec fields
-        conf = { endpoint: Users, method }
-        decode = map addAvatarField <$> lmap printJsonDecodeError <<< Codec.decode createdProfileCodec
+  where
+  method = Post $ Just $ Codec.encode registerCodec fields
+  conf = { endpoint: Users, method }
+  decode = map addAvatarField <$> lmap printJsonDecodeError <<< Codec.decode createdProfileCodec
 
 tokenKey = "token" :: String
 
 decodeToken :: Token -> Either String ProfileWithIdAndEmail
 decodeToken (Token token) =
-   lmap printJwtError $ addAvatarField <$> _.user <$> Jwt.decodeWith (Codec.decode userCodec) token
+  lmap printJwtError $ addAvatarField <$> _.user <$> Jwt.decodeWith (Codec.decode userCodec) token
 
 readToken :: Effect (Maybe Token)
 readToken = do

@@ -26,7 +26,9 @@ _slot = Proxy
 type Slot id = forall query. H.Slot query Void id
 
 data TypeStatus
-  = Typing Boolean | Deliting | Waiting Int
+  = Typing Boolean
+  | Deliting
+  | Waiting Int
 
 isWaiting :: TypeStatus -> Boolean
 isWaiting (Waiting _) = true
@@ -38,17 +40,18 @@ data Action
   | Finalize
 
 type State
-  = { before :: Array String
-    , current :: String
-    , after :: Array String
-    , status :: TypeStatus
-    , display :: String
-    , position :: Int
-    , tickFiber :: Maybe (Fiber Unit)
-    }
+  =
+  { before :: Array String
+  , current :: String
+  , after :: Array String
+  , status :: TypeStatus
+  , display :: String
+  , position :: Int
+  , tickFiber :: Maybe (Fiber Unit)
+  }
 
 type Input
-  = {words :: NonEmptyArray String}
+  = { words :: NonEmptyArray String }
 
 component
   :: forall q o m
@@ -64,7 +67,7 @@ component = H.mkComponent
       }
   }
   where
-  initialState {words} =
+  initialState { words } =
     { before: Array.reverse $ NEA.tail words
     , current: NEA.head words
     , after: []
@@ -77,33 +80,32 @@ component = H.mkComponent
   handleAction :: forall slots. Action -> H.HalogenM State Action slots o m Unit
   handleAction = case _ of
     Initialize -> do
-      {emitter, listener} <- H.liftEffect HS.create
+      { emitter, listener } <- H.liftEffect HS.create
       void $ H.subscribe emitter
 
       fiber <- H.liftAff $ forkAff $ forever do
         H.liftEffect $ HS.notify listener Tick
         delay $ Milliseconds 60.0
 
-      H.modify_ _ {tickFiber = Just fiber}
+      H.modify_ _ { tickFiber = Just fiber }
 
     Finalize -> do
-      {tickFiber} <- H.get
+      { tickFiber } <- H.get
       for_ tickFiber \fiber ->
         H.liftAff $ killFiber (error "Finalize") fiber
 
-
     Tick -> do
-      {display, position, status, before, current, after} <- H.get
+      { display, position, status, before, current, after } <- H.get
 
       case status of
-        Waiting 0 -> H.modify_ _ {status = Deliting}
+        Waiting 0 -> H.modify_ _ { status = Deliting }
 
-        Waiting n -> H.modify_ _ {status = Waiting (n - 1)}
+        Waiting n -> H.modify_ _ { status = Waiting (n - 1) }
 
-        Typing false ->  H.modify_ _ {status = Typing true}
+        Typing false -> H.modify_ _ { status = Typing true }
 
         Typing true -> do
-          when (display == current) $ H.modify_ _ {status = Waiting 33}
+          when (display == current) $ H.modify_ _ { status = Waiting 33 }
 
           unless (display == current) do
             let newPosition = position + 1
@@ -138,14 +140,14 @@ component = H.mkComponent
                     , status = Typing false
                     }
 
-            _ -> H.modify_ _ {display = String.take (String.length display - 1) display}
+            _ -> H.modify_ _ { display = String.take (String.length display - 1) display }
 
   render :: forall slots. State -> H.ComponentHTML Action slots m
-  render {display, status} =
+  render { display, status } =
     HH.span
       [ HP.classes
-         [ T.typingCursor
-         , cx T.idle $ isWaiting status
-         ]
+          [ T.typingCursor
+          , cx T.idle $ isWaiting status
+          ]
       ]
       [ HH.text display ]

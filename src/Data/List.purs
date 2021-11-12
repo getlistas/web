@@ -32,76 +32,83 @@ instance authorShow :: Show Author where
   show (Other user) = "Other (" <> ID.toString user.id <> ")"
 
 type ForkedList
-  = { id :: ID
-    , slug :: Slug
-    , user :: ID
-    , title :: String
-    , description :: Maybe String
-    , tags :: Array String
-    , created_at :: DateTime
-    }
+  =
+  { id :: ID
+  , slug :: Slug
+  , user :: ID
+  , title :: String
+  , description :: Maybe String
+  , tags :: Array String
+  , created_at :: DateTime
+  }
 
 type ForkMeta
-  = { list :: ID
-    , user :: ID
-    }
+  =
+  { list :: ID
+  , user :: ID
+  }
 
 type ResourceMeta
-  = { count :: Int
-    , completed_count :: Int
-    , last_completed_at :: Maybe DateTime
-    , next :: Maybe ListResource
-    }
+  =
+  { count :: Int
+  , completed_count :: Int
+  , last_completed_at :: Maybe DateTime
+  , next :: Maybe ListResource
+  }
 
 type ListRep row
-  = ( title :: String
-    , description :: Maybe String
-    , tags :: Array String
-    , is_public :: Boolean
-    | row
-    )
+  =
+  ( title :: String
+  , description :: Maybe String
+  , tags :: Array String
+  , is_public :: Boolean
+  | row
+  )
 
 type CreateListFields
   = { | ListRep () }
 
 type List
-  = { | ListRep ( fork :: Maybe ForkMeta ) }
+  = { | ListRep (fork :: Maybe ForkMeta) }
 
 type ListWithIdAndUserRep row
-  = ( title :: String
-    , description :: Maybe String
-    , tags :: Array String
-    , is_public :: Boolean
-    , id :: ID
-    , slug :: Slug
-    , user :: ID
-    , created_at :: DateTime
-    , updated_at :: DateTime
-    , fork :: Maybe ForkMeta
-    , forks_count :: Int
-    , likes_count :: Int
-    , subscriptions_count :: Int
-    | row
-    )
+  =
+  ( title :: String
+  , description :: Maybe String
+  , tags :: Array String
+  , is_public :: Boolean
+  , id :: ID
+  , slug :: Slug
+  , user :: ID
+  , created_at :: DateTime
+  , updated_at :: DateTime
+  , fork :: Maybe ForkMeta
+  , forks_count :: Int
+  , likes_count :: Int
+  , subscriptions_count :: Int
+  | row
+  )
 
 type ListWithIdAndUser
   = { | ListWithIdAndUserRep () }
 
 type ListWithIdUserAndMeta
-  = {
-    | ListWithIdAndUserRep
-      ( resource_metadata :: ResourceMeta )
-    }
+  =
+  {
+  | ListWithIdAndUserRep
+      (resource_metadata :: ResourceMeta)
+  }
 
 type PublicListRep row
-  = ( id :: ID
-    , slug :: Slug
-    , title :: String
-    , description :: Maybe String
-    , tags :: Array String
-    , created_at :: DateTime
-    | row
-    )
+  =
+  ( id :: ID
+  , slug :: Slug
+  , title :: String
+  , description :: Maybe String
+  , tags :: Array String
+  , created_at :: DateTime
+  | row
+  )
 
 type PublicListWithUser
   = { | PublicListRep (user :: PublicProfile) }
@@ -110,11 +117,11 @@ type PublicList
   = { | PublicListRep (author :: Author) }
 
 publicListUserToAuthor :: Maybe ID -> PublicListWithUser -> PublicList
-publicListUserToAuthor Nothing {id, slug, title, description, tags, created_at, user} =
-  {id, slug, title, description, tags, created_at, author: Other user}
-publicListUserToAuthor (Just currentUser) {id, slug, title, description, tags, created_at, user}
-  | currentUser == user.id = {id, slug, title, description, tags, created_at, author: You}
-  | otherwise = {id, slug, title, description, tags, created_at, author: Other user}
+publicListUserToAuthor Nothing { id, slug, title, description, tags, created_at, user } =
+  { id, slug, title, description, tags, created_at, author: Other user }
+publicListUserToAuthor (Just currentUser) { id, slug, title, description, tags, created_at, user }
+  | currentUser == user.id = { id, slug, title, description, tags, created_at, author: You }
+  | otherwise = { id, slug, title, description, tags, created_at, author: Other user }
 
 publicListCodec :: JsonCodec PublicListWithUser
 publicListCodec =

@@ -29,7 +29,7 @@ import Web.DOM.ParentNode (QuerySelector(..))
 
 main :: Effect Unit
 main = HA.runHalogenAff do
-  liftEffect $ Splitbee.init {scriptUrl: ConfigProvider.splitbeeUrl}
+  liftEffect $ Splitbee.init { scriptUrl: ConfigProvider.splitbeeUrl }
 
   _ <- HA.awaitBody
 
@@ -40,8 +40,8 @@ main = HA.runHalogenAff do
     Just token -> do
       let decodedUser = hush $ decodeToken token
 
-      for_ decodedUser \{email, id} ->
-        liftEffect $ Splitbee.userSet $ encodeJson {email: unwrap email, userId: ID.toString id}
+      for_ decodedUser \{ email, id } ->
+        liftEffect $ Splitbee.userSet $ encodeJson { email: unwrap email, userId: ID.toString id }
 
       pure decodedUser
 
@@ -50,7 +50,7 @@ main = HA.runHalogenAff do
   let
     baseUrl = ConfigProvider.provide
     env = ConfigProvider.env
-    store = {nav, baseUrl, env, currentUser, lists: NotAsked}
+    store = { nav, baseUrl, env, currentUser, lists: NotAsked }
 
   rootComponent <- (runAppM store) Router.component
 

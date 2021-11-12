@@ -78,20 +78,20 @@ type ChildSlots =
   , discover :: OpaqueSlot Unit
   , profile :: OpaqueSlot Unit
   , publicList :: OpaqueSlot Unit
-    -- Info
+  -- Info
   , about :: OpaqueSlot Unit
   , pricing :: OpaqueSlot Unit
   , changelog :: OpaqueSlot Unit
   , howTo :: OpaqueSlot Unit
-    -- Legal
+  -- Legal
   , terms :: OpaqueSlot Unit
   , policy :: OpaqueSlot Unit
-    -- Auth
+  -- Auth
   , login :: OpaqueSlot Unit
   , register :: OpaqueSlot Unit
   , verifySuccess :: OpaqueSlot Unit
   , verifyFailure :: OpaqueSlot Unit
-    -- Private
+  -- Private
   , dashboard :: OpaqueSlot Unit
   , library :: OpaqueSlot Unit
   , settings :: OpaqueSlot Unit
@@ -118,7 +118,7 @@ component
   => Analytics m
   => H.Component Query Unit Void m
 component = connect (selectEq _.currentUser) $ H.mkComponent
-  { initialState: \{context: currentUser} -> {route: Nothing, currentUser}
+  { initialState: \{ context: currentUser } -> { route: Nothing, currentUser }
   , render
   , eval: H.mkEval $ H.defaultEval
       { handleQuery = handleQuery
@@ -138,20 +138,21 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
     NavigateAct route e -> navigate_ e route
 
-    Receive {context: currentUser} ->
-      H.modify_ _ {currentUser = currentUser}
+    Receive { context: currentUser } ->
+      H.modify_ _ { currentUser = currentUser }
 
   handleQuery :: forall a. Query a -> H.HalogenM State Action ChildSlots Void m (Maybe a)
   handleQuery = case _ of
     Navigate dest a -> do
-      {route, currentUser} <- H.get
+      { route, currentUser } <- H.get
 
-      let isLoggedIn = isJust currentUser
-          isAuthRoute = dest `elem` authRoutes
+      let
+        isLoggedIn = isJust currentUser
+        isAuthRoute = dest `elem` authRoutes
 
       when (route /= Just dest) do
         case isLoggedIn && isAuthRoute of
-          false -> H.modify_ _ {route = Just dest}
+          false -> H.modify_ _ { route = Just dest }
           _ -> pure unit
 
       pure $ Just a
@@ -162,15 +163,15 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
   -- Display the login page instead of the expected page if there is no current user
   authorize :: Maybe ProfileWithIdAndEmail -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
   authorize mbProfile html = case mbProfile of
-    Nothing -> HH.slot_ Login._slot unit Login.component {redirect: false, registerSuccess: false}
+    Nothing -> HH.slot_ Login._slot unit Login.component { redirect: false, registerSuccess: false }
 
     Just _ -> html
 
   authorizeList :: Maybe ProfileWithIdAndEmail -> Slug -> H.ComponentHTML Action ChildSlots m -> H.ComponentHTML Action ChildSlots m
   authorizeList mbProfile pathSlug html = case mbProfile of
-    Nothing -> HH.slot_ Login._slot unit Login.component {redirect: false, registerSuccess: false}
+    Nothing -> HH.slot_ Login._slot unit Login.component { redirect: false, registerSuccess: false }
 
-    Just {slug} | slug == pathSlug -> html
+    Just { slug } | slug == pathSlug -> html
 
     Just _ -> NotFound.elem
 
@@ -180,7 +181,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       [ HP.classes [ T.minHScreen, T.wScreen, T.flex, T.flexCol, T.bgGray10 ] ]
       [ HH.div
           [ HP.classes [ T.container, T.mxAuto, T.mdPx4, T.xlPx0 ] ]
-          [ HH.slot_ Nav._slot unit Nav.component {route: currentRoute} ]
+          [ HH.slot_ Nav._slot unit Nav.component { route: currentRoute } ]
       , HH.div
           [ HP.classes [ T.container, T.mxAuto, T.px4, T.xlPx0, T.pb20, T.flex1 ] ]
           [ content ]
@@ -188,7 +189,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       ]
 
   render :: State -> H.ComponentHTML Action ChildSlots m
-  render {route, currentUser} =
+  render { route, currentUser } =
     -- removing this wrapping div causes the navigation from Home to other pages
     -- to render nothing at all, even when the lifecycle of the other pages is
     -- triggered
@@ -208,10 +209,10 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                   HH.slot_ Discover._slot unit Discover.component unit
 
                 Profile slug ->
-                  HH.slot_ Profile._slot unit Profile.component {slug}
+                  HH.slot_ Profile._slot unit Profile.component { slug }
 
                 PublicList user list ->
-                  HH.slot_ PublicList._slot unit PublicList.component {user, list}
+                  HH.slot_ PublicList._slot unit PublicList.component { user, list }
 
                 -- INFO ------------------------------------------------------------------
                 About ->
@@ -235,13 +236,13 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
                 -- AUTH ------------------------------------------------------------------
                 Login ->
-                  HH.slot_ Login._slot unit Login.component {redirect: true, registerSuccess: false}
+                  HH.slot_ Login._slot unit Login.component { redirect: true, registerSuccess: false }
 
                 Register ->
                   HH.slot_ Register._slot unit Register.component unit
 
                 VerifyEmailSuccess ->
-                  HH.slot_ Login._slot unit Login.component {redirect: true, registerSuccess: true}
+                  HH.slot_ Login._slot unit Login.component { redirect: true, registerSuccess: true }
 
                 VerifyEmailFailure ->
                   HH.slot_ VerifyFailure._slot unit VerifyFailure.component unit
@@ -271,17 +272,17 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                   HH.slot_ ViewList._slot unit ViewList.component unit
 
                 EditList user list ->
-                  HH.slot_ EditList._slot unit EditList.component {user, list}
+                  HH.slot_ EditList._slot unit EditList.component { user, list }
                     # authorizeList currentUser user
 
                 -- TODO: validate that the current user is accessing this list
                 IntegrationsList user list ->
-                  HH.slot_ ListIntegrations._slot unit ListIntegrations.component {user, list}
+                  HH.slot_ ListIntegrations._slot unit ListIntegrations.component { user, list }
                     # authorizeList currentUser user
 
                 -- TODO: validate that the current user is accessing this list
                 ImportResourcesList user list ->
-                  HH.slot_ ListResourcesImport._slot unit ListResourcesImport.component {user, list}
+                  HH.slot_ ListResourcesImport._slot unit ListResourcesImport.component { user, list }
                     # authorizeList currentUser user
 
                 -- This shouldn't happend, as is already pattern matched above

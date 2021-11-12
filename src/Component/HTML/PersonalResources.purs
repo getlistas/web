@@ -58,12 +58,12 @@ type Slot id = H.Slot Query Void id
 
 _slot = Proxy :: Proxy "personalResources"
 
-type Input = {list :: ID}
+type Input = { list :: ID }
 
 type Lists = RemoteData String (Array ListWithIdUserAndMeta)
 
 type StoreState
-  = {lists :: Lists}
+  = { lists :: Lists }
 
 data Action
   = Initialize
@@ -71,11 +71,11 @@ data Action
   | SearchChange String
   | LoadResources
   | LoadLists
-    -- editing resources
+  -- editing resources
   | Edit ListResource
   | ResourceEdited EditResource.Output
   | CloseEditModal
-    -- resources actions
+  -- resources actions
   | CopyToShare ListResource
   | CopyResourceURL ListResource
   | CompleteResource ListResource
@@ -84,9 +84,9 @@ data Action
   | DeleteResource ListResource
   | ConfirmDeleteResource ListResource
   | CancelDeleteResource
-    -- filtering
+  -- filtering
   | ToggleStatusFilter FilterByDone
-    -- meta actions
+  -- meta actions
   | WhenNotProcessingAction Action
   | NoOp
 
@@ -94,20 +94,22 @@ data Query a
   = ResourceAdded ListResource a
 
 type State
-  = { list :: ID
-    , lists :: Lists
-    , resources :: RemoteData String (Array ListResource)
-    , isProcessingAction :: Boolean
-    , confirmDelete :: Maybe ID
-    , year :: Maybe Year
-    , filterByStatus :: FilterByDone
-    , searchQuery :: String
-    , toEdit :: Maybe ListResource
-    }
+  =
+  { list :: ID
+  , lists :: Lists
+  , resources :: RemoteData String (Array ListResource)
+  , isProcessingAction :: Boolean
+  , confirmDelete :: Maybe ID
+  , year :: Maybe Year
+  , filterByStatus :: FilterByDone
+  , searchQuery :: String
+  , toEdit :: Maybe ListResource
+  }
 
 type ChildSlots
-  = ( editResource :: EditResource.Slot
-    )
+  =
+  ( editResource :: EditResource.Slot
+  )
 
 insertResourceAt :: Int -> ListResource -> State -> State
 insertResourceAt i resource =
@@ -124,7 +126,7 @@ modifyResourceById id f =
   over (_resources <<< _Success) (map (\r -> if r.id == id then f r else r))
 
 select :: Store.Store -> StoreState
-select {lists} = {lists}
+select { lists } = { lists }
 
 component
   :: forall o m
@@ -147,7 +149,7 @@ component = connect (selectEq select) $ H.mkComponent
       }
   }
   where
-  initialState {context: {lists}, input: {list}} =
+  initialState { context: { lists }, input: { list } } =
     { lists
     , list
     , resources: NotAsked
@@ -163,38 +165,38 @@ component = connect (selectEq select) $ H.mkComponent
   handleAction = case _ of
     Initialize -> do
       year <- Date.year <$> nowDate
-      H.modify_ _ {year = Just year}
+      H.modify_ _ { year = Just year }
 
       handleAction LoadResources
 
     LoadResources -> do
-      {list} <- H.get
+      { list } <- H.get
 
-      H.modify_ _ {resources = Loading}
+      H.modify_ _ { resources = Loading }
 
-      resources <- RemoteData.fromEither <$> note "Failed to load resources" <$> getListResources {list, completed: Nothing}
+      resources <- RemoteData.fromEither <$> note "Failed to load resources" <$> getListResources { list, completed: Nothing }
 
-      H.modify_ _ {resources = resources}
+      H.modify_ _ { resources = resources }
 
     SearchChange newQuery -> do
-      {searchQuery: oldQuery} <- H.get
-      H.modify_ _ {searchQuery = newQuery}
+      { searchQuery: oldQuery } <- H.get
+      H.modify_ _ { searchQuery = newQuery }
 
       when (null newQuery && (oldQuery /= newQuery)) do
         handleAction LoadResources
 
       when (not $ null newQuery) do
-        {list} <- H.get
+        { list } <- H.get
 
-        let search = defaultSearch {list = Just list, search_text = NES.fromString newQuery, sort = Just PositionAsc}
+        let search = defaultSearch { list = Just list, search_text = NES.fromString newQuery, sort = Just PositionAsc }
 
-        H.modify_ _ {resources = Loading}
+        H.modify_ _ { resources = Loading }
 
         resources <- RemoteData.fromEither <$> note "Failed to load resources" <$> searchResources search
 
-        H.modify_ _ {resources = resources}
+        H.modify_ _ { resources = resources }
 
-    Receive {context: {lists}} -> H.modify_ _ {lists = lists}
+    Receive { context: { lists } } -> H.modify_ _ { lists = lists }
 
     LoadLists -> do
       result <- RemoteData.fromEither <$> note "Could not fetch your lists" <$> getLists
@@ -203,26 +205,26 @@ component = connect (selectEq select) $ H.mkComponent
     -- editing resource
 
     Edit resource -> do
-      {toEdit} <- H.get
-      when (isNothing toEdit) do H.modify_ _ {toEdit = Just resource}
+      { toEdit } <- H.get
+      when (isNothing toEdit) do H.modify_ _ { toEdit = Just resource }
 
-    ResourceEdited (EditResource.Updated {new: updated@{id}}) -> do
+    ResourceEdited (EditResource.Updated { new: updated@{ id } }) -> do
       handleAction CloseEditModal
-      {list} <- H.get
+      { list } <- H.get
       when (updated.list == list) do H.modify_ $ modifyResourceById id (const updated)
       when (updated.list /= list) do H.modify_ $ removeResourceById id
 
-    CloseEditModal -> H.modify_ _ {toEdit = Nothing}
+    CloseEditModal -> H.modify_ _ { toEdit = Nothing }
 
     -- resources actions
 
-    CopyToShare {url} -> do
+    CopyToShare { url } -> do
       host <- H.liftEffect $ Location.host =<< Window.location =<< Window.window
-      void $ writeText $ host <> print routeCodec (CreateResource {url: Just url, text: Nothing, title: Nothing})
+      void $ writeText $ host <> print routeCodec (CreateResource { url: Just url, text: Nothing, title: Nothing })
 
-    CopyResourceURL {url} -> void $ writeText url
+    CopyResourceURL { url } -> void $ writeText url
 
-    CompleteResource toComplete@{id, completed_at} -> do
+    CompleteResource toComplete@{ id, completed_at } -> do
       when (not $ isJust completed_at) do
         state <- H.get
 
@@ -231,7 +233,7 @@ component = connect (selectEq select) $ H.mkComponent
             now <- nowDateTime
 
             H.modify_ $
-              modifyResourceById id (_ {completed_at = Just now})
+              modifyResourceById id (_ { completed_at = Just now })
                 <<< set _isProcessingAction true
 
             result <- completeResource toComplete
@@ -242,14 +244,14 @@ component = connect (selectEq select) $ H.mkComponent
             H.modify_ $ set _isProcessingAction false
           Nothing -> pure unit
 
-    UncompleteResource toUndo@{id, completed_at} -> do
+    UncompleteResource toUndo@{ id, completed_at } -> do
       when (isJust completed_at) do
         state <- H.get
 
         case A.findIndex ((id == _) <<< _.id) =<< preview (_resources <<< _Success) state of
           Just i -> do
             H.modify_ $
-              modifyResourceById id (_ {completed_at = Nothing})
+              modifyResourceById id (_ { completed_at = Nothing })
                 <<< set _isProcessingAction true
 
             result <- uncompleteResource toUndo
@@ -260,7 +262,7 @@ component = connect (selectEq select) $ H.mkComponent
             H.modify_ $ set _isProcessingAction false
           Nothing -> pure unit
 
-    SkipResource i toSkip@{id} -> do
+    SkipResource i toSkip@{ id } -> do
       lastId <- H.gets $ map _.id <<< lastOf (_resources <<< _Success <<< traversed)
 
       H.modify_
@@ -268,18 +270,18 @@ component = connect (selectEq select) $ H.mkComponent
             <<< over (_resources <<< _Success) (flip A.snoc toSkip)
             <<< removeResourceById id
 
-      result <- changePosition toSkip {previus: lastId}
+      result <- changePosition toSkip { previus: lastId }
 
       when (isNothing result) $ H.modify_ $ insertResourceAt i toSkip <<< removeResourceById id
       when (isJust result) $ void $ H.fork $ handleAction LoadLists
 
       H.modify_ $ set _isProcessingAction false
 
-    DeleteResource {id} -> do
-      H.modify_ _ {confirmDelete = Just id}
+    DeleteResource { id } -> do
+      H.modify_ _ { confirmDelete = Just id }
 
-    ConfirmDeleteResource toDelete@{id} -> do
-      {confirmDelete} <- H.get
+    ConfirmDeleteResource toDelete@{ id } -> do
+      { confirmDelete } <- H.get
 
       mbItems <- H.gets $ preview (_resources <<< _Success)
 
@@ -294,16 +296,16 @@ component = connect (selectEq select) $ H.mkComponent
 
           H.modify_ $ set _isProcessingAction false
 
-      H.modify_ _ {confirmDelete = Nothing}
+      H.modify_ _ { confirmDelete = Nothing }
 
     CancelDeleteResource ->
-      H.modify_ _ {confirmDelete = Nothing}
+      H.modify_ _ { confirmDelete = Nothing }
 
     ToggleStatusFilter status ->
-      H.modify_ _ {filterByStatus = status}
+      H.modify_ _ { filterByStatus = status }
 
     WhenNotProcessingAction action -> do
-      {isProcessingAction} <- H.get
+      { isProcessingAction } <- H.get
       when (not isProcessingAction) $ void $ H.fork $ handleAction action
 
     NoOp -> pure unit
@@ -316,7 +318,7 @@ component = connect (selectEq select) $ H.mkComponent
       pure $ Just a
 
   render :: State -> H.ComponentHTML Action ChildSlots m
-  render {lists, isProcessingAction, resources, confirmDelete, year, filterByStatus, searchQuery, toEdit} =
+  render { lists, isProcessingAction, resources, confirmDelete, year, filterByStatus, searchQuery, toEdit } =
     HH.div
       []
       [ HH.div
@@ -332,12 +334,12 @@ component = connect (selectEq select) $ H.mkComponent
                   }
               ]
           , HH.div
-              [ HP.classes [ T.wFull , T.smWAuto ] ]
+              [ HP.classes [ T.wFull, T.smWAuto ] ]
               [ ToggleGroup.toggleGroup
                   false
-                  [ {label: "All", action: ToggleStatusFilter ShowAll, active: filterByStatus == ShowAll}
-                  , {label: "Done", action: ToggleStatusFilter ShowDone, active: filterByStatus == ShowDone}
-                  , {label: "Pending", action: ToggleStatusFilter ShowPending, active: filterByStatus == ShowPending}
+                  [ { label: "All", action: ToggleStatusFilter ShowAll, active: filterByStatus == ShowAll }
+                  , { label: "Done", action: ToggleStatusFilter ShowDone, active: filterByStatus == ShowDone }
+                  , { label: "Pending", action: ToggleStatusFilter ShowPending, active: filterByStatus == ShowPending }
                   ]
               ]
           ]
@@ -364,16 +366,18 @@ component = connect (selectEq select) $ H.mkComponent
 
           -- TODO: error message element
           Failure msg -> HH.text msg
-     , Modal.modal (isJust toEdit) ({onClose: CloseEditModal, noOp: NoOp}) $
-        HH.div
-          []
-          [ HH.div
-              [ HP.classes [ T.textCenter, T.textGray400, T.text2xl, T.fontBold, T.mb4 ] ]
-              [ HH.text "Edit resource" ]
-          , maybeElem toEdit \resource ->
-              let input = {lists: fromMaybe [] $ toMaybe lists, resource}
-                in HH.slot EditResource._slot unit EditResource.component input ResourceEdited
-          ]
+      , Modal.modal (isJust toEdit) ({ onClose: CloseEditModal, noOp: NoOp }) $
+          HH.div
+            []
+            [ HH.div
+                [ HP.classes [ T.textCenter, T.textGray400, T.text2xl, T.fontBold, T.mb4 ] ]
+                [ HH.text "Edit resource" ]
+            , maybeElem toEdit \resource ->
+                let
+                  input = { lists: fromMaybe [] $ toMaybe lists, resource }
+                in
+                  HH.slot EditResource._slot unit EditResource.component input ResourceEdited
+            ]
       ]
 
     where
@@ -390,7 +394,7 @@ component = connect (selectEq select) $ H.mkComponent
 
     isLast id = Just id == mbLastId
 
-    iconAction {icon, action, hoverColor, title, disabled} =
+    iconAction { icon, action, hoverColor, title, disabled } =
       HH.button
         [ HE.onClick $ const action
         , HP.classes
@@ -408,7 +412,7 @@ component = connect (selectEq select) $ H.mkComponent
         [ icon [ Icons.classes [ T.h5, T.w5 ] ] ]
 
     listResource :: Int -> ListResource -> Tuple String _
-    listResource i resource@{id, url, thumbnail, completed_at, created_at, description, tags} =
+    listResource i resource@{ id, url, thumbnail, completed_at, created_at, description, tags } =
       Tuple (ID.toString id)
         $ HH.div
             [ HP.classes
@@ -454,22 +458,22 @@ component = connect (selectEq select) $ H.mkComponent
                           $ NEA.toArray
                           $ map Tag.tag ts
                     ]
-                    , HH.div
-                        [ HP.classes [ T.flex, T.itemsCenter, T.groupHoverHidden, T.groupFocusHidden, T.groupFocusWithinHidden, T.mt2 ] ]
-                        $ case completed_at of
-                            Just date ->
-                              [ HH.div
-                                  [ HP.classes [ T.py2, T.mr2 ] ]
-                                  [ Icons.check [ Icons.classes [ T.textKiwiDark, T.h5, T.w5 ] ] ]
-                              , HH.div
-                                  [ HP.classes [ T.textGray300, T.textXs ] ]
-                                  [ HH.text $ "Completed " <> displayDate date ]
-                              ]
-                            Nothing ->
-                              [ HH.div
-                                  [ HP.classes [ T.py1, T.textGray300, T.textXs ] ]
-                                  [ HH.text $ "Added " <> displayDate created_at ]
-                              ]
+                , HH.div
+                    [ HP.classes [ T.flex, T.itemsCenter, T.groupHoverHidden, T.groupFocusHidden, T.groupFocusWithinHidden, T.mt2 ] ]
+                    $ case completed_at of
+                        Just date ->
+                          [ HH.div
+                              [ HP.classes [ T.py2, T.mr2 ] ]
+                              [ Icons.check [ Icons.classes [ T.textKiwiDark, T.h5, T.w5 ] ] ]
+                          , HH.div
+                              [ HP.classes [ T.textGray300, T.textXs ] ]
+                              [ HH.text $ "Completed " <> displayDate date ]
+                          ]
+                        Nothing ->
+                          [ HH.div
+                              [ HP.classes [ T.py1, T.textGray300, T.textXs ] ]
+                              [ HH.text $ "Added " <> displayDate created_at ]
+                          ]
                 , HH.div
                     [ HP.classes [ T.hidden, T.groupHoverFlex, T.groupFocusFlex, T.groupFocusWithinFlex, T.mt1 ] ]
                     [ case completed_at of
@@ -550,5 +554,5 @@ component = connect (selectEq select) $ H.mkComponent
                           , T.roundedMd
                           ]
                       ]
-                ]
+                  ]
             ]

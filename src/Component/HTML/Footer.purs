@@ -16,8 +16,7 @@ footer :: forall i p. (Route -> Event -> p) -> HH.HTML i p
 footer navigate =
   HH.footer
     [ HP.classes [ T.bgKiwiDark, T.mt12 ] ]
-    [
-      HH.div
+    [ HH.div
         [ HP.classes
             [ T.mxAuto
             , T.maxWMd
