@@ -57,32 +57,76 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
     HH.div
       []
       [ HH.div
-          [ HP.classes [ T.pt2 ] ]
+          [ HP.classes [ T.pt2, T.flex, T.flexCol, T.gap12 ] ]
           [ HH.h1
-              [ HP.classes [ T.textGray400, T.mb6, T.text4xl, T.fontBold ] ]
+              [ HP.classes [ T.textGray400, T.text4xl, T.fontBold ] ]
               [ HH.text "How to add resources" ]
-          , HH.h2
-              [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ] ]
-              [ HH.text "Short cut" ]
-          , HH.p
-              [ HP.classes [ T.textGray400, T.mb6, T.textLg ] ]
-              [ HH.code
-                  [ HP.classes [ T.textManzana, T.bgGray100, T.p1, T.roundedSm ] ]
-                  [ HH.text "Cmd/Ctrl + v" ]
-              , HH.text " will open the resources tab with the link you just pasted."
+          , HH.div
+              []
+              [ HH.h2
+                  [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ] ]
+                  [ HH.text "Quick paste" ]
+              , HH.p
+                  [ HP.classes [ T.textGray400, T.textLg ] ]
+                  [ HH.code
+                      [ HP.classes [ T.textManzana, T.bgGray100, T.p1, T.roundedSm ] ]
+                      [ HH.text "Cmd/Ctrl + v" ]
+                  , HH.text " will open the resources tab with the link you just pasted."
+                  ]
               ]
-          , HH.h2
-              [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ] ]
-              [ HH.text "Browser extensions" ]
-          , HH.p
-              [ HP.classes [ T.textGray400, T.mb2, T.textLg ] ]
-              [ HH.text "Use our fancy browser extensions to quickly add the current tab to Listas." ]
-          , HH.ul
-              [ HP.classes [ T.textGray400, T.mb6, T.textLg, T.listDisc, T.listInside ] ]
-              [ HH.li
-                  []
-                  [ HH.a
-                      [ HP.href "https://chrome.google.com/webstore/detail/save-to-listas/nnpnmodoppncmkhbmdeabepeppcnmdno"
+          , HH.div []
+              [ HH.h2
+                  [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ] ]
+                  [ HH.text "Browser extensions" ]
+              , HH.p
+                  [ HP.classes [ T.textGray400, T.mb2, T.textLg ] ]
+                  [ HH.text "Use our fancy browser extensions to quickly add the current tab to Listas." ]
+              , HH.ul
+                  [ HP.classes [ T.textGray400, T.textLg, T.listDisc, T.listInside ] ]
+                  [ HH.li
+                      []
+                      [ HH.a
+                          [ HP.href "https://chrome.google.com/webstore/detail/save-to-listas/nnpnmodoppncmkhbmdeabepeppcnmdno"
+                          , HP.target "_blank"
+                          , HP.rel "noreferrer noopener nofollow"
+                          , HP.classes
+                              [ T.textKiwi
+                              , T.hoverUnderline
+                              , T.cursorPointer
+                              ]
+                          ]
+                          [ HH.text "Chrome extension" ]
+                      ]
+                  , HH.li
+                      []
+                      [ HH.a
+                          [ HP.href "https://addons.mozilla.org/en-US/firefox/addon/save-to-listas/"
+                          , HP.target "_blank"
+                          , HP.rel "noreferrer noopener nofollow"
+                          , HP.classes
+                              [ T.textKiwi
+                              , T.hoverUnderline
+                              , T.cursorPointer
+                              ]
+                          ]
+                          [ HH.text "Firefox add-on" ]
+                      ]
+                  , HH.li
+                      []
+                      [ HH.text "Safari extension coming soon" ]
+                  ]
+
+              ]
+          , HH.div
+              []
+              [ HH.h2
+                  [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ] ]
+                  [ HH.text "iOS Shortcut" ]
+              , HH.p
+                  [ HP.classes [ T.textGray400, T.mb2, T.textLg ] ]
+                  [ HH.text "Install "
+                  , HH.a
+                      [ HP.href "https://www.icloud.com/shortcuts/d3209ade253140e2992d074f0889652a"
                       , HP.target "_blank"
                       , HP.rel "noreferrer noopener nofollow"
                       , HP.classes
@@ -91,63 +135,52 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                           , T.cursorPointer
                           ]
                       ]
-                      [ HH.text "Chrome extension" ]
+                      [ HH.text "our Shortcut" ]
+                  , HH.text " on iOS to quickly to share to Listas"
                   ]
-              , HH.li
-                  []
-                  [ HH.a
-                      [ HP.href "https://addons.mozilla.org/en-US/firefox/addon/save-to-listas/"
-                      , HP.target "_blank"
-                      , HP.rel "noreferrer noopener nofollow"
-                      , HP.classes
-                          [ T.textKiwi
-                          , T.hoverUnderline
-                          , T.cursorPointer
-                          ]
+              , HH.img
+                  [ HP.src "https://i.imgur.com/uNwwLr9.jpg"
+                  , HP.classes [ T.mt2, T.maxWFull ]
+                  ]
+              ]
+          , HH.div
+              []
+              [ HH.h2
+                  [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ] ]
+                  [ HH.text "Share on mobile" ]
+              , HH.p
+                  [ HP.classes [ T.textGray400, T.textLg ] ]
+                  [ HH.text "Install our PWA and share from mobile"
+                  ]
+              , HH.div
+                  [ HP.classes [ T.flex, T.flexWrap, T.mt2, T.gap4 ] ]
+                  [ HH.img
+                      [ HP.src "https://i.imgur.com/Q7X1Y2O.jpg"
+                      , HP.classes [ T.maxWFull ]
                       ]
-                      [ HH.text "Firefox add-on" ]
-                  ]
-              , HH.li
-                  []
-                  [ HH.text "Safari extension coming soon" ]
-              ]
-          , HH.h2
-              [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ] ]
-              [ HH.text "Share on mobile" ]
-          , HH.p
-              [ HP.classes [ T.textGray400, T.mb6, T.textLg ] ]
-              [ HH.text "Install our PWA and share from mobile"
-              ]
-          , HH.h2
-              [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ] ]
-              [ HH.text "iOS Shortcut" ]
-          , HH.p
-              [ HP.classes [ T.textGray400, T.mb2, T.textLg ] ]
-              [ HH.text "Install "
-              , HH.a
-                  [ HP.href "https://www.icloud.com/shortcuts/d3209ade253140e2992d074f0889652a"
-                  , HP.target "_blank"
-                  , HP.rel "noreferrer noopener nofollow"
-                  , HP.classes
-                      [ T.textKiwi
-                      , T.hoverUnderline
-                      , T.cursorPointer
+                  , HH.img
+                      [ HP.src "https://i.imgur.com/bJNiGa2.jpg"
+                      , HP.classes [ T.maxWFull ]
                       ]
                   ]
-                  [ HH.text "our Shortcut" ]
-              , HH.text " on iOS to quickly to share to Listas"
               ]
-          , HH.img
-              [ HP.src "https://i.imgur.com/uNwwLr9.jpg"
-              , HP.classes [ T.mt2, T.mb6, T.maxWFull ]
+          , HH.div
+              []
+              [ HH.h2
+                  [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ] ]
+                  [ HH.text "Bulk import" ]
+              , HH.p
+                  [ HP.classes [ T.textGray400, T.textLg ] ]
+                  [ HH.text "Import several links at once from the Import section on each list's Settings. For example, from OneTab's export."
+                  ]
+              , HH.img
+                  [ HP.src "https://i.imgur.com/xeEp7tW.png"
+                  , HP.classes [ T.mt2, T.maxWFull ]
+                  ]
+
               ]
-          , HH.h2
-              [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ] ]
-              [ HH.text "Bulk import" ]
-          , HH.p
-              [ HP.classes [ T.textGray400, T.mb6, T.textLg ] ]
-              [ HH.text "Go to the import section on a list settings and past your links, one per line, to bulk import. Eg. from OneTab export."
-              ]
+
           ]
+
       ]
 

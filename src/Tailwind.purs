@@ -395,6 +395,10 @@ fontSemibold = ClassName "font-semibold"
 fromDurazno :: ClassName
 fromDurazno = ClassName "from-durazno"
 
+-- | gap12
+gap12 :: ClassName
+gap12 = ClassName "gap-12"
+
 -- | gap1
 gap1 :: ClassName
 gap1 = ClassName "gap-1"
@@ -918,6 +922,10 @@ maxWMd = ClassName "max-w-md"
 -- | maxWXl
 maxWXl :: ClassName
 maxWXl = ClassName "max-w-xl"
+
+-- | mb12
+mb12 :: ClassName
+mb12 = ClassName "mb-12"
 
 -- | mb1
 mb1 :: ClassName

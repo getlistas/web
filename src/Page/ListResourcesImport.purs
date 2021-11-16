@@ -145,6 +145,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                     [ T.flex
                     , T.itemsCenter
                     , T.textGray300
+                    , T.flexShrink0
                     ]
                 ]
                 [ Icons.eye [ Icons.classes [ T.w6, T.h6, T.mr2 ] ]
@@ -186,12 +187,30 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
         Success _ ->
           mkLayout
             [ { cta: Nothing
-              , title: "Import from OneTab"
+              , title: "Bulk import"
               , description: Nothing
               , content:
                   HH.div
                     []
-                    [ HH.slot _form unit formComponent unit HandleForm ]
+                    [ HH.div
+                        [ HP.classes [ T.mb4 ] ]
+                        [ HH.a
+                            [ safeHref HowTo
+                            , HE.onClick $ Navigate HowTo <<< Mouse.toEvent
+                            , HP.classes
+                                [ T.textGray300
+                                , T.hoverTextKiwi
+                                , T.textSm
+                                , T.flex
+                                , T.gap2
+                                ]
+                            ]
+                            [ Icons.info [ Icons.classes [ T.h5, T.w5 ] ]
+                            , HH.text "How to add resources"
+                            ]
+                        ]
+                    , HH.slot _form unit formComponent unit HandleForm
+                    ]
               }
             , { cta: Nothing
               , title: "More ways to import resources comming soon"
@@ -272,6 +291,7 @@ data FormAction
 formComponent
   :: forall m slots
    . MonadAff m
+  => Navigate m
   => F.Component Form FormQuery slots Unit { urls :: String } m
 formComponent =
   F.component formInput

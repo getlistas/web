@@ -201,6 +201,7 @@ component = connect (selectEq select) $ H.mkComponent
                     [ T.flex
                     , T.itemsCenter
                     , T.textGray300
+                    , T.flexShrink0
                     ]
                 ]
                 [ Icons.eye [ Icons.classes [ T.w6, T.h6, T.mr2 ] ]
