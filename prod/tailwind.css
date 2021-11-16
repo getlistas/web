@@ -5045,6 +5045,10 @@ select{
   gap: 2rem;
 }
 
+.gap-12 {
+  gap: 3rem;
+}
+
 .grid-flow-col {
   grid-auto-flow: column;
 }
