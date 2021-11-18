@@ -209,7 +209,8 @@ formComponent =
         RegisterForm
           { name: V.required >>> V.usernameFormat
           , email: V.required >>> V.minLength 3 >>> V.emailFormat
-          , password: V.required >>> V.minLength 10 >>> V.maxLength 100
+          -- TODO: password validation
+          , password: V.required >>> V.minLength 8 >>> V.maxLength 100
           }
     , initialInputs: Nothing
     , status: NotAsked

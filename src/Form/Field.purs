@@ -157,7 +157,10 @@ input sym form { required, hideOptional, placeholder, id, props, type_, message,
     , blurAction = Just $ F.validate sym
     }
   where
-  defProps = Input.defaultProps (F.set sym)
+  defProps = Input.defaultProps action
+  action str =
+    if isJust $ F.getError sym form then F.setValidate sym str
+    else F.set sym str
 
 type TextareaProps form act
   =
@@ -212,7 +215,7 @@ textarea sym form groupProps =
             ( append
                 ( catMaybes
                     [ Just $ HP.value $ F.getInput sym form
-                    , Just $ HE.onValueInput $ F.set sym
+                    , Just $ HE.onValueInput action
                     , Just $ HE.onBlur $ \_ -> F.validate sym
                     , Just $ HP.classes $ Input.fieldInputClasses
                         { hasError, iconBefore: false, iconAfter: false }
@@ -254,4 +257,7 @@ textarea sym form groupProps =
   where
   mbError = filter (const $ F.getTouched sym form) $ F.getError sym form
   hasError = isJust mbError
+  action str =
+    if isJust $ F.getError sym form then F.setValidate sym str
+    else F.set sym str
 
