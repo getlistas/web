@@ -19,8 +19,8 @@ import Listasio.Component.HTML.Utils (maybeElem, whenElem)
 import Listasio.Form.Validation (errorToString)
 import Listasio.Form.Validation as V
 import Tailwind as T
-import Type.Row as Row
 import Type.Proxy (Proxy)
+import Type.Row as Row
 
 -- TODO: Move to Button module
 submit :: forall i p. String -> Boolean -> HH.HTML i p
@@ -127,12 +127,17 @@ defaultProps =
 -- | that an input field of the correct type exists in our form state at the key we provided as
 -- | the function's first argument.
 input
-  :: forall form act slots m sym fields inputs out t0 t1
+  :: forall form act slots m sym fields us inputs out t0 t1 e i o r
    . IsSymbol sym
   => Newtype (form Record F.FormField) { | fields }
   => Newtype (form Variant F.InputFunction) (Variant inputs)
-  => Row.Cons sym (F.FormField V.FormError String out) t0 fields
   => Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs
+  -- These are required for validate, copied from
+  -- [Formless.Actions.validate](https://pursuit.purescript.org/packages/purescript-halogen-formless/2.0.1/docs/Formless.Action#v:validate)
+  -- /shrug
+  => Newtype (form Variant F.U) (Variant us)
+  => Row.Cons sym (F.FormField V.FormError String out) t0 fields
+  => Row.Cons sym (F.U e i o) r us
   => Proxy sym
   -> form Record F.FormField
   -> InputProps form act
@@ -149,9 +154,10 @@ input sym form { required, hideOptional, placeholder, id, props, type_, message,
     , message = message
     , required = required
     , label = label
+    , blurAction = Just $ F.validate sym
     }
   where
-  defProps = Input.defaultProps (F.setValidate sym)
+  defProps = Input.defaultProps (F.set sym)
 
 type TextareaProps form act
   =
@@ -180,12 +186,18 @@ textareaDefaultProps =
   }
 
 textarea
-  :: forall form act slots m sym fields inputs out t0 t1
+  :: forall form act slots m sym fields us inputs out t0 t1 e i o r
    . IsSymbol sym
   => Newtype (form Record F.FormField) { | fields }
   => Newtype (form Variant F.InputFunction) (Variant inputs)
   => Row.Cons sym (F.FormField V.FormError String out) t0 fields
   => Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs
+  -- These are required for validate, copied from
+  -- [Formless.Actions.validate](https://pursuit.purescript.org/packages/purescript-halogen-formless/2.0.1/docs/Formless.Action#v:validate)
+  -- /shrug
+  => Newtype (form Variant F.U) (Variant us)
+  => Row.Cons sym (F.FormField V.FormError String out) t0 fields
+  => Row.Cons sym (F.U e i o) r us
   => Proxy sym
   -> form Record F.FormField
   -> TextareaProps form act
@@ -200,7 +212,8 @@ textarea sym form groupProps =
             ( append
                 ( catMaybes
                     [ Just $ HP.value $ F.getInput sym form
-                    , Just $ HE.onValueInput $ F.setValidate sym
+                    , Just $ HE.onValueInput $ F.set sym
+                    , Just $ HE.onBlur $ \_ -> F.validate sym
                     , Just $ HP.classes $ Input.fieldInputClasses
                         { hasError, iconBefore: false, iconAfter: false }
                     , Just $ HP.required groupProps.required

@@ -22,6 +22,7 @@ type SimpleInputProps act
   { error :: Maybe V.FormError
   , value :: String
   , action :: String -> act
+  , blurAction :: Maybe act
   , required :: Boolean
   , disabled :: Boolean
   , hideOptional :: Boolean
@@ -40,6 +41,7 @@ defaultProps action =
   { value: ""
   , error: Nothing
   , action
+  , blurAction: Nothing
   , disabled: false
   , required: false
   , hideOptional: false
@@ -79,6 +81,7 @@ input groupProps =
                     [ Just $ HP.type_ groupProps.type_
                     , Just $ HP.value groupProps.value
                     , Just $ HE.onValueInput groupProps.action
+                    , HE.onBlur <$> const <$> groupProps.blurAction
                     , Just $ HP.classes $ fieldInputClasses
                         { hasError: isJust groupProps.error
                         , iconBefore: isJust groupProps.iconBefore
