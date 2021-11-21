@@ -89,7 +89,7 @@ required :: forall form m a. Eq a => Monoid a => Monad m => F.Validation form m 
 required = F.hoistFnE_ $ cond (_ /= mempty) Required
 
 minLength :: forall form m. Monad m => Int -> F.Validation form m FormError String String
-minLength n = F.hoistFnE_ $ cond (\str -> String.length str > n) $ TooShort n
+minLength n = F.hoistFnE_ $ cond (\str -> String.length str >= n) $ TooShort n
 
 maxLength :: forall form m. Monad m => Int -> F.Validation form m FormError String String
 maxLength n = F.hoistFnE_ $ cond (\str -> String.length str <= n) $ TooLong n
