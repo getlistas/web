@@ -6,17 +6,20 @@ import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Store.Connect (Connected, connect)
 import Halogen.Store.Monad (class MonadStore)
 import Halogen.Store.Select (selectEq)
 import Listasio.Capability.Navigate (class Navigate, navigate_)
+import Listasio.Component.HTML.Utils (safeHref)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
-import Listasio.Data.Route (Route)
+import Listasio.Data.Route (Route(..))
 import Listasio.Store as Store
 import Tailwind as T
 import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
+import Web.UIEvent.MouseEvent as Mouse
 
 _slot :: Proxy "howTo"
 _slot = Proxy
@@ -64,23 +67,45 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
           , HH.div
               []
               [ HH.h2
-                  [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ] ]
-                  [ HH.text "Quick paste" ]
+                  [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ]
+                  , HP.id "quick-save"
+                  ]
+                  [ HH.text "Quick save" ]
               , HH.p
                   [ HP.classes [ T.textGray400, T.textLg ] ]
-                  [ HH.code
+                  [ HH.text "On Desktop, press "
+                  , HH.code
                       [ HP.classes [ T.textManzana, T.bgGray100, T.p1, T.roundedSm ] ]
-                      [ HH.text "Cmd/Ctrl + v" ]
-                  , HH.text " will open the resources tab with the link you just pasted."
+                      [ HH.text "Ctrl + v" ]
+                  , HH.text " or "
+                  , HH.code
+                      [ HP.classes [ T.textManzana, T.bgGray100, T.p1, T.roundedSm ] ]
+                      [ HH.text "Cmd + v" ]
+                  , HH.text " when on the "
+                  , HH.a
+                      [ safeHref Dashboard
+                      , HE.onClick $ Navigate Dashboard <<< Mouse.toEvent
+                      , HP.target "_blank"
+                      , HP.rel "noreferrer noopener nofollow"
+                      , HP.classes
+                          [ T.textKiwi
+                          , T.hoverUnderline
+                          , T.cursorPointer
+                          ]
+                      ]
+                      [ HH.text "Up next" ]
+                  , HH.text " page or any list page to quickly save an URL you copied."
                   ]
               ]
           , HH.div []
               [ HH.h2
-                  [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ] ]
+                  [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ]
+                  , HP.id "browser-extensions"
+                  ]
                   [ HH.text "Browser extensions" ]
               , HH.p
                   [ HP.classes [ T.textGray400, T.mb2, T.textLg ] ]
-                  [ HH.text "Use our fancy browser extensions to quickly add the current tab to Listas." ]
+                  [ HH.text "Sabe the current tab to Listas with our browser extensions." ]
               , HH.ul
                   [ HP.classes [ T.textGray400, T.textLg, T.listDisc, T.listInside ] ]
                   [ HH.li
@@ -120,8 +145,10 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
           , HH.div
               []
               [ HH.h2
-                  [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ] ]
-                  [ HH.text "iOS Shortcut" ]
+                  [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ]
+                  , HP.id "ios-shortcut"
+                  ]
+                  [ HH.text "Save to Listas on iOS" ]
               , HH.p
                   [ HP.classes [ T.textGray400, T.mb2, T.textLg ] ]
                   [ HH.text "Install "
@@ -135,8 +162,24 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                           , T.cursorPointer
                           ]
                       ]
-                      [ HH.text "our Shortcut" ]
-                  , HH.text " on iOS to quickly to share to Listas"
+                      [ HH.text "the iOS Shortcut" ]
+                  , HH.text " to share any link from other apps to Listas."
+                  ]
+              , HH.p
+                  [ HP.classes [ T.textGray400, T.mb2, T.textLg ] ]
+                  [ HH.text "For mor information on shortcuts check the iOS "
+                  , HH.a
+                      [ HP.href "https://support.apple.com/en-gb/guide/shortcuts/welcome/ios"
+                      , HP.target "_blank"
+                      , HP.rel "noreferrer noopener nofollow"
+                      , HP.classes
+                          [ T.textKiwi
+                          , T.hoverUnderline
+                          , T.cursorPointer
+                          ]
+                      ]
+                      [ HH.text "Shortcuts User Guide" ]
+                  , HH.text "."
                   ]
               , HH.img
                   [ HP.src "https://i.imgur.com/uNwwLr9.jpg"
@@ -146,14 +189,16 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
           , HH.div
               []
               [ HH.h2
-                  [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ] ]
-                  [ HH.text "Share on mobile" ]
+                  [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ]
+                  , HP.id "android-pwa"
+                  ]
+                  [ HH.text "Save to Listas on Android" ]
               , HH.p
-                  [ HP.classes [ T.textGray400, T.textLg ] ]
-                  [ HH.text "Install our PWA and share from mobile"
+                  [ HP.classes [ T.textGray400, T.mb2, T.textLg ] ]
+                  [ HH.text "Install Listas to your Home screen to share any link from other apps to Listas."
                   ]
               , HH.div
-                  [ HP.classes [ T.flex, T.flexWrap, T.mt2, T.gap4 ] ]
+                  [ HP.classes [ T.flex, T.flexWrap, T.gap4 ] ]
                   [ HH.img
                       [ HP.src "https://i.imgur.com/Q7X1Y2O.jpg"
                       , HP.classes [ T.maxWFull ]
@@ -167,20 +212,23 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
           , HH.div
               []
               [ HH.h2
-                  [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ] ]
+                  [ HP.classes [ T.textGray400, T.mb4, T.text2xl, T.fontBold ]
+                  , HP.id "bulk-import"
+                  ]
                   [ HH.text "Bulk import" ]
               , HH.p
-                  [ HP.classes [ T.textGray400, T.textLg ] ]
-                  [ HH.text "Import several links at once from the Import section on each list's Settings. For example, from OneTab's export."
+                  [ HP.classes [ T.textGray400, T.textLg, T.mb2 ] ]
+                  [ HH.text "Import many links at once on the Import section on the list's Settings page."
+                  ]
+              , HH.p
+                  [ HP.classes [ T.textGray400, T.textLg, T.mb2 ] ]
+                  [ HH.text "For example, this can be used to import all OneTab's exported links at once."
                   ]
               , HH.img
                   [ HP.src "https://i.imgur.com/xeEp7tW.png"
-                  , HP.classes [ T.mt2, T.maxWFull ]
+                  , HP.classes [ T.maxWFull ]
                   ]
-
               ]
-
           ]
-
       ]
 
