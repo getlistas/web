@@ -159,7 +159,9 @@ input sym form { required, hideOptional, placeholder, id, props, type_, message,
   where
   defProps = Input.defaultProps action
   action str =
-    if isJust $ F.getError sym form then F.setValidate sym str
+    -- TODO: this shows the errors right away,
+    --       instead of waiting for the first blur as I thought
+    if F.getTouched sym form then F.setValidate sym str
     else F.set sym str
 
 type TextareaProps form act
@@ -258,6 +260,8 @@ textarea sym form groupProps =
   mbError = filter (const $ F.getTouched sym form) $ F.getError sym form
   hasError = isJust mbError
   action str =
-    if isJust $ F.getError sym form then F.setValidate sym str
+    -- TODO: this shows the errors right away,
+    --       instead of waiting for the first blur as I thought
+    if F.getTouched sym form then F.setValidate sym str
     else F.set sym str
 
