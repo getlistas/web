@@ -105,7 +105,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                   [ HH.text "Browser extensions" ]
               , HH.p
                   [ HP.classes [ T.textGray400, T.mb2, T.textLg ] ]
-                  [ HH.text "Sabe the current tab to Listas with our browser extensions." ]
+                  [ HH.text "Save the current tab to Listas with our browser extensions." ]
               , HH.ul
                   [ HP.classes [ T.textGray400, T.textLg, T.listDisc, T.listInside ] ]
                   [ HH.li
@@ -167,7 +167,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                   ]
               , HH.p
                   [ HP.classes [ T.textGray400, T.mb2, T.textLg ] ]
-                  [ HH.text "For mor information on shortcuts check the iOS "
+                  [ HH.text "For more information on shortcuts check the iOS "
                   , HH.a
                       [ HP.href "https://support.apple.com/en-gb/guide/shortcuts/welcome/ios"
                       , HP.target "_blank"
