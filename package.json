@@ -3,50 +3,48 @@
   "private": true,
   "author": "Christain Gill",
   "scripts": {
-    "assets:dev": "cp -R dev/assets public/",
-    "assets:prod": "cp -R prod/assets dist/",
-    "build": "npm run prep-prod && npm run bundle && npm run assets:prod && npm run fixdist && npm run sw",
-    "build:dev": "spago build",
-    "bundle": "npm run bundle:build && npm run bundle:dce && npm run css:purge && npm run bundle:parcel",
+    "build": "npm run prep-prod && npm run bundle",
+    "bundle": "npm run bundle:build && npm run bundle:dce && npm run css:build && npm run bundle:esbuild && npm run fixdist",
     "bundle:build": "PRODUCTION=True spago build --purs-args '--codegen corefn'",
     "bundle:dce": "zephyr -f Main.main",
-    "bundle:parcel": "parcel build prod/index.html --public-url '.' --no-source-maps",
-    "clean": "rm -rf output dce-output .spago dist/* *.lock .cache .parcel-cache && git checkout dist/vercel.json",
-    "css:gen": "postcss build css/tailwind_inputs.css -o dev/tailwind.css",
+    "bundle:esbuild": "npm run esbuild -- --bundle index.js --minify --entry-names=[name]-[hash] --outfile=dist/main.js",
+    "clean": "rm -rf output dce-output .spago dist/*.js dist/*.css *.lock && git checkout dist/service-worker.js",
+    "css:build": "npm run css:purge && npm run css:prod && rm dist/styles.css",
+    "css:gen": "postcss build css/tailwind_inputs.css -o dev/styles.css",
     "css:gen:all": "twpurs gen-purs --classes css/tailwind-classes.txt --all",
-    "css:gen:available": "twpurs gen-available-classes --css dev/tailwind.css --out css/tailwind-classes.txt",
+    "css:gen:available": "twpurs gen-available-classes --css dev/styles.css --out css/tailwind-classes.txt",
     "css:lock": "twpurs gen-purs --classes css/tailwind-classes.txt",
     "css:lock:watch": "twpurs gen-purs --classes css/tailwind-classes.txt --watch",
-    "css:purge": "twpurs gen-css --classes css/tailwind-classes.txt --css dev/tailwind.css -o prod/tailwind.css",
+    "css:prod": "esbuild --bundle dist/styles.css --entry-names=[name]-[hash] --outfile=dist/styles.css --minify",
+    "css:purge": "twpurs gen-css --classes css/tailwind-classes.txt --css dev/styles.css -o dist/styles.css",
+    "esbuild": "esbuild --external:url --external:xhr2",
     "fixdist": "scripts/fix-dist.sh",
     "fmt": "purs-tidy format-in-place 'src/**/*.purs'",
-    "prep-prod": "rm -rf dist && git checkout dist/vercel.json",
+    "prep-prod": "rm -rf dist/*.js dist/*.css && git checkout dist/service-worker.js",
     "pscid:build": "spago build",
-    "serve-dev": "parcel dev/index.html --open -p 8080",
-    "sw": "cp src/public/service-worker.js dist/service-worker.js",
-    "test": "spago test",
-    "watch": "spago build --watch"
+    "serve-dev": "npm run esbuild -- --bundle index-dev.js --servedir=dev --serve=localhost:8080 --outfile=dev/main.js",
+    "test": "spago test"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gillchristian/listas.io.git"
   },
   "devDependencies": {
-    "http-server": "^0.12.3",
-    "parcel": "^2.0.0-beta.1"
-  },
-  "dependencies": {
-    "@splitbee/web": "^0.2.4",
     "@tailwindcss/aspect-ratio": "^0.2.0",
     "@tailwindcss/forms": "^0.2.1",
     "@tailwindcss/line-clamp": "^0.1.0",
     "autoprefixer": "^10.1.0",
-    "decimal.js": "^10.2.0",
-    "marked": "^1.1.1",
-    "postcss": "^8.2.1",
+    "esbuild": "^0.14.10",
+    "http-server": "^0.12.3",
+    "lmdb-store": "^1.6.14",
+    "postcss": "^8.4.5",
     "postcss-cli": "^8.3.1",
     "tailwind-scrollbar": "^1.1.2",
     "tailwindcss": "^2.0.2",
     "tailwindcss-truncate-multiline": "^1.0.3"
+  },
+  "dependencies": {
+    "@splitbee/web": "^0.2.4",
+    "decimal.js": "^10.3.1"
   }
 }

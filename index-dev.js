@@ -1,4 +1,4 @@
-var Main = require("./output/Main");
-Main.main();
+const { main } = require("./output/Main");
+main();
 
 require("./src/register-sw");

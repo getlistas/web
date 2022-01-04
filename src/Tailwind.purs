@@ -923,10 +923,6 @@ maxWMd = ClassName "max-w-md"
 maxWXl :: ClassName
 maxWXl = ClassName "max-w-xl"
 
--- | mb12
-mb12 :: ClassName
-mb12 = ClassName "mb-12"
-
 -- | mb1
 mb1 :: ClassName
 mb1 = ClassName "mb-1"

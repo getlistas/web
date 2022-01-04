@@ -1,3 +1,5 @@
+// TODO: run  this as FFI on Main
+
 if ("serviceWorker" in navigator) {
   const sw = "service-worker.js";
 
@@ -7,6 +9,6 @@ if ("serviceWorker" in navigator) {
       console.log("Service worker registered.");
     })
     .catch((err) => {
-      console.log("Service worker not registered. This happened:", err);
+      console.error("Service worker not registered. This happened:", err);
     });
 }
