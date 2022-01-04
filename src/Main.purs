@@ -21,6 +21,7 @@ import Listasio.AppM (runAppM)
 import Listasio.Component.Router as Router
 import Listasio.Data.ID as ID
 import Listasio.Data.Route (Route, routeCodec)
+import Listasio.Foreign.ServiceWorker as ServiceWorker
 import Listasio.Foreign.Splitbee as Splitbee
 import Network.RemoteData (RemoteData(..))
 import Routing.Duplex (parse)
@@ -29,6 +30,8 @@ import Web.DOM.ParentNode (QuerySelector(..))
 
 main :: Effect Unit
 main = HA.runHalogenAff do
+  _ <- ServiceWorker.register
+
   liftEffect $ Splitbee.init { scriptUrl: ConfigProvider.splitbeeUrl }
 
   _ <- HA.awaitBody
