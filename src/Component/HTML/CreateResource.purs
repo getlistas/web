@@ -8,7 +8,6 @@ import Data.Either (note)
 import Data.Maybe (Maybe(..))
 import Data.String (fromCodePointArray, toCodePointArray) as String
 import Effect.Aff.Class (class MonadAff)
-import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.Store.Monad (class MonadStore, updateStore)
@@ -54,7 +53,7 @@ data Output
   = Created ListResource
 
 type ChildSlots
-  = (formless :: ResourceForm.Slot)
+  = (resourceForm :: ResourceForm.Slot)
 
 filterNonAlphanum :: String -> String
 filterNonAlphanum =
@@ -87,18 +86,18 @@ component = H.mkComponent
   handleAction :: Action -> H.HalogenM State Action ChildSlots Output m Unit
   handleAction = case _ of
     HandleFormMessage newResource -> do
-      void $ H.query F._formless unit $ F.injQuery $ ResourceForm.SetCreateStatus Loading unit
+      void $ H.query ResourceForm._slot unit $ ResourceForm.SetCreateStatus Loading unit
 
       mbNewResource <- createResource newResource
 
       case mbNewResource of
         Just resource -> do
           H.raise $ Created resource
-          void $ H.query F._formless unit $ F.injQuery $ ResourceForm.SetCreateStatus (Success resource) unit
+          void $ H.query ResourceForm._slot unit $ ResourceForm.SetCreateStatus (Success resource) unit
           handleAction LoadLists
 
         Nothing ->
-          void $ H.query F._formless unit $ F.injQuery $ ResourceForm.SetCreateStatus (Failure "Could not create resource") unit
+          void $ H.query ResourceForm._slot unit $ ResourceForm.SetCreateStatus (Failure "Could not create resource") unit
 
     LoadLists -> do
       result <- RemoteData.fromEither <$> note "Could not fetch your lists" <$> getLists
@@ -108,7 +107,7 @@ component = H.mkComponent
   render { lists, selectedList, url, title, text } =
     HH.div
       []
-      [ HH.slot F._formless unit ResourceForm.formComponent formInput HandleFormMessage ]
+      [ HH.slot ResourceForm._slot unit ResourceForm.component formInput HandleFormMessage ]
     where
     formInput = { lists, selectedList, initialInput }
     initialInput = ResourceForm.InputToCreate { url, title, text }

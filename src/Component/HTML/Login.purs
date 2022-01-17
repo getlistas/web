@@ -2,8 +2,9 @@ module Listasio.Component.HTML.Login where
 
 import Prelude
 
+import Data.Const (Const)
 import Data.Maybe (Maybe(..))
-import Data.Newtype (class Newtype, unwrap)
+import Data.Newtype (unwrap)
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
@@ -32,11 +33,25 @@ _slot = Proxy
 
 type Slot = forall query. H.Slot query Output Unit
 
-type ChildSlots
-  = (formless :: F.Slot LoginForm FormQuery () LoginFields Unit)
+type Form :: (Type -> Type -> Type -> Type) -> Row Type
+type Form f =
+  ( email :: f String V.FormError Email
+  , password :: f String V.FormError String
+  )
 
-data Output
-  = GoToRegister
+type FormInputs = { | Form F.FieldInput }
+
+type Query :: Type -> Type
+type Query = Const Void
+
+type Input = { redirect :: Boolean }
+
+data Output = GoToRegister
+
+type FormContext
+  = F.FormContext (Form F.FieldState) (Form (F.FieldAction Action)) Input Action
+
+type FormlessAction = F.FormlessAction (Form F.FieldState)
 
 data Action
   = Initialize
@@ -44,14 +59,15 @@ data Action
   | HandleGoogleLogin
   | Navigate Route Event.Event
   | SwitchToRegister Event.Event
+  -- Formless actions
+  | Receive FormContext
+  | Eval FormlessAction
 
 type State
   =
-  { redirect :: Boolean
+  { context :: FormContext
   , status :: RemoteData String Unit
   }
-
-type Input = { redirect :: Boolean }
 
 component
   :: forall q m
@@ -60,19 +76,20 @@ component
   => ManageUser m
   => Analytics m
   => H.Component q Input Output m
-component =
-  H.mkComponent
-    { initialState
-    , render
-    , eval: H.mkEval $ H.defaultEval
-        { handleAction = handleAction
-        , initialize = Just Initialize
-        }
-    }
+component = F.formless { liftAction: Eval } mempty $ H.mkComponent
+  { initialState
+  , render
+  , eval: H.mkEval $ H.defaultEval
+      { initialize = Just Initialize
+      , receive = Just <<< Receive
+      , handleAction = handleAction
+      , handleQuery = handleQuery
+      }
+  }
   where
-  initialState { redirect } = { redirect, status: NotAsked }
+  initialState context = { context, status: NotAsked }
 
-  handleAction :: Action -> H.HalogenM State Action ChildSlots Output m Unit
+  handleAction :: Action -> H.HalogenM _ _ _ _ m Unit
   handleAction = case _ of
     Initialize ->
       void $ H.liftAff $ initGoogleAuth
@@ -80,51 +97,58 @@ component =
     HandleLoginForm fields -> do
       { status } <- H.get
       when (not $ isLoading status) $ do
-        void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus Loading unit
         H.modify_ _ { status = Loading }
 
         mbProfile <- loginUser fields
 
         case mbProfile of
           Nothing -> do
-            void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Failure "Could not login") unit
             H.modify_ _ { status = Failure "Could not login" }
 
           Just { email, id } -> do
             userSet { email: unwrap email, userId: ID.toString id }
-            void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Success unit) unit
             H.modify_ _ { status = Success unit }
             st <- H.get
-            when st.redirect (navigate Dashboard)
+            when st.context.input.redirect (navigate Dashboard)
 
     HandleGoogleLogin -> do
       { status } <- H.get
       when (not $ isLoading status) do
-        void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus Loading unit
         H.modify_ _ { status = Loading }
 
         mbProfile <- googleLoginUser
 
         case mbProfile of
           Nothing -> do
-            void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus NotAsked unit
             H.modify_ _ { status = NotAsked }
 
           Just { email, id } -> do
             userSet { email: unwrap email, userId: ID.toString id }
-            void $ H.query F._formless unit $ F.injQuery $ SetLoginStatus (Success unit) unit
             H.modify_ _ { status = Success unit }
             st <- H.get
-            when st.redirect (navigate Dashboard)
+            when st.context.input.redirect (navigate Dashboard)
 
     Navigate route e -> navigate_ e route
 
     SwitchToRegister e -> do
       H.liftEffect $ Event.preventDefault e
-      H.raise GoToRegister
+      F.raise GoToRegister
 
-  render :: State -> H.ComponentHTML Action ChildSlots m
-  render { status } =
+    -- Formless actions
+
+    Receive context -> H.modify_ _ { context = context }
+
+    Eval action -> F.eval action
+
+  handleQuery :: forall a. F.FormQuery _ _ _ _ a -> H.HalogenM _ _ _ _ m (Maybe a)
+  handleQuery =
+    F.handleSubmitValidate (handleAction <<< HandleLoginForm) F.validate
+      { email: V.emailFormat <=< V.required <=< V.minLength 3
+      , password: V.required <=< V.maxLength 100
+      }
+
+  render :: State -> H.ComponentHTML Action () m
+  render { status, context: { formActions, fields, actions } } =
     HH.div
       [ HP.classes [ T.flex, T.flexCol, T.itemsCenter ] ]
       [ HH.button
@@ -163,7 +187,7 @@ component =
           , HH.div [ HP.classes [ T.textGray300, T.mx4, T.leadingNone ] ] [ HH.text "Or" ]
           , HH.div [ HP.classes [ T.h0, T.wFull, T.borderT, T.borderGray200 ] ] []
           ]
-      , HH.slot F._formless unit formComponent unit HandleLoginForm
+      , form
       , HH.p
           [ HP.classes [ T.mt4 ] ]
           [ HH.span [ HP.classes [ T.textGray400 ] ] [ HH.text "Don't have an account? " ]
@@ -175,93 +199,31 @@ component =
               [ HH.text "Sign up" ]
           ]
       ]
-
-newtype LoginForm (r :: Row Type -> Type) f = LoginForm (r (FormRow f))
-
-derive instance Newtype (LoginForm r f) _
-
-type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
-type FormRow f =
-  ( email :: f V.FormError String Email
-  , password :: f V.FormError String String
-  )
-
-data FormQuery a
-  = SetLoginStatus (RemoteData String Unit) a
-
-derive instance functorFormQuery :: Functor FormQuery
-
-data FormAction
-  = Submit Event.Event
-
-formComponent
-  :: forall i slots m
-   . MonadAff m
-  => F.Component LoginForm FormQuery slots i LoginFields m
-formComponent =
-  F.component formInput
-    $ F.defaultSpec
-        { render = renderLogin
-        , handleEvent = handleEvent
-        , handleQuery = handleQuery
-        , handleAction = handleAction
-        }
-  where
-  formInput :: i -> F.Input LoginForm (status :: RemoteData String Unit) m
-  formInput _ =
-    { validators:
-        LoginForm
-          { email: V.required >>> V.minLength 3 >>> V.emailFormat
-          , password: V.required >>> V.maxLength 100
-          }
-    , initialInputs: Nothing
-    , status: NotAsked
-    }
-
-  handleEvent = F.raiseResult
-
-  handleAction = case _ of
-    Submit event -> do
-      H.liftEffect $ Event.preventDefault event
-      { status } <- H.get
-      when (not $ isLoading status) do eval F.submit
-
     where
-    eval act = F.handleAction handleAction handleEvent act
+    form =
+      HH.form
+        [ HE.onSubmit formActions.handleSubmit
+        , HP.noValidate true
+        , HP.classes [ T.wFull ]
+        ]
+        [ HH.fieldset
+            []
+            [ email
+            , HH.div
+                [ HP.classes [ T.mt4 ] ]
+                [ password ]
+            , whenElem (isFailure status) \_ ->
+                HH.div
+                  [ HP.classes [ T.textRed500, T.my4 ] ]
+                  [ HH.text "Email or password is invalid" ]
+            , HH.div
+                [ HP.classes [ T.mt4 ] ]
+                [ Field.submit "Sign in" (isLoading status) ]
+            ]
+        ]
 
-  handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
-  handleQuery = case _ of
-    SetLoginStatus status a -> do
-      H.modify_ _ { status = status }
-      pure (Just a)
-
-  proxies = F.mkSProxies (Proxy :: Proxy LoginForm)
-
-  renderLogin { form, status, submitting } =
-    HH.form
-      [ HE.onSubmit $ F.injAction <<< Submit
-      , HP.noValidate true
-      , HP.classes [ T.wFull ]
-      ]
-      [ HH.fieldset
-          []
-          [ email
-          , HH.div
-              [ HP.classes [ T.mt4 ] ]
-              [ password ]
-          , whenElem (isFailure status) \_ ->
-              HH.div
-                [ HP.classes [ T.textRed500, T.my4 ] ]
-                [ HH.text "Email or password is invalid" ]
-          , HH.div
-              [ HP.classes [ T.mt4 ] ]
-              [ Field.submit "Sign in" (submitting || isLoading status) ]
-          ]
-      ]
-
-    where
     email =
-      Field.input proxies.email form $ Field.defaultProps
+      Field.input fields.email actions.email $ Field.defaultProps
         { label = Just "Email address"
         , id = Just "email"
         , placeholder = Just "john.doe@email.com"
@@ -270,7 +232,7 @@ formComponent =
         }
 
     password =
-      Field.input proxies.password form $ Field.defaultProps
+      Field.input fields.password actions.password $ Field.defaultProps
         { label = Just "Password"
         , id = Just "password"
         , placeholder = Just "********"

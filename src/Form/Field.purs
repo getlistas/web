@@ -4,11 +4,8 @@ import Prelude
 
 import DOM.HTML.Indexed (HTMLinput, HTMLtextarea)
 import Data.Array (catMaybes)
-import Data.Filterable (filter)
+import Data.Lens (_Just, _Left, preview)
 import Data.Maybe (Maybe(..), isJust)
-import Data.Newtype (class Newtype)
-import Data.Symbol (class IsSymbol)
-import Data.Variant (Variant)
 import Formless as F
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -16,11 +13,8 @@ import Halogen.HTML.Properties as HP
 import Listasio.Component.HTML.Icons as Icons
 import Listasio.Component.HTML.Input as Input
 import Listasio.Component.HTML.Utils (maybeElem, whenElem)
-import Listasio.Form.Validation (errorToString)
 import Listasio.Form.Validation as V
 import Tailwind as T
-import Type.Proxy (Proxy)
-import Type.Row as Row
 
 -- TODO: Move to Button module
 submit :: forall i p. String -> Boolean -> HH.HTML i p
@@ -78,19 +72,19 @@ cancel buttonText disabled action =
     ]
 
 -- TODO: unify with SimpleInputProps using Row Type Maaaagic!!!
-type InputProps form act
+type InputProps act
   =
   { required :: Boolean
   , hideOptional :: Boolean
   , placeholder :: Maybe String
   , id :: Maybe String
-  , props :: Array (HH.IProp HTMLinput (F.Action form act))
+  , props :: Array (HH.IProp HTMLinput act)
   , type_ :: HP.InputType
   , message :: Maybe String
   , label :: Maybe String
   }
 
-defaultProps :: forall form act. InputProps form act
+defaultProps :: forall act. InputProps act
 defaultProps =
   { required: false
   , hideOptional: false
@@ -102,50 +96,16 @@ defaultProps =
   , label: Nothing
   }
 
--- | This helper function creates an input field hooked up with Formless, including styles,
--- | events, error handling, and more. The function ensures at compile-time that the field we
--- | want actually exists in the form, that the input, error, and output types of the field are
--- | compatible, that the only properties you attempt to set on the HTML are actual valid <input>
--- | properties, and more.
--- |
--- | Let's deconstruct the type.
--- |
--- | First, the `IsSymbol` constraint requires that our first argument, `sym`, is a type-level
--- | string. You've seen these all over the place -- record labels are one example. We'll use
--- | this any time we need to talk about a value existing at a particular key in a record or
--- | a variant.
--- |
--- | Next, the two `Newtype` constraints require that you can use the `unwrap` function to
--- | transform the first type into the second type. In other words, the first type has to have
--- | a `Newtype` instance. This is how we'll unpack our self-defined Formless form type into
--- | either a raw record or variant we can work with.
--- |
--- | Next, the two `Cons` constraints require that there exists a value of the type given in
--- | the second argument at the label `sym` in the record or variant given in the last argument.
--- | For instance, we require that there's a field with an error type `FormError` and an input
--- | type `String` at the label `sym` in the row `fields`. In short, we require at compile-time
--- | that an input field of the correct type exists in our form state at the key we provided as
--- | the function's first argument.
 input
-  :: forall form act slots m sym fields us inputs out t0 t1 e i o r
-   . IsSymbol sym
-  => Newtype (form Record F.FormField) { | fields }
-  => Newtype (form Variant F.InputFunction) (Variant inputs)
-  => Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs
-  -- These are required for validate, copied from
-  -- [Formless.Actions.validate](https://pursuit.purescript.org/packages/purescript-halogen-formless/2.0.1/docs/Formless.Action#v:validate)
-  -- /shrug
-  => Newtype (form Variant F.U) (Variant us)
-  => Row.Cons sym (F.FormField V.FormError String out) t0 fields
-  => Row.Cons sym (F.U e i o) r us
-  => Proxy sym
-  -> form Record F.FormField
-  -> InputProps form act
-  -> F.ComponentHTML form act slots m
-input sym form { required, hideOptional, placeholder, id, props, type_, message, label } =
-  Input.input $ defProps
-    { value = F.getInput sym form
-    , error = filter (const $ F.getTouched sym form) $ F.getError sym form
+  :: forall action output i
+   . F.FieldState String V.FormError output
+  -> F.FieldAction action String V.FormError output
+  -> InputProps action
+  -> HH.HTML i action
+input state actions { required, hideOptional, placeholder, id, props, type_, message, label } =
+  Input.input $ (Input.defaultProps actions.handleChange)
+    { value = state.value
+    , error = preview (_Just <<< _Left) state.result
     , hideOptional = hideOptional
     , placeholder = placeholder
     , id = id
@@ -154,30 +114,23 @@ input sym form { required, hideOptional, placeholder, id, props, type_, message,
     , message = message
     , required = required
     , label = label
-    , blurAction = Just $ F.validate sym
+    , blurAction = Just $ actions.handleBlur
     }
-  where
-  defProps = Input.defaultProps action
-  action str =
-    -- TODO: this shows the errors right away,
-    --       instead of waiting for the first blur as I thought
-    if F.getTouched sym form then F.setValidate sym str
-    else F.set sym str
 
-type TextareaProps form act
+type TextareaProps act
   =
   { required :: Boolean
   , hideOptional :: Boolean
   , placeholder :: Maybe String
   , id :: Maybe String
-  , props :: Array (HH.IProp HTMLtextarea (F.Action form act))
+  , props :: Array (HH.IProp HTMLtextarea act)
   , message :: Maybe String
   , label :: Maybe String
   , rows :: Maybe Int
   , disabled :: Boolean
   }
 
-textareaDefaultProps :: forall form act. TextareaProps form act
+textareaDefaultProps :: forall act. TextareaProps act
 textareaDefaultProps =
   { required: false
   , hideOptional: false
@@ -191,23 +144,12 @@ textareaDefaultProps =
   }
 
 textarea
-  :: forall form act slots m sym fields us inputs out t0 t1 e i o r
-   . IsSymbol sym
-  => Newtype (form Record F.FormField) { | fields }
-  => Newtype (form Variant F.InputFunction) (Variant inputs)
-  => Row.Cons sym (F.FormField V.FormError String out) t0 fields
-  => Row.Cons sym (F.InputFunction V.FormError String out) t1 inputs
-  -- These are required for validate, copied from
-  -- [Formless.Actions.validate](https://pursuit.purescript.org/packages/purescript-halogen-formless/2.0.1/docs/Formless.Action#v:validate)
-  -- /shrug
-  => Newtype (form Variant F.U) (Variant us)
-  => Row.Cons sym (F.FormField V.FormError String out) t0 fields
-  => Row.Cons sym (F.U e i o) r us
-  => Proxy sym
-  -> form Record F.FormField
-  -> TextareaProps form act
-  -> F.ComponentHTML form act slots m
-textarea sym form groupProps =
+  :: forall action output i
+   . F.FieldState String V.FormError output
+  -> F.FieldAction action String V.FormError output
+  -> TextareaProps action
+  -> HH.HTML i action
+textarea state actions groupProps =
   HH.fieldset
     [ HP.classes [ T.wFull ] ]
     [ Input.fieldLabel groupProps
@@ -216,9 +158,9 @@ textarea sym form groupProps =
         [ HH.textarea
             ( append
                 ( catMaybes
-                    [ Just $ HP.value $ F.getInput sym form
-                    , Just $ HE.onValueInput action
-                    , Just $ HE.onBlur $ \_ -> F.validate sym
+                    [ Just $ HP.value state.value
+                    , Just $ HE.onValueInput actions.handleChange
+                    , Just $ HE.onBlur actions.handleBlur
                     , Just $ HP.classes $ Input.fieldInputClasses
                         { hasError, iconBefore: false, iconAfter: false }
                     , Just $ HP.required groupProps.required
@@ -254,14 +196,8 @@ textarea sym form groupProps =
     , maybeElem mbError \error ->
         HH.p
           [ HP.classes [ T.mt1, T.textSm, T.textManzana ] ]
-          [ HH.text $ errorToString error ]
+          [ HH.text $ V.errorToString error ]
     ]
   where
-  mbError = filter (const $ F.getTouched sym form) $ F.getError sym form
+  mbError = preview (_Just <<< _Left) state.result
   hasError = isJust mbError
-  action str =
-    -- TODO: this shows the errors right away,
-    --       instead of waiting for the first blur as I thought
-    if F.getTouched sym form then F.setValidate sym str
-    else F.set sym str
-

@@ -15,6 +15,7 @@ import Listasio.Component.HTML.Utils (cx, maybeElem, whenElem)
 import Listasio.Form.Validation (errorToString)
 import Listasio.Form.Validation as V
 import Tailwind as T
+import Web.UIEvent.FocusEvent (FocusEvent)
 import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
 type SimpleInputProps act
@@ -22,7 +23,7 @@ type SimpleInputProps act
   { error :: Maybe V.FormError
   , value :: String
   , action :: String -> act
-  , blurAction :: Maybe act
+  , blurAction :: Maybe (FocusEvent -> act)
   , required :: Boolean
   , disabled :: Boolean
   , hideOptional :: Boolean
@@ -81,7 +82,7 @@ input groupProps =
                     [ Just $ HP.type_ groupProps.type_
                     , Just $ HP.value groupProps.value
                     , Just $ HE.onValueInput groupProps.action
-                    , HE.onBlur <$> const <$> groupProps.blurAction
+                    , HE.onBlur <$> groupProps.blurAction
                     , Just $ HP.classes $ fieldInputClasses
                         { hasError: isJust groupProps.error
                         , iconBefore: isJust groupProps.iconBefore

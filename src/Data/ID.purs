@@ -20,6 +20,9 @@ derive instance eqID :: Eq ID
 derive instance ordID :: Ord ID
 derive instance newtypeID :: Newtype ID _
 
+instance semigroupID :: Semigroup ID where
+  append a _ = a
+
 codec :: JsonCodec ID
 codec = wrapIso ID CA.string
 
