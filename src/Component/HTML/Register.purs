@@ -2,9 +2,10 @@ module Listasio.Component.HTML.Register where
 
 import Prelude
 
+import Data.Const (Const)
 import Data.Either (note)
 import Data.Maybe (Maybe(..))
-import Data.Newtype (class Newtype, unwrap)
+import Data.Newtype (unwrap)
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
@@ -33,16 +34,28 @@ import Web.UIEvent.MouseEvent as Mouse
 _slot :: Proxy "register"
 _slot = Proxy
 
-type Slot = forall query. H.Slot query Output Unit
+type Slot = H.Slot Query Output Unit
 
-type ChildSlots
-  = (registerForm :: F.Slot RegisterForm FormQuery () RegisterFields Unit)
+type Form :: (Type -> Type -> Type -> Type) -> Row Type
+type Form f =
+  ( name :: f String V.FormError Username
+  , email :: f String V.FormError Email
+  , password :: f String V.FormError String
+  )
 
-data Output
-  = GoToSignin
+type FormInputs = { | Form F.FieldInput }
 
-type State
-  = { status :: RemoteData String Unit }
+type Query :: Type -> Type
+type Query = Const Void
+
+type Input = Unit
+
+data Output = GoToSignin
+
+type FormContext
+  = F.FormContext (Form F.FieldState) (Form (F.FieldAction Action)) Input Action
+
+type FormlessAction = F.FormlessAction (Form F.FieldState)
 
 data Action
   = Initialize
@@ -50,51 +63,54 @@ data Action
   | HandleGoogleLogin
   | Navigate Route Event.Event
   | SwitchToSignin Event.Event
+  -- Formless actions
+  | Receive FormContext
+  | Eval FormlessAction
+
+type State
+  =
+  { context :: FormContext
+  , status :: RemoteData String Unit
+  }
 
 component
-  :: forall q m
+  :: forall m
    . MonadAff m
   => ManageUser m
   => Navigate m
   => Analytics m
-  => H.Component q Unit Output m
-component =
-  H.mkComponent
-    { initialState: const { status: NotAsked }
-    , render
-    , eval: H.mkEval $ H.defaultEval
-        { handleAction = handleAction
-        , initialize = Just Initialize
-        }
-    }
+  => H.Component Query Input Output m
+component = F.formless { liftAction: Eval } mempty $ H.mkComponent
+  { initialState: \context -> { context, status: NotAsked }
+  , render
+  , eval: H.mkEval $ H.defaultEval
+      { initialize = Just Initialize
+      , receive = Just <<< Receive
+      , handleAction = handleAction
+      , handleQuery = handleQuery
+      }
+  }
   where
-  handleAction :: Action -> H.HalogenM State Action ChildSlots Output m Unit
+  handleAction :: Action -> H.HalogenM _ _ _ _ m Unit
   handleAction = case _ of
-    Initialize ->
-      void $ H.liftAff $ initGoogleAuth
+    Initialize -> void $ H.liftAff $ initGoogleAuth
 
     HandleRegisterForm fields -> do
       { status } <- H.get
       when (not $ isLoading status) do
-        void $ H.query _form unit $ F.injQuery $ SetRegisterStatus Loading unit
         H.modify_ _ { status = Loading }
-
         result <- fromEither <$> note "Failed to register" <$> registerUser fields
-
         H.modify_ _ { status = unit <$ result }
-        void $ H.query _form unit $ F.injQuery $ SetRegisterStatus (unit <$ result) unit
 
     HandleGoogleLogin -> do
       { status } <- H.get
       when (not $ isLoading status) do
-        void $ H.query _form unit $ F.injQuery $ SetRegisterStatus Loading unit
         H.modify_ _ { status = Loading }
 
         mbProfile <- googleLoginUser
 
         case mbProfile of
           Nothing -> do
-            void $ H.query _form unit $ F.injQuery $ SetRegisterStatus NotAsked unit
             H.modify_ _ { status = NotAsked }
 
           Just { email, id } -> do
@@ -105,10 +121,25 @@ component =
 
     SwitchToSignin e -> do
       H.liftEffect $ Event.preventDefault e
-      H.raise GoToSignin
+      F.raise GoToSignin
 
-  render :: State -> H.ComponentHTML Action ChildSlots m
-  render { status } =
+    -- Formless actions
+
+    Receive context -> H.modify_ _ { context = context }
+
+    Eval action -> F.eval action
+
+  handleQuery :: forall a. F.FormQuery _ _ _ _ a -> H.HalogenM _ _ _ _ m (Maybe a)
+  handleQuery =
+    F.handleSubmitValidate (handleAction <<< HandleRegisterForm) F.validate
+      { name: V.usernameFormat <=< V.required
+      , email: V.emailFormat <=< V.required <=< V.minLength 3
+      -- TODO: real password validation ? (like strenght?)
+      , password: V.required <=< V.minLength 8 <=< V.maxLength 100
+      }
+
+  render :: State -> H.ComponentHTML Action () m
+  render { status, context: { formActions, fields, actions } } =
     case status of
       Success _ ->
         HH.div
@@ -157,7 +188,7 @@ component =
               , HH.div [ HP.classes [ T.textGray300, T.mx4, T.leadingNone ] ] [ HH.text "Or" ]
               , HH.div [ HP.classes [ T.h0, T.wFull, T.borderT, T.borderGray200 ] ] []
               ]
-          , HH.slot _form unit formComponent unit HandleRegisterForm
+          , form
           , HH.p
               [ HP.classes [ T.mt4 ] ]
               [ HH.span [ HP.classes [ T.textGray400 ] ] [ HH.text "Already have an account? " ]
@@ -169,96 +200,31 @@ component =
                   [ HH.text "Sign in" ]
               ]
           ]
-
-_form = Proxy :: Proxy "registerForm"
-
-newtype RegisterForm (r :: Row Type -> Type) f = RegisterForm (r (FormRow f))
-
-derive instance Newtype (RegisterForm r f) _
-
-type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
-type FormRow f =
-  ( name :: f V.FormError String Username
-  , email :: f V.FormError String Email
-  , password :: f V.FormError String String
-  )
-
-data FormQuery a
-  = SetRegisterStatus (RemoteData String Unit) a
-
-derive instance functorFormQuery :: Functor FormQuery
-
-data FormAction
-  = Submit Event.Event
-
-formComponent
-  :: forall formSlots formInput m
-   . MonadAff m
-  => F.Component RegisterForm FormQuery formSlots formInput RegisterFields m
-formComponent =
-  F.component formInput $ F.defaultSpec
-    { render = renderForm
-    , handleQuery = handleQuery
-    , handleEvent = handleEvent
-    , handleAction = handleAction
-    }
-  where
-  formInput :: formInput -> F.Input RegisterForm (status :: RemoteData String Unit) m
-  formInput _ =
-    { validators:
-        RegisterForm
-          { name: V.required >>> V.usernameFormat
-          , email: V.required >>> V.minLength 3 >>> V.emailFormat
-          -- TODO: password validation
-          , password: V.required >>> V.minLength 8 >>> V.maxLength 100
-          }
-    , initialInputs: Nothing
-    , status: NotAsked
-    }
-
-  handleEvent = F.raiseResult
-
-  handleAction = case _ of
-    Submit event -> do
-      H.liftEffect $ Event.preventDefault event
-      { status } <- H.get
-      when (not $ isLoading status) do eval F.submit
-
     where
-    eval act = F.handleAction handleAction handleEvent act
-
-  handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
-  handleQuery = case _ of
-    SetRegisterStatus status a -> do
-      H.modify_ _ { status = status }
-      pure (Just a)
-
-  renderForm { form, status, submitting } =
-    HH.form
-      [ HE.onSubmit $ F.injAction <<< Submit
-      , HP.noValidate true
-      , HP.classes [ T.wFull ]
-      ]
-      [ HH.fieldset
-          []
-          [ HH.div [ HP.classes [] ] [ name ]
-          , HH.div [ HP.classes [ T.mt4 ] ] [ email ]
-          , HH.div [ HP.classes [ T.mt4 ] ] [ password ]
-          ]
-      , whenElem (isFailure status) \_ ->
-          HH.div
-            [ HP.classes [ T.textRed500, T.my4 ] ]
-            -- TODO better error based on what went wrong
-            [ HH.text "Could not register :(" ]
-      , HH.div
-          [ HP.classes [ T.mt4 ] ]
-          [ Field.submit "Sign up" (submitting || isLoading status) ]
-      ]
-    where
-    proxies = F.mkSProxies (Proxy :: Proxy RegisterForm)
+    form =
+      HH.form
+        [ HE.onSubmit formActions.handleSubmit
+        , HP.noValidate true
+        , HP.classes [ T.wFull ]
+        ]
+        [ HH.fieldset
+            []
+            [ HH.div [ HP.classes [] ] [ name ]
+            , HH.div [ HP.classes [ T.mt4 ] ] [ email ]
+            , HH.div [ HP.classes [ T.mt4 ] ] [ password ]
+            ]
+        , whenElem (isFailure status) \_ ->
+            HH.div
+              [ HP.classes [ T.textRed500, T.my4 ] ]
+              -- TODO better error based on what went wrong
+              [ HH.text "Could not register :(" ]
+        , HH.div
+            [ HP.classes [ T.mt4 ] ]
+            [ Field.submit "Sign up" (isLoading status) ]
+        ]
 
     name =
-      Field.input proxies.name form $ Field.defaultProps
+      Field.input fields.name actions.name $ Field.defaultProps
         { label = Just "Name"
         , id = Just "name"
         , placeholder = Just "John Doe"
@@ -266,7 +232,7 @@ formComponent =
         }
 
     email =
-      Field.input proxies.email form $ Field.defaultProps
+      Field.input fields.email actions.email $ Field.defaultProps
         { label = Just "Email address"
         , id = Just "email"
         , placeholder = Just "john.doe@email.com"
@@ -275,7 +241,7 @@ formComponent =
         }
 
     password =
-      Field.input proxies.password form $ Field.defaultProps
+      Field.input fields.password actions.password $ Field.defaultProps
         { label = Just "Password"
         , id = Just "password"
         , placeholder = Just "********"

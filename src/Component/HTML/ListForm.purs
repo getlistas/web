@@ -2,13 +2,14 @@ module Listasio.Component.HTML.ListForm where
 
 import Prelude
 
+import Data.Either (Either(..))
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..), fromMaybe, isNothing)
-import Data.Newtype (class Newtype)
 import Data.String (joinWith)
 import Data.String as String
 import Data.String.Common (split, trim)
 import Data.String.Pattern (Pattern(..))
+import Data.Traversable (for_)
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
@@ -23,105 +24,130 @@ import Listasio.Form.Validation as V
 import Network.RemoteData (RemoteData(..), isFailure, isLoading)
 import Tailwind as T
 import Type.Proxy (Proxy(..))
-import Web.Event.Event as Event
 
-type Slot
-  = F.Slot ListForm FormQuery () CreateListFields Unit
+_slot :: Proxy "listForm"
+_slot = Proxy
 
-newtype ListForm (r :: Row Type -> Type) f = ListForm (r (FormRow f))
+type Slot = H.Slot Query Output Unit
 
-derive instance Newtype (ListForm r f) _
-
-type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
-type FormRow f =
-  ( title :: f V.FormError String String
-  , description :: f V.FormError String (Maybe String)
-  , tags :: f V.FormError String (Array String)
-  , is_public :: f V.FormError Boolean Boolean
+type Form :: (Type -> Type -> Type -> Type) -> Row Type
+type Form f =
+  ( title :: f String V.FormError String
+  , description :: f String V.FormError (Maybe String)
+  , tags :: f String V.FormError (Array String)
+  , is_public :: f Boolean V.FormError Boolean
   )
 
-data FormQuery a
+type FormInputs = { | Form F.FieldInput }
+
+data Query a
   = SetCreateStatus (RemoteData String ListWithIdUserAndMeta) a
 
-derive instance functorFormQuery :: Functor FormQuery
-
-data FormAction
-  = Submit Event.Event
-
-type FormInput
+type Input
   = { list :: Maybe ListWithIdUserAndMeta }
 
-type FormState
+type Output = CreateListFields
+
+type FormContext
+  = F.FormContext (Form F.FieldState) (Form (F.FieldAction Action)) Input Action
+
+type FormlessAction = F.FormlessAction (Form F.FieldState)
+
+data Action
+  = Initialize
+  -- Formless actions
+  | Receive FormContext
+  | Eval FormlessAction
+
+type State
   =
-  ( status :: RemoteData String Unit
+  { context :: FormContext
+  , status :: RemoteData String Unit
   , isNew :: Boolean
   , initialList :: Maybe ListWithIdUserAndMeta
-  )
+  }
 
-formComponent
-  :: forall slots m
+initialInputs :: ListWithIdUserAndMeta -> FormInputs
+initialInputs { title, description, tags, is_public } =
+  { title
+  , description: fromMaybe "" description
+  , tags: joinWith ", " tags
+  , is_public
+  }
+
+splitTags :: String -> (Array String)
+splitTags = filter (not <<< String.null) <<< map trim <<< split (Pattern ",")
+
+component
+  :: forall m
    . MonadAff m
-  => F.Component ListForm FormQuery slots FormInput CreateListFields m
-formComponent =
-  F.component formInput
-    $ F.defaultSpec
-        { render = render
-        , handleEvent = handleEvent
-        , handleQuery = handleQuery
-        , handleAction = handleAction
+  => H.Component Query Input Output m
+component =
+  F.formless
+    { liftAction: Eval }
+    { title: "", description: "", tags: "", is_public: false } $ H.mkComponent
+    { initialState: \context ->
+        { context
+        , status: NotAsked
+        , isNew: isNothing context.input.list
+        , initialList: context.input.list
         }
+    , render
+    , eval: H.mkEval $ H.defaultEval
+        { initialize = Just Initialize
+        , receive = Just <<< Receive
+        , handleAction = handleAction
+        , handleQuery = handleQuery
+        }
+    }
   where
-  formInput :: FormInput -> F.Input ListForm FormState m
-  formInput { list } =
-    { validators:
-        ListForm
-          { title: V.required >>> V.maxLength 100
-          , description: V.toOptional $ V.maxLength 500
-          , tags: V.maxLengthArr 4
-              <<< F.hoistFn_ (filter (not <<< String.null) <<< map trim <<< split (Pattern ","))
-                <?> V.WithMsg "Cannot have more than 4 tags"
-          , is_public: F.noValidation
-          }
-    , initialInputs: map initialInputs list
-    , initialList: list
-    , status: NotAsked
-    , isNew: isNothing list
-    }
-
-  initialInputs { title, description, tags, is_public } = F.wrapInputFields
-    { title
-    , description: fromMaybe "" description
-    , tags: joinWith ", " tags
-    , is_public
-    }
-
-  eval act = F.handleAction handleAction handleEvent act
-
-  handleEvent = F.raiseResult
-
+  handleAction :: Action -> H.HalogenM _ _ _ _ m Unit
   handleAction = case _ of
-    Submit event -> do
-      H.liftEffect $ Event.preventDefault event
-      { status, dirty } <- H.get
-      let shouldSubmit = dirty && not (isLoading status)
-      when shouldSubmit do eval F.submit
+    Initialize -> do
+      { context } <- H.get
 
-  handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
+      for_ context.input.list \list ->
+        handleAction $ context.formActions.setFields $ F.mkFieldStates $ initialInputs list
+
+    -- Formless actions
+    Receive context -> H.modify_ _ { context = context }
+
+    Eval action -> F.eval action
+
+  handleQuery :: forall a. F.FormQuery _ _ _ _ a -> H.HalogenM _ _ _ _ m (Maybe a)
   handleQuery = case _ of
-    SetCreateStatus (Success newList) a -> do
+    F.Query (SetCreateStatus (Success newList) a) -> do
       H.modify_ _ { status = Success unit, initialList = Just newList }
-      eval $ F.loadForm $ initialInputs newList
-      pure (Just a)
+      formActions <- H.gets _.context.formActions
+      handleAction $ formActions.reset
+      handleAction $ formActions.setFields $ F.mkFieldStates $ initialInputs newList
+      pure $ Just a
 
-    SetCreateStatus status a -> do
+    F.Query (SetCreateStatus status a) -> do
       H.modify_ _ { status = map (const unit) status }
-      pure (Just a)
+      pure $ Just a
 
-  proxies = F.mkSProxies (Proxy :: Proxy ListForm)
+    F.Validate changed reply ->
+      pure $ Just $ reply $ F.validate changed
+        { title: V.required <=< V.maxLength 100
+        , description: V.toOptional $ V.maxLength 500
+        , tags: V.maxLengthArr 4 <=< (Right <<< splitTags) <?> V.WithMsg "Cannot have more than 4 tags"
+        , is_public: Right
+        }
 
-  render { dirty, form, status, submitting, isNew } =
+    F.Submit output a -> do
+      { status, context } <- H.get
+      when (not $ isLoading status) do
+        F.raise output
+        handleAction context.formActions.reset
+      pure $ Just a
+
+    _ -> pure Nothing
+
+  render :: State -> H.ComponentHTML Action () m
+  render { status, isNew, context: { formActions, formState, fields, actions } } =
     HH.form
-      [ HE.onSubmit $ F.injAction <<< Submit
+      [ HE.onSubmit formActions.handleSubmit
       , HP.noValidate true
       ]
       [ HH.fieldset_
@@ -135,8 +161,8 @@ formComponent =
               [ HP.classes [ T.flex, T.itemsCenter, T.my6, T.cursorPointer ] ]
               [ HH.input
                   [ HP.type_ HP.InputCheckbox
-                  , HP.checked $ F.getInput proxies.is_public form
-                  , HE.onChange $ const $ F.modify proxies.is_public not
+                  , HP.checked fields.is_public.value
+                  , HE.onChecked actions.is_public.handleChange
                   , HP.classes
                       [ T.h6
                       , T.w6
@@ -159,13 +185,13 @@ formComponent =
 
           , Field.submit
               (if isNew then "Create" else "Save")
-              (not dirty || submitting || isLoading status)
+              (formState.allTouched || isLoading status)
           ]
       ]
 
     where
     title =
-      Field.input proxies.title form $ Field.defaultProps
+      Field.input fields.title actions.title $ Field.defaultProps
         { label = Just "Title"
         , id = Just "title"
         , placeholder = Just "Learning How to Cook"
@@ -173,14 +199,14 @@ formComponent =
         }
 
     tags =
-      Field.input proxies.tags form $ Field.defaultProps
+      Field.input fields.tags actions.tags $ Field.defaultProps
         { label = Just "Tags"
         , id = Just "tags"
         , message = Just "Separated by commas"
         }
 
     description =
-      Field.textarea proxies.description form $ Field.textareaDefaultProps
+      Field.textarea fields.description actions.description $ Field.textareaDefaultProps
         { label = Just "Description"
         , id = Just "description"
         , props = [ HP.rows 3 ]

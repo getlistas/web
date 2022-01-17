@@ -8,7 +8,6 @@ import Data.Lens (preview)
 import Data.Maybe (Maybe(..))
 import Data.Traversable (for_)
 import Effect.Aff.Class (class MonadAff)
-import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -70,7 +69,7 @@ type State
   , confirmDelete :: Boolean
   }
 
-type Slots = (formless :: ListForm.Slot)
+type Slots = (listForm :: ListForm.Slot)
 
 failedToFetch :: forall a. Maybe a -> Either String a
 failedToFetch = note "Could not get list"
@@ -146,13 +145,13 @@ component = connect (selectEq select) $ H.mkComponent
     HandleListForm newList -> do
       mbList <- H.gets $ preview (_list <<< _Success)
       for_ mbList \oldList -> do
-        void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus Loading unit
+        void $ H.query ListForm._slot unit $ ListForm.SetCreateStatus Loading unit
 
         mbUpdatedList <- updateList oldList.id newList
 
         case mbUpdatedList of
           Just updatedList -> do
-            void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Success updatedList) unit
+            void $ H.query ListForm._slot unit $ ListForm.SetCreateStatus (Success updatedList) unit
             -- We modify the local one in case there are no global lists
             -- Eg. when loading this page first
             H.modify_ _ { list = Success updatedList }
@@ -160,7 +159,7 @@ component = connect (selectEq select) $ H.mkComponent
             updateStore $ Store.OverLists $ map $ replaceById updatedList
 
           Nothing ->
-            void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Failure "Could not update list") unit
+            void $ H.query ListForm._slot unit $ ListForm.SetCreateStatus (Failure "Could not update list") unit
 
     DeleteList ->
       H.modify_ _ { confirmDelete = true }
@@ -243,7 +242,7 @@ component = connect (selectEq select) $ H.mkComponent
         Success list ->
           mkLayout
             [ { cta: Nothing
-              , content: HH.slot F._formless unit ListForm.formComponent { list: Just list } HandleListForm
+              , content: HH.slot ListForm._slot unit ListForm.component { list: Just list } HandleListForm
               , title: "Details"
               , description: Nothing
               }

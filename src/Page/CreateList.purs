@@ -5,7 +5,6 @@ import Prelude
 import Data.Array as A
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
-import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -39,7 +38,7 @@ data Action
 type State = { currentUser :: Maybe ProfileWithIdAndEmail }
 
 type ChildSlots
-  = (formless :: ListForm.Slot)
+  = (listForm :: ListForm.Slot)
 
 component
   :: forall q o m
@@ -67,17 +66,17 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
     Navigate route e -> navigate_ e route
 
     HandleCreateForm newList -> do
-      void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus Loading unit
+      void $ H.query ListForm._slot unit $ ListForm.SetCreateStatus Loading unit
 
       mbCreatedList <- createList newList
 
       case mbCreatedList of
         Just createdList -> do
-          void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Success createdList) unit
+          void $ H.query ListForm._slot unit $ ListForm.SetCreateStatus (Success createdList) unit
           updateStore $ Store.OverLists $ flip A.snoc createdList
           navigate Dashboard
         Nothing ->
-          void $ H.query F._formless unit $ F.injQuery $ ListForm.SetCreateStatus (Failure "Could not create list") unit
+          void $ H.query ListForm._slot unit $ ListForm.SetCreateStatus (Failure "Could not create list") unit
 
   render :: State -> H.ComponentHTML Action ChildSlots m
   render _ =
@@ -86,7 +85,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       [ title
       , HH.div
           [ HP.classes [ T.grid, T.gridCols1, T.mdGridCols2 ] ]
-          [ HH.slot F._formless unit ListForm.formComponent { list: Nothing } HandleCreateForm
+          [ HH.slot ListForm._slot unit ListForm.component { list: Nothing } HandleCreateForm
           ]
       ]
 

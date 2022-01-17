@@ -2,10 +2,11 @@ module Listasio.Page.ListResourcesImport where
 
 import Prelude
 
-import Data.Either (note)
+import Data.Either (Either(..), note)
 import Data.Foldable (for_)
+import Data.Lens (_Just, _Left, preview)
 import Data.Maybe (Maybe(..))
-import Data.Newtype (class Newtype)
+import Data.String (null)
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
@@ -35,32 +36,48 @@ import Slug (Slug)
 import Tailwind as T
 import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
-import Web.Event.Event as Event
 import Web.UIEvent.MouseEvent as Mouse
 
 _slot :: Proxy "listResourcesImport"
 _slot = Proxy
 
+type Slot = forall query. H.Slot query Output Input
+
+type Form :: (Type -> Type -> Type -> Type) -> Row Type
+type Form f = ( urls :: f String V.FormError String )
+
+type FormInputs = { | Form F.FieldInput }
+
 type Input
   = { user :: Slug, list :: Slug }
+
+type ConnectedInput = Connected (Maybe ProfileWithIdAndEmail) Input
+
+type Output = Void
+
+type FormContext
+  = F.FormContext (Form F.FieldState) (Form (F.FieldAction Action)) ConnectedInput Action
+
+type FormlessAction = F.FormlessAction (Form F.FieldState)
 
 data Action
   = Initialize
   | LoadList
-  | Receive (Connected (Maybe ProfileWithIdAndEmail) Input)
   | Navigate Route Event
   | HandleForm { urls :: String }
+  -- Formless actions
+  | Receive FormContext
+  | Eval FormlessAction
 
 type State
   =
-  { currentUser :: Maybe ProfileWithIdAndEmail
+  { context :: FormContext
+  , currentUser :: Maybe ProfileWithIdAndEmail
   , list :: RemoteData String ListWithIdUserAndMeta
   , importStatus :: RemoteData String Unit
   , listSlug :: Slug
   , userSlug :: Slug
   }
-
-type Slots = (importForm :: FormSlot)
 
 getRss :: Integration -> Maybe RssIntegration
 getRss (RssIntegration a) = Just a
@@ -72,33 +89,38 @@ getSubscription _ = Nothing
 
 -- TODO: EditList approach -> only fetching when not present
 component
-  :: forall q o m
+  :: forall query m
    . MonadAff m
   => MonadStore Store.Action Store.Store m
   => Navigate m
   => ManageList m
   => ManageIntegration m
   => ManageResource m
-  => H.Component q Input o m
-component = connect (selectEq _.currentUser) $ H.mkComponent
-  { initialState
-  , render
-  , eval: H.mkEval $ H.defaultEval
-      { handleAction = handleAction
-      , initialize = Just Initialize
-      , receive = Just <<< Receive
-      }
-  }
+  => H.Component query Input Output m
+component =
+  connect (selectEq _.currentUser)
+    $ F.formless { liftAction: Eval } mempty
+    $ H.mkComponent
+    { initialState
+    , render
+    , eval: H.mkEval $ H.defaultEval
+        { initialize = Just Initialize
+        , receive = Just <<< Receive
+        , handleAction = handleAction
+        , handleQuery = handleQuery
+        }
+    }
   where
-  initialState { context: currentUser, input: { list, user } } =
-    { currentUser
-    , userSlug: user
-    , listSlug: list
+  initialState context =
+    { context
+    , currentUser: context.input.context
+    , userSlug: context.input.input.user
+    , listSlug: context.input.input.list
     , list: NotAsked
     , importStatus: NotAsked
     }
 
-  handleAction :: Action -> H.HalogenM State Action Slots o m Unit
+  handleAction :: Action -> H.HalogenM _ _ _ _ m Unit
   handleAction = case _ of
     Initialize ->
       void $ H.fork $ handleAction LoadList
@@ -109,24 +131,32 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       list <- RemoteData.fromEither <$> note "Could not get list" <$> getListBySlug { list: st.listSlug, user: st.userSlug }
       H.modify_ _ { list = list }
 
-    Receive { context: currentUser } -> do
-      H.modify_ _ { currentUser = currentUser }
-
     Navigate route e -> navigate_ e route
 
     HandleForm { urls } -> do
-      { importStatus, list } <- H.get
-      when (not $ isLoading importStatus) $ for_ (toMaybe list) \{ id } -> do
-        void $ H.query _form unit $ F.injQuery $ SetSubmitStatus Loading unit
+      { importStatus, list, context } <- H.get
+      when (not (isLoading importStatus) && not (null context.fields.urls.value)) $ for_ (toMaybe list) \{ id } -> do
         H.modify_ _ { importStatus = Loading }
-
         result <- fromEither <$> note "Failed to register" <$> importResources { list: id, payload: urls }
-
-        void $ H.query _form unit $ F.injQuery $ SetSubmitStatus (unit <$ result) unit
         H.modify_ _ { importStatus = unit <$ result }
 
-  render :: State -> H.ComponentHTML Action Slots m
-  render { list: mbList, listSlug, userSlug } =
+        when (isSuccess result) do handleAction context.formActions.reset
+
+    -- Formless actions
+
+    Receive context -> do
+      H.modify_ _ { context = context, currentUser = context.input.context }
+
+    Eval action -> F.eval action
+
+  handleQuery :: forall a. F.FormQuery _ _ _ _ a -> H.HalogenM _ _ _ _ m (Maybe a)
+  handleQuery =
+    -- TODO: remove nullcheck in HandleForm and introduce this validation instead
+    -- F.handleSubmitValidate (handleAction <<< HandleForm) F.validate { urls: V.required }
+    F.handleSubmitValidate (handleAction <<< HandleForm) F.validate { urls: Right }
+
+  render :: State -> H.ComponentHTML Action () m
+  render { importStatus, list: mbList, listSlug, userSlug, context: { formActions, fields, actions } } =
     HH.div [] [ header, content ]
 
     where
@@ -209,7 +239,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
                             , HH.text "How to add resources"
                             ]
                         ]
-                    , HH.slot _form unit formComponent unit HandleForm
+                    , form
                     ]
               }
             , { cta: Nothing
@@ -267,89 +297,27 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
               , description: Nothing
               }
             ]
+    form =
+      HH.form
+        [ HE.onSubmit formActions.handleSubmit
+        , HP.noValidate true
+        ]
+        [ HH.fieldset_
+            [ urlsField
+            , HH.div
+                [ HP.classes [ T.mt4 ] ]
+                [ Field.submit "Save" (isSuccess importStatus) ]
+            ]
+        ]
 
-type FormSlot
-  = F.Slot Form FormQuery () { urls :: String } Unit
-
-data FormQuery a
-  = SetSubmitStatus (RemoteData String Unit) a
-
-derive instance functorFormQuery :: Functor FormQuery
-
-newtype Form (r :: Row Type -> Type) f = Form (r (FormRow f))
-
-derive instance Newtype (Form r f) _
-
-type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
-type FormRow f = (urls :: f V.FormError String String)
-
-_form = Proxy :: Proxy "importForm"
-
-data FormAction
-  = Submit Event
-
-formComponent
-  :: forall m slots
-   . MonadAff m
-  => Navigate m
-  => F.Component Form FormQuery slots Unit { urls :: String } m
-formComponent =
-  F.component formInput
-    $ F.defaultSpec
-        { render = renderForm
-        , handleEvent = handleEvent
-        , handleQuery = handleQuery
-        , handleAction = handleAction
-        }
-  where
-  formInput :: Unit -> F.Input Form (status :: RemoteData String Unit) m
-  formInput _ =
-    { validators: Form { urls: V.required }
-    , initialInputs: Nothing
-    , status: NotAsked
-    }
-
-  handleEvent = F.raiseResult
-
-  eval act = F.handleAction handleAction handleEvent act
-
-  handleAction = case _ of
-    Submit event -> do
-      H.liftEffect $ Event.preventDefault event
-      { status } <- H.get
-      when (not $ isLoading status) do eval F.submit
-
-  handleQuery :: forall a. FormQuery a -> H.HalogenM _ _ _ _ _ (Maybe a)
-  handleQuery = case _ of
-    SetSubmitStatus status a -> do
-      H.modify_ _ { status = status }
-      when (isSuccess status) do eval F.resetAll
-      pure (Just a)
-
-  renderForm { form, submitting, status } =
-    HH.form
-      [ HE.onSubmit $ F.injAction <<< Submit
-      , HP.noValidate true
-      ]
-      [ HH.fieldset_
-          [ urls
-          , HH.div
-              [ HP.classes [ T.mt4 ] ]
-              [ Field.submit "Save" (submitting || isSuccess status) ]
-          ]
-      ]
-    where
-    proxies = F.mkSProxies (Proxy :: Proxy Form)
-
-    urls =
-      Field.textarea proxies.urls form $ Field.textareaDefaultProps
+    urlsField =
+      Field.textarea fields.urls actions.urls $ Field.textareaDefaultProps
         { label = Just "Urls"
         , id = Just "urls"
         , placeholder = Just "https://blog.com/post-1\nhttps://blog.com/post-2"
         , rows = Just 4
-        , message = Just $ case status, F.getTouched proxies.urls form of
-            Success _, false -> "We are importing your links. It can take a few seconds to process all of them"
+        , message = Just $ case importStatus, preview (_Just <<< _Left) fields.urls.result of
+            Success _, Just _ -> "We are importing your links. It can take a few seconds to process all of them"
             _, _ -> "One link per line. Duplicated links will not be imported."
-        , disabled = isLoading status
+        , disabled = isLoading importStatus
         }
-

@@ -4,9 +4,7 @@ import Prelude
 
 import Data.Lens (_Just, set)
 import Data.Maybe (Maybe(..))
-import Data.Newtype (class Newtype)
 import Effect.Aff.Class (class MonadAff)
-import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -22,30 +20,14 @@ import Listasio.Component.HTML.Wip as Wip
 import Listasio.Data.Lens (_currentUser, _name, _slug)
 import Listasio.Data.Profile (Profile, ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route)
-import Listasio.Data.Username (Username)
-import Listasio.Data.Username as Username
-import Listasio.Form.Field as Field
-import Listasio.Form.Validation as V
 import Listasio.Store as Store
-import Slug (Slug)
-import Slug as Slug
 import Tailwind as T
 import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
-import Web.Event.Event as Event
 
 _slot :: Proxy "settings"
 _slot = Proxy
 
-newtype Form (r :: Row Type -> Type) f = Form (r (FormRow f))
-
-derive instance Newtype (Form r f) _
-
-type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
-type FormRow f =
-  ( name :: f V.FormError String Username
-  , slug :: f V.FormError String Slug
-  )
 
 data Action
   = Receive (Connected (Maybe ProfileWithIdAndEmail) Unit)
@@ -82,11 +64,12 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       case currentUser of
         -- if we dont' have a profile something went completely wrong
         Nothing -> logout
-        Just profile -> do
-          void $ H.query _form unit $ F.asQuery $ F.loadForm $ F.wrapInputFields
-            { name: Username.toString profile.name
-            , slug: Slug.toString profile.slug
-            }
+        Just _ -> pure unit
+        -- Just profile ->
+        --   void $ H.query _form unit $ F.asQuery $ F.loadForm $ F.wrapInputFields
+        --     { name: Username.toString profile.name
+        --     , slug: Slug.toString profile.slug
+        --     }
 
     HandleForm { name, slug } -> do
       -- TODO: check response !!!
@@ -110,7 +93,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       , Wip.elem
       , HH.div
           []
-          [ whenElem false \_ -> HH.slot _form unit formComponent unit HandleForm
+          [ whenElem false \_ -> HH.text "form goes here xD (HH.slot _form unit formComponent unit HandleForm)"
           , HH.div
               [ HP.classes [ T.mt8 ] ]
               [ HH.button
@@ -140,69 +123,75 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
           ]
       ]
 
-_form = Proxy :: Proxy "settingsForm"
+-- type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
+-- type FormRow f =
+--   ( name :: f V.FormError String Username
+--   , slug :: f V.FormError String Slug
+--   )
 
-data FormAction
-  = Submit Event.Event
+-- _form = Proxy :: Proxy "settingsForm"
 
-formComponent
-  :: forall m query slots
-   . MonadAff m
-  => F.Component Form query slots Unit Profile m
-formComponent =
-  F.component formInput
-    $ F.defaultSpec
-        { render = renderForm
-        , handleEvent = handleEvent
-        , handleAction = handleAction
-        }
-  where
-  formInput :: Unit -> F.Input' Form m
-  formInput _ =
-    { validators:
-        Form
-          { name: V.required >>> V.minLength 3 >>> V.maxLength 20 >>> V.usernameFormat
-          , slug: V.required >>> V.minLength 3 >>> V.maxLength 20 >>> V.slugFormat
-          }
-    , initialInputs: Nothing
-    }
+-- data FormAction
+--   = Submit Event.Event
 
-  handleEvent = F.raiseResult
+-- formComponent
+--   :: forall m query slots
+--    . MonadAff m
+--   => F.Component Form query slots Unit Profile m
+-- formComponent =
+--   F.component formInput
+--     $ F.defaultSpec
+--         { render = renderForm
+--         , handleEvent = handleEvent
+--         , handleAction = handleAction
+--         }
+--   where
+--   formInput :: Unit -> F.Input' Form m
+--   formInput _ =
+--     { validators:
+--         Form
+--           { name: V.required >>> V.minLength 3 >>> V.maxLength 20 >>> V.usernameFormat
+--           , slug: V.required >>> V.minLength 3 >>> V.maxLength 20 >>> V.slugFormat
+--           }
+--     , initialInputs: Nothing
+--     }
 
-  handleAction = case _ of
-    Submit event -> do
-      H.liftEffect $ Event.preventDefault event
-      eval F.submit
+--   handleEvent = F.raiseResult
 
-    where
-    eval act = F.handleAction handleAction handleEvent act
+--   handleAction = case _ of
+--     Submit event -> do
+--       H.liftEffect $ Event.preventDefault event
+--       eval F.submit
 
-  renderForm { form, submitting } =
-    HH.form
-      [ HE.onSubmit $ F.injAction <<< Submit
-      , HP.noValidate true
-      ]
-      [ HH.fieldset_
-          [ name
-          , HH.div [ HP.classes [ T.mt4 ] ] [ slug ]
-          , HH.div
-              [ HP.classes [ T.mt4 ] ]
-              [ Field.submit "Update settings" submitting ]
-          ]
-      ]
-    where
-    proxies = F.mkSProxies (Proxy :: Proxy Form)
+--     where
+--     eval act = F.handleAction handleAction handleEvent act
 
-    name =
-      Field.input proxies.name form $ Field.defaultProps
-        { label = Just "Your name"
-        , id = Just "name"
-        , placeholder = Just "John Doe"
-        }
+--   renderForm { form, submitting } =
+--     HH.form
+--       [ HE.onSubmit $ F.injAction <<< Submit
+--       , HP.noValidate true
+--       ]
+--       [ HH.fieldset_
+--           [ name
+--           , HH.div [ HP.classes [ T.mt4 ] ] [ slug ]
+--           , HH.div
+--               [ HP.classes [ T.mt4 ] ]
+--               [ Field.submit "Update settings" submitting ]
+--           ]
+--       ]
+--     where
+--     proxies = F.mkSProxies (Proxy :: Proxy Form)
 
-    slug =
-      Field.input proxies.slug form $ Field.defaultProps
-        { label = Just "Your slug"
-        , id = Just "slug"
-        , placeholder = Just "john-doe"
-        }
+--     name =
+--       Field.input proxies.name form $ Field.defaultProps
+--         { label = Just "Your name"
+--         , id = Just "name"
+--         , placeholder = Just "John Doe"
+--         }
+
+--     slug =
+--       Field.input proxies.slug form $ Field.defaultProps
+--         { label = Just "Your slug"
+--         , id = Just "slug"
+--         , placeholder = Just "john-doe"
+--         }
