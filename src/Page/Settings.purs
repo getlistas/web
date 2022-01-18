@@ -28,7 +28,6 @@ import Web.Event.Event (Event)
 _slot :: Proxy "settings"
 _slot = Proxy
 
-
 data Action
   = Receive (Connected (Maybe ProfileWithIdAndEmail) Unit)
   | HandleForm Profile
@@ -65,11 +64,11 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
         -- if we dont' have a profile something went completely wrong
         Nothing -> logout
         Just _ -> pure unit
-        -- Just profile ->
-        --   void $ H.query _form unit $ F.asQuery $ F.loadForm $ F.wrapInputFields
-        --     { name: Username.toString profile.name
-        --     , slug: Slug.toString profile.slug
-        --     }
+    -- Just profile ->
+    --   void $ H.query _form unit $ F.asQuery $ F.loadForm $ F.wrapInputFields
+    --     { name: Username.toString profile.name
+    --     , slug: Slug.toString profile.slug
+    --     }
 
     HandleForm { name, slug } -> do
       -- TODO: check response !!!

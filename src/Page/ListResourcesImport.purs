@@ -44,7 +44,7 @@ _slot = Proxy
 type Slot = forall query. H.Slot query Output Input
 
 type Form :: (Type -> Type -> Type -> Type) -> Row Type
-type Form f = ( urls :: f String V.FormError String )
+type Form f = (urls :: f String V.FormError String)
 
 type FormInputs = { | Form F.FieldInput }
 
@@ -101,15 +101,15 @@ component =
   connect (selectEq _.currentUser)
     $ F.formless { liftAction: Eval } mempty
     $ H.mkComponent
-    { initialState
-    , render
-    , eval: H.mkEval $ H.defaultEval
-        { initialize = Just Initialize
-        , receive = Just <<< Receive
-        , handleAction = handleAction
-        , handleQuery = handleQuery
+        { initialState
+        , render
+        , eval: H.mkEval $ H.defaultEval
+            { initialize = Just Initialize
+            , receive = Just <<< Receive
+            , handleAction = handleAction
+            , handleQuery = handleQuery
+            }
         }
-    }
   where
   initialState context =
     { context
