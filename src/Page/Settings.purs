@@ -5,6 +5,7 @@ import Prelude
 import Data.Lens (_Just, set)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
+import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -20,7 +21,13 @@ import Listasio.Component.HTML.Wip as Wip
 import Listasio.Data.Lens (_currentUser, _name, _slug)
 import Listasio.Data.Profile (Profile, ProfileWithIdAndEmail)
 import Listasio.Data.Route (Route)
+import Listasio.Data.Username (Username)
+import Listasio.Data.Username as Username
+import Listasio.Form.Field as Field
+import Listasio.Form.Validation as V
 import Listasio.Store as Store
+import Slug (Slug)
+import Slug as Slug
 import Tailwind as T
 import Type.Proxy (Proxy(..))
 import Web.Event.Event (Event)
@@ -28,14 +35,38 @@ import Web.Event.Event (Event)
 _slot :: Proxy "settings"
 _slot = Proxy
 
+type Slot = forall query. H.Slot query Output Input
+
+type Form :: (Type -> Type -> Type -> Type) -> Row Type
+type Form f =
+  ( name :: f String V.FormError Username
+  , slug :: f String V.FormError Slug
+  )
+
+type FormInputs = { | Form F.FieldInput }
+
+type Input = Unit
+
+type ConnectedInput = Connected (Maybe ProfileWithIdAndEmail) Input
+
+type Output = Void
+
+type FormContext
+  = F.FormContext (Form F.FieldState) (Form (F.FieldAction Action)) ConnectedInput Action
+
+type FormlessAction = F.FormlessAction (Form F.FieldState)
+
 data Action
-  = Receive (Connected (Maybe ProfileWithIdAndEmail) Unit)
-  | HandleForm Profile
+  = HandleForm Profile
   | LogUserOut
   | Navigate Route Event
+  -- Formless actions
+  | Receive FormContext
+  | Eval FormlessAction
 
 type State
-  = { currentUser :: Maybe ProfileWithIdAndEmail }
+  = { context :: FormContext
+    , currentUser :: Maybe ProfileWithIdAndEmail }
 
 component
   :: forall q o m
@@ -44,32 +75,24 @@ component
   => Navigate m
   => ManageUser m
   => H.Component q Unit o m
-component = connect (selectEq _.currentUser) $ H.mkComponent
-  { initialState
-  , render
-  , eval:
-      H.mkEval
-        $ H.defaultEval
-            { handleAction = handleAction
-            , receive = Just <<< Receive
-            }
-  }
+component = connect (selectEq _.currentUser)
+    $ F.formless { liftAction: Eval } mempty
+    $ H.mkComponent
+        { initialState
+        , render
+        , eval:
+            H.mkEval
+              $ H.defaultEval
+                  { receive = Just <<< Receive
+                  , handleAction = handleAction
+                  , handleQuery = handleQuery
+                  }
+        }
   where
-  initialState { context: currentUser } = { currentUser }
+  initialState context = { context, currentUser: context.input.context }
 
+  handleAction :: Action -> H.HalogenM _ _ _ _ m Unit
   handleAction = case _ of
-    Receive { context: currentUser } -> do
-      H.modify_ _ { currentUser = currentUser }
-      case currentUser of
-        -- if we dont' have a profile something went completely wrong
-        Nothing -> logout
-        Just _ -> pure unit
-    -- Just profile ->
-    --   void $ H.query _form unit $ F.asQuery $ F.loadForm $ F.wrapInputFields
-    --     { name: Username.toString profile.name
-    --     , slug: Slug.toString profile.slug
-    --     }
-
     HandleForm { name, slug } -> do
       -- TODO: check response !!!
       updateUser { name, slug }
@@ -80,7 +103,31 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
     Navigate route e -> navigate_ e route
 
-  render _ =
+    -- Formless actions
+    Receive context -> do
+      let newUser = context.input.context
+      {currentUser} <- H.get
+      H.modify_ _ { context = context, currentUser = newUser }
+      case currentUser, newUser of
+        -- if we dont' have a profile something went completely wrong
+        _, Nothing -> logout
+        Just current, Just new | current /= new ->
+          handleAction $ context.formActions.setFields $ F.mkFieldStates
+            { name: Username.toString new.name
+            , slug: Slug.toString new.slug
+            }
+        _, _ -> pure unit
+
+    Eval action -> F.eval action
+
+  handleQuery :: forall a. F.FormQuery _ _ _ _ a -> H.HalogenM _ _ _ _ m (Maybe a)
+  handleQuery =
+    F.handleSubmitValidate (handleAction <<< HandleForm) F.validate
+      { name: V.usernameFormat <=< V.required <=< V.minLength 2 <=< V.maxLength 20
+      , slug: V.slugFormat <=< V.required <=< V.minLength 2 <=< V.maxLength 20
+      }
+
+  render { context: { formActions, fields, actions } } =
     HH.div
       []
       [ HH.div
@@ -92,7 +139,8 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
       , Wip.elem
       , HH.div
           []
-          [ whenElem false \_ -> HH.text "form goes here xD (HH.slot _form unit formComponent unit HandleForm)"
+          [ -- TODO: show the form
+            whenElem false \_ -> form
           , HH.div
               [ HP.classes [ T.mt8 ] ]
               [ HH.button
@@ -121,76 +169,33 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
               ]
           ]
       ]
+    where
+    form =
+      HH.form
+        [ HE.onSubmit formActions.handleSubmit
+        , HP.noValidate true
+        ]
+        [ HH.fieldset_
+            [ name
+            , HH.div [ HP.classes [ T.mt4 ] ] [ slug ]
+            , HH.div
+                [ HP.classes [ T.mt4 ] ]
+                [ -- TODO: disable while submitting or not changed
+                  Field.submit "Update settings" true
+                ]
+            ]
+        ]
 
--- type FormRow :: (Type -> Type -> Type -> Type) -> Row Type
--- type FormRow f =
---   ( name :: f V.FormError String Username
---   , slug :: f V.FormError String Slug
---   )
+    name =
+      Field.input fields.name actions.name $ Field.defaultProps
+        { label = Just "Your name"
+        , id = Just "name"
+        , placeholder = Just "John Doe"
+        }
 
--- _form = Proxy :: Proxy "settingsForm"
-
--- data FormAction
---   = Submit Event.Event
-
--- formComponent
---   :: forall m query slots
---    . MonadAff m
---   => F.Component Form query slots Unit Profile m
--- formComponent =
---   F.component formInput
---     $ F.defaultSpec
---         { render = renderForm
---         , handleEvent = handleEvent
---         , handleAction = handleAction
---         }
---   where
---   formInput :: Unit -> F.Input' Form m
---   formInput _ =
---     { validators:
---         Form
---           { name: V.required >>> V.minLength 3 >>> V.maxLength 20 >>> V.usernameFormat
---           , slug: V.required >>> V.minLength 3 >>> V.maxLength 20 >>> V.slugFormat
---           }
---     , initialInputs: Nothing
---     }
-
---   handleEvent = F.raiseResult
-
---   handleAction = case _ of
---     Submit event -> do
---       H.liftEffect $ Event.preventDefault event
---       eval F.submit
-
---     where
---     eval act = F.handleAction handleAction handleEvent act
-
---   renderForm { form, submitting } =
---     HH.form
---       [ HE.onSubmit $ F.injAction <<< Submit
---       , HP.noValidate true
---       ]
---       [ HH.fieldset_
---           [ name
---           , HH.div [ HP.classes [ T.mt4 ] ] [ slug ]
---           , HH.div
---               [ HP.classes [ T.mt4 ] ]
---               [ Field.submit "Update settings" submitting ]
---           ]
---       ]
---     where
---     proxies = F.mkSProxies (Proxy :: Proxy Form)
-
---     name =
---       Field.input proxies.name form $ Field.defaultProps
---         { label = Just "Your name"
---         , id = Just "name"
---         , placeholder = Just "John Doe"
---         }
-
---     slug =
---       Field.input proxies.slug form $ Field.defaultProps
---         { label = Just "Your slug"
---         , id = Just "slug"
---         , placeholder = Just "john-doe"
---         }
+    slug =
+      Field.input fields.slug actions.slug $ Field.defaultProps
+        { label = Just "Your slug"
+        , id = Just "slug"
+        , placeholder = Just "john-doe"
+        }
