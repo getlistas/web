@@ -65,8 +65,10 @@ data Action
   | Eval FormlessAction
 
 type State
-  = { context :: FormContext
-    , currentUser :: Maybe ProfileWithIdAndEmail }
+  =
+  { context :: FormContext
+  , currentUser :: Maybe ProfileWithIdAndEmail
+  }
 
 component
   :: forall q o m
@@ -76,18 +78,17 @@ component
   => ManageUser m
   => H.Component q Unit o m
 component = connect (selectEq _.currentUser)
-    $ F.formless { liftAction: Eval } mempty
-    $ H.mkComponent
-        { initialState
-        , render
-        , eval:
-            H.mkEval
-              $ H.defaultEval
-                  { receive = Just <<< Receive
-                  , handleAction = handleAction
-                  , handleQuery = handleQuery
-                  }
-        }
+  $ F.formless { liftAction: Eval } mempty
+  $ H.mkComponent
+      { initialState
+      , render
+      , eval:
+          H.mkEval $ H.defaultEval
+            { receive = Just <<< Receive
+            , handleAction = handleAction
+            , handleQuery = handleQuery
+            }
+      }
   where
   initialState context = { context, currentUser: context.input.context }
 
@@ -106,7 +107,7 @@ component = connect (selectEq _.currentUser)
     -- Formless actions
     Receive context -> do
       let newUser = context.input.context
-      {currentUser} <- H.get
+      { currentUser } <- H.get
       H.modify_ _ { context = context, currentUser = newUser }
       case currentUser, newUser of
         -- if we dont' have a profile something went completely wrong
