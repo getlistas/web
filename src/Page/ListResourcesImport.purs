@@ -2,11 +2,10 @@ module Listasio.Page.ListResourcesImport where
 
 import Prelude
 
-import Data.Either (Either(..), note)
+import Data.Either (Either, note)
 import Data.Foldable (for_)
 import Data.Lens (_Just, _Left, preview)
 import Data.Maybe (Maybe(..))
-import Data.String (null)
 import Effect.Aff.Class (class MonadAff)
 import Formless as F
 import Halogen as H
@@ -135,7 +134,7 @@ component =
 
     HandleForm { urls } -> do
       { importStatus, list, context } <- H.get
-      when (not (isLoading importStatus) && not (null context.fields.urls.value)) $ for_ (toMaybe list) \{ id } -> do
+      when (not $ isLoading importStatus) $ for_ (toMaybe list) \{ id } -> do
         H.modify_ _ { importStatus = Loading }
         result <- fromEither <$> note "Failed to register" <$> importResources { list: id, payload: urls }
         H.modify_ _ { importStatus = unit <$ result }
@@ -151,9 +150,8 @@ component =
 
   handleQuery :: forall a. F.FormQuery _ _ _ _ a -> H.HalogenM _ _ _ _ m (Maybe a)
   handleQuery =
-    -- TODO: remove nullcheck in HandleForm and introduce this validation instead
-    -- F.handleSubmitValidate (handleAction <<< HandleForm) F.validate { urls: V.required }
-    F.handleSubmitValidate (handleAction <<< HandleForm) F.validate { urls: Right }
+    F.handleSubmitValidate (handleAction <<< HandleForm) F.validate
+      { urls: V.required :: String -> Either V.FormError String }
 
   render :: State -> H.ComponentHTML Action () m
   render { importStatus, list: mbList, listSlug, userSlug, context: { formActions, fields, actions } } =

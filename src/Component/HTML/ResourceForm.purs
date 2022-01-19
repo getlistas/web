@@ -213,13 +213,10 @@ component = F.formless { liftAction: Eval } mempty $ H.mkComponent
           H.modify_ _ { meta = Success meta }
           { actions, fields } <- H.gets _.context
           handleAction $ actions.thumbnail.modify $ _ { value = meta.thumbnail }
-          handleAction actions.thumbnail.validate
-          for_ (filter (const $ String.null $ fields.title.value) meta.title) \title -> do
+          for_ (filter (const $ String.null $ fields.title.value) meta.title) \title ->
             handleAction $ actions.title.modify $ _ { value = title }
-            handleAction actions.title.validate
           for_ (filter (const $ String.null $ fields.description.value) meta.description) \description -> do
             handleAction $ actions.description.modify $ _ { value = description }
-            handleAction actions.description.validate
         Nothing ->
           H.modify_ _ { meta = Failure "Couldn't get suggestions" }
 
@@ -266,7 +263,7 @@ component = F.formless { liftAction: Eval } mempty $ H.mkComponent
 
     F.Submit output a -> do
       { status } <- H.get
-      when (not $ isLoading status) do F.raise output
+      when (not $ isLoading status) $ F.raise output
       pure $ Just a
 
     _ -> pure Nothing
