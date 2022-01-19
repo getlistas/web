@@ -136,16 +136,14 @@ component =
         }
 
     F.Submit output a -> do
-      { status, context } <- H.get
-      when (not $ isLoading status) do
-        F.raise output
-        handleAction context.formActions.reset
+      { status } <- H.get
+      when (not $ isLoading status) $ F.raise output
       pure $ Just a
 
     _ -> pure Nothing
 
   render :: State -> H.ComponentHTML Action () m
-  render { status, isNew, context: { formActions, formState, fields, actions } } =
+  render { status, isNew, context: { formActions, fields, actions } } =
     HH.form
       [ HE.onSubmit formActions.handleSubmit
       , HP.noValidate true
@@ -185,7 +183,7 @@ component =
 
           , Field.submit
               (if isNew then "Create" else "Save")
-              (formState.allTouched || isLoading status)
+              (isLoading status)
           ]
       ]
 
