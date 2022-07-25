@@ -69,7 +69,6 @@ type RssBody
   =
   { url :: String
   , subscription_id :: String
-  , status :: String
   , feed_type :: String
   , metadata :: Maybe String
   }
@@ -92,7 +91,6 @@ rssBody =
   CAR.object "RssBody"
     { url: CA.string
     , subscription_id: CA.string
-    , status: CA.string
     , feed_type: CA.string
     , metadata: CAC.maybe CA.string
     }
