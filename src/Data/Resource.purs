@@ -42,6 +42,20 @@ type ListResource
       )
   }
 
+type ListResourceWithConent
+  =
+  {
+  | ResourceRep
+      ( id :: ID
+      , user :: String
+      , created_at :: DateTime
+      , updated_at :: DateTime
+      , completed_at :: Maybe DateTime
+      , position :: Int
+      , html :: Maybe String
+      )
+  }
+
 resourceCodec :: JsonCodec Resource
 resourceCodec =
   CAR.object "Resource"
@@ -55,7 +69,7 @@ resourceCodec =
 
 listResourceCodec :: JsonCodec ListResource
 listResourceCodec =
-  CAR.object "Resource"
+  CAR.object "ListResource"
     { id: ID.codec
     , list: ID.codec
     , user: CA.string
@@ -68,6 +82,24 @@ listResourceCodec =
     , updated_at: DateTime.codec
     , completed_at: CAC.maybe DateTime.codec
     , tags: CAC.array CA.string
+    }
+
+listResourceWithContentCodec :: JsonCodec ListResourceWithConent
+listResourceWithContentCodec =
+  CAR.object "ListResourceWithContent"
+    { id: ID.codec
+    , list: ID.codec
+    , user: CA.string
+    , url: CA.string
+    , title: CAC.maybe CA.string
+    , description: CAC.maybe CA.string
+    , thumbnail: CAC.maybe CA.string
+    , position: CA.int
+    , created_at: DateTime.codec
+    , updated_at: DateTime.codec
+    , completed_at: CAC.maybe DateTime.codec
+    , tags: CAC.array CA.string
+    , html: CAC.maybe CA.string
     }
 
 type PositionChangeBody

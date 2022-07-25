@@ -53,7 +53,7 @@ main = HA.runHalogenAff do
   let
     baseUrl = ConfigProvider.provide
     env = ConfigProvider.env
-    store = { nav, baseUrl, env, currentUser, lists: NotAsked }
+    store = { nav, baseUrl, env, currentUser, lists: NotAsked, reader: Nothing }
 
   rootComponent <- (runAppM store) Router.component
 

@@ -22,6 +22,9 @@ _currentUser = prop (SProxy :: SProxy "currentUser")
 _description :: forall a r. Lens' { description :: a | r } a
 _description = prop (SProxy :: SProxy "description")
 
+_fullScreen :: forall a r. Lens' { fullScreen :: a | r } a
+_fullScreen = prop (SProxy :: SProxy "fullScreen")
+
 _id :: forall a r. Lens' { id :: a | r } a
 _id = prop (SProxy :: SProxy "id")
 
@@ -67,6 +70,9 @@ _profile = prop (SProxy :: SProxy "profile")
 _resource_metadata :: forall a r. Lens' { resource_metadata :: a | r } a
 _resource_metadata = prop (SProxy :: SProxy "resource_metadata")
 
+_resource :: forall a r. Lens' { resource :: a | r } a
+_resource = prop (SProxy :: SProxy "resource")
+
 _resources :: forall a r. Lens' { resources :: a | r } a
 _resources = prop (SProxy :: SProxy "resources")
 
@@ -78,6 +84,9 @@ _showMore = prop (SProxy :: SProxy "showMore")
 
 _subscriptions :: forall a r. Lens' { subscriptions :: a | r } a
 _subscriptions = prop (SProxy :: SProxy "subscriptions")
+
+_reader :: forall a r. Lens' { reader :: a | r } a
+_reader = prop (SProxy :: SProxy "reader")
 
 _rss :: forall a r. Lens' { rss :: a | r } a
 _rss = prop (SProxy :: SProxy "rss")

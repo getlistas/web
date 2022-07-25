@@ -207,6 +207,14 @@ bottom4 = ClassName "bottom-4"
 checkedBgKiwi :: ClassName
 checkedBgKiwi = ClassName "checked:bg-kiwi"
 
+-- | colSpan1
+colSpan1 :: ClassName
+colSpan1 = ClassName "col-span-1"
+
+-- | colSpan2
+colSpan2 :: ClassName
+colSpan2 = ClassName "col-span-2"
+
 -- | container
 container :: ClassName
 container = ClassName "container"
@@ -967,6 +975,10 @@ mdFlex = ClassName "md:flex"
 mdGridCols2 :: ClassName
 mdGridCols2 = ClassName "md:grid-cols-2"
 
+-- | mdGridCols3
+mdGridCols3 :: ClassName
+mdGridCols3 = ClassName "md:grid-cols-3"
+
 -- | mdHFull
 mdHFull :: ClassName
 mdHFull = ClassName "md:h-full"
@@ -1390,6 +1402,10 @@ py6 = ClassName "py-6"
 -- | py8
 py8 :: ClassName
 py8 = ClassName "py-8"
+
+-- | rawHtml
+rawHtml :: ClassName
+rawHtml = ClassName "raw-html"
 
 -- | relative
 relative :: ClassName
@@ -2022,10 +2038,6 @@ wScreen = ClassName "w-screen"
 -- | xlFlex
 xlFlex :: ClassName
 xlFlex = ClassName "xl:flex"
-
--- | xlGridCols3
-xlGridCols3 :: ClassName
-xlGridCols3 = ClassName "xl:grid-cols-3"
 
 -- | xlGridCols4
 xlGridCols4 :: ClassName

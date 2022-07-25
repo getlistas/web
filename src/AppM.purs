@@ -189,6 +189,12 @@ instance manageResourceAppM :: ManageResource AppM where
     conf = { endpoint: ResourceMeta, method }
     codec = ResourceMeta.metaCodec
 
+  getResource id = do
+    hush <$> mkAuthRequest conf codec
+    where
+    conf = { endpoint: Resource id, method: Get }
+    codec = Resource.listResourceWithContentCodec
+
   getResources = do
     hush <$> mkAuthRequest conf codec
     where

@@ -10,12 +10,13 @@ module Listasio.Store where
 
 import Prelude
 
-import Data.Lens (over)
+import Data.Lens (_Just, over, set)
 import Data.Maybe (Maybe(..))
 import Listasio.Api.Request (BaseURL)
-import Listasio.Data.Lens (_lists)
+import Listasio.Data.Lens (_fullScreen, _lists, _reader)
 import Listasio.Data.List (ListWithIdUserAndMeta)
 import Listasio.Data.Profile (ProfileWithIdAndEmail)
+import Listasio.Data.Resource (ListResourceWithConent)
 import Network.RemoteData (RemoteData, _Success)
 import Routing.PushState (PushStateInterface)
 
@@ -27,12 +28,18 @@ derive instance Ord LogLevel
 type Lists = Array ListWithIdUserAndMeta
 type RD_Lists = RemoteData String Lists
 
+type ReaderState =
+  { resource :: ListResourceWithConent
+  , fullScreen :: Boolean
+  }
+
 type Store =
   { nav :: PushStateInterface
   , env :: LogLevel
   , baseUrl :: BaseURL
   , currentUser :: Maybe ProfileWithIdAndEmail
   , lists :: RD_Lists
+  , reader :: Maybe ReaderState
   }
 
 data Action
@@ -42,6 +49,10 @@ data Action
   -- My Lists
   | SetLists RD_Lists
   | OverLists (Lists -> Lists)
+  -- Reader
+  | Fullscreen Boolean
+  | SetReader ListResourceWithConent
+  | ClearReader
 
 reduce :: Store -> Action -> Store
 reduce store = case _ of
@@ -56,3 +67,12 @@ reduce store = case _ of
 
   OverLists f ->
     over (_lists <<< _Success) f store
+
+  Fullscreen isOn ->
+    set (_reader <<< _Just <<< _fullScreen) isOn store
+
+  SetReader resource ->
+    set _reader (Just {resource, fullScreen: false}) store
+
+  ClearReader ->
+    set _reader Nothing store

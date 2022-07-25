@@ -6,7 +6,7 @@ import Data.Maybe (Maybe)
 import Halogen (HalogenM, lift)
 import Listasio.Api.Endpoint (SearchResourcesArgs)
 import Listasio.Data.ID (ID)
-import Listasio.Data.Resource (ListResource, Resource, ImportResourcesBody)
+import Listasio.Data.Resource (ImportResourcesBody, ListResource, Resource, ListResourceWithConent)
 import Listasio.Data.ResourceMetadata (ResourceMeta)
 import Slug (Slug)
 
@@ -17,6 +17,7 @@ type PublicResourcesArgs
 
 class Monad m <= ManageResource m where
   getMeta :: String -> m (Maybe ResourceMeta)
+  getResource :: ID -> m (Maybe ListResourceWithConent)
   getResources :: m (Maybe (Array ListResource))
   getListResources :: { list :: ID, completed :: Maybe Boolean } -> m (Maybe (Array ListResource))
   getPublicListResources :: PublicResourcesArgs -> m (Maybe (Array ListResource))
@@ -31,6 +32,7 @@ class Monad m <= ManageResource m where
 
 instance manageResourceHalogenM :: ManageResource m => ManageResource (HalogenM st act slots msg m) where
   getMeta = lift <<< getMeta
+  getResource = lift <<< getResource
   getResources = lift getResources
   getListResources = lift <<< getListResources
   getPublicListResources = lift <<< getPublicListResources
