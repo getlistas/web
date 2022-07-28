@@ -1,0 +1,78 @@
+{
+  "nodes": {
+    "easy-purescript-nix": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1654121141,
+        "narHash": "sha256-mkHIyWk5Xh54FqCU7CT3G/tnHF7mLbQt3EfnNCMCTO8=",
+        "owner": "justinwoo",
+        "repo": "easy-purescript-nix",
+        "rev": "5dca2f0f3b9ec0bceabb23fa1fd2b5f8ec30fa53",
+        "type": "github"
+      },
+      "original": {
+        "owner": "justinwoo",
+        "repo": "easy-purescript-nix",
+        "type": "github"
+      }
+    },
+    "flake-compat": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1650374568,
+        "narHash": "sha256-Z+s0J8/r907g149rllvwhb4pKi8Wam5ij0st8PwAh+E=",
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "rev": "b4a34015c698c7793d592d66adbab377907a2be8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1658346836,
+        "narHash": "sha256-c9BZZbi0tqCQ4j6CMVDlsut3Q3ET1Fezf+qIslCfkhs=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "a1fe662eb26ffc2a036b37c4670392ade632c413",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-21.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "easy-purescript-nix": "easy-purescript-nix",
+        "flake-compat": "flake-compat",
+        "nixpkgs": "nixpkgs",
+        "twpurs": "twpurs"
+      }
+    },
+    "twpurs": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1643229729,
+        "narHash": "sha256-a3Z+RJHnsGLdeDOt2qFw4v5ce2gC6FtxsHra8cJ9MDk=",
+        "owner": "gillchristian",
+        "repo": "tailwind-purs",
+        "rev": "b727868c920c3c03a63f667a2491593979f44ac5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "gillchristian",
+        "repo": "tailwind-purs",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
