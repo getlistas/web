@@ -2,7 +2,7 @@ module Listasio.Page.Profile where
 
 import Prelude
 
-import Control.Error.Util (note)
+import Data.Either (note)
 import Data.Array (cons, drop, range)
 import Data.Date (Date, Weekday(..), adjust, weekday)
 import Data.DateTime (DateTime(..), date)
