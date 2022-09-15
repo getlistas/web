@@ -1,0 +1,26 @@
+name: 'Mirror'
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  push_mirror:
+    name: 'Notify Subilo'
+
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Notify Subilo
+      shell: bash
+      run: |
+        curl -v -d '{ "name": "listas" }' \
+          -H "Authorization: Bearer $TOKEN" \
+          -H "Content-Type: application/json" \
+          -X POST "$WEBHOOK"
+        exit $?
+      env:
+        WEBHOOK: ${{ secrets.deploy_webhook }}
+        TOKEN: ${{ secrets.deploy_token }}
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
